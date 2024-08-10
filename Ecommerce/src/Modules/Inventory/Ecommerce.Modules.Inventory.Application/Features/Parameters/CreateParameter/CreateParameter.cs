@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Parameters.CreateParameter
 {
-    public sealedrecord class CreateParameter : Shared.Abstractions.MediatR.ICommand;
+    public sealed record class CreateParameter(string Name) : Shared.Abstractions.MediatR.ICommand;
 }

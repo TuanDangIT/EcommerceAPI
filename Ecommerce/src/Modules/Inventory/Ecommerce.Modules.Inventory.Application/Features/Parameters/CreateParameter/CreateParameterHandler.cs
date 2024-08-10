@@ -1,4 +1,6 @@
-﻿using Ecommerce.Shared.Abstractions.MediatR;
+﻿using Ecommerce.Modules.Inventory.Application.Exceptions;
+using Ecommerce.Modules.Inventory.Domain.Repositories;
+using Ecommerce.Shared.Abstractions.MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +11,26 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Parameters.CreatePara
 {
     internal sealed class CreateParameterHandler : ICommandHandler<CreateParameter>
     {
-        public Task Handle(CreateParameter request, CancellationToken cancellationToken)
+        private readonly IParameterRepository _parameterRepository;
+        private readonly TimeProvider _timeProvider;
+
+        public CreateParameterHandler(IParameterRepository parameterRepository, TimeProvider timeProvider)
         {
-            throw new NotImplementedException();
+            _parameterRepository = parameterRepository;
+            _timeProvider = timeProvider;
+        }
+        public async Task Handle(CreateParameter request, CancellationToken cancellationToken)
+        {
+            var rowsChanged = await _parameterRepository.AddAsync(new Domain.Entities.Parameter()
+            {
+                Id = Guid.NewGuid(),
+                Name = request.Name,
+                CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
+            });
+            if(rowsChanged is 0)
+            {
+                throw new ParameterNotCreatedException();
+            }
         }
     }
 }
