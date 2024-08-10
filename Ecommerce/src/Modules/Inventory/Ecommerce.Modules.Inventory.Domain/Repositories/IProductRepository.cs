@@ -13,7 +13,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Repositories
         Task<int> UpdateAsync(Product product);
         Task<int> DeleteAsync(Guid productId);
         Task<int> DecreaseQuantityAsync(Guid productId, int ammount);
-        Task<int> DeleteManyAsync(params Guid[] productIds);
+        Task<int> DeleteManyAsync(Guid[] productIds);
         //Task<IEnumerable<Product>> GetAllAsync();
         //Task<Product?> GetAsync(Guid productId);
     }
