@@ -29,6 +29,8 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
 
         public async Task<IEnumerable<Parameter>> GetAllAsync() => await _dbContext.Parameters.ToListAsync();
 
+        public async Task<Parameter?> GetAsync(Guid parameterId) => await _dbContext.Parameters.SingleOrDefaultAsync(p => p.Id == parameterId);
+
         public async Task<int> UpdateAsync(Parameter parameter)
         {
             _dbContext.Parameters.Update(parameter);
