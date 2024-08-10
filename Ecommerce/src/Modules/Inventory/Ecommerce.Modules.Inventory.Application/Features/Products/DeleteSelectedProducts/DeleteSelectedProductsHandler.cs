@@ -1,4 +1,7 @@
-﻿using Ecommerce.Shared.Abstractions.MediatR;
+﻿using Ecommerce.Modules.Inventory.Application.Exceptions;
+using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteSelectedManufacturers;
+using Ecommerce.Modules.Inventory.Domain.Repositories;
+using Ecommerce.Shared.Abstractions.MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +12,19 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.DeleteSelect
 {
     internal sealed class DeleteSelectedProductsHandler : ICommandHandler<DeleteSelectedProducts>
     {
-        public Task Handle(DeleteSelectedProducts request, CancellationToken cancellationToken)
+        private readonly IProductRepository _productRepository;
+
+        public DeleteSelectedProductsHandler(IProductRepository productRepository)
         {
-            throw new NotImplementedException();
+            _productRepository = productRepository;
+        }
+        public async Task Handle(DeleteSelectedProducts request, CancellationToken cancellationToken)
+        {
+            var rowsChanged = await _productRepository.DeleteManyAsync(request.ProductIds);
+            if (rowsChanged != request.ProductIds.Count())
+            {
+                throw new ManufacturerNotAllDeletedException();
+            }
         }
     }
 }
