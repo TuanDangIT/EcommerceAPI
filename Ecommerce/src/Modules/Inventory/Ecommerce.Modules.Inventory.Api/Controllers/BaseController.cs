@@ -10,7 +10,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
 {
     [ApiController]
     [Route("api/" + InventoryModule.BasePath + "/[controller]")]
-    internal abstract class BaseController : ControllerBase
+    internal class BaseController : ControllerBase
     {
         private readonly IMediator _mediator;
 
