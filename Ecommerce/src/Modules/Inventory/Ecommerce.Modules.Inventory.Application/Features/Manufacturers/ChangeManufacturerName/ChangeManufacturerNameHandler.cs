@@ -24,14 +24,14 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Manufacturers.ChangeM
             var manufacturer = await _manufacturerRepository.GetAsync(request.ManufaturerId);
             if(manufacturer is null)
             {
-                throw new ManufacturerNotFound(request.ManufaturerId);
+                throw new ManufacturerNotFoundException(request.ManufaturerId);
             }
             manufacturer.Name = request.Name;
             manufacturer.UpdatedAt = _timeProvider.GetUtcNow().UtcDateTime;
             var rowChanged = await _manufacturerRepository.UpdateAsync(manufacturer);
             if(rowChanged is not 1)
             {
-                throw new ManufacturerNotUpdated(request.ManufaturerId);
+                throw new ManufacturerNotUpdatedException(request.ManufaturerId);
             }
         }
     }

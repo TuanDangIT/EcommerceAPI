@@ -29,7 +29,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Manufacturers.CreateM
             });
             if(rowChanged is not 1)
             {
-                throw new ManufacturerNotCreated();
+                throw new ManufacturerNotCreatedException();
             }
         }
     }

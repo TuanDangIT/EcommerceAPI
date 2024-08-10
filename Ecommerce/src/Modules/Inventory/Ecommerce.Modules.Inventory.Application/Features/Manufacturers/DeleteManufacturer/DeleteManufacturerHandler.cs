@@ -1,4 +1,6 @@
-﻿using Ecommerce.Shared.Abstractions.MediatR;
+﻿using Ecommerce.Modules.Inventory.Application.Exceptions;
+using Ecommerce.Modules.Inventory.Domain.Repositories;
+using Ecommerce.Shared.Abstractions.MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +11,19 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteM
 {
     internal sealed class DeleteManufacturerHandler : ICommandHandler<DeleteManufacturer>
     {
-        public Task Handle(DeleteManufacturer request, CancellationToken cancellationToken)
+        private readonly IManufacturerRepository _manufacturerRepository;
+
+        public DeleteManufacturerHandler(IManufacturerRepository manufacturerRepository)
         {
-            throw new NotImplementedException();
+            _manufacturerRepository = manufacturerRepository;
+        }
+        public async Task Handle(DeleteManufacturer request, CancellationToken cancellationToken)
+        {
+            var rowChanged = await _manufacturerRepository.DeleteAsync(request.ManufacturerID);
+            if(rowChanged is not 1)
+            {
+                throw new ManufacturerNotDeletedException(request.ManufacturerID);
+            }
         }
     }
 }

@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Exceptions
 {
-    internal class ManufacturerNotUpdated : EcommerceException
+    internal sealed class ManufacturerNotFoundException : EcommerceException
     {
         public Guid Id { get; }
-        public ManufacturerNotUpdated(Guid id) : base($"Manufacturer: {id} was not updated.")
+        public ManufacturerNotFoundException(Guid id) : base($"Manufacturer: {id} was not found.")
         {
             Id = id;
         }
