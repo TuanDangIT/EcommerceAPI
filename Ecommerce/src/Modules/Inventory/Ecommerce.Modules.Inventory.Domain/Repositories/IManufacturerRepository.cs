@@ -14,6 +14,6 @@ namespace Ecommerce.Modules.Inventory.Domain.Repositories
         Task<int> DeleteAsync(Guid manufacturerId);
         Task<int> DeleteManyAsync(params Guid[] manufacturerIds);
         //Task<IEnumerable<Manufacturer>> GetAllAsync();
-        //Task<Manufacturer?> GetAsync(Guid manufacturerId);
+        Task<Manufacturer?> GetAsync(Guid manufacturerId);
     }
 }

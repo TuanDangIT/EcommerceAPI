@@ -1,4 +1,6 @@
-﻿using Ecommerce.Shared.Abstractions.MediatR;
+﻿using Ecommerce.Modules.Inventory.Application.Exceptions;
+using Ecommerce.Modules.Inventory.Domain.Repositories;
+using Ecommerce.Shared.Abstractions.MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +11,28 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Manufacturers.ChangeM
 {
     internal sealed class ChangeManufacturerNameHandler : ICommandHandler<ChangeManufacturerName>
     {
-        public Task Handle(ChangeManufacturerName request, CancellationToken cancellationToken)
+        private readonly IManufacturerRepository _manufacturerRepository;
+        private readonly TimeProvider _timeProvider;
+
+        public ChangeManufacturerNameHandler(IManufacturerRepository manufacturerRepository, TimeProvider timeProvider)
         {
-            throw new NotImplementedException();
+            _manufacturerRepository = manufacturerRepository;
+            _timeProvider = timeProvider;
+        }
+        public async Task Handle(ChangeManufacturerName request, CancellationToken cancellationToken)
+        {
+            var manufacturer = await _manufacturerRepository.GetAsync(request.ManufaturerId);
+            if(manufacturer is null)
+            {
+                throw new ManufacturerNotFound(request.ManufaturerId);
+            }
+            manufacturer.Name = request.Name;
+            manufacturer.UpdatedAt = _timeProvider.GetUtcNow().UtcDateTime;
+            var rowChanged = await _manufacturerRepository.UpdateAsync(manufacturer);
+            if(rowChanged is not 1)
+            {
+                throw new ManufacturerNotUpdated(request.ManufaturerId);
+            }
         }
     }
 }

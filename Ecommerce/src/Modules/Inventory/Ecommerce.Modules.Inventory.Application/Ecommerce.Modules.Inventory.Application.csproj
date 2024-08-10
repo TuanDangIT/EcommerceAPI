@@ -10,8 +10,4 @@
     <ProjectReference Include="..\Ecommerce.Modules.Inventory.Domain\Ecommerce.Modules.Inventory.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Exceptions\" />
-  </ItemGroup>
-
 </Project>
