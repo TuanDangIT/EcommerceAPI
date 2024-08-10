@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Products.DeleteProduct
 {
-    public sealed record class DeleteProduct : Shared.Abstractions.MediatR.ICommand;
+    public sealed record class DeleteProduct(Guid ProductId) : Shared.Abstractions.MediatR.ICommand;
 }
