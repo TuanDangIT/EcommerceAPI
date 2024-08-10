@@ -1,4 +1,7 @@
-﻿using Ecommerce.Shared.Abstractions.MediatR;
+﻿using Ecommerce.Modules.Inventory.Application.Exceptions;
+using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteSelectedManufacturers;
+using Ecommerce.Modules.Inventory.Domain.Repositories;
+using Ecommerce.Shared.Abstractions.MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +12,19 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Parameters.DeleteSele
 {
     internal sealed class DeleteSelectedParametersHandler : ICommandHandler<DeleteSelectedParameters>
     {
-        public Task Handle(DeleteSelectedParameters request, CancellationToken cancellationToken)
+        private readonly IParameterRepository _parameterRepository;
+
+        public DeleteSelectedParametersHandler(IParameterRepository parameterRepository)
         {
-            throw new NotImplementedException();
+            _parameterRepository = parameterRepository;
+        }
+        public async Task Handle(DeleteSelectedParameters request, CancellationToken cancellationToken)
+        {
+            var rowsChanged = await _parameterRepository.DeleteManyAsync(request.ParameterIds);
+            if (rowsChanged != request.ParameterIds.Count())
+            {
+                throw new ParameterNotAllDeletedException();
+            }
         }
     }
 }
