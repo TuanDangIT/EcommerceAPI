@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteSelectedManufacturers
 {
-    public sealed record class DeleteSelectedManufacturers : Shared.Abstractions.MediatR.ICommand;
+    public sealed record class DeleteSelectedManufacturers(Guid[] ManufacturerIds) : Shared.Abstractions.MediatR.ICommand;
 }
