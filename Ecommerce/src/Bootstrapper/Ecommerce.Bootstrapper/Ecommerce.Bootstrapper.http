@@ -1,0 +1,6 @@
+@Ecommerce.Bootstrapper_HostAddress = http://localhost:5268
+
+GET {{Ecommerce.Bootstrapper_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

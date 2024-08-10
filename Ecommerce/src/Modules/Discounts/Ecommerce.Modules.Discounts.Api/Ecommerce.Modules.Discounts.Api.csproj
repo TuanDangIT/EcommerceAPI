@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ecommerce.Modules.Discounts.Application\Ecommerce.Modules.Discounts.Application.csproj" />
+    <ProjectReference Include="..\Ecommerce.Modules.Discounts.Infrastructure\Ecommerce.Modules.Discounts.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
