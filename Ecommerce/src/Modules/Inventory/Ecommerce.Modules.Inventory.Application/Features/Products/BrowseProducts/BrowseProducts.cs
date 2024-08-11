@@ -8,5 +8,5 @@ using Ecommerce.Shared.Abstractions.MediatR;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Products.BrowseProducts
 {
-    public sealed record class BrowseProducts : IQuery<IEnumerable<ProductDto>>;
+    public sealed record class BrowseProducts : IQuery<IEnumerable<ProductListingDto>>;
 }

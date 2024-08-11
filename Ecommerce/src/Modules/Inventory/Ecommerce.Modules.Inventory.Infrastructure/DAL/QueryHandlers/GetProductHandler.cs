@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
 {
-    internal sealed class GetProductHandler : IQueryHandler<GetProduct, ProductDto>
+    internal sealed class GetProductHandler : IQueryHandler<GetProduct, ProductDetailsDto>
     {
-        public Task<ProductDto> Handle(GetProduct request, CancellationToken cancellationToken)
+        public Task<ProductDetailsDto> Handle(GetProduct request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
