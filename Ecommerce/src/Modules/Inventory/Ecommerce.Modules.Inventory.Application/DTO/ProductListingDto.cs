@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.DTO
 {
-    internal class ProductListingDto
+    public class ProductListingDto
     {
         public string SKU { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
