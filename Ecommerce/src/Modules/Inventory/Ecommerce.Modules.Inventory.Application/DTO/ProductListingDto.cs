@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.DTO
 {
-    public class ParameterDto
+    internal class ProductListingDto
     {
+        public string SKU { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public int? Quantity { get; set; }
+        public decimal Price { get; set; }
     }
 }
