@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.DTO
 {
-    public class ParameterDto
+    public class ParameterBrowseDto
     {
         public string Name { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }

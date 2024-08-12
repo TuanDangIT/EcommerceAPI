@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Manufacturers.BrowseManufacturers
 {
-    public sealed record class BrowseManufacturers : IQuery<IEnumerable<ManufacturerDto>>;
+    public sealed record class BrowseManufacturers : IQuery<IEnumerable<ManufacturerBrowseDto>>;
 }

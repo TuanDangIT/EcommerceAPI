@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Manufacturers.GetManufacturer
 {
-    public sealed record class GetManufacturer(Guid ManufacturerId) : IQuery<ManufacturerDto?>;
+    public sealed record class GetManufacturer(Guid ManufacturerId) : IQuery<ManufacturerBrowseDto?>;
 }

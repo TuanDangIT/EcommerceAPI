@@ -11,7 +11,7 @@ using Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings;
 
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
 {
-    internal sealed class GetManufacturerHandler : IQueryHandler<GetManufacturer, ManufacturerDto?>
+    internal sealed class GetManufacturerHandler : IQueryHandler<GetManufacturer, ManufacturerBrowseDto?>
     {
         private readonly InventoryDbContext _dbContext;
 
@@ -19,7 +19,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
         {
             _dbContext = dbContext;
         }
-        public async Task<ManufacturerDto?> Handle(GetManufacturer request, CancellationToken cancellationToken)
+        public async Task<ManufacturerBrowseDto?> Handle(GetManufacturer request, CancellationToken cancellationToken)
         {
             var manufacturer = await _dbContext.Manufacturers.AsNoTracking().SingleOrDefaultAsync(m => m.Id == request.ManufacturerId);
             return manufacturer?.AsDto();

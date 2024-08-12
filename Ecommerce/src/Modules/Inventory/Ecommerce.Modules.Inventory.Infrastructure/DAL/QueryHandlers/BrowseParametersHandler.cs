@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
 {
-    internal sealed class BrowseParametersHandler : IQueryHandler<BrowseParameters, IEnumerable<ParameterDto>>
+    internal sealed class BrowseParametersHandler : IQueryHandler<BrowseParameters, IEnumerable<ParameterBrowseDto>>
     {
-        public Task<IEnumerable<ParameterDto>> Handle(BrowseParameters request, CancellationToken cancellationToken)
+        public Task<IEnumerable<ParameterBrowseDto>> Handle(BrowseParameters request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Parameters.BrowseParameters
 {
-    public sealed record class BrowseParameters : IQuery<IEnumerable<ParameterDto>>;
+    public sealed record class BrowseParameters : IQuery<IEnumerable<ParameterBrowseDto>>;
 }

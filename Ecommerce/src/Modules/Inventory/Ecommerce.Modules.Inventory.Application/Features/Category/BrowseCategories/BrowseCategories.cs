@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Category.BrowseCategory
 {
-    public sealed record class BrowseCategories : IQuery<IEnumerable<CategoryDto>>;
+    public sealed record class BrowseCategories : IQuery<IEnumerable<CategoryBrowseDto>>;
 }

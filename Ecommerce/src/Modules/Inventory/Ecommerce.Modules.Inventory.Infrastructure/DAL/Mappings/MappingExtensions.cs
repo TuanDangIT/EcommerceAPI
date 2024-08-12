@@ -11,22 +11,22 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
 {
     internal static class MappingExtensions
     {
-        public static ManufacturerDto AsDto(this Manufacturer manufacturer)
-            => new ManufacturerDto()
+        public static ManufacturerBrowseDto AsDto(this Manufacturer manufacturer)
+            => new ManufacturerBrowseDto()
             {
                 Name = manufacturer.Name,
                 CreatedAt = manufacturer.CreatedAt,
                 UpdatedAt = manufacturer.UpdatedAt,
             };
-        public static ParameterDto AsDto(this Domain.Entities.Parameter parameter)
-            => new ParameterDto()
+        public static ParameterBrowseDto AsDto(this Domain.Entities.Parameter parameter)
+            => new ParameterBrowseDto()
             {
                 Name = parameter.Name, 
                 CreatedAt = parameter.CreatedAt,
                 UpdatedAt = parameter.UpdatedAt,
             };
-        public static CategoryDto AsDto(this Category category)
-            => new CategoryDto()
+        public static CategoryBrowseDto AsDto(this Category category)
+            => new CategoryBrowseDto()
             {
                 Name = category.Name,
                 CreatedAt = category.CreatedAt,
