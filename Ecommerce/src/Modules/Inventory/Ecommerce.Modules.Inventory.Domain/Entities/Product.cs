@@ -24,6 +24,8 @@ namespace Ecommerce.Modules.Inventory.Domain.Entities
         public Manufacturer Manufacturer { get; set; } = new();
         public Guid ManufacturerId { get; set; }
         public List<Image> Images { get; set; } = new();
+        public Category Category { get; set; } = new();
+        public Guid CategoryId { get; set; } 
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }

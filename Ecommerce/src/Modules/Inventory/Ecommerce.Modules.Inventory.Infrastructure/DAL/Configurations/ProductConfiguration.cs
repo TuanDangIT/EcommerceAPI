@@ -35,6 +35,9 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
             builder.HasMany(p => p.Images)
                 .WithOne(i => i.Product)
                 .HasForeignKey(i => i.ProductId);
+            builder.HasOne(p => p.Category)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.CategoryId);
         }
     }
 }
