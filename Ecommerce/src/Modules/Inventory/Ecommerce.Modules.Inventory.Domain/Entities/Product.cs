@@ -13,7 +13,9 @@ namespace Ecommerce.Modules.Inventory.Domain.Entities
         public string? EAN { get; set; }
         public string Name { get; set; } = string.Empty;
         public decimal Price { get; set; }
+        public int VAT { get; set; }
         public int? Quantity { get; set; }
+        public string? Location { get; set; }
         public string Description { get; set; } = string.Empty;
         public string? AdditionalDescription { get; set; }
         public List<Parameter> Parameters { get; set; } = new();
