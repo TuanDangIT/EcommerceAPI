@@ -19,6 +19,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure
             services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
             services.AddScoped<IParameterRepository, ParameterRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();  
             return services;
         }
     }

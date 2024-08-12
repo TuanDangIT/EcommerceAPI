@@ -15,6 +15,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL
         public DbSet<Parameter> Parameters { get; set; }
         public DbSet<ProductParameter> ProductParameters { get; set; }  
         public DbSet<Image> Images { get; set; }
+        public DbSet<Category> Categories { get; set; }
         public InventoryDbContext(DbContextOptions<InventoryDbContext> options) : base(options)
         {
             
