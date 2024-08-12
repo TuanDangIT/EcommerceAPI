@@ -21,6 +21,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Entities
         //public IEnumerable<Parameter> Parameters => _parameters;
         public Manufacturer Manufacturer { get; set; } = new();
         public Guid ManufacturerId { get; set; }
+        public List<Image> Images { get; set; } = new();
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }

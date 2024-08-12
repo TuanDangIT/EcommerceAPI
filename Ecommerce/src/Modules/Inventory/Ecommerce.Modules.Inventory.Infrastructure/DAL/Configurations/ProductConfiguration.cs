@@ -32,6 +32,9 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
                         pp.Property(pp => pp.Value).IsRequired();
                     }
                 );
+            builder.HasMany(p => p.Images)
+                .WithOne(i => i.Product)
+                .HasForeignKey(i => i.ProductId);
         }
     }
 }
