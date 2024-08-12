@@ -8,6 +8,7 @@ namespace Ecommerce.Modules.Inventory.Application.DTO
 {
     public class CategoryOptionDto
     {
+        public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
     }
 }

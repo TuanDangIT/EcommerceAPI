@@ -22,7 +22,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
         public async Task<ManufacturerBrowseDto?> Handle(GetManufacturer request, CancellationToken cancellationToken)
         {
             var manufacturer = await _dbContext.Manufacturers.AsNoTracking().SingleOrDefaultAsync(m => m.Id == request.ManufacturerId);
-            return manufacturer?.AsDto();
+            return manufacturer?.AsBrowseDto();
         }
     }
 }
