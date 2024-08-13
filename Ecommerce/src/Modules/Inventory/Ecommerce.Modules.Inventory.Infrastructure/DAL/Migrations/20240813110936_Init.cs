@@ -13,11 +13,11 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "users");
+                name: "inventory");
 
             migrationBuilder.CreateTable(
-                name: "Category",
-                schema: "users",
+                name: "Categories",
+                schema: "inventory",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -27,12 +27,12 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.Id);
+                    table.PrimaryKey("PK_Categories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Manufacturers",
-                schema: "users",
+                schema: "inventory",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -47,7 +47,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Parameters",
-                schema: "users",
+                schema: "inventory",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -62,7 +62,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Products",
-                schema: "users",
+                schema: "inventory",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -84,16 +84,16 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Products_Category_CategoryId",
+                        name: "FK_Products_Categories_CategoryId",
                         column: x => x.CategoryId,
-                        principalSchema: "users",
-                        principalTable: "Category",
+                        principalSchema: "inventory",
+                        principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Products_Manufacturers_ManufacturerId",
                         column: x => x.ManufacturerId,
-                        principalSchema: "users",
+                        principalSchema: "inventory",
                         principalTable: "Manufacturers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -101,7 +101,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Images",
-                schema: "users",
+                schema: "inventory",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -115,7 +115,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                     table.ForeignKey(
                         name: "FK_Images_Products_ProductId",
                         column: x => x.ProductId,
-                        principalSchema: "users",
+                        principalSchema: "inventory",
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -123,7 +123,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 
             migrationBuilder.CreateTable(
                 name: "ProductParameters",
-                schema: "users",
+                schema: "inventory",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -140,14 +140,14 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                     table.ForeignKey(
                         name: "FK_ProductParameters_Parameters_ParameterId",
                         column: x => x.ParameterId,
-                        principalSchema: "users",
+                        principalSchema: "inventory",
                         principalTable: "Parameters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ProductParameters_Products_ProductId",
                         column: x => x.ProductId,
-                        principalSchema: "users",
+                        principalSchema: "inventory",
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -155,37 +155,37 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Images_ProductId",
-                schema: "users",
+                schema: "inventory",
                 table: "Images",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductParameters_ParameterId",
-                schema: "users",
+                schema: "inventory",
                 table: "ProductParameters",
                 column: "ParameterId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductParameters_ProductId",
-                schema: "users",
+                schema: "inventory",
                 table: "ProductParameters",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
-                schema: "users",
+                schema: "inventory",
                 table: "Products",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_ManufacturerId",
-                schema: "users",
+                schema: "inventory",
                 table: "Products",
                 column: "ManufacturerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_SKU",
-                schema: "users",
+                schema: "inventory",
                 table: "Products",
                 column: "SKU",
                 unique: true);
@@ -196,27 +196,27 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Images",
-                schema: "users");
+                schema: "inventory");
 
             migrationBuilder.DropTable(
                 name: "ProductParameters",
-                schema: "users");
+                schema: "inventory");
 
             migrationBuilder.DropTable(
                 name: "Parameters",
-                schema: "users");
+                schema: "inventory");
 
             migrationBuilder.DropTable(
                 name: "Products",
-                schema: "users");
+                schema: "inventory");
 
             migrationBuilder.DropTable(
-                name: "Category",
-                schema: "users");
+                name: "Categories",
+                schema: "inventory");
 
             migrationBuilder.DropTable(
                 name: "Manufacturers",
-                schema: "users");
+                schema: "inventory");
         }
     }
 }

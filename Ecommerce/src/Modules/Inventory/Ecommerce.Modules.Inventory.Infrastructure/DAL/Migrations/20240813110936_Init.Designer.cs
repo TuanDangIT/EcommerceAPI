@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20240812150526_Init")]
+    [Migration("20240813110936_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("users")
+                .HasDefaultSchema("inventory")
                 .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -44,7 +44,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category", "users");
+                    b.ToTable("Categories", "inventory");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Inventory.Domain.Entities.Image", b =>
@@ -67,7 +67,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Images", "users");
+                    b.ToTable("Images", "inventory");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Inventory.Domain.Entities.Manufacturer", b =>
@@ -88,7 +88,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Manufacturers", "users");
+                    b.ToTable("Manufacturers", "inventory");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Inventory.Domain.Entities.Parameter", b =>
@@ -109,7 +109,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Parameters", "users");
+                    b.ToTable("Parameters", "inventory");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Inventory.Domain.Entities.Product", b =>
@@ -169,7 +169,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                     b.HasIndex("SKU")
                         .IsUnique();
 
-                    b.ToTable("Products", "users");
+                    b.ToTable("Products", "inventory");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Inventory.Domain.Entities.ProductParameter", b =>
@@ -202,7 +202,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductParameters", "users");
+                    b.ToTable("ProductParameters", "inventory");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Inventory.Domain.Entities.Image", b =>
