@@ -22,7 +22,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("users");
+            modelBuilder.HasDefaultSchema("inventory");
             modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
         }
     }
