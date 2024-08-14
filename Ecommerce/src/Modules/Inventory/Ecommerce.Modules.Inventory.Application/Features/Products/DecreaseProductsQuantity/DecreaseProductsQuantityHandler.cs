@@ -1,4 +1,6 @@
-﻿using Ecommerce.Shared.Abstractions.MediatR;
+﻿using Ecommerce.Modules.Inventory.Application.Exceptions;
+using Ecommerce.Modules.Inventory.Domain.Repositories;
+using Ecommerce.Shared.Abstractions.MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +11,19 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.DecreaseProd
 {
     internal class DecreaseProductsQuantityHandler : ICommandHandler<DecreaseProductsQuantity>
     {
-        public Task Handle(DecreaseProductsQuantity request, CancellationToken cancellationToken)
+        private readonly IProductRepository _productRepository;
+
+        public DecreaseProductsQuantityHandler(IProductRepository productRepository)
         {
-            throw new NotImplementedException();
+            _productRepository = productRepository;
+        }
+        public async Task Handle(DecreaseProductsQuantity request, CancellationToken cancellationToken)
+        {
+            var rowsChanged = await _productRepository.DecreaseQuantityAsync(request.ProductId, request.Quantity);
+            if(rowsChanged is not 0)
+            {
+                throw new ProductNotDecreasedException(request.ProductId);
+            }
         }
     }
 }

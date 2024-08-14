@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Products.DecreaseProductsQuantity
 {
-    public sealed record class DecreaseProductsQuantity() : Shared.Abstractions.MediatR.ICommand;
+    public sealed record class DecreaseProductsQuantity(Guid ProductId, int Quantity) : Shared.Abstractions.MediatR.ICommand;
 }
