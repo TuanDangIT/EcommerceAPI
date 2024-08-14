@@ -22,10 +22,10 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
                 .WithMany(p => p.Products)
                 .UsingEntity<ProductParameter>(
                     p => p.HasOne(pp => pp.Parameter)
-                        .WithMany()
+                        .WithMany(pp => pp.ProductParameters)
                         .HasForeignKey(pp => pp.ParameterId),
                     p => p.HasOne(pp => pp.Product)
-                        .WithMany()
+                        .WithMany(pp => pp.ProductParameters)
                         .HasForeignKey(pp => pp.ProductId),
                     pp =>
                     {

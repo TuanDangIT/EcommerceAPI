@@ -33,7 +33,7 @@ namespace Ecommerce.Shared.Infrastructure.Storage
             {
                 await blobClient.UploadAsync(data);
             }
-            return blobClient.Uri.AbsoluteUri;
+            return blobClient.Uri.AbsolutePath;
         }
     }
 }

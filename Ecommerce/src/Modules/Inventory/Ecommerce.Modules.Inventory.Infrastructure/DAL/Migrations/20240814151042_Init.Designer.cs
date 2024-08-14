@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20240813110936_Init")]
+    [Migration("20240814151042_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -238,13 +238,13 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
             modelBuilder.Entity("Ecommerce.Modules.Inventory.Domain.Entities.ProductParameter", b =>
                 {
                     b.HasOne("Ecommerce.Modules.Inventory.Domain.Entities.Parameter", "Parameter")
-                        .WithMany()
+                        .WithMany("ProductParameters")
                         .HasForeignKey("ParameterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Ecommerce.Modules.Inventory.Domain.Entities.Product", "Product")
-                        .WithMany()
+                        .WithMany("ProductParameters")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -264,9 +264,16 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("Ecommerce.Modules.Inventory.Domain.Entities.Parameter", b =>
+                {
+                    b.Navigation("ProductParameters");
+                });
+
             modelBuilder.Entity("Ecommerce.Modules.Inventory.Domain.Entities.Product", b =>
                 {
                     b.Navigation("Images");
+
+                    b.Navigation("ProductParameters");
                 });
 #pragma warning restore 612, 618
         }

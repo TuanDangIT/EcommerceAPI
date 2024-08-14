@@ -19,6 +19,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Entities
         public string Description { get; set; } = string.Empty;
         public string? AdditionalDescription { get; set; }
         public List<Parameter> Parameters { get; set; } = new();
+        public List<ProductParameter> ProductParameters { get; set; } = new();
         //private readonly List<Parameter> _parameters = new List<Parameter>();
         //public IEnumerable<Parameter> Parameters => _parameters;
         public Manufacturer Manufacturer { get; set; } = new();
