@@ -9,7 +9,7 @@ namespace Ecommerce.Bootstrapper
         {
             const string modulePart = "Ecommerce.Modules.";
             //var assemblies = new List<Assembly>();
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToHashSet();
             var filesDirectory = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll")
                 .Where(f => f.Contains(modulePart))
                 .ToList();
@@ -17,7 +17,7 @@ namespace Ecommerce.Bootstrapper
             {
                 assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(fileDirectory)));
             }
-            return assemblies;
+            return assemblies.ToList();
         }
         public static IList<IModule> LoadModules(IList<Assembly> assemblies)
         {

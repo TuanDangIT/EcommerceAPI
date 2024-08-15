@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Products.GetProduct
 {
-    public sealed record class GetProduct(Guid Id) : IQuery<ProductDetailsDto>;
+    public sealed record class GetProduct(Guid ProductId) : IQuery<ProductDetailsDto>;
 }

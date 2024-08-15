@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure
             services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
             services.AddScoped<IParameterRepository, ParameterRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped<ICategoryRepository, CategoryRepository>();  
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             return services;
         }
     }

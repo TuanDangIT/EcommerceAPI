@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Inventory.Infrastructure;
+﻿using Ecommerce.Modules.Inventory.Application;
+using Ecommerce.Modules.Inventory.Infrastructure;
 using Ecommerce.Shared.Abstractions.Modules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -20,6 +21,7 @@ namespace Ecommerce.Modules.Inventory.Api
 
         public void Register(IServiceCollection services, IConfiguration configuration)
         {
+            services.AddApplication();
             services.AddInfrastructure();
         }
 

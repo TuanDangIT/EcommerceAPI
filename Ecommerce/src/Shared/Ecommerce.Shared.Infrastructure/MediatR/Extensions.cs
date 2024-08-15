@@ -12,7 +12,7 @@ namespace Ecommerce.Shared.Infrastructure.MediatR
     {
         public static IServiceCollection AddMediatR(this IServiceCollection services)
         {
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+            //services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             return services;
         }
     }

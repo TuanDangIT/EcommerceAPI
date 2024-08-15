@@ -1,4 +1,8 @@
 ﻿using Ecommerce.Modules.Inventory.Application.DTO;
+using Ecommerce.Modules.Inventory.Application.Features.Category.ChangeCategoryName;
+using Ecommerce.Modules.Inventory.Application.Features.Category.CreateCategory;
+using Ecommerce.Modules.Inventory.Application.Features.Category.DeleteCategory;
+using Ecommerce.Modules.Inventory.Application.Features.Category.DeleteManyCategories;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.ChangeManufacturerName;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.CreateManufacturer;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteManufacturer;
@@ -14,41 +18,37 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Api.Controllers
 {
-    internal class ManufacturerController : BaseController
+    internal class CategoryController : BaseController
     {
-        public ManufacturerController(IMediator mediator) : base(mediator)
+        public CategoryController(IMediator mediator) : base(mediator)
         {
         }
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ManufacturerBrowseDto?>> GetManufacturer([FromRoute] Guid id)
-            => OkOrNotFound(await _mediator.Send(new GetManufacturer(id)));
         [HttpPost()]
-        public async Task<ActionResult> CreateManufacturer([FromBody]CreateManufacturer command)
+        public async Task<ActionResult> CreateCategory([FromBody] CreateCategory command)
         {
             await _mediator.Send(command);
             return NoContent();
         }
         [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> DeleteManufacturer([FromRoute]Guid id)
+        public async Task<ActionResult> DeleteCategory([FromRoute] Guid id)
         {
-            await _mediator.Send(new DeleteManufacturer(id));
+            await _mediator.Send(new DeleteCategory(id));
             return NoContent();
         }
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult> ChangeManufacturerName([FromRoute]Guid id, [FromBody]ChangeManufacturerName command)
+        public async Task<ActionResult> ChangeCategoryName([FromRoute] Guid id, [FromBody] ChangeCategoryName command)
         {
             await _mediator.Send(command with
             {
-                ManufaturerId = id
+                CategoryId = id
             });
             return NoContent();
         }
         [HttpDelete]
-        public async Task<ActionResult> DeleteSelectedManufacturers([FromBody]DeleteSelectedManufacturers command)
+        public async Task<ActionResult> DeleteSelectedCategories([FromBody] DeleteSelectedCategories command)
         {
             await _mediator.Send(command);
-            return NoContent(); 
+            return NoContent();
         }
-
     }
 }

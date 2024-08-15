@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Category.DeleteManyCategories
 {
-    internal sealed class DeleteManyCategoriesHandler : ICommandHandler<DeleteManyCategories>
+    internal sealed class DeleteSelectedCategoriesHandler : ICommandHandler<DeleteSelectedCategories>
     {
         private readonly ICategoryRepository _categoryRepository;
 
-        public DeleteManyCategoriesHandler(ICategoryRepository categoryRepository)
+        public DeleteSelectedCategoriesHandler(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }
-        public async Task Handle(DeleteManyCategories request, CancellationToken cancellationToken)
+        public async Task Handle(DeleteSelectedCategories request, CancellationToken cancellationToken)
         {
             var rowsChanged = await _categoryRepository.DeleteManyAsync(request.CategoryIds);
             if (rowsChanged != request.CategoryIds.Count())

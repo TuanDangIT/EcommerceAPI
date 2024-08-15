@@ -6,6 +6,7 @@ using Ecommerce.Shared.Infrastructure.Exceptions;
 using Ecommerce.Shared.Infrastructure.MediatR;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Ecommerce.Shared.Infrastructure.Services;
+using Ecommerce.Shared.Infrastructure.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -33,6 +34,7 @@ namespace Ecommerce.Shared.Infrastructure
             services.AddAuth();
             services.AddContext();
             services.AddPostgres();
+            services.AddAzureBlobStorage();
             services.AddHostedService<AppInitializer>();
             services.AddControllers()
                 .ConfigureApplicationPartManager(manager =>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
 {
@@ -52,7 +53,41 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
             };
         public static ProductDetailsDto AsDetailsDto(this Product product)
         {
-            throw new NotImplementedException();
+            var productDetailsImagesDto = new List<ProductDetailsImageDto>();
+            foreach(var image in product.Images) 
+            {
+                productDetailsImagesDto.Add(new ProductDetailsImageDto()
+                {
+                    ImageUrlPath = image.ImageUrlPath,
+                    Order = image.Order,
+                });
+            }
+            productDetailsImagesDto.Sort();
+            var productDetailsParametersDto = new List<ProductDetailsParameterDto>();
+            foreach(var productParameter in product.ProductParameters)
+            {
+                productDetailsParametersDto.Add(new ProductDetailsParameterDto()
+                {
+                    Parameter = productParameter.Parameter.Name,
+                    Value = productParameter.Value
+                });
+            }
+            var productDetailsDto =  new ProductDetailsDto()
+            {
+                SKU = product.SKU,
+                EAN = product.EAN,
+                Name = product.Name,
+                Price = product.Price,
+                VAT = product.VAT,
+                Location = product.Location,
+                Description = product.Description,
+                AdditionalDescription = product.AdditionalDescription,
+                Manufacturer = product.Manufacturer.Name,
+                Category = product.Category.Name,
+                Images = productDetailsImagesDto,
+                Parameters = productDetailsParametersDto
+            };
+            return productDetailsDto;
         }
         public static ProductListingDto AsListingDto(this Product product)
         {

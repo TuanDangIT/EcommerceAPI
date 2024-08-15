@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Category.DeleteCategory
 {
-    internal sealed record class DeleteCategory(Guid CategoryId) : ICommand;
+    public sealed record class DeleteCategory(Guid CategoryId) : ICommand;
 }
