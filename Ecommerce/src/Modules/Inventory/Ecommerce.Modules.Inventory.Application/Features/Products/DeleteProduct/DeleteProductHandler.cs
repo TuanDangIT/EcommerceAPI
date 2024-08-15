@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Exceptions;
 using Ecommerce.Modules.Inventory.Domain.Repositories;
+using Ecommerce.Shared.Abstractions.BloblStorage;
 using Ecommerce.Shared.Abstractions.MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,10 +13,15 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.DeleteProduc
     internal sealed class DeleteProductHandler : ICommandHandler<DeleteProduct>
     {
         private readonly IProductRepository _productRepository;
+        private readonly IBlobStorageService _blobStorageService;
+        private readonly IImageRepository _imageRepository;
+        private const string containerName = "images";
 
-        public DeleteProductHandler(IProductRepository productRepository)
+        public DeleteProductHandler(IProductRepository productRepository, IBlobStorageService blobStorageService, IImageRepository imageRepository)
         {
             _productRepository = productRepository;
+            _blobStorageService = blobStorageService;
+            _imageRepository = imageRepository;
         }
         public async Task Handle(DeleteProduct request, CancellationToken cancellationToken)
         {
@@ -23,6 +29,10 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.DeleteProduc
             if(rowsChanged is 0)
             {
                 throw new ProductNotDeletedException(request.ProductId);
+            }
+            foreach(var imageId in await _imageRepository.GetAllImagesForProduct(request.ProductId))
+            {
+                await _blobStorageService.DeleteAsync(imageId.ToString(), containerName);
             }
         }
     }

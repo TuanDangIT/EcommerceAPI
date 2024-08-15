@@ -9,7 +9,7 @@ namespace Ecommerce.Shared.Abstractions.BloblStorage
 {
     public interface IBlobStorageService
     {
-        Task<string> UploadAsync(IFormFile blub, string containerName);
+        Task<string> UploadAsync(IFormFile blub, string fileName, string containerName);
         Task DeleteAsync(string fileName, string containerName);
     }
 }

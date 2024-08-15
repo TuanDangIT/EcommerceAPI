@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Ecommerce.Shared.Abstractions.BloblStorage;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -25,13 +26,16 @@ namespace Ecommerce.Shared.Infrastructure.Storage
             await blobClient.DeleteAsync();
         }
 
-        public async Task<string> UploadAsync(IFormFile blob, string containerName)
+        public async Task<string> UploadAsync(IFormFile blob, string fileName, string containerName)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-            BlobClient blobClient = containerClient.GetBlobClient(blob.FileName);
+            BlobClient blobClient = containerClient.GetBlobClient(fileName);
             await using(Stream data = blob.OpenReadStream())
             {
-                await blobClient.UploadAsync(data);
+                await blobClient.UploadAsync(data, new BlobHttpHeaders()
+                {
+                    ContentType = blob.ContentType
+                });
             }
             return blobClient.Uri.AbsolutePath;
         }

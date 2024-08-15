@@ -20,16 +20,18 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
         private readonly IManufacturerRepository _manufacturerRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly TimeProvider _timeProvider;
-        private const string _containerName = "files";
+        private readonly IParameterRepository _parameterRepository;
+        private const string _containerName = "images";
 
         public CreateProductHandler(IProductRepository productRepository, IBlobStorageService blobStorageService, IManufacturerRepository manufacturerRepository
-            , ICategoryRepository categoryRepository, TimeProvider timeProvider)
+            , ICategoryRepository categoryRepository, TimeProvider timeProvider, IParameterRepository parameterRepository)
         {
             _productRepository = productRepository;
             _blobStorageService = blobStorageService;
             _manufacturerRepository = manufacturerRepository;
             _categoryRepository = categoryRepository;
             _timeProvider = timeProvider;
+            _parameterRepository = parameterRepository;
         }
         public async Task Handle(CreateProduct request, CancellationToken cancellationToken)
         {
@@ -47,10 +49,16 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
             var productParameters = new List<ProductParameter>();
             foreach (var productParameter in request.ProductParameters)
             {
+                var parameter = await _parameterRepository.GetAsync(productParameter.ParameterId);
+                if(parameter is null)
+                {
+                    throw new ParameterNotFoundException(productParameter.ParameterId);
+                }
                 productParameters.Add(new ProductParameter()
                 {
-                    ParameterId = productParameter.ParameterId,
-                    Value = productParameter.Value
+                    Parameter = parameter,
+                    Value = productParameter.Value,
+                    CreatedAt = _timeProvider.GetUtcNow().UtcDateTime
                 });
             }
             var rowChanged = await _productRepository.AddAsync(new Product()
@@ -71,16 +79,17 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
                 CreatedAt = _timeProvider.GetUtcNow().UtcDateTime
             });
         }
-        private async Task<IEnumerable<Image>> UploadImagesToBlobStorage(IFormFile[] images)
+        private async Task<IEnumerable<Image>> UploadImagesToBlobStorage(List<IFormFile> images)
         {
             var imagesList = new List<Image>();
             int counter = 1;
             foreach (var image in images)
             {
-                var imageUrlPath = await _blobStorageService.UploadAsync(image, _containerName);
+                var newGuid = Guid.NewGuid();
+                var imageUrlPath = await _blobStorageService.UploadAsync(image, newGuid.ToString(), _containerName);
                 imagesList.Add(new Image()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = newGuid,
                     ImageUrlPath = imageUrlPath,
                     Order = counter++
                 });

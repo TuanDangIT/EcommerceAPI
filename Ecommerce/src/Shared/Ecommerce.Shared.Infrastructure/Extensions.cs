@@ -45,17 +45,17 @@ namespace Ecommerce.Shared.Infrastructure
                     }
                     manager.FeatureProviders.Add(new InternalControllerFeatureProvider());
                 });
-            //services.AddEndpointsApiExplorer();
-            //services.AddSwaggerGen();
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen();
             return services;
         }
         public static WebApplication UseInfrastructure(this WebApplication app)
         {
-            //if (app.Environment.IsDevelopment())
-            //{
-            //    app.UseSwagger();
-            //    app.UseSwaggerUI();
-            //}
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
             app.UseErrorHandling();
             app.MapGet("api", () =>
             {

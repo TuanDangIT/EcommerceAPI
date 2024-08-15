@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduct
 {
-    public sealed class CreateProduct : Shared.Abstractions.MediatR.ICommand
+    public sealed record class CreateProduct : Shared.Abstractions.MediatR.ICommand
     {
         public string SKU { get; set; } = string.Empty;
         public string? EAN { get; set; }
@@ -20,9 +20,9 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
         public string? Location { get; set; }
         public string Description { get; set; } = string.Empty;
         public string? AdditionalDescription { get; set; }
-        public ProductParameterDto[] ProductParameters { get; set; } = [];
+        public List<ProductParameterDto> ProductParameters { get; set; } = [];
         public Guid ManufacturerId { get; set; }
         public Guid CategoryId { get; set; }
-        public IFormFile[] Images { get; set; } = [];
+        public List<IFormFile> Images { get; set; } = [];
     };
 }
