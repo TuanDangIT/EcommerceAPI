@@ -28,7 +28,6 @@ namespace Ecommerce.Shared.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             services.AddErrorHandling();
-            services.AddMediatR();
             services.AddContext();
             services.AddSingleton(TimeProvider.System);
             services.AddAuth();
