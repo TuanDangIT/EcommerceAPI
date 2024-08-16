@@ -8,6 +8,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Repositories
 {
     public interface IImageRepository
     {
-        Task<IEnumerable<Guid>> GetAllImagesForProduct(Guid productId);
+        Task<IEnumerable<Guid>> GetAllImagesForProductAsync(Guid productId);
+        Task<IEnumerable<Guid>> GetAllImagesForProductsAsync(Guid[] productIds);
     }
 }

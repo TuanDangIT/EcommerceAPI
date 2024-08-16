@@ -25,14 +25,12 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.DeleteProduc
         }
         public async Task Handle(DeleteProduct request, CancellationToken cancellationToken)
         {
+            var imagesIds = await _imageRepository.GetAllImagesForProductAsync(request.ProductId);
+            await _blobStorageService.DeleteManyAsync(imagesIds.Select(i => i.ToString()), containerName);
             var rowsChanged = await _productRepository.DeleteAsync(request.ProductId);
             if(rowsChanged is 0)
             {
                 throw new ProductNotDeletedException(request.ProductId);
-            }
-            foreach(var imageId in await _imageRepository.GetAllImagesForProduct(request.ProductId))
-            {
-                await _blobStorageService.DeleteAsync(imageId.ToString(), containerName);
             }
         }
     }

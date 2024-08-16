@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
 using Ecommerce.Shared.Abstractions.BloblStorage;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -23,9 +24,21 @@ namespace Ecommerce.Shared.Infrastructure.Storage
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             BlobClient blobClient = containerClient.GetBlobClient(fileName);
+            var a = blobClient.Uri;
             await blobClient.DeleteAsync();
         }
-
+        public async Task DeleteManyAsync(IEnumerable<string> fileNames, string containerName)
+        {
+            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+            BlobBatchClient blobBatchClient = containerClient.GetBlobBatchClient();
+            var blobStorageUri = blobBatchClient.Uri;
+            List<Uri> imageUris = new();
+            foreach(var fileName in fileNames)
+            {
+                imageUris.Add(new Uri(blobStorageUri + "/" + fileName));
+            }
+            await blobBatchClient.DeleteBlobsAsync(imageUris);
+        }
         public async Task<string> UploadAsync(IFormFile blob, string fileName, string containerName)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
