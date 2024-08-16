@@ -47,19 +47,22 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
                 throw new CategoryNotFoundException(request.CategoryId);
             }
             var productParameters = new List<ProductParameter>();
-            foreach (var productParameter in request.ProductParameters)
+            if(request.ProductParameters is not null)
             {
-                var parameter = await _parameterRepository.GetAsync(productParameter.ParameterId);
-                if(parameter is null)
+                foreach (var productParameter in request.ProductParameters)
                 {
-                    throw new ParameterNotFoundException(productParameter.ParameterId);
+                    var parameter = await _parameterRepository.GetAsync(productParameter.ParameterId);
+                    if (parameter is null)
+                    {
+                        throw new ParameterNotFoundException(productParameter.ParameterId);
+                    }
+                    productParameters.Add(new ProductParameter()
+                    {
+                        Parameter = parameter,
+                        Value = productParameter.Value,
+                        CreatedAt = _timeProvider.GetUtcNow().UtcDateTime
+                    });
                 }
-                productParameters.Add(new ProductParameter()
-                {
-                    Parameter = parameter,
-                    Value = productParameter.Value,
-                    CreatedAt = _timeProvider.GetUtcNow().UtcDateTime
-                });
             }
             var rowChanged = await _productRepository.AddAsync(new Product()
             {

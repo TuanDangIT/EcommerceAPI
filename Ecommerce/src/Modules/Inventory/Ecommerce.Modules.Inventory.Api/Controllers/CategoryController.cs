@@ -2,7 +2,7 @@
 using Ecommerce.Modules.Inventory.Application.Features.Category.ChangeCategoryName;
 using Ecommerce.Modules.Inventory.Application.Features.Category.CreateCategory;
 using Ecommerce.Modules.Inventory.Application.Features.Category.DeleteCategory;
-using Ecommerce.Modules.Inventory.Application.Features.Category.DeleteManyCategories;
+using Ecommerce.Modules.Inventory.Application.Features.Category.DeleteSelectedCategories;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.ChangeManufacturerName;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.CreateManufacturer;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteManufacturer;

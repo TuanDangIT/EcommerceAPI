@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Inventory.Application.Features.Category.DeleteManyCategories
+namespace Ecommerce.Modules.Inventory.Application.Features.Category.DeleteSelectedCategories
 {
     internal sealed class DeleteSelectedCategoriesHandler : ICommandHandler<DeleteSelectedCategories>
     {

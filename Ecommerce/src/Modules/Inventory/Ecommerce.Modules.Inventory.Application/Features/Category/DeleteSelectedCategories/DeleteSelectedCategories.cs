@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Inventory.Application.Features.Category.DeleteManyCategories
+namespace Ecommerce.Modules.Inventory.Application.Features.Category.DeleteSelectedCategories
 {
     public sealed record class DeleteSelectedCategories(Guid[] CategoryIds) : ICommand;
 }

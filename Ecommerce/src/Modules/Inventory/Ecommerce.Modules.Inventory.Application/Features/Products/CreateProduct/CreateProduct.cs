@@ -20,7 +20,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
         public string? Location { get; set; }
         public string Description { get; set; } = string.Empty;
         public string? AdditionalDescription { get; set; }
-        public List<ProductParameterDto> ProductParameters { get; set; } = [];
+        public List<ProductParameterDto>? ProductParameters { get; set; } 
         public Guid ManufacturerId { get; set; }
         public Guid CategoryId { get; set; }
         public List<IFormFile> Images { get; set; } = [];

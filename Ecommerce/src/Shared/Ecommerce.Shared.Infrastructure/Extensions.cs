@@ -3,7 +3,6 @@ using Ecommerce.Shared.Infrastructure.Api;
 using Ecommerce.Shared.Infrastructure.Auth;
 using Ecommerce.Shared.Infrastructure.Contexts;
 using Ecommerce.Shared.Infrastructure.Exceptions;
-using Ecommerce.Shared.Infrastructure.MediatR;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Ecommerce.Shared.Infrastructure.Services;
 using Ecommerce.Shared.Infrastructure.Storage;
