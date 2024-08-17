@@ -15,7 +15,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.DeleteProduc
         private readonly IProductRepository _productRepository;
         private readonly IBlobStorageService _blobStorageService;
         private readonly IImageRepository _imageRepository;
-        private const string containerName = "images";
+        private const string _containerName = "images";
 
         public DeleteProductHandler(IProductRepository productRepository, IBlobStorageService blobStorageService, IImageRepository imageRepository)
         {

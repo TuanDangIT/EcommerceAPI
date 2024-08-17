@@ -20,10 +20,11 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.UpdateProduc
         private readonly ICategoryRepository _categoryRepository;
         private readonly TimeProvider _timeProvider;
         private readonly IParameterRepository _parameterRepository;
+        private readonly IImageRepository _imageRepository;
         private const string _containerName = "images";
 
         public UpdateProductHandler(IProductRepository productRepository, IBlobStorageService blobStorageService, IManufacturerRepository manufacturerRepository
-            , ICategoryRepository categoryRepository, TimeProvider timeProvider, IParameterRepository parameterRepository)
+            , ICategoryRepository categoryRepository, TimeProvider timeProvider, IParameterRepository parameterRepository, IImageRepository imageRepository)
         {
             _productRepository = productRepository;
             _blobStorageService = blobStorageService;
@@ -31,6 +32,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.UpdateProduc
             _categoryRepository = categoryRepository;
             _timeProvider = timeProvider;
             _parameterRepository = parameterRepository;
+            _imageRepository = imageRepository;
         }
         public async Task Handle(UpdateProduct request, CancellationToken cancellationToken)
         {
@@ -39,6 +41,8 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.UpdateProduc
             {
                 throw new ProductNotFoundException(request.Id);
             }
+            var imagesIds = await _imageRepository.GetAllImagesForProductAsync(request.Id);
+            await _blobStorageService.DeleteManyAsync(imagesIds.Select(i => i.ToString()), _containerName);
             var imageList = await UploadImagesToBlobStorageAsync(request.Images);
             var manufacturer = await _manufacturerRepository.GetAsync(request.ManufacturerId);
             if (manufacturer is null)

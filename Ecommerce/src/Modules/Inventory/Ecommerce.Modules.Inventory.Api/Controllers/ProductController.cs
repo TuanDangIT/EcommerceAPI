@@ -5,6 +5,7 @@ using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteSelec
 using Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduct;
 using Ecommerce.Modules.Inventory.Application.Features.Products.DeleteProduct;
 using Ecommerce.Modules.Inventory.Application.Features.Products.DeleteSelectedProducts;
+using Ecommerce.Modules.Inventory.Application.Features.Products.UpdateProduct;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,12 +23,9 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         {
         }
         [HttpPost()]
-        public async Task<ActionResult> CreateProduct([FromForm] CreateProduct command, List<IFormFile> images)
+        public async Task<ActionResult> CreateProduct([FromForm] CreateProduct command)
         {
-            await _mediator.Send(command with
-            {
-                Images = images
-            });
+            await _mediator.Send(command);
             return NoContent();
         }
         [HttpDelete("{id:guid}")]
@@ -38,6 +36,12 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         }
         [HttpDelete]
         public async Task<ActionResult> DeleteSelectedProducts([FromBody] DeleteSelectedProducts command)
+        {
+            await _mediator.Send(command);
+            return NoContent();
+        }
+        [HttpPut("{id:guid}")]
+        public async Task<ActionResult> UpdateProduct([FromForm] UpdateProduct command)
         {
             await _mediator.Send(command);
             return NoContent();
