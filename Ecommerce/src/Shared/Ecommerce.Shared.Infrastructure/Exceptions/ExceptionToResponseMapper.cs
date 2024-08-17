@@ -14,10 +14,9 @@ namespace Ecommerce.Shared.Infrastructure.Exceptions
         public ExceptionResponse Map(Exception exception)
             => exception switch
             {
-                EcommerceException ex => new ExceptionResponse(new Error(ex.GetType().Name, ex.Message)
-                    , HttpStatusCode.BadRequest),
-                _ => new ExceptionResponse(new Error("error", "There was an error."),
-                    HttpStatusCode.InternalServerError)
+                ValidationException ex => new ExceptionResponse(HttpStatusCode.BadRequest, "error", ex.Message, ex.Errors),
+                EcommerceException ex => new ExceptionResponse(HttpStatusCode.BadRequest, "error", ex.Message),
+                _ => new ExceptionResponse(HttpStatusCode.InternalServerError, "error", "There was a server error.")
             };
     }
 }

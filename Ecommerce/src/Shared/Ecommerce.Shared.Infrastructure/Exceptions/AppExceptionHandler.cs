@@ -27,7 +27,7 @@ namespace Ecommerce.Shared.Infrastructure.Exceptions
             _logger.LogError(exception, $"Exception occured at {_timeProvider.GetUtcNow().UtcDateTime
                 }: {exception.Message}");
             var response = _exceptionToResponseMapper.Map(exception);
-            httpContext.Response.StatusCode = (int)response.StatusCode;
+            httpContext.Response.StatusCode = (int)response.Code;
             await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
             return true;
 
