@@ -26,8 +26,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Manufacturers.ChangeM
             {
                 throw new ManufacturerNotFoundException(request.ManufaturerId);
             }
-            manufacturer.Name = request.Name;
-            manufacturer.UpdatedAt = _timeProvider.GetUtcNow().UtcDateTime;
+            manufacturer.ChangeName(request.Name, _timeProvider.GetUtcNow().UtcDateTime);
             var rowsChanged = await _manufacturerRepository.UpdateAsync(manufacturer);
             if(rowsChanged is not 1)
             {

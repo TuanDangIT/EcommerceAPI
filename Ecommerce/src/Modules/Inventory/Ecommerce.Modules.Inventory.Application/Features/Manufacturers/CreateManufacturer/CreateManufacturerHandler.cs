@@ -21,12 +21,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Manufacturers.CreateM
         }
         public async Task Handle(CreateManufacturer request, CancellationToken cancellationToken)
         {
-            var rowsChanged = await _manufacturerRepository.AddAsync(new Domain.Entities.Manufacturer()
-            {
-                Id = Guid.NewGuid(),
-                Name = request.Name,
-                CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
-            });
+            var rowsChanged = await _manufacturerRepository.AddAsync(new Domain.Entities.Manufacturer(Guid.NewGuid(), request.Name, _timeProvider.GetUtcNow().UtcDateTime));
             if(rowsChanged is not 1)
             {
                 throw new ManufacturerNotCreatedException();

@@ -26,8 +26,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Parameters.ChangePara
             {
                 throw new ParameterNotFoundException(request.ParameterId);
             }
-            parameter.Name = request.Name;
-            parameter.UpdatedAt = _timeProvider.GetUtcNow().UtcDateTime;
+            parameter.ChangeName(request.Name, _timeProvider.GetUtcNow().UtcDateTime);
             var rowsChanged = await _parameterRepository.UpdateAsync(parameter);
             if (rowsChanged is not 1)
             {

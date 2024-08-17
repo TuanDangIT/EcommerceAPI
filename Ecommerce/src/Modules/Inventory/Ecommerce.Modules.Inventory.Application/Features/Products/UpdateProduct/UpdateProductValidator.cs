@@ -12,6 +12,42 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.UpdateProduc
     {
         public UpdateProductValidator()
         {
+            RuleFor(c => c.SKU)
+                .NotEmpty()
+                .NotNull()
+                .MinimumLength(8)
+                .MaximumLength(16);
+            RuleFor(c => c.EAN)
+                .Length(13);
+            RuleFor(c => c.Name)
+                .NotEmpty()
+                .NotNull()
+                .MinimumLength(2)
+                .MaximumLength(24);
+            RuleFor(c => c.Price)
+                .NotEmpty()
+                .NotNull()
+                .GreaterThanOrEqualTo(0);
+            RuleFor(c => c.VAT)
+                .NotEmpty()
+                .NotNull()
+                .GreaterThanOrEqualTo(0);
+            RuleFor(c => c.Location)
+                .MaximumLength(64);
+            RuleFor(c => c.Quantity)
+                .GreaterThanOrEqualTo(0);
+            RuleFor(c => c.Description)
+                .NotEmpty()
+                .NotNull();
+            RuleFor(c => c.ManufacturerId)
+                .NotEmpty()
+                .NotNull();
+            RuleFor(c => c.CategoryId)
+                .NotEmpty()
+                .NotNull();
+            RuleFor(c => c.Images)
+                .NotEmpty()
+                .NotNull();
         }
     }
 }

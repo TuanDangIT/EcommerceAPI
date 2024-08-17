@@ -21,12 +21,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Parameters.CreatePara
         }
         public async Task Handle(CreateParameter request, CancellationToken cancellationToken)
         {
-            var rowsChanged = await _parameterRepository.AddAsync(new Domain.Entities.Parameter()
-            {
-                Id = Guid.NewGuid(),
-                Name = request.Name,
-                CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
-            });
+            var rowsChanged = await _parameterRepository.AddAsync(new Domain.Entities.Parameter(Guid.NewGuid(), request.Name, _timeProvider.GetUtcNow().UtcDateTime));
             if(rowsChanged is 0)
             {
                 throw new ParameterNotCreatedException();

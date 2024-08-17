@@ -26,12 +26,12 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
 
         public async Task<int> DeleteAsync(Guid productId) => await _dbContext.Products.Where(p => p.Id == productId).ExecuteDeleteAsync();
 
-        public async Task<int> DecreaseQuantityAsync(Guid productId, int ammount)
-        {
-            var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
-            product!.Quantity -= ammount;
-            return await _dbContext.SaveChangesAsync();
-        }
+        //public async Task<int> DecreaseQuantityAsync(Guid productId, int ammount)
+        //{
+        //    var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
+        //    product!.Quantity -= ammount;
+        //    return await _dbContext.SaveChangesAsync();
+        //}
 
         public async Task<IEnumerable<Product>> GetAllAsync() => await _dbContext.Products.ToListAsync();
 

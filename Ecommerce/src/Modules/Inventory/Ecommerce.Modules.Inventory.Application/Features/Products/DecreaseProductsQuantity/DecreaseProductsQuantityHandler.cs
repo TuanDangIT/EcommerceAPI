@@ -19,7 +19,13 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.DecreaseProd
         }
         public async Task Handle(DecreaseProductsQuantity request, CancellationToken cancellationToken)
         {
-            var rowsChanged = await _productRepository.DecreaseQuantityAsync(request.ProductId, request.Quantity);
+            var product = await _productRepository.GetAsync(request.ProductId);
+            if(product is null)
+            {
+                throw new ProductNotFoundException(request.ProductId);
+            }
+            product.DecreaseQuantity(request.Quantity);
+            var rowsChanged = await _productRepository.UpdateAsync(product);
             if(rowsChanged is not 0)
             {
                 throw new ProductNotDecreasedException(request.ProductId);

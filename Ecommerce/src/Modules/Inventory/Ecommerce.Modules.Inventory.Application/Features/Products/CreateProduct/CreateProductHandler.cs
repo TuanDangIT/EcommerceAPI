@@ -35,7 +35,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
         }
         public async Task Handle(CreateProduct request, CancellationToken cancellationToken)
         {
-            var imageList = await UploadImagesToBlobStorage(request.Images);
+            var imageList = await UploadImagesToBlobStorageAsync(request.Images);
             var manufacturer = await _manufacturerRepository.GetAsync(request.ManufacturerId);
             if (manufacturer is null)
             {
@@ -64,25 +64,30 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
                     });
                 }
             }
-            var rowChanged = await _productRepository.AddAsync(new Product()
+            var rowsChanged = await _productRepository.AddAsync(new Product
+                (
+                    id: Guid.NewGuid(),
+                    sku: request.SKU,
+                    ean: request.EAN,
+                    name: request.Name,
+                    price: request.Price,
+                    vat: request.VAT,
+                    quantity: request.Quantity,
+                    location: request.Location,
+                    description: request.Description,
+                    additionalDescription: request.AdditionalDescription,
+                    productParameters: productParameters,
+                    manufacturer: manufacturer,
+                    category: category,
+                    images: imageList.ToList(),
+                    createdAt: _timeProvider.GetUtcNow().UtcDateTime
+                ));
+            if(rowsChanged is 0)
             {
-                SKU = request.SKU,
-                EAN = request.EAN,
-                Name = request.Name,
-                Price = request.Price,
-                VAT = request.VAT,
-                Quantity = request.Quantity,
-                Location = request.Location,
-                Description = request.Description,
-                AdditionalDescription = request.AdditionalDescription,
-                ProductParameters = productParameters,
-                Manufacturer = manufacturer,
-                Category = category,
-                Images = imageList.ToList(),
-                CreatedAt = _timeProvider.GetUtcNow().UtcDateTime
-            });
+                throw new ProductNotCreatedException();
+            }
         }
-        private async Task<IEnumerable<Image>> UploadImagesToBlobStorage(List<IFormFile> images)
+        private async Task<IEnumerable<Image>> UploadImagesToBlobStorageAsync(List<IFormFile> images)
         {
             var imagesList = new List<Image>();
             int counter = 1;

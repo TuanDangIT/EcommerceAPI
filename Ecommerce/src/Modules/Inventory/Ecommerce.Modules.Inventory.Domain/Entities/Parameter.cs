@@ -8,11 +8,28 @@ namespace Ecommerce.Modules.Inventory.Domain.Entities
 {
     public class Parameter
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public List<Product> Products { get; set; } = new();
-        public List<ProductParameter> ProductParameters { get; set; } = new();
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public Guid Id { get; private set; }
+        public string Name { get; private set; } = string.Empty;
+        private readonly List<Product> _products = new();
+        public IEnumerable<Product> Products => _products;
+        private readonly List<ProductParameter> _productParameters = new();
+        public IEnumerable<ProductParameter> ProductParameters => _productParameters;
+        public DateTime CreatedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
+        public Parameter(Guid id, string name, DateTime createdAt)
+        {
+            Id = id;
+            Name = name;
+            CreatedAt = createdAt;
+        }
+        public Parameter()
+        {
+            
+        }
+        public void ChangeName(string name, DateTime updatedAt)
+        {
+            Name = name;
+            UpdatedAt = updatedAt;
+        }
     }
 }
