@@ -21,7 +21,10 @@ namespace Ecommerce.Modules.Inventory.Application.Behavior
         }
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
-            if (!_validators.Any()) { return await next(); }
+            if (!_validators.Any()) 
+            { 
+                return await next(); 
+            }
             Error[] errors = _validators
                 .Select(validator => validator.Validate(request))
                 .SelectMany(validationResult => validationResult.Errors)
