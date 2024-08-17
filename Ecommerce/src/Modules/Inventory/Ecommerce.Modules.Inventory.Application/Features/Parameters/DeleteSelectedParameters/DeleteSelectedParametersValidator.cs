@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Parameters.DeleteSelectedParameters
 {
-    internal class DeleteSelectedParametersValidator : AbstractValidator<DeleteSelectedParameters>
+    internal sealed class DeleteSelectedParametersValidator : AbstractValidator<DeleteSelectedParameters>
     {
         public DeleteSelectedParametersValidator()
         {

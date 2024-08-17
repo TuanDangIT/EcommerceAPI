@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Products.UpdateProduct
 {
-    internal class UpdateProductValidator : AbstractValidator<UpdateProduct>
+    internal sealed class UpdateProductValidator : AbstractValidator<UpdateProduct>
     {
         public UpdateProductValidator()
         {

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Products.DeleteSelectedProducts
 {
-    internal class DeleteSelectedProductValidator : AbstractValidator<DeleteSelectedProducts>
+    internal sealed class DeleteSelectedProductValidator : AbstractValidator<DeleteSelectedProducts>
     {
         public DeleteSelectedProductValidator()
         {

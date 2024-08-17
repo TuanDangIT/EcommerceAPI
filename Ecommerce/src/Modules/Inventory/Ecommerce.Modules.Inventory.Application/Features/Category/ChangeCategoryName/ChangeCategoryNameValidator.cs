@@ -7,16 +7,15 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Category.ChangeCategoryName
 {
-    internal class ChangeCategoryNameValidator : AbstractValidator<ChangeCategoryName>
+    internal sealed class ChangeCategoryNameValidator : AbstractValidator<ChangeCategoryName>
     {
         public ChangeCategoryNameValidator()
         {
-            RuleFor(c => c.CategoryId)
-                .NotEmpty()
-                .NotNull();
             RuleFor(c => c.Name)
                 .NotEmpty()
-                .NotNull();
+                .NotNull()
+                .MinimumLength(2)
+                .MaximumLength(32);
         }
     }
 }

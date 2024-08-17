@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Inventory.Application.Features.Category.CreateCategory
+namespace Ecommerce.Modules.Inventory.Application.Features.Manufacturers.CreateManufacturer
 {
-    internal sealed class CreateCategoryValidator : AbstractValidator<CreateCategory>
+    internal sealed class CreateManufacturerValidator : AbstractValidator<CreateManufacturer>
     {
-        public CreateCategoryValidator()
+        public CreateManufacturerValidator()
         {
             RuleFor(c => c.Name)
                 .NotEmpty()

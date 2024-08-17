@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Parameters.CreateParameter
 {
-    internal class CreateParameterValidator : AbstractValidator<CreateParameter>
+    internal sealed class CreateParameterValidator : AbstractValidator<CreateParameter>
     {
         public CreateParameterValidator()
         {
             RuleFor(c => c.Name)
                 .NotEmpty()
-                .NotNull();
+                .NotNull()
+                .MinimumLength(2)
+                .MaximumLength(32);
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Products.DecreaseProductsQuantity
 {
-    internal class DecreaseProductQuantityValidator
+    internal sealed class DecreaseProductsQuantityValidator
     {
     }
 }

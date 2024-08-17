@@ -8,16 +8,15 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Parameters.ChangeParameterName
 {
-    internal class ChangeParameterNameValidator : AbstractValidator<ChangeParameterName>
+    internal sealed class ChangeParameterNameValidator : AbstractValidator<ChangeParameterName>
     {
         public ChangeParameterNameValidator()
         {
-            RuleFor(c => c.ParameterId)
-                .NotEmpty()
-                .NotNull();
             RuleFor(c => c.Name)
                 .NotEmpty()
-                .NotNull();
+                .NotNull()
+                .MinimumLength(2)
+                .MaximumLength(32);
         }
     }
 }

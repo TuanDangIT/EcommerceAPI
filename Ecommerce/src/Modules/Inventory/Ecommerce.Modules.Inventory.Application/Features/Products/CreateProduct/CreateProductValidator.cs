@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduct
 {
-    internal class CreateProductValidator : AbstractValidator<CreateProduct>
+    internal sealed class CreateProductValidator : AbstractValidator<CreateProduct>
     {
         public CreateProductValidator()
         {
@@ -21,6 +21,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
             RuleFor(c => c.Name)
                 .NotEmpty()
                 .NotNull()
+                .MinimumLength(2)
                 .MaximumLength(24);
             RuleFor(c => c.Price)
                 .NotEmpty()

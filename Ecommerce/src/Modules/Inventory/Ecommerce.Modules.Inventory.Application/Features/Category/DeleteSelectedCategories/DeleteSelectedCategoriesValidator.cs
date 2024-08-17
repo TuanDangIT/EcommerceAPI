@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Category.DeleteSelectedCategories
 {
-    internal class DeleteSelectedCategoriesValidator : AbstractValidator<DeleteSelectedCategories>
+    internal sealed class DeleteSelectedCategoriesValidator : AbstractValidator<DeleteSelectedCategories>
     {
         public DeleteSelectedCategoriesValidator()
         {
