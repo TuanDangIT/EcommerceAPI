@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.DeleteProduc
         public async Task Handle(DeleteProduct request, CancellationToken cancellationToken)
         {
             var imagesIds = await _imageRepository.GetAllImagesForProductAsync(request.ProductId);
-            await _blobStorageService.DeleteManyAsync(imagesIds.Select(i => i.ToString()), containerName);
+            await _blobStorageService.DeleteManyAsync(imagesIds.Select(i => i.ToString()), _containerName);
             var rowsChanged = await _productRepository.DeleteAsync(request.ProductId);
             if(rowsChanged is 0)
             {
