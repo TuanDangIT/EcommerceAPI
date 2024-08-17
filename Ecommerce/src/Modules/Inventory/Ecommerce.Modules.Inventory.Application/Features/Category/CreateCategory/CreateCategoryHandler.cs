@@ -21,12 +21,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Category.CreateCatego
         }
         public async Task Handle(CreateCategory request, CancellationToken cancellationToken)
         {
-            var rowsChanged = await _categoryRepository.AddAsync(new Domain.Entities.Category()
-            {
-                Id = Guid.NewGuid(),
-                Name = request.Name,
-                CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
-            });
+            var rowsChanged = await _categoryRepository.AddAsync(new Domain.Entities.Category(Guid.NewGuid(), request.Name, _timeProvider.GetUtcNow().UtcDateTime));
             if (rowsChanged is not 1)
             {
                 throw new CategoryNotCreatedException();

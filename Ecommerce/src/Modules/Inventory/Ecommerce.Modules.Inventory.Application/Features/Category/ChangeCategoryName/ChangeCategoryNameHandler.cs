@@ -26,8 +26,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Category.ChangeCatego
             {
                 throw new CategoryNotFoundException(request.CategoryId);
             }
-            category.Name = request.Name;
-            category.UpdatedAt = _timeProvider.GetUtcNow().UtcDateTime;
+            category.ChangeCategoryName(request.Name, _timeProvider.GetUtcNow().UtcDateTime);
             var rowsChanged = await _categoryRepository.UpdateAsync(category);
             if (rowsChanged is not 1)
             {
