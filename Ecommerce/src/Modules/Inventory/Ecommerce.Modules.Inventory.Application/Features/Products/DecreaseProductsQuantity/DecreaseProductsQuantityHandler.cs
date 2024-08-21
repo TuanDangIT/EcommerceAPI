@@ -25,7 +25,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.DecreaseProd
                 throw new ProductNotFoundException(request.ProductId);
             }
             product.DecreaseQuantity(request.Quantity);
-            var rowsChanged = await _productRepository.UpdateAsync(product);
+            var rowsChanged = await _productRepository.UpdateAsync();
             if(rowsChanged is not 0)
             {
                 throw new ProductNotDecreasedException(request.ProductId);

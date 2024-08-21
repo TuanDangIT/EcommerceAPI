@@ -26,23 +26,19 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
 
         public async Task<int> DeleteAsync(Guid productId) => await _dbContext.Products.Where(p => p.Id == productId).ExecuteDeleteAsync();
 
-        //public async Task<int> DecreaseQuantityAsync(Guid productId, int ammount)
-        //{
-        //    var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
-        //    product!.Quantity -= ammount;
-        //    return await _dbContext.SaveChangesAsync();
-        //}
-
         public async Task<IEnumerable<Product>> GetAllAsync() => await _dbContext.Products.ToListAsync();
 
         public Task<Product?> GetAsync(Guid productId) => _dbContext.Products.SingleOrDefaultAsync(p => p.Id == productId);
 
-        public async Task<int> UpdateAsync(Product product)
+        public async Task<int> UpdateAsync()
         {
-            _dbContext.Products.Update(product);
             return await _dbContext.SaveChangesAsync();
         }
-
+        public async Task DeleteProductParametersAndImagesRelatedToProduct(Guid productId)
+        {
+            await _dbContext.Images.Where(i => i.ProductId == productId).ExecuteDeleteAsync();
+            await _dbContext.ProductParameters.Where(i => i.ProductId == productId).ExecuteDeleteAsync();
+        }
         public async Task<int> DeleteManyAsync(params Guid[] productIds) => await _dbContext.Products.Where(p => productIds.Contains(p.Id)).ExecuteDeleteAsync();
     }
 }

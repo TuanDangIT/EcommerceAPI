@@ -10,11 +10,12 @@ namespace Ecommerce.Modules.Inventory.Domain.Repositories
     public interface IProductRepository
     {
         Task<int> AddAsync(Product product);
-        Task<int> UpdateAsync(Product product);
+        Task<int> UpdateAsync();
         Task<int> DeleteAsync(Guid productId);
         //Task<int> DecreaseQuantityAsync(Guid productId, int ammount);
         Task<int> DeleteManyAsync(Guid[] productIds);
         Task<IEnumerable<Product>> GetAllAsync();
         Task<Product?> GetAsync(Guid productId);
+        Task DeleteProductParametersAndImagesRelatedToProduct(Guid productId);
     }
 }

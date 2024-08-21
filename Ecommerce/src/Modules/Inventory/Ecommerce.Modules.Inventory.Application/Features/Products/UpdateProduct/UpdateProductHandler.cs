@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Inventory.Application.Exceptions;
+﻿using Azure.Core;
+using Ecommerce.Modules.Inventory.Application.Exceptions;
 using Ecommerce.Modules.Inventory.Domain.Entities;
 using Ecommerce.Modules.Inventory.Domain.Repositories;
 using Ecommerce.Shared.Abstractions.BloblStorage;
@@ -41,9 +42,6 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.UpdateProduc
             {
                 throw new ProductNotFoundException(request.Id);
             }
-            var imagesIds = await _imageRepository.GetAllImagesForProductAsync(request.Id);
-            await _blobStorageService.DeleteManyAsync(imagesIds.Select(i => i.ToString()), _containerName);
-            var imageList = await UploadImagesToBlobStorageAsync(request.Images);
             var manufacturer = await _manufacturerRepository.GetAsync(request.ManufacturerId);
             if (manufacturer is null)
             {
@@ -72,7 +70,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.UpdateProduc
                     });
                 }
             }
-            product.Edit
+            product.ChangeBaseDetails
                 (
                     sku: request.SKU,
                     ean: request.EAN,
@@ -82,21 +80,27 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.UpdateProduc
                     quantity: request.Quantity,
                     location: request.Location,
                     description: request.Description,
-                    additionalDescription: request.AdditionalDescription,
-                    productParameters: productParameters,
-                    manufacturer: manufacturer,
-                    category: category,
-                    images: imageList.ToList(),
-                    updatedAt: _timeProvider.GetUtcNow().UtcDateTime
+                    additionalDescription: request.AdditionalDescription
                 );
-            var rowsChanged = await _productRepository.UpdateAsync(product);
+            product.ChangeManufacturer(manufacturer);
+            product.ChangeCategory(category);
+            await UploadImagesToBlobStorageAsync(request.Images, product);
+            await _productRepository.DeleteProductParametersAndImagesRelatedToProduct(request.Id);
+            product.ChangeProductParameters(productParameters);
+            product.SetUpdateAt(_timeProvider.GetUtcNow().UtcDateTime);
+            var rowsChanged = await _productRepository.UpdateAsync();
             if (rowsChanged is 0)
             {
                 throw new ProductNotUpdatedException(request.Id);
             }
         }
-        private async Task<IEnumerable<Image>> UploadImagesToBlobStorageAsync(List<IFormFile> images)
+        private async Task UploadImagesToBlobStorageAsync(List<IFormFile> images, Product product)
         {
+            var imagesIds = await _imageRepository.GetAllImagesForProductAsync(product.Id);
+            if(imagesIds.Any())
+            {
+                await _blobStorageService.DeleteManyAsync(imagesIds.Select(i => i.ToString()), _containerName);
+            }
             var imagesList = new List<Image>();
             int counter = 1;
             foreach (var image in images)
@@ -107,10 +111,11 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.UpdateProduc
                 {
                     Id = newGuid,
                     ImageUrlPath = imageUrlPath,
-                    Order = counter++
+                    Order = counter++,
+                    Product = product
                 });
             }
-            return imagesList;
+            await _imageRepository.AddRangeAsync(imagesList);
         }
     }
 }

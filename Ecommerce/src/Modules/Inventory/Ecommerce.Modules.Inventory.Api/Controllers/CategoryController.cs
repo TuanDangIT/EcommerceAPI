@@ -8,11 +8,13 @@ using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.CreateManuf
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteManufacturer;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteSelectedManufacturers;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.GetManufacturer;
+using Ecommerce.Shared.Abstractions.ApiResponse;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,7 +35,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public async Task<ActionResult> DeleteCategory([FromRoute] Guid id)
         {
             await _mediator.Send(new DeleteCategory(id));
-            return NoContent();
+            return Ok(new ApiResponse(200, "success"));
         }
         [HttpPut("{id:guid}")]
         public async Task<ActionResult> ChangeCategoryName([FromRoute] Guid id, [FromBody] ChangeCategoryName command)
@@ -42,7 +44,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             {
                 CategoryId = id
             });
-            return NoContent();
+            return Ok(new ApiResponse(200, "success"));
         }
         [HttpDelete]
         public async Task<ActionResult> DeleteSelectedCategories([FromBody] DeleteSelectedCategories command)

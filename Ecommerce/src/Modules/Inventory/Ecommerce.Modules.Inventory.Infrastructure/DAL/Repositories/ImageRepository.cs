@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Inventory.Domain.Repositories;
+﻿using Ecommerce.Modules.Inventory.Domain.Entities;
+using Ecommerce.Modules.Inventory.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,5 +21,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
             => await _dbContext.Images.Where(i => i.ProductId == productId).Select(i => i.Id).ToListAsync();
         public async Task<IEnumerable<Guid>> GetAllImagesForProductsAsync(Guid[] productIds)
             => await _dbContext.Images.Where(i => productIds.Contains(i.ProductId)).Select(i => i.Id).ToListAsync();
+        public async Task AddRangeAsync(IEnumerable<Image> images)
+            => await _dbContext.Images.AddRangeAsync(images);
     }
 }

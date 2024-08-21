@@ -35,7 +35,6 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
         }
         public async Task Handle(CreateProduct request, CancellationToken cancellationToken)
         {
-            var imageList = await UploadImagesToBlobStorageAsync(request.Images);
             var manufacturer = await _manufacturerRepository.GetAsync(request.ManufacturerId);
             if (manufacturer is null)
             {
@@ -64,6 +63,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
                     });
                 }
             }
+            var imageList = await UploadImagesToBlobStorageAsync(request.Images);
             var rowsChanged = await _productRepository.AddAsync(new Product
                 (
                     id: Guid.NewGuid(),
@@ -82,7 +82,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
                     images: imageList.ToList(),
                     createdAt: _timeProvider.GetUtcNow().UtcDateTime
                 ));
-            if(rowsChanged is 0)
+            if (rowsChanged is 0)
             {
                 throw new ProductNotCreatedException();
             }

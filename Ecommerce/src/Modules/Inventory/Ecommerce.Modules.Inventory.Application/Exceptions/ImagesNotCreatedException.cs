@@ -7,12 +7,10 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Exceptions
 {
-    internal class CategoryNotFoundException : EcommerceException
+    internal class ImagesNotCreatedException : EcommerceException
     {
-        public Guid Id { get; }
-        public CategoryNotFoundException(Guid id) : base($"Category: {id} was not found.")
+        public ImagesNotCreatedException() : base("Images was not created.")
         {
-            Id = id;
         }
     }
 }

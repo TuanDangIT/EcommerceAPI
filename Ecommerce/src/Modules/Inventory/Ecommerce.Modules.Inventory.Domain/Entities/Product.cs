@@ -25,7 +25,8 @@ namespace Ecommerce.Modules.Inventory.Domain.Entities
         public IEnumerable<ProductParameter> ProductParameters => _productParameters;
         public Manufacturer Manufacturer { get; private set; } = new();
         public Guid ManufacturerId { get; private set; }
-        public List<Image> Images { get; private set; } = new();
+        public List<Image> _images = new();
+        public IEnumerable<Image> Images => _images;
         public Category Category { get; private set; } = new();
         public Guid CategoryId { get; private set; } 
         public DateTime CreatedAt { get; private set; }
@@ -47,7 +48,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Entities
             _productParameters = productParameters;
             Manufacturer = manufacturer;
             Category = category;
-            Images = images;
+            _images = images;
             CreatedAt = createdAt;
         }
         public Product()
@@ -58,9 +59,44 @@ namespace Ecommerce.Modules.Inventory.Domain.Entities
         {
             Quantity -= quantity;
         }
-        public void Edit(string sku, string name, decimal price, int vat, string description
-            , List<ProductParameter> productParameters, Manufacturer manufacturer, Category category
-            , List<Image> images, DateTime updatedAt, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)
+        //public void Edit(string sku, string name, decimal price, int vat, string description
+        //    , List<ProductParameter> productParameters, Manufacturer manufacturer, Category category
+        //    , List<Image> images, DateTime updatedAt, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)
+        //{
+        //    SKU = sku;
+        //    EAN = ean;
+        //    Name = name;
+        //    Price = price;
+        //    VAT = vat;
+        //    Quantity = quantity;
+        //    Location = location;
+        //    Description = description;
+        //    AdditionalDescription = additionalDescription;
+        //    _productParameters = productParameters;
+        //    Manufacturer = manufacturer;
+        //    Category = category;
+        //    Images = images;
+        //    UpdatedAt = updatedAt;
+//        //}
+//        public void Edit(string sku, string name, decimal price, int vat, string description, List<ProductParameter> productParameters, Manufacturer manufacturer, Category category
+///*            , List<Image> images*/, DateTime updatedAt, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)
+//        {
+//            SKU = sku;
+//            EAN = ean;
+//            Name = name;
+//            Price = price;
+//            VAT = vat;
+//            Quantity = quantity;
+//            Location = location;
+//            Description = description;
+//            AdditionalDescription = additionalDescription;
+//            _productParameters = productParameters;
+//            Manufacturer = manufacturer;
+//            Category = category;
+//            //Images = images;
+//            UpdatedAt = updatedAt;
+//        }
+        public void ChangeBaseDetails(string sku, string name, decimal price, int vat, string description, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)
         {
             SKU = sku;
             EAN = ean;
@@ -71,11 +107,16 @@ namespace Ecommerce.Modules.Inventory.Domain.Entities
             Location = location;
             Description = description;
             AdditionalDescription = additionalDescription;
-            _productParameters = productParameters;
-            Manufacturer = manufacturer;
-            Category = category;
-            Images = images;
-            UpdatedAt = updatedAt;
         }
+        public void ChangeManufacturer(Manufacturer manufacturer)
+            => Manufacturer = manufacturer;
+        public void ChangeCategory(Category category)
+            => Category = category;
+        public void ChangeImages(List<Image> images)
+            => _images = images;
+        public void ChangeProductParameters(List<ProductParameter> parameters)
+            => _productParameters = parameters;
+        public void SetUpdateAt(DateTime updateAt)
+            => UpdatedAt = updateAt;
     }
 }

@@ -11,9 +11,9 @@ namespace Ecommerce.Modules.Inventory.Domain.Entities
         public Guid Id { get; private set; }
         public string Name { get; private set; } = string.Empty;
         private readonly List<Product> _products = new();
-        public IEnumerable<Product> Products => _products;
-        private readonly List<ProductParameter> _productParameters = new();
-        public IEnumerable<ProductParameter> ProductParameters => _productParameters;
+        public IEnumerable<Product>? Products => _products;
+        private readonly List<ProductParameter>? _productParameters = new();
+        public IEnumerable<ProductParameter>? ProductParameters => _productParameters;
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public Parameter(Guid id, string name, DateTime createdAt)
