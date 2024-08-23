@@ -32,7 +32,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return NoContent();
         }
         [HttpGet()]
-        public async Task<ActionResult<PagedResult<ProductListingDto>>> BrowseProducts([FromBody]BrowseProducts query)
+        public async Task<ActionResult<PagedResult<ProductListingDto>>> BrowseProducts([FromQuery]BrowseProducts query)
         {
             var result = await _mediator.Send(query);
             return Ok(result);

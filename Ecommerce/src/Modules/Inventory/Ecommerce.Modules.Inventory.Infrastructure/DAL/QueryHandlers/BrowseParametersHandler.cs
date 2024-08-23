@@ -1,6 +1,11 @@
 ﻿using Ecommerce.Modules.Inventory.Application.DTO;
+using Ecommerce.Modules.Inventory.Application.Exceptions;
 using Ecommerce.Modules.Inventory.Application.Features.Parameters.BrowseParameters;
+using Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Ecommerce.Shared.Infrastructure.Pagination;
+using Microsoft.EntityFrameworkCore;
+using Sieve.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +14,34 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
 {
-    internal sealed class BrowseParametersHandler : IQueryHandler<BrowseParameters, IEnumerable<ParameterBrowseDto>>
+    internal sealed class BrowseParametersHandler : IQueryHandler<BrowseParameters, PagedResult<ParameterBrowseDto>>
     {
-        public Task<IEnumerable<ParameterBrowseDto>> Handle(BrowseParameters request, CancellationToken cancellationToken)
+        private readonly InventoryDbContext _dbContext;
+        private readonly ISieveProcessor _sieveProcessor;
+
+        public BrowseParametersHandler(InventoryDbContext dbContext, ISieveProcessor sieveProcessor)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
+            _sieveProcessor = sieveProcessor;
+        }
+        public async Task<PagedResult<ParameterBrowseDto>> Handle(BrowseParameters request, CancellationToken cancellationToken)
+        {
+            var parameters = _dbContext.Parameters
+                .AsQueryable();
+            var dtos = await _sieveProcessor
+                .Apply(request, parameters)
+                .Select(c => c.AsBrowseDto())
+                .AsNoTracking()
+                .ToListAsync();
+            var totalCount = await _sieveProcessor
+                .Apply(request, parameters, applyPagination: false, applySorting: false)
+                .CountAsync();
+            if (request.PageSize is null || request.Page is null)
+            {
+                throw new PaginationException();
+            }
+            var pagedResult = new PagedResult<ParameterBrowseDto>(dtos, totalCount, request.PageSize.Value, request.Page.Value);
+            return pagedResult;
         }
     }
 }

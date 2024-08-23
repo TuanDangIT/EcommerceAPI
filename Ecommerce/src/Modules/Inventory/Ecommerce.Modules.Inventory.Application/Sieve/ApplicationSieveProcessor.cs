@@ -17,29 +17,30 @@ namespace Ecommerce.Modules.Inventory.Application.Sieve
         }
         protected override SievePropertyMapper MapProperties(SievePropertyMapper mapper)
         {
-            mapper.Property<Product>(p => p.SKU)
-                .CanFilter();
-            mapper.Property<Product>(p => p.EAN)
-                .CanFilter();
-            mapper.Property<Product>(p => p.Price)
-                .CanFilter()
-                .CanSort();
-            mapper.Property<Product>(p => p.Quantity)
-                .CanFilter()
-                .CanSort();
-            mapper.Property<Product>(p => p.Location)
-                .CanFilter();
-            mapper.Property<Product>(p => p.Description)
-                .CanFilter();
-            mapper.Property<Product>(p => p.AdditionalDescription)
-                .CanFilter();
-            mapper.Property<Product>(p => p.Manufacturer.Name)
-                .CanFilter();
-            mapper.Property<Product>(p => p.Category.Name)
-                .CanFilter();
-            mapper.Property<Product>(p => p.Parameters.Select(p => p.Name))
-                .CanFilter();
-            return mapper;
+            //mapper.Property<Product>(p => p.SKU)
+            //    .CanFilter();
+            //mapper.Property<Product>(p => p.EAN)
+            //    .CanFilter();
+            //mapper.Property<Product>(p => p.Price)
+            //    .CanFilter()
+            //    .CanSort();
+            //mapper.Property<Product>(p => p.Quantity)
+            //    .CanFilter()
+            //    .CanSort();
+            //mapper.Property<Product>(p => p.Location)
+            //    .CanFilter();
+            //mapper.Property<Product>(p => p.Description)
+            //    .CanFilter();
+            //mapper.Property<Product>(p => p.AdditionalDescription)
+            //    .CanFilter();
+            //mapper.Property<Product>(p => p.Manufacturer.Name)
+            //    .CanFilter();
+            //mapper.Property<Product>(p => p.Category.Name)
+            //    .CanFilter();
+            //mapper.Property<Product>(p => p.Parameters.Select(p => p.Name))
+            //    .CanFilter();
+            //return mapper;
+            return base.MapProperties(mapper);
         }
     }
 }

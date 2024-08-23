@@ -1,10 +1,13 @@
 ﻿using Ecommerce.Modules.Inventory.Application.DTO;
+using Ecommerce.Modules.Inventory.Application.Features.Category.BrowseCategory;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteSelectedManufacturers;
 using Ecommerce.Modules.Inventory.Application.Features.Parameters;
+using Ecommerce.Modules.Inventory.Application.Features.Parameters.BrowseParameters;
 using Ecommerce.Modules.Inventory.Application.Features.Parameters.ChangeParameterName;
 using Ecommerce.Modules.Inventory.Application.Features.Parameters.CreateParameter;
 using Ecommerce.Modules.Inventory.Application.Features.Parameters.DeleteParameter;
 using Ecommerce.Modules.Inventory.Application.Features.Parameters.DeleteSelectedParameters;
+using Ecommerce.Shared.Infrastructure.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -25,6 +28,12 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         {
             await _mediator.Send(command);
             return NoContent();
+        }
+        [HttpGet()]
+        public async Task<ActionResult<PagedResult<ParameterBrowseDto>>> BrowseParameters([FromQuery] BrowseParameters query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteParameter([FromRoute] Guid id)

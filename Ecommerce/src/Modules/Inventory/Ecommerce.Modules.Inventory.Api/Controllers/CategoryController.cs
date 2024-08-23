@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Inventory.Application.DTO;
+using Ecommerce.Modules.Inventory.Application.Features.Category.BrowseCategory;
 using Ecommerce.Modules.Inventory.Application.Features.Category.ChangeCategoryName;
 using Ecommerce.Modules.Inventory.Application.Features.Category.CreateCategory;
 using Ecommerce.Modules.Inventory.Application.Features.Category.DeleteCategory;
@@ -8,7 +9,9 @@ using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.CreateManuf
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteManufacturer;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteSelectedManufacturers;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.GetManufacturer;
+using Ecommerce.Modules.Inventory.Application.Features.Products.BrowseProducts;
 using Ecommerce.Shared.Abstractions.ApiResponse;
+using Ecommerce.Shared.Infrastructure.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -30,6 +33,12 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         {
             await _mediator.Send(command);
             return NoContent();
+        }
+        [HttpGet()]
+        public async Task<ActionResult<PagedResult<CategoryBrowseDto>>> BrowseCategories([FromQuery] BrowseCategories query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteCategory([FromRoute] Guid id)

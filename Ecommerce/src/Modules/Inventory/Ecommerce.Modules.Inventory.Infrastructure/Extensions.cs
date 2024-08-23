@@ -16,6 +16,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddPostgres<InventoryDbContext>();
             services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
             services.AddScoped<IParameterRepository, ParameterRepository>();
