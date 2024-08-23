@@ -1,7 +1,9 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Behavior;
 using Ecommerce.Modules.Inventory.Application.Features.Parameters.ChangeParameterName;
+using Ecommerce.Modules.Inventory.Application.Sieve;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Sieve.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +26,7 @@ namespace Ecommerce.Modules.Inventory.Application
                 .AddClasses(c => c.AssignableTo(typeof(IValidator<>)))
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
+            services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
             return services;
         }
     }

@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Ecommerce.Modules.Inventory.Application.DTO;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Ecommerce.Shared.Infrastructure.Pagination;
+using Sieve.Models;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Products.BrowseProducts
 {
-    public sealed record class BrowseProducts : IQuery<IEnumerable<ProductListingDto>>;
+    public sealed class BrowseProducts : SieveModel, IQuery<PagedResult<ProductListingDto>>;
 }

@@ -1,11 +1,14 @@
-﻿using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.ChangeManufacturerName;
+﻿using Ecommerce.Modules.Inventory.Application.DTO;
+using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.ChangeManufacturerName;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.CreateManufacturer;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteManufacturer;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteSelectedManufacturers;
+using Ecommerce.Modules.Inventory.Application.Features.Products.BrowseProducts;
 using Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduct;
 using Ecommerce.Modules.Inventory.Application.Features.Products.DeleteProduct;
 using Ecommerce.Modules.Inventory.Application.Features.Products.DeleteSelectedProducts;
 using Ecommerce.Modules.Inventory.Application.Features.Products.UpdateProduct;
+using Ecommerce.Shared.Infrastructure.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +30,12 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         {
             await _mediator.Send(command);
             return NoContent();
+        }
+        [HttpGet()]
+        public async Task<ActionResult<PagedResult<ProductListingDto>>> BrowseProducts([FromBody]BrowseProducts query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteProduct([FromRoute] Guid id)
