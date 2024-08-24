@@ -21,13 +21,13 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         {
             _mediator = mediator;
         }
-        protected ActionResult<ApiResponse> OkOrNotFound<T>(object? model)
+        protected ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse, TEntity>(TResponse? model)
         {
             if (model is not null)
             {
-                return Ok(new ApiResponse(HttpStatusCode.OK, "success", model));
+                return Ok(new ApiResponse<TResponse>(HttpStatusCode.OK, "success", model));
             }
-            string entityName = typeof(T).Name;
+            string entityName = typeof(TEntity).Name;
              return NotFound(new ExceptionResponse(HttpStatusCode.NotFound, "error", $"{entityName} was not found"));
         }
     }

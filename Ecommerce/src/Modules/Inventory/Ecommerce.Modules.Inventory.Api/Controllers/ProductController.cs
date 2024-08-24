@@ -37,14 +37,14 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return CreatedAtAction(nameof(GetProduct), new {productId}, null);
         }
         [HttpGet()]
-        public async Task<ActionResult<ApiResponse>> BrowseProducts([FromQuery] BrowseProducts query)
+        public async Task<ActionResult<ApiResponse<PagedResult<ProductListingDto>>>> BrowseProducts([FromQuery] BrowseProducts query)
         {
             var result = await _mediator.Send(query);
-            return Ok(new ApiResponse(HttpStatusCode.OK, "success", result));
+            return Ok(new ApiResponse<PagedResult<ProductListingDto>>(HttpStatusCode.OK, "success", result));
         }
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ApiResponse>> GetProduct([FromRoute]Guid id)
-            => OkOrNotFound<Product>(await _mediator.Send(new GetProduct(id)));
+        public async Task<ActionResult<ApiResponse<ProductDetailsDto>>> GetProduct([FromRoute]Guid id)
+            => OkOrNotFound<ProductDetailsDto, Product>(await _mediator.Send(new GetProduct(id)));
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteProduct([FromRoute] Guid id)
         {

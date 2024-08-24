@@ -26,8 +26,8 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         {
         }
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ApiResponse>> GetManufacturer([FromRoute] Guid id)
-            => OkOrNotFound<Manufacturer>(await _mediator.Send(new GetManufacturer(id)));
+        public async Task<ActionResult<ApiResponse<ManufacturerBrowseDto>>> GetManufacturer([FromRoute] Guid id)
+            => OkOrNotFound<ManufacturerBrowseDto, Manufacturer>(await _mediator.Send(new GetManufacturer(id)));
         [HttpPost()]
         public async Task<ActionResult> CreateManufacturer([FromBody]CreateManufacturer command)
         {
@@ -35,10 +35,10 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return Created();
         }
         [HttpGet()]
-        public async Task<ActionResult<ApiResponse>> BrowseManufacturers([FromQuery] BrowseManufacturers query)
+        public async Task<ActionResult<ApiResponse<PagedResult<ManufacturerBrowseDto>>>> BrowseManufacturers([FromQuery] BrowseManufacturers query)
         {
             var result = await _mediator.Send(query);
-            return Ok(new ApiResponse(HttpStatusCode.OK, "success", result));
+            return Ok(new ApiResponse<PagedResult<ManufacturerBrowseDto>>(HttpStatusCode.OK, "success", result));
         }
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteManufacturer([FromRoute]Guid id)
