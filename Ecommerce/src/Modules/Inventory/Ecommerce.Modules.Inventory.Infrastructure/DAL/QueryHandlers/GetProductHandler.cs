@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
                 .AsNoTracking()
                 .Include(p => p.Manufacturer)
                 .Include(p => p.Category)
-                .Include(p => p.Images)
+                .Include(p => p.Images.OrderBy(i => i.Order))
                 .Include(p => p.ProductParameters)
                 .ThenInclude(pp => pp.Parameter)
                 .SingleOrDefaultAsync(p => p.Id == request.ProductId);

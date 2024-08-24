@@ -7,6 +7,7 @@ using Ecommerce.Modules.Inventory.Application.Features.Products.BrowseProducts;
 using Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduct;
 using Ecommerce.Modules.Inventory.Application.Features.Products.DeleteProduct;
 using Ecommerce.Modules.Inventory.Application.Features.Products.DeleteSelectedProducts;
+using Ecommerce.Modules.Inventory.Application.Features.Products.GetProduct;
 using Ecommerce.Modules.Inventory.Application.Features.Products.UpdateProduct;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using MediatR;
@@ -32,9 +33,15 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return NoContent();
         }
         [HttpGet()]
-        public async Task<ActionResult<PagedResult<ProductListingDto>>> BrowseProducts([FromQuery]BrowseProducts query)
+        public async Task<ActionResult<PagedResult<ProductListingDto>>> BrowseProducts([FromQuery] BrowseProducts query)
         {
             var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<PagedResult<ProductListingDto>>> GetProduct([FromRoute]Guid id)
+        {
+            var result = await _mediator.Send(new GetProduct(id));
             return Ok(result);
         }
         [HttpDelete("{id:guid}")]

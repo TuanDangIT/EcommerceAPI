@@ -62,7 +62,6 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
                     Order = image.Order,
                 });
             }
-            productDetailsImagesDto.Sort();
             var productDetailsParametersDto = new List<ProductDetailsParameterDto>();
             foreach(var productParameter in product.ProductParameters)
             {
@@ -78,6 +77,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
                 EAN = product.EAN,
                 Name = product.Name,
                 Price = product.Price,
+                Quantity = product.Quantity,
                 VAT = product.VAT,
                 Location = product.Location,
                 Description = product.Description,
