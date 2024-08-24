@@ -3,7 +3,9 @@ using Ecommerce.Modules.Inventory.Application.Features.Parameters.ChangeParamete
 using Ecommerce.Modules.Inventory.Application.Sieve;
 using Ecommerce.Modules.Inventory.Application.Sieve.CustomFilters;
 using FluentValidation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Sieve.Models;
 using Sieve.Services;
 using System;
 using System.Collections.Generic;
@@ -16,7 +18,7 @@ namespace Ecommerce.Modules.Inventory.Application
 {
     public static class Extensions
     {
-        public static IServiceCollection AddApplication(this IServiceCollection services)
+        public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddMediatR(cfg =>
             {
@@ -27,6 +29,7 @@ namespace Ecommerce.Modules.Inventory.Application
                 .AddClasses(c => c.AssignableTo(typeof(IValidator<>)))
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
+            services.Configure<SieveOptions>(configuration.GetSection("Sieve"));
             services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
             services.AddScoped<ISieveCustomFilterMethods, SieveCustomFilterMethods>();
             return services;

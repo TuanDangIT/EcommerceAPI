@@ -21,7 +21,7 @@ namespace Ecommerce.Modules.Inventory.Api
 
         public void Register(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddApplication();
+            services.AddApplication(configuration);
             services.AddInfrastructure();
         }
 
