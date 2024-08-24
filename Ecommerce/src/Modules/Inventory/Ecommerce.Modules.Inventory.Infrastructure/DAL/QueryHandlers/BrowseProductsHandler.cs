@@ -39,7 +39,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
                 .AsNoTracking()
                 .ToListAsync();
             var totalCount = await _sieveProcessor
-                .Apply(request, products, applyPagination: false, applyFiltering: false)
+                .Apply(request, products, applyPagination: false)
                 .CountAsync();
             if(request.PageSize is null || request.Page is null)
             {
