@@ -1,8 +1,11 @@
-﻿using MediatR;
+﻿using Ecommerce.Shared.Abstractions.Api;
+using Ecommerce.Shared.Abstractions.Exceptions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,14 +21,14 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         {
             _mediator = mediator;
         }
-        protected ActionResult<T> OkOrNotFound<T>(T model)
+        protected ActionResult<ApiResponse> OkOrNotFound<T>(object? model)
         {
             if (model is not null)
             {
-                return Ok(model);
+                return Ok(new ApiResponse(HttpStatusCode.OK, "success", model));
             }
-
-            return NotFound();
+            string entityName = typeof(T).Name;
+             return NotFound(new ExceptionResponse(HttpStatusCode.NotFound, "error", $"{entityName} was not found"));
         }
     }
 }

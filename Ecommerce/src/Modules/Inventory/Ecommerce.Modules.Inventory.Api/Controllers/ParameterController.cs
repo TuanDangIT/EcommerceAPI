@@ -7,12 +7,14 @@ using Ecommerce.Modules.Inventory.Application.Features.Parameters.ChangeParamete
 using Ecommerce.Modules.Inventory.Application.Features.Parameters.CreateParameter;
 using Ecommerce.Modules.Inventory.Application.Features.Parameters.DeleteParameter;
 using Ecommerce.Modules.Inventory.Application.Features.Parameters.DeleteSelectedParameters;
+using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,13 +29,13 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public async Task<ActionResult> CreateParameter([FromBody] CreateParameter command)
         {
             await _mediator.Send(command);
-            return NoContent();
+            return Created();
         }
         [HttpGet()]
-        public async Task<ActionResult<PagedResult<ParameterBrowseDto>>> BrowseParameters([FromQuery] BrowseParameters query)
+        public async Task<ActionResult<ApiResponse>> BrowseParameters([FromQuery] BrowseParameters query)
         {
             var result = await _mediator.Send(query);
-            return Ok(result);
+            return Ok(new ApiResponse(HttpStatusCode.OK, "success", result));
         }
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteParameter([FromRoute] Guid id)

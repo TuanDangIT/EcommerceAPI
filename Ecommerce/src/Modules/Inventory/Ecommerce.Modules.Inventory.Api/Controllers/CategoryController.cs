@@ -10,7 +10,7 @@ using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteManuf
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteSelectedManufacturers;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.GetManufacturer;
 using Ecommerce.Modules.Inventory.Application.Features.Products.BrowseProducts;
-using Ecommerce.Shared.Abstractions.ApiResponse;
+using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -32,19 +32,19 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public async Task<ActionResult> CreateCategory([FromBody] CreateCategory command)
         {
             await _mediator.Send(command);
-            return NoContent();
+            return Created();
         }
         [HttpGet()]
-        public async Task<ActionResult<PagedResult<CategoryBrowseDto>>> BrowseCategories([FromQuery] BrowseCategories query)
+        public async Task<ActionResult<ApiResponse>> BrowseCategories([FromQuery] BrowseCategories query)
         {
             var result = await _mediator.Send(query);
-            return Ok(result);
+            return Ok(new ApiResponse(HttpStatusCode.OK, "success", result));
         }
         [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> DeleteCategory([FromRoute] Guid id)
+        public async Task<ActionResult<ApiResponse>> DeleteCategory([FromRoute] Guid id)
         {
             await _mediator.Send(new DeleteCategory(id));
-            return Ok(new ApiResponse(200, "success"));
+            return NoContent();
         }
         [HttpPut("{id:guid}")]
         public async Task<ActionResult> ChangeCategoryName([FromRoute] Guid id, [FromBody] ChangeCategoryName command)
@@ -53,7 +53,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             {
                 CategoryId = id
             });
-            return Ok(new ApiResponse(200, "success"));
+            return NoContent();
         }
         [HttpDelete]
         public async Task<ActionResult> DeleteSelectedCategories([FromBody] DeleteSelectedCategories command)

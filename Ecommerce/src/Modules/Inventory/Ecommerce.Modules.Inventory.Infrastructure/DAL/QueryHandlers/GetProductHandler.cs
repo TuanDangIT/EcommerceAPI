@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
 {
-    internal sealed class GetProductHandler : IQueryHandler<GetProduct, ProductDetailsDto>
+    internal sealed class GetProductHandler : IQueryHandler<GetProduct, ProductDetailsDto?>
     {
         private readonly InventoryDbContext _dbContext;
 
@@ -20,7 +20,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
         {
             _dbContext = dbContext;
         }
-        public async Task<ProductDetailsDto> Handle(GetProduct request, CancellationToken cancellationToken)
+        public async Task<ProductDetailsDto?> Handle(GetProduct request, CancellationToken cancellationToken)
         {
             var product = await _dbContext.Products
                 .AsNoTracking()
@@ -30,11 +30,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
                 .Include(p => p.ProductParameters)
                 .ThenInclude(pp => pp.Parameter)
                 .SingleOrDefaultAsync(p => p.Id == request.ProductId);
-            if(product is null)
-            {
-                throw new ProductNotFoundException(request.ProductId);
-            }
-            return product.AsDetailsDto();
+            return product?.AsDetailsDto();
         }
     }
 }

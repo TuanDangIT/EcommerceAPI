@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduct
 {
-    public sealed record class CreateProduct : Shared.Abstractions.MediatR.ICommand
+    public sealed record class CreateProduct : Shared.Abstractions.MediatR.ICommand<Guid>
     {
         public string SKU { get; set; } = string.Empty;
         public string? EAN { get; set; }

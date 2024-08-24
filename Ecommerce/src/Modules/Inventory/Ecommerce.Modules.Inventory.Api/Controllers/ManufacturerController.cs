@@ -6,12 +6,15 @@ using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.CreateManuf
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteManufacturer;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.DeleteSelectedManufacturers;
 using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.GetManufacturer;
+using Ecommerce.Modules.Inventory.Domain.Entities;
+using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,19 +26,19 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         {
         }
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ManufacturerBrowseDto?>> GetManufacturer([FromRoute] Guid id)
-            => OkOrNotFound(await _mediator.Send(new GetManufacturer(id)));
+        public async Task<ActionResult<ApiResponse>> GetManufacturer([FromRoute] Guid id)
+            => OkOrNotFound<Manufacturer>(await _mediator.Send(new GetManufacturer(id)));
         [HttpPost()]
         public async Task<ActionResult> CreateManufacturer([FromBody]CreateManufacturer command)
         {
             await _mediator.Send(command);
-            return NoContent();
+            return Created();
         }
         [HttpGet()]
-        public async Task<ActionResult<PagedResult<ManufacturerBrowseDto>>> BrowseManufacturers([FromQuery] BrowseManufacturers query)
+        public async Task<ActionResult<ApiResponse>> BrowseManufacturers([FromQuery] BrowseManufacturers query)
         {
             var result = await _mediator.Send(query);
-            return Ok(result);
+            return Ok(new ApiResponse(HttpStatusCode.OK, "success", result));
         }
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteManufacturer([FromRoute]Guid id)
@@ -56,7 +59,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public async Task<ActionResult> DeleteSelectedManufacturers([FromBody]DeleteSelectedManufacturers command)
         {
             await _mediator.Send(command);
-            return NoContent(); 
+            return NoContent();
         }
 
     }

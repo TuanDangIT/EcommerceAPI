@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduct
 {
-    internal sealed class CreateProductHandler : ICommandHandler<CreateProduct>
+    internal sealed class CreateProductHandler : ICommandHandler<CreateProduct, Guid>
     {
         private readonly IProductRepository _productRepository;
         private readonly IBlobStorageService _blobStorageService;
@@ -33,7 +33,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
             _timeProvider = timeProvider;
             _parameterRepository = parameterRepository;
         }
-        public async Task Handle(CreateProduct request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateProduct request, CancellationToken cancellationToken)
         {
             var manufacturer = await _manufacturerRepository.GetAsync(request.ManufacturerId);
             if (manufacturer is null)
@@ -64,9 +64,10 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
                 }
             }
             var imageList = await UploadImagesToBlobStorageAsync(request.Images);
+            var productId = Guid.NewGuid();
             var rowsChanged = await _productRepository.AddAsync(new Product
                 (
-                    id: Guid.NewGuid(),
+                    id: productId,
                     sku: request.SKU,
                     ean: request.EAN,
                     name: request.Name,
@@ -86,6 +87,7 @@ namespace Ecommerce.Modules.Inventory.Application.Features.Products.CreateProduc
             {
                 throw new ProductNotCreatedException();
             }
+            return productId;
         }
         private async Task<IEnumerable<Image>> UploadImagesToBlobStorageAsync(List<IFormFile> images)
         {

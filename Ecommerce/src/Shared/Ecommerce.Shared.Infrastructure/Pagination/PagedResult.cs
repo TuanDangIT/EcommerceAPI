@@ -11,6 +11,7 @@ namespace Ecommerce.Shared.Infrastructure.Pagination
     {
         //Potrzebne informację do przekazania użytkownikowi
         public List<T> Items { get; set; }
+        public int CurrentPageNumber { get; set; }
         public int TotalPages { get; set; }
         public int ItemsFrom { get; set; }
         public int ItemsTo { get; set; }
@@ -20,6 +21,7 @@ namespace Ecommerce.Shared.Infrastructure.Pagination
         {
             //Tutaj mamy przypisanie do konstruktora, aby działało. Potrzebne nam są tu wyliczenia matematyczne, żeby to działało.
             Items = items;
+            CurrentPageNumber = pageNumber;
             TotalItemsCount = totalCount;
             ItemsFrom = pageSize * (pageNumber - 1) + 1;
             ItemsTo = ItemsFrom + pageSize - 1;

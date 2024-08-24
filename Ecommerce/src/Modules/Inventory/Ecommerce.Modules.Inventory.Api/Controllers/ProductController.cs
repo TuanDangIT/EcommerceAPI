@@ -9,13 +9,17 @@ using Ecommerce.Modules.Inventory.Application.Features.Products.DeleteProduct;
 using Ecommerce.Modules.Inventory.Application.Features.Products.DeleteSelectedProducts;
 using Ecommerce.Modules.Inventory.Application.Features.Products.GetProduct;
 using Ecommerce.Modules.Inventory.Application.Features.Products.UpdateProduct;
+using Ecommerce.Modules.Inventory.Domain.Entities;
+using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,21 +33,18 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [HttpPost()]
         public async Task<ActionResult> CreateProduct([FromForm] CreateProduct command)
         {
-            await _mediator.Send(command);
-            return NoContent();
+            var productId = await _mediator.Send(command);
+            return CreatedAtAction(nameof(GetProduct), new {productId}, null);
         }
         [HttpGet()]
-        public async Task<ActionResult<PagedResult<ProductListingDto>>> BrowseProducts([FromQuery] BrowseProducts query)
+        public async Task<ActionResult<ApiResponse>> BrowseProducts([FromQuery] BrowseProducts query)
         {
             var result = await _mediator.Send(query);
-            return Ok(result);
+            return Ok(new ApiResponse(HttpStatusCode.OK, "success", result));
         }
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<PagedResult<ProductListingDto>>> GetProduct([FromRoute]Guid id)
-        {
-            var result = await _mediator.Send(new GetProduct(id));
-            return Ok(result);
-        }
+        public async Task<ActionResult<ApiResponse>> GetProduct([FromRoute]Guid id)
+            => OkOrNotFound<Product>(await _mediator.Send(new GetProduct(id)));
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteProduct([FromRoute] Guid id)
         {
