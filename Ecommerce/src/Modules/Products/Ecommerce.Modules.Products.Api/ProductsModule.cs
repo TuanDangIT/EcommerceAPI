@@ -1,4 +1,5 @@
-﻿using Ecommerce.Shared.Abstractions.Modules;
+﻿using Ecommerce.Modules.Products.Core;
+using Ecommerce.Shared.Abstractions.Modules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +21,7 @@ namespace Ecommerce.Modules.Products.Api
 
         public void Register(IServiceCollection services, IConfiguration configuration)
         {
+            services.AddCore();
         }
 
         public void Use(WebApplication app)
