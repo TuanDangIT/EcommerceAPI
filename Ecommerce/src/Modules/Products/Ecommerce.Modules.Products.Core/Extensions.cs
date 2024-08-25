@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Ecommerce.Modules.Products.Core.DAL;
+using Ecommerce.Shared.Infrastructure.Postgres;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,7 @@ namespace Ecommerce.Modules.Products.Core
     {
         public static IServiceCollection AddCore(this IServiceCollection services)
         {
+            services.AddPostgres<ProductDbContext>();
             return services;
         }
     }
