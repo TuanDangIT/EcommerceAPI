@@ -20,7 +20,7 @@ namespace Ecommerce.Modules.Products.Core.Entities
         //public IEnumerable<Parameter> Parameters => _parameters;
         //private List<ProductParameter> _productParameters = new();
         //public IEnumerable<ProductParameter> ProductParameters => _productParameters;
-        public string Manufacturer { get; set; } = string.Empty;
+        public string? Manufacturer { get; set; } 
         //public List<Image> _images = new();
         //public IEnumerable<Image> Images => _images;
         public List<string> ImageUrls { get; set; } = new();
