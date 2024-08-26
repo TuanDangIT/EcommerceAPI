@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Ecommerce.Modules.Products.Core.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,8 @@ namespace Ecommerce.Modules.Products.Core.DAL
 {
     internal class ProductDbContext : DbContext
     {
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Review> Reviews { get; set; }
         public ProductDbContext(DbContextOptions<ProductDbContext> options) : base(options)
         {
 
