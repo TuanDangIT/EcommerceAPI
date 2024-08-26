@@ -15,12 +15,31 @@ namespace Ecommerce.Modules.Products.Core.Services
     internal class ReviewService : IReviewService
     {
         private readonly IProductDbContext _dbContext;
+        private readonly TimeProvider _timeProvider;
 
-        public ReviewService(IProductDbContext dbContext)
+        public ReviewService(IProductDbContext dbContext, TimeProvider timeProvider)
         {
             _dbContext = dbContext;
+            _timeProvider = timeProvider;
         }
 
+        public async Task<int> AddReviewForProduct(ReviewAddDto reviewAddDto, Guid productId)
+        {
+            var product = await _dbContext.Products.SingleOrDefaultAsync(p => p.Id == productId);
+            if(product is null)
+            {
+                throw new ProductNotFoundException(productId);
+            }
+            //nie koniec, jeszcze Username
+            product.AddReview(new Review()
+            {
+                Id = Guid.NewGuid(),
+                Text = reviewAddDto.Text,
+                Grade = reviewAddDto.Grade,
+                CreatedAt = _timeProvider.GetUtcNow().UtcDateTime
+            });
+            return await _dbContext.SaveChangesAsync();
+        }
         public async Task<IEnumerable<ReviewBrowseDto>> BrowseReviewsForProductAsync(Guid productId)
             => await _dbContext.Reviews.Where(r => r.ProductId  == productId).Select(r => r.AsBrowseDto()).ToListAsync();
 

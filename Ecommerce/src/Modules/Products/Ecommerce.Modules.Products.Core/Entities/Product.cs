@@ -25,8 +25,10 @@ namespace Ecommerce.Modules.Products.Core.Entities
         //public IEnumerable<Image> Images => _images;
         public List<string> ImagePathUrls { get; set; } = new();
         public string Category { get; set; } = string.Empty;
-        public List<Review>? Reviews { get; set; } = new();
+        public List<Review> Reviews { get; set; } = new();
         //public DateTime CreatedAt { get; private set; }
         //public DateTime? UpdatedAt { get; private set; }
+        public void AddReview(Review review)
+            => Reviews.Add(review);
     }
 }

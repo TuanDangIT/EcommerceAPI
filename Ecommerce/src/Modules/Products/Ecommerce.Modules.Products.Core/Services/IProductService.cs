@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Products.Core.Services
 {
-    internal interface IProductService
+    public interface IProductService
     {
         //Task<int> AddAsync(Product product);
         //Task<int> UpdateAsync(Product product);
