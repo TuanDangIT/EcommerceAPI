@@ -15,7 +15,7 @@ namespace Ecommerce.Modules.Products.Core.DAL
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("inventory");
+            modelBuilder.HasDefaultSchema("product");
             modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
         }
     }
