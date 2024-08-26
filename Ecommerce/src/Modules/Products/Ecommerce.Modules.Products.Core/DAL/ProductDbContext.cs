@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Products.Core.DAL
 {
-    internal class ProductDbContext : DbContext
+    internal class ProductDbContext : DbContext, IProductDbContext
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<Review> Reviews { get; set; }
@@ -20,6 +20,11 @@ namespace Ecommerce.Modules.Products.Core.DAL
         {
             modelBuilder.HasDefaultSchema("product");
             modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+        }
+
+        public Task<int> SaveChangesAsync()
+        {
+            return base.SaveChangesAsync();
         }
     }
 }

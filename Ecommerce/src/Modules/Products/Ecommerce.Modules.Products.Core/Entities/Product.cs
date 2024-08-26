@@ -8,13 +8,13 @@ namespace Ecommerce.Modules.Products.Core.Entities
 {
     public class Product
     {
-        public Guid Id { get; private set; }
-        public string SKU { get; private set; } = string.Empty;
-        public string Name { get; private set; } = string.Empty;
-        public decimal Price { get; private set; }
-        public int? Quantity { get; private set; }
-        public string Description { get; private set; } = string.Empty;
-        public string? AdditionalDescription { get; private set; }
+        public Guid Id { get; set; }
+        public string SKU { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public decimal Price { get; set; }
+        public int? Quantity { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public string? AdditionalDescription { get; set; }
         public List<Parameter>? Parameters { get; set; } = new();
         //private readonly List<Parameter> _parameters = new();
         //public IEnumerable<Parameter> Parameters => _parameters;
@@ -23,7 +23,7 @@ namespace Ecommerce.Modules.Products.Core.Entities
         public string? Manufacturer { get; set; } 
         //public List<Image> _images = new();
         //public IEnumerable<Image> Images => _images;
-        public List<string> ImageUrls { get; set; } = new();
+        public List<string> ImagePathUrls { get; set; } = new();
         public string Category { get; set; } = string.Empty;
         public List<Review>? Reviews { get; set; } = new();
         //public DateTime CreatedAt { get; private set; }
