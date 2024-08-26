@@ -18,10 +18,10 @@ namespace Ecommerce.Modules.Users.Core.DAL.Configuration
             builder.HasIndex(x => x.Email).IsUnique();
             builder.Property(x => x.Password).IsRequired();
             builder.Property(x => x.Role).IsRequired();
-            builder.Property(x => x.CreatedAt)
-                .HasColumnType("timestamp without time zone");
-            builder.Property(x => x.LastUpdatedAt)
-                .HasColumnType("timestamp without time zone");
+            //builder.Property(x => x.CreatedAt)
+            //    .HasColumnType("timestamp without time zone");
+            //builder.Property(x => x.LastUpdatedAt)
+            //    .HasColumnType("timestamp without time zone");
             builder.OwnsOne(x => x.RefreshToken);
         }
     }

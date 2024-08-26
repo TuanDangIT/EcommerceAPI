@@ -66,6 +66,7 @@ namespace Ecommerce.Modules.Users.Core.Services
                 Id = dto.Id,
                 Email = email,
                 Password = password,
+                Username = dto.Username,
                 Role = dto.Role?.ToLowerInvariant() ?? "Customer",
                 CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
                 IsActive = true,
