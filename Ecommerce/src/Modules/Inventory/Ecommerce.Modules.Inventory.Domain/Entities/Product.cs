@@ -19,13 +19,13 @@ namespace Ecommerce.Modules.Inventory.Domain.Entities
         public string? Location { get; private set; }
         public string Description { get; private set; } = string.Empty;
         public string? AdditionalDescription { get; private set; }
-        private readonly List<Parameter> _parameters = new();
+        private readonly List<Parameter> _parameters = [];
         public IEnumerable<Parameter> Parameters => _parameters;
-        private List<ProductParameter> _productParameters = new();
+        private List<ProductParameter> _productParameters = [];
         public IEnumerable<ProductParameter> ProductParameters => _productParameters;
         public Manufacturer Manufacturer { get; private set; } = new();
         public Guid ManufacturerId { get; private set; }
-        public List<Image> _images = new();
+        public List<Image> _images = [];
         public IEnumerable<Image> Images => _images;
         public Category Category { get; private set; } = new();
         public Guid CategoryId { get; private set; } 

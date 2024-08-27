@@ -15,7 +15,7 @@ namespace Ecommerce.Modules.Products.Core.Entities
         public int? Quantity { get; set; }
         public string Description { get; set; } = string.Empty;
         public string? AdditionalDescription { get; set; }
-        public List<Parameter>? Parameters { get; set; } = new();
+        public List<Parameter>? Parameters { get; set; } = [];
         //private readonly List<Parameter> _parameters = new();
         //public IEnumerable<Parameter> Parameters => _parameters;
         //private List<ProductParameter> _productParameters = new();
@@ -23,9 +23,9 @@ namespace Ecommerce.Modules.Products.Core.Entities
         public string? Manufacturer { get; set; } 
         //public List<Image> _images = new();
         //public IEnumerable<Image> Images => _images;
-        public List<string> ImagePathUrls { get; set; } = new();
+        public List<string> ImagePathUrls { get; set; } = [];
         public string Category { get; set; } = string.Empty;
-        public List<Review> Reviews { get; set; } = new();
+        public List<Review> Reviews { get; set; } = [];
         //public DateTime CreatedAt { get; private set; }
         //public DateTime? UpdatedAt { get; private set; }
         public void AddReview(Review review)

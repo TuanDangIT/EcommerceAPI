@@ -15,11 +15,11 @@ namespace Ecommerce.Modules.Products.Core.DTO
         public int? Quantity { get; set; }
         public string Description { get; set; } = string.Empty;
         public string? AdditionalDescription { get; set; }
-        public List<Parameter>? Parameters { get; set; } = new();
+        public List<Parameter>? Parameters { get; set; } = [];
         public string? Manufacturer { get; set; }
-        public List<string> ImageUrls { get; set; } = new();
+        public List<string> ImageUrls { get; set; } = [];
         public string Category { get; set; } = string.Empty;
         public double AverageGrade { get; set; }
-        public List<Review>? Reviews { get; set; } = new();
+        public List<Review>? Reviews { get; set; } = [];
     }
 }

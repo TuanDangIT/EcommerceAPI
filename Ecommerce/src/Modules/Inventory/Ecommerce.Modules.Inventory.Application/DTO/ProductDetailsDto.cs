@@ -21,8 +21,8 @@ namespace Ecommerce.Modules.Inventory.Application.DTO
         public string? AdditionalDescription { get; set; }
         public string Manufacturer { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
-        public List<ProductDetailsImageDto> Images { get; set; } = new();
-        public List<ProductDetailsParameterDto> Parameters { get; set; } = new();
+        public List<ProductDetailsImageDto> Images { get; set; } = [];
+        public List<ProductDetailsParameterDto> Parameters { get; set; } = [];
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }

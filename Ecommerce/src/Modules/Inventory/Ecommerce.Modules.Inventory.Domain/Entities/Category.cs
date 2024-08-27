@@ -10,7 +10,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Entities
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; } = string.Empty;
-        private readonly List<Product> _product = new();
+        private readonly List<Product> _product = [];
         public IEnumerable<Product> Products => _product;
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
