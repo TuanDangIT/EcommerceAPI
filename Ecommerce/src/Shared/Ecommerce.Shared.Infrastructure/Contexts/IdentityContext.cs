@@ -12,6 +12,7 @@ namespace Ecommerce.Shared.Infrastructure.Contexts
     {
         public bool IsAuthenticated { get; }
         public Guid Id { get; }
+        public string Username { get; }
         public string Role { get; }
 
         public IdentityContext(ClaimsPrincipal principal)
@@ -26,6 +27,7 @@ namespace Ecommerce.Shared.Infrastructure.Contexts
             }
             Id = IsAuthenticated ? Guid.Parse(principal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)!.Value) : Guid.Empty;
             Role = IsAuthenticated ? principal.Claims.Single(x => x.Type == ClaimTypes.Role).Value : string.Empty;
+            Username = IsAuthenticated ? principal.Claims.Single(x => x.Type == ClaimTypes.Name).Value : string.Empty;
         }
     }
 }

@@ -67,7 +67,7 @@ namespace Ecommerce.Modules.Users.Core.DAL.Migrations
 
             modelBuilder.Entity("Ecommerce.Modules.Users.Core.Entities.User", b =>
                 {
-                    b.OwnsOne("Ecommerce.Modules.Users.Core.Entities.RefreshToken", "RefreshToken", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Users.Core.Entities.User.RefreshToken#Ecommerce.Modules.Users.Core.Entities.RefreshToken", "RefreshToken", b1 =>
                         {
                             b1.Property<Guid>("UserId")
                                 .HasColumnType("uuid");

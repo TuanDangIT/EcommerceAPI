@@ -9,8 +9,9 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
 {
     public interface IUserRepository
     {
-        Task<User?> GetAsync(Guid id);
-        Task<User?> GetAsync(string email);
+        Task<User?> GetByIdAsync(Guid id);
+        Task<User?> GetByEmailAsync(string email);
+        Task<User?> GetByUsernameAsync(string username);
         Task AddAsync(User user);
         Task<RefreshToken> AddRefreshTokenAsync(User user, string generatedRefreshToken);
         Task UpdateAsync(User user);

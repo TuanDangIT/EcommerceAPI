@@ -15,6 +15,7 @@ namespace Ecommerce.Modules.Users.Core.DAL.Configuration
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
+            builder.Property(x => x.Email).IsRequired();
             builder.HasIndex(x => x.Email).IsUnique();
             builder.Property(x => x.Password).IsRequired();
             builder.Property(x => x.Role).IsRequired();

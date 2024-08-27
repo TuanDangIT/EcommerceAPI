@@ -49,9 +49,11 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public Task<User?> GetAsync(Guid id) => _dbContext.Users.SingleOrDefaultAsync(x => x.Id == id);
+        public Task<User?> GetByIdAsync(Guid id) => _dbContext.Users.SingleOrDefaultAsync(x => x.Id == id);
 
-        public Task<User?> GetAsync(string email) => _dbContext.Users.SingleOrDefaultAsync(x => x.Email == email);
+        public Task<User?> GetByEmailAsync(string email) => _dbContext.Users.SingleOrDefaultAsync(x => x.Email == email);
+
+        public Task<User?> GetByUsernameAsync(string username) => _dbContext.Users.SingleOrDefaultAsync(x => x.Username == username);
 
         public async Task UpdateAsync(User user)
         {

@@ -9,7 +9,7 @@ namespace Ecommerce.Shared.Abstractions.Auth
 {
     public interface IAuthManager
     {
-        JsonWebToken GenerateAccessToken(string userId, string role = "Customer");
+        JsonWebToken GenerateAccessToken(string userId, string username, string role = "Customer");
         string GenerateRefreshToken();
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
     }

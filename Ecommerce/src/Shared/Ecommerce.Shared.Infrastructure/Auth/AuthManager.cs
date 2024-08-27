@@ -24,7 +24,7 @@ namespace Ecommerce.Shared.Infrastructure.Auth
             _timeProvider = timeProvider;
             _signingCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authOptions.IssuerSigningKey)), SecurityAlgorithms.HmacSha256);
         }
-        public JsonWebToken GenerateAccessToken(string userId, string role)
+        public JsonWebToken GenerateAccessToken(string userId, string username, string role = "Customer")
         {
             if (string.IsNullOrWhiteSpace(userId))
             {
@@ -38,7 +38,8 @@ namespace Ecommerce.Shared.Infrastructure.Auth
             var jwtClaims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, userId.ToString()),
-                new(ClaimTypes.Role, role),
+                new(ClaimTypes.Name, username),
+                new(ClaimTypes.Role, role)
             };
 
             var jwt = new JwtSecurityToken(

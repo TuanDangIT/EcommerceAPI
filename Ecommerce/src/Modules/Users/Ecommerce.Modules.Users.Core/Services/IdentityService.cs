@@ -29,7 +29,7 @@ namespace Ecommerce.Modules.Users.Core.Services
         }
         public async Task<JsonWebToken> SignInAsync(SignInDto dto)
         {
-            var user = await _userRepository.GetAsync(dto.Email);
+            var user = await _userRepository.GetByEmailAsync(dto.Email);
             if(user is null)
             {
                 throw new InvalidCredentialsException();
@@ -43,7 +43,7 @@ namespace Ecommerce.Modules.Users.Core.Services
             {
                 throw new UserNotActiveException(user.Id);
             }
-            var jwt = _authManager.GenerateAccessToken(user.Id.ToString());
+            var jwt = _authManager.GenerateAccessToken(user.Id.ToString(), user.Username);
             var generatedRefreshToken = _authManager.GenerateRefreshToken();
             var refreshToken = await _userRepository.AddRefreshTokenAsync(user, generatedRefreshToken);
             jwt.RefreshTokenExpiryTime = refreshToken.RefreshTokenExpiryTime;
@@ -55,13 +55,16 @@ namespace Ecommerce.Modules.Users.Core.Services
         public async Task SignUpAsync(SignUpDto dto)
         {
             var email = dto.Email.ToLowerInvariant();
-            var user = await _userRepository.GetAsync(email);
-            if(user is not null)
+            if(await _userRepository.GetByEmailAsync(email) is not null)
             {
                 throw new EmailInUseException();
             }
+            if(await _userRepository.GetByUsernameAsync(dto.Username) is not null)
+            {
+                throw new UsernameInUseException();
+            }
             var password = _passwordHasher.HashPassword(default!, dto.Password);
-            user = new User()
+            var user = new User()
             {
                 Id = dto.Id,
                 Email = email,
@@ -78,12 +81,12 @@ namespace Ecommerce.Modules.Users.Core.Services
             string accessToken = dto.AccessToken;
             string refreshToken = dto.RefreshToken;
             var principal = _authManager.GetPrincipalFromExpiredToken(accessToken);
-            var user = await _userRepository.GetAsync(Guid.Parse(principal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)!.Value));
+            var user = await _userRepository.GetByIdAsync(Guid.Parse(principal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)!.Value));
             if (user is null || user.RefreshToken is null || user.RefreshToken.Token != refreshToken || user.RefreshToken.RefreshTokenExpiryTime <= _timeProvider.GetUtcNow().UtcDateTime)
             {
                 throw new InvalidRefreshToken();
             }
-            var jwt = _authManager.GenerateAccessToken(user.Id.ToString());
+            var jwt = _authManager.GenerateAccessToken(user.Id.ToString(), user.Username);
             var generatedRefreshToken = _authManager.GenerateRefreshToken();
             var newRefreshToken = await _userRepository.AddRefreshTokenAsync(user, generatedRefreshToken);
             jwt.RefreshTokenExpiryTime = newRefreshToken.RefreshTokenExpiryTime;
@@ -108,7 +111,7 @@ namespace Ecommerce.Modules.Users.Core.Services
         }
         public async Task<UserDto?> GetAsync(Guid id)
         {
-            var user = await _userRepository.GetAsync(id);
+            var user = await _userRepository.GetByIdAsync(id);
             return user is null ? null : new UserDto()
             {
                 Id = user.Id,
@@ -121,7 +124,7 @@ namespace Ecommerce.Modules.Users.Core.Services
 
         public async Task<UserDto?> GetAsync(string email)
         {
-            var user = await _userRepository.GetAsync(email);
+            var user = await _userRepository.GetByEmailAsync(email);
             return user is null ? null : new UserDto()
             {
                 Id = user.Id,
