@@ -27,11 +27,11 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
         public async Task<PagedResult<ManufacturerBrowseDto>> Handle(BrowseManufacturers request, CancellationToken cancellationToken)
         {
             var manufacturers = _dbContext.Manufacturers
+                .AsNoTracking()
                 .AsQueryable();
             var dtos = await _sieveProcessor
                 .Apply(request, manufacturers)
                 .Select(c => c.AsBrowseDto())
-                .AsNoTracking()
                 .ToListAsync();
             var totalCount = await _sieveProcessor
                 .Apply(request, manufacturers, applyPagination: false, applySorting: false)

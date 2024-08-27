@@ -32,11 +32,11 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
                 .Include(p => p.Images)
                 .Include(p => p.ProductParameters)
                 .ThenInclude(pp => pp.Parameter)
+                .AsNoTracking()
                 .AsQueryable();
             var dtos = await _sieveProcessor
                 .Apply(request, products)
                 .Select(p => p.AsListingDto())
-                .AsNoTracking()
                 .ToListAsync();
             var totalCount = await _sieveProcessor
                 .Apply(request, products, applyPagination: false)

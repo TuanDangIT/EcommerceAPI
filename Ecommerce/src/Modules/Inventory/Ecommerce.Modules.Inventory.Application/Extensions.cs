@@ -30,7 +30,7 @@ namespace Ecommerce.Modules.Inventory.Application
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
             services.Configure<SieveOptions>(configuration.GetSection("Sieve"));
-            services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
+            services.AddScoped<ISieveProcessor, InventoryModuleSieveProcessor>();
             services.AddScoped<ISieveCustomFilterMethods, SieveCustomFilterMethods>();
             return services;
         }

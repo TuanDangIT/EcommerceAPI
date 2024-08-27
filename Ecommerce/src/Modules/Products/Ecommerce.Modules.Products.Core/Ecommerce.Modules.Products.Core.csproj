@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Sieve" Version="2.5.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\Ecommerce.Shared.Abstractions\Ecommerce.Shared.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\Shared\Ecommerce.Shared.Infrastructure\Ecommerce.Shared.Infrastructure.csproj" />
   </ItemGroup>

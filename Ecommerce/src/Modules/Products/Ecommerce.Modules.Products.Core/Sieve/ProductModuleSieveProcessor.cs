@@ -1,5 +1,4 @@
-﻿using Ecommerce.Modules.Inventory.Domain.Entities;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Sieve.Models;
 using Sieve.Services;
 using System;
@@ -9,12 +8,13 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Inventory.Application.Sieve
+namespace Ecommerce.Modules.Products.Core.Sieve
 {
-    internal class ApplicationSieveProcessor : SieveProcessor
+    internal class ProductModuleSieveProcessor : SieveProcessor
     {
-        public ApplicationSieveProcessor(IOptions<SieveOptions> options, ISieveCustomFilterMethods sieveCustomFilterMethods) : base(options, sieveCustomFilterMethods)
+        public ProductModuleSieveProcessor(IOptions<SieveOptions> options) : base(options)
         {
+
         }
         protected override SievePropertyMapper MapProperties(SievePropertyMapper mapper)
         {
