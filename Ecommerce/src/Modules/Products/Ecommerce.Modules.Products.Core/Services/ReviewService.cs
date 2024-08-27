@@ -40,14 +40,12 @@ namespace Ecommerce.Modules.Products.Core.Services
             {
                 throw new ProductNotFoundException(productId);
             }
-            product.AddReview(new Review()
-            {
-                Id = Guid.NewGuid(),
-                Text = reviewAddDto.Text,
-                Grade = reviewAddDto.Grade,
-                CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
-                Username = _identityContext.IsAuthenticated ? _identityContext.Username : throw new UserIsNotAuthenticatedException()
-            });
+            product.AddReview(new Review(
+                Guid.NewGuid(), 
+                _identityContext.IsAuthenticated ? _identityContext.Username : throw new UserIsNotAuthenticatedException(), 
+                reviewAddDto.Text, 
+                reviewAddDto.Grade,
+                _timeProvider.GetUtcNow().UtcDateTime));
             return await _dbContext.SaveChangesAsync();
         }
         //public async Task<IEnumerable<ReviewBrowseDto>> BrowseReviewsForProductAsync(Guid productId)
@@ -83,8 +81,7 @@ namespace Ecommerce.Modules.Products.Core.Services
             {
                 throw new ReviewNotFoundException(reviewId);
             }
-            review.Text = updateReviewDto.Text;
-            review.Grade = updateReviewDto.Grade;
+            review.UpdateReview(updateReviewDto.Text, updateReviewDto.Grade);
             return await _dbContext.SaveChangesAsync();
         }
     }

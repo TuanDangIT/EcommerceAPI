@@ -16,7 +16,7 @@ namespace Ecommerce.Modules.Users.Core.Entities
         public string Role { get; set; } = string.Empty;
         public RefreshToken? RefreshToken { get; set; }
         public bool IsActive { get; set; }
-        public DateTime LastUpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }

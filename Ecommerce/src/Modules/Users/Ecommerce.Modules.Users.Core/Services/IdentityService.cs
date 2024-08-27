@@ -106,7 +106,7 @@ namespace Ecommerce.Modules.Users.Core.Services
                 Id = userDto.Id,
                 Email = userDto.Email,
                 Role = userDto.Role,
-                LastUpdatedAt = _timeProvider.GetUtcNow().UtcDateTime
+                UpdatedAt = _timeProvider.GetUtcNow().UtcDateTime
             });
         }
         public async Task<UserDto?> GetAsync(Guid id)
@@ -118,7 +118,7 @@ namespace Ecommerce.Modules.Users.Core.Services
                 Email = user.Email,
                 Role = user.Role,
                 CreatedAt = user.CreatedAt,
-                LastUpdatedAt = user.LastUpdatedAt,
+                LastUpdatedAt = user.UpdatedAt,
             };
         }
 
@@ -131,7 +131,7 @@ namespace Ecommerce.Modules.Users.Core.Services
                 Email = user.Email,
                 Role = user.Role,
                 CreatedAt = user.CreatedAt,
-                LastUpdatedAt = user.LastUpdatedAt,
+                LastUpdatedAt = user.UpdatedAt,
             };
         }
     }
