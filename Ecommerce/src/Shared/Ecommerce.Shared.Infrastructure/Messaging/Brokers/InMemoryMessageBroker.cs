@@ -35,11 +35,7 @@ namespace Ecommerce.Shared.Infrastructure.Messaging.Brokers
 
             foreach (var message in messages)
             {
-                if (1 == 1)
-                {
-                    await _asyncMessageDispatcher.PublishAsync(message);
-                    continue;
-                }
+                await _asyncMessageDispatcher.PublishAsync(message);
                 //tasks.Add(_moduleClient.PublishAsync(message));
             }
 

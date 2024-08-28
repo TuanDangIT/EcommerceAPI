@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Inventory.Domain.Repositories;
+﻿using Ecommerce.Modules.Inventory.Domain.Auctions.Repositories;
+using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories;
 using Ecommerce.Shared.Infrastructure.Postgres;
@@ -23,6 +24,8 @@ namespace Ecommerce.Modules.Inventory.Infrastructure
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IImageRepository, ImageRepository>();
+            services.AddScoped<IAuctionRepository, AuctionRepository>();
+            services.AddScoped<IReviewRepository, ReviewRepository>();
             return services;
         }
     }

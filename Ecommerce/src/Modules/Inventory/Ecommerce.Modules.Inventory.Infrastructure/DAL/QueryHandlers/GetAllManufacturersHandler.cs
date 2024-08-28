@@ -1,5 +1,5 @@
-﻿using Ecommerce.Modules.Inventory.Application.DTO;
-using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.GetAllManufacturers;
+﻿using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
+using Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacturers.GetAllManufacturers;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Microsoft.EntityFrameworkCore;

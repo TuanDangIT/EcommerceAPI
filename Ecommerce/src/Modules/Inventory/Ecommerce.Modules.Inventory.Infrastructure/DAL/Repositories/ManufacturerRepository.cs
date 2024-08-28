@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ecommerce.Modules.Inventory.Domain;
-using Ecommerce.Modules.Inventory.Domain.Entities;
-using Ecommerce.Modules.Inventory.Domain.Repositories;
+using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
+using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories

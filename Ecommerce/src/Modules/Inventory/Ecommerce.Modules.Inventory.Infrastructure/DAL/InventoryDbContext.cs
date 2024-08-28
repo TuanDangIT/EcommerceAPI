@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Ecommerce.Modules.Inventory.Domain.Entities;
+using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
+using Ecommerce.Modules.Inventory.Domain.Auctions.Entities;
 
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL
 {
@@ -16,6 +17,8 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL
         public DbSet<ProductParameter> ProductParameters { get; set; }  
         public DbSet<Image> Images { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Auction> Auctions { get; set; }
+        public DbSet<Review> Reviews { get; set; }  
         public InventoryDbContext(DbContextOptions<InventoryDbContext> options) : base(options)
         {
             

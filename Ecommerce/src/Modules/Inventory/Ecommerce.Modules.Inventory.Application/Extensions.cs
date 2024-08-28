@@ -1,7 +1,6 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Behavior;
-using Ecommerce.Modules.Inventory.Application.Features.Parameters.ChangeParameterName;
+using Ecommerce.Modules.Inventory.Application.Inventory.Sieve.CustomFilters;
 using Ecommerce.Modules.Inventory.Application.Sieve;
-using Ecommerce.Modules.Inventory.Application.Sieve.CustomFilters;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,6 +1,6 @@
-﻿using Ecommerce.Modules.Inventory.Application.DTO;
-using Ecommerce.Modules.Inventory.Application.Exceptions;
-using Ecommerce.Modules.Inventory.Application.Features.Category.BrowseCategory;
+﻿using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
+using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
+using Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.BrowseCategories;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Infrastructure.Pagination;

@@ -1,5 +1,4 @@
-﻿using Ecommerce.Modules.Inventory.Domain.Entities;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Sieve.Models;
 using Sieve.Services;
 using System;

@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Modules\Auctions\Ecommerce.Modules.Auctions.Api\Ecommerce.Modules.Auctions.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Carts\Ecommerce.Modules.Carts.Api\Ecommerce.Modules.Carts.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Discounts\Ecommerce.Modules.Discounts.Api\Ecommerce.Modules.Discounts.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Inventory\Ecommerce.Modules.Inventory.Api\Ecommerce.Modules.Inventory.Api.csproj" />

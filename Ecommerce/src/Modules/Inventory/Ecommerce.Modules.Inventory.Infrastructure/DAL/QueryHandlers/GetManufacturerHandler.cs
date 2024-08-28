@@ -1,6 +1,4 @@
-﻿using Ecommerce.Modules.Inventory.Application.DTO;
-using Ecommerce.Modules.Inventory.Application.Features.Manufacturers.GetManufacturer;
-using Ecommerce.Shared.Abstractions.MediatR;
+﻿using Ecommerce.Shared.Abstractions.MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings;
+using Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacturers.GetManufacturer;
+using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
 
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
 {

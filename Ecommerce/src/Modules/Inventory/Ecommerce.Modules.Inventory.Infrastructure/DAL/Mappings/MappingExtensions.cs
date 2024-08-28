@@ -1,9 +1,10 @@
-﻿using Ecommerce.Modules.Inventory.Application.DTO;
-using Ecommerce.Modules.Inventory.Domain.Entities;
+﻿using Ecommerce.Modules.Inventory.Application.Auctions.DTO;
+using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
+using Ecommerce.Modules.Inventory.Domain.Auctions.Entities;
+using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
@@ -19,7 +20,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
                 CreatedAt = manufacturer.CreatedAt,
                 UpdatedAt = manufacturer.UpdatedAt,
             };
-        public static ParameterBrowseDto AsBrowseDto(this Domain.Entities.Parameter parameter)
+        public static ParameterBrowseDto AsBrowseDto(this Domain.Inventory.Entities.Parameter parameter)
             => new ParameterBrowseDto()
             {
                 Name = parameter.Name, 
@@ -39,7 +40,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
                 Id = manufacturer.Id,
                 Name = manufacturer.Name,
             };
-        public static ParameterOptionDto AsOptionDto(this Domain.Entities.Parameter parameter)
+        public static ParameterOptionDto AsOptionDto(this Domain.Inventory.Entities.Parameter parameter)
             => new ParameterOptionDto()
             {
                 Id = parameter.Id,
@@ -96,6 +97,46 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
                 Name = product.Name,
                 Price = product.Price,
                 Quantity = product.Quantity,
+            };
+        public static AuctionBrowseDto AsBrowseDto(this Auction auction)
+            => new AuctionBrowseDto()
+            {
+                Name = auction.Name,
+                Price = auction.Price,
+                Quantity = auction.Quantity,
+                ImageUrl = auction.ImagePathUrls[0],
+                Category = auction.Category,
+                AverageGrade = auction.Reviews.Any() ? auction.Reviews.Average(p => p.Grade) : 0
+            };
+        public static AuctionDetailsDto AsDetailsDto(this Auction auction)
+        {
+            var reviews = new List<ReviewDto>();
+            
+            return new AuctionDetailsDto()
+            {
+                SKU = auction.SKU,
+                Name = auction.Name,
+                Price = auction.Price,
+                Quantity = auction.Quantity,
+                Description = auction.Description,
+                AdditionalDescription = auction.AdditionalDescription,
+                Parameters = auction.Parameters,
+                Manufacturer = auction.Manufacturer,
+                ImageUrls = auction.ImagePathUrls,
+                Category = auction.Category,
+                Reviews = auction.Reviews.Select(r => r.AsDto()).ToList(),
+                AverageGrade = auction.Reviews.Any() ? auction.Reviews.Average(p => p.Grade) : 0
+            };
+        }
+        public static ReviewDto AsDto(this Review review)
+            => new ReviewDto()
+            {
+                Id = review.Id,
+                Username = review.Username,
+                Text = review.Text,
+                Grade = review.Grade,
+                CreatedAt = review.CreatedAt,
+                UpdatedAt = review.UpdatedAt
             };
     }
 }

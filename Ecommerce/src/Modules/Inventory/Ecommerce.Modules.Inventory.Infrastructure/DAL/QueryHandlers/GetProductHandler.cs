@@ -1,6 +1,5 @@
-﻿using Ecommerce.Modules.Inventory.Application.DTO;
-using Ecommerce.Modules.Inventory.Application.Exceptions;
-using Ecommerce.Modules.Inventory.Application.Features.Products.GetProduct;
+﻿using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
+using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.GetProduct;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Microsoft.EntityFrameworkCore;
