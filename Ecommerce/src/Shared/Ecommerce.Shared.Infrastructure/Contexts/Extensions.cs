@@ -14,8 +14,8 @@ namespace Ecommerce.Shared.Infrastructure.Contexts
         public static IServiceCollection AddContext(this IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<ContextFactory>();
-            services.AddTransient(sp => sp.GetRequiredService<ContextFactory>().Create());
+            services.AddSingleton<IContextFactory, ContextFactory>();
+            services.AddTransient(sp => sp.GetRequiredService<IContextFactory>().Create());
             return services;
         }
     }

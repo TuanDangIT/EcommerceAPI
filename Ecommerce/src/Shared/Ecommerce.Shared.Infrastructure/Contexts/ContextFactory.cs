@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Shared.Infrastructure.Contexts
 {
-    internal class ContextFactory 
+    internal class ContextFactory : IContextFactory
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 

@@ -12,12 +12,11 @@ namespace Ecommerce.Shared.Infrastructure.Contexts
     {
         public string RequestId => $"{Guid.NewGuid()}";
 
-        public string TraceId { get; }
+        public string TraceId { get; } = string.Empty;
 
         public IIdentityContext? Identity { get; }
         internal ContextService()
         {
-            TraceId = string.Empty;
         }
         public ContextService(HttpContext context) : this(context.TraceIdentifier, new IdentityContext(context.User))
         {

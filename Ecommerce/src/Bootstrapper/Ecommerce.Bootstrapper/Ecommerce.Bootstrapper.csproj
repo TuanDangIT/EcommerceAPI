@@ -15,13 +15,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Modules\Auctions\Ecommerce.Modules.Auctions.Api\Ecommerce.Modules.Auctions.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Carts\Ecommerce.Modules.Carts.Api\Ecommerce.Modules.Carts.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Discounts\Ecommerce.Modules.Discounts.Api\Ecommerce.Modules.Discounts.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Inventory\Ecommerce.Modules.Inventory.Api\Ecommerce.Modules.Inventory.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Mails\Ecommerce.Modules.Mails.Api\Ecommerce.Modules.Mails.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Orders\Ecommerce.Modules.Orders.Api\Ecommerce.Modules.Orders.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Payments\Ecommerce.Modules.Payments.Api\Ecommerce.Modules.Payments.Api.csproj" />
-    <ProjectReference Include="..\..\Modules\Products\Ecommerce.Modules.Products.Api\Ecommerce.Modules.Products.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Returns\Ecommerce.Modules.Returns.Api\Ecommerce.Modules.Returns.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Users\Ecommerce.Modules.Users.Api\Ecommerce.Modules.Users.Api.csproj" />
     <ProjectReference Include="..\..\Shared\Ecommerce.Shared.Infrastructure\Ecommerce.Shared.Infrastructure.csproj" />

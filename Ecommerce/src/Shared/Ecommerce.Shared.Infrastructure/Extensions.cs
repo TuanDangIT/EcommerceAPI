@@ -2,7 +2,10 @@
 using Ecommerce.Shared.Infrastructure.Api;
 using Ecommerce.Shared.Infrastructure.Auth;
 using Ecommerce.Shared.Infrastructure.Contexts;
+using Ecommerce.Shared.Infrastructure.Events;
 using Ecommerce.Shared.Infrastructure.Exceptions;
+using Ecommerce.Shared.Infrastructure.Messaging;
+using Ecommerce.Shared.Infrastructure.Modules;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Ecommerce.Shared.Infrastructure.Services;
 using Ecommerce.Shared.Infrastructure.Storage;
@@ -24,9 +27,12 @@ namespace Ecommerce.Shared.Infrastructure
 {
     internal static class Extensions
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IList<Assembly> assemblies)
         {
             services.AddErrorHandling();
+            services.AddEvents(assemblies);
+            services.AddModuleRequests(assemblies);
+            services.AddMessaging();
             services.AddContext();
             services.AddSingleton(TimeProvider.System);
             services.AddAuth();
