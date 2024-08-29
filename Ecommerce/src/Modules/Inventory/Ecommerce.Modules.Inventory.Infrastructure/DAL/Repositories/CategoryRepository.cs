@@ -25,7 +25,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
 
         public async Task<int> DeleteAsync(Guid categoryId) => await _dbContext.Categories.Where(c => c.Id == categoryId).ExecuteDeleteAsync();
 
-        public async Task<int> DeleteManyAsync(params Guid[] categoryIds) => await _dbContext.Categories.Where(c => categoryIds.Contains(c.Id)).ExecuteDeleteAsync();
+        public async Task<int> DeleteManyAsync(Guid[] categoryIds) => await _dbContext.Categories.Where(c => categoryIds.Contains(c.Id)).ExecuteDeleteAsync();
 
         public async Task<IEnumerable<Category>> GetAllAsync() => await _dbContext.Categories.ToListAsync();
 

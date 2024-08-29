@@ -14,7 +14,8 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Repositories
         Task<int> DeleteAsync(Guid productId);
         //Task<int> DecreaseQuantityAsync(Guid productId, int ammount);
         Task<int> DeleteManyAsync(Guid[] productIds);
-        Task<IEnumerable<Product>> GetAllAsync();
+        Task<IEnumerable<Guid>> GetAllIdThatContainsInArrayAsync(Guid[] productIds);
+        Task<IEnumerable<Product>> GetAllThatContainsInArrayAsync(Guid[] productIds);
         Task<Product?> GetAsync(Guid productId);
         Task DeleteProductParametersAndImagesRelatedToProduct(Guid productId);
     }

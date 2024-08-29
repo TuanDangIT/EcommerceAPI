@@ -10,5 +10,5 @@ using Sieve.Models;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.BrowseProducts
 {
-    public sealed class BrowseProducts : SieveModel, IQuery<PagedResult<ProductListingDto>>;
+    public sealed class BrowseProducts : SieveModel, IQuery<PagedResult<ProductBrowseDto>>;
 }

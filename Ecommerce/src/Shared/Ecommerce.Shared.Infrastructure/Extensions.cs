@@ -2,6 +2,7 @@
 using Ecommerce.Shared.Infrastructure.Api;
 using Ecommerce.Shared.Infrastructure.Auth;
 using Ecommerce.Shared.Infrastructure.Contexts;
+using Ecommerce.Shared.Infrastructure.DomainEvents;
 using Ecommerce.Shared.Infrastructure.Events;
 using Ecommerce.Shared.Infrastructure.Exceptions;
 using Ecommerce.Shared.Infrastructure.Messaging;
@@ -31,6 +32,7 @@ namespace Ecommerce.Shared.Infrastructure
         {
             services.AddErrorHandling();
             services.AddEvents(assemblies);
+            services.AddDomainEvents(assemblies);
             services.AddModuleRequests(assemblies);
             services.AddMessaging();
             services.AddContext();

@@ -4,6 +4,8 @@ using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Create
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.DeleteProduct;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.DeleteSelectedProducts;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.GetProduct;
+using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.ListProduct;
+using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.UnlistProduct;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.UpdateProduct;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Shared.Abstractions.Api;
@@ -33,10 +35,10 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return CreatedAtAction(nameof(GetProduct), new {productId}, null);
         }
         [HttpGet()]
-        public async Task<ActionResult<ApiResponse<PagedResult<ProductListingDto>>>> BrowseProducts([FromQuery] BrowseProducts query)
+        public async Task<ActionResult<ApiResponse<PagedResult<ProductBrowseDto>>>> BrowseProducts([FromQuery] BrowseProducts query)
         {
             var result = await _mediator.Send(query);
-            return Ok(new ApiResponse<PagedResult<ProductListingDto>>(HttpStatusCode.OK, "success", result));
+            return Ok(new ApiResponse<PagedResult<ProductBrowseDto>>(HttpStatusCode.OK, "success", result));
         }
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<ApiResponse<ProductDetailsDto>>> GetProduct([FromRoute]Guid id)
@@ -57,6 +59,18 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public async Task<ActionResult> UpdateProduct([FromForm] UpdateProduct command)
         {
             await _mediator.Send(command);
+            return NoContent();
+        }
+        [HttpPost("list")]
+        public async Task<ActionResult> ListProduct([FromBody]Guid[] ids)
+        {
+            await _mediator.Send(new ListProduct(ids));
+            return NoContent();
+        }
+        [HttpPost("unlist")]
+        public async Task<ActionResult> UnlistProduct([FromBody] Guid[] ids)
+        {
+            await _mediator.Send(new UnlistProduct(ids));
             return NoContent();
         }
     }

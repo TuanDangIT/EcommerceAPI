@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
 {
-    internal sealed class BrowseProductsHandler : IQueryHandler<BrowseProducts, PagedResult<ProductListingDto>>
+    internal sealed class BrowseProductsHandler : IQueryHandler<BrowseProducts, PagedResult<ProductBrowseDto>>
     {
         private readonly InventoryDbContext _dbContext;
         private readonly ISieveProcessor _sieveProcessor;
@@ -24,7 +24,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
             _dbContext = dbContext;
             _sieveProcessor = sieveProcessor;
         }
-        public async Task<PagedResult<ProductListingDto>> Handle(BrowseProducts request, CancellationToken cancellationToken)
+        public async Task<PagedResult<ProductBrowseDto>> Handle(BrowseProducts request, CancellationToken cancellationToken)
         {
             var products = _dbContext.Products
                 .Include(p => p.Manufacturer)
@@ -45,7 +45,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
             {
                 throw new PaginationException();
             }
-            var pagedResult = new PagedResult<ProductListingDto>(dtos, totalCount, request.PageSize.Value, request.Page.Value);
+            var pagedResult = new PagedResult<ProductBrowseDto>(dtos, totalCount, request.PageSize.Value, request.Page.Value);
             return pagedResult;
         }
     }

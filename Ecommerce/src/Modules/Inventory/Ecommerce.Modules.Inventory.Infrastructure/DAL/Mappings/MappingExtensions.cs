@@ -90,8 +90,8 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
             };
             return productDetailsDto;
         }
-        public static ProductListingDto AsListingDto(this Product product)
-            => new ProductListingDto()
+        public static ProductBrowseDto AsListingDto(this Product product)
+            => new ProductBrowseDto()
             {
                 SKU = product.SKU,
                 Name = product.Name,

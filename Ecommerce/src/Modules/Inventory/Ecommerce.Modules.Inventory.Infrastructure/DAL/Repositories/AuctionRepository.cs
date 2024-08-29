@@ -23,8 +23,18 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
             await _dbContext.Auctions.AddAsync(auction);
             return await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<int> AddManyAsync(IEnumerable<Auction> auctions)
+        {
+            await _dbContext.Auctions.AddRangeAsync(auctions);  
+            return await _dbContext.SaveChangesAsync();
+        }
+
         public async Task<int> DeleteAsync(Guid auctionId)
             => await _dbContext.Auctions.Where(a => a.Id == auctionId).ExecuteDeleteAsync();
+
+        public async Task<int> DeleteManyAsync(Guid[] auctionIds) 
+            => await _dbContext.Auctions.Where(a => auctionIds.Contains(a.Id)).ExecuteDeleteAsync();
 
         public async Task<Auction?> GetAsync(Guid auctionId)
             => await _dbContext.Auctions.SingleOrDefaultAsync(a => a.Id == auctionId);

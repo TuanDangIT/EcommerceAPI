@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Inventory.Domain.Inventory.Events
+namespace Ecommerce.Shared.Abstractions.DomainEvents
 {
-    internal class CategoryCreated
+    public interface IDomainEvent
     {
     }
 }

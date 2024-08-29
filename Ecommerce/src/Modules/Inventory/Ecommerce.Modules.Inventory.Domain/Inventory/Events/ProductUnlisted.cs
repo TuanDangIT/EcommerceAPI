@@ -1,4 +1,4 @@
-﻿using Ecommerce.Shared.Abstractions.Events;
+﻿using Ecommerce.Shared.Abstractions.DomainEvents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Inventory.Events
 {
-    public record class ProductUpdated : IEvent;
+    public sealed record class ProductUnlisted(IEnumerable<Guid> ProductIds) : IDomainEvent;
 }
