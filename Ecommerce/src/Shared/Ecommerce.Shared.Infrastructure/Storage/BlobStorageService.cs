@@ -2,6 +2,7 @@
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
 using Ecommerce.Shared.Abstractions.BloblStorage;
+using Ecommerce.Shared.Infrastructure.Storage.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,11 @@ namespace Ecommerce.Shared.Infrastructure.Storage
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             BlobClient blobClient = containerClient.GetBlobClient(fileName);
             var a = blobClient.Uri;
-            await blobClient.DeleteAsync();
+            using var response = await blobClient.DeleteAsync();
+            if(response.IsError)
+            {
+                throw new BlobStorageFileNotDeletedException(fileName);
+            }
         }
         public async Task DeleteManyAsync(IEnumerable<string> fileNames, string containerName)
         {
@@ -37,7 +42,11 @@ namespace Ecommerce.Shared.Infrastructure.Storage
             {
                 imageUris.Add(new Uri(blobStorageUri + "/" + fileName));
             }
-            await blobBatchClient.DeleteBlobsAsync(imageUris);
+            var responses = await blobBatchClient.DeleteBlobsAsync(imageUris);
+            if (responses.Any(r => r.IsError == true))
+            {
+                throw new BlobStorageFilesNotAllDeletedException(fileNames);
+            }
         }
         public async Task<string> UploadAsync(IFormFile blob, string fileName, string containerName)
         {
@@ -45,10 +54,15 @@ namespace Ecommerce.Shared.Infrastructure.Storage
             BlobClient blobClient = containerClient.GetBlobClient(fileName);
             await using(Stream data = blob.OpenReadStream())
             {
-                await blobClient.UploadAsync(data, new BlobHttpHeaders()
+                var response = await blobClient.UploadAsync(data, new BlobHttpHeaders()
                 {
                     ContentType = blob.ContentType
                 });
+                using var rawResponse = response.GetRawResponse();
+                if (rawResponse.IsError)
+                {
+                    throw new BlobStorageFileNotUploadedException(fileName);
+                }
             }
             return blobClient.Uri.AbsolutePath;
         }
