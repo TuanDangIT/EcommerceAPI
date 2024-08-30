@@ -8,5 +8,19 @@ namespace Ecommerce.Modules.Carts.Core.Entities
 {
     internal class Product
     {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public decimal Price { get; set; }
+        public string ImagePathUrl { get; set; } = string.Empty;
+        public Product(string name, decimal price, string imagePathUrl)
+        {
+            Name = name;
+            Price = price;
+            ImagePathUrl = imagePathUrl;
+        }
+        public Product()
+        {
+            
+        }
     }
 }
