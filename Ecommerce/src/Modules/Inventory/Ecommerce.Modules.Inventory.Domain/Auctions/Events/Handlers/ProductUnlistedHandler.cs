@@ -22,7 +22,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Events.Handlers
         {
             var productIds = @event.ProductIds.ToArray();
             var rowsChanged = await _auctionRepository.DeleteManyAsync(productIds);
-            if(rowsChanged != productIds.Count())
+            if(rowsChanged != productIds.Length)
             {
                 throw new AuctionNotUnlistedException();
             }
