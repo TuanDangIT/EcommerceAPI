@@ -1,4 +1,5 @@
-﻿using Ecommerce.Shared.Abstractions.Modules;
+﻿using Ecommerce.Modules.Carts.Core;
+using Ecommerce.Shared.Abstractions.Modules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -20,6 +21,7 @@ namespace Ecommerce.Modules.Carts.Api
 
         public void Register(IServiceCollection services, IConfiguration configuration)
         {
+            services.AddCore();
         }
 
         public void Use(WebApplication app)
