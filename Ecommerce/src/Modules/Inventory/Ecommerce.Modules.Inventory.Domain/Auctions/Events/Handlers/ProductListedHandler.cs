@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Inventory.Domain.Auctions.Entities;
+using Ecommerce.Modules.Inventory.Domain.Auctions.Exceptions;
 using Ecommerce.Modules.Inventory.Domain.Auctions.Repositories;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Events;
 using Ecommerce.Shared.Abstractions.DomainEvents;
@@ -40,7 +41,11 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Events.Handlers
                     manufacturer: product.Manufacturer.Name
                 ));
             }
-            await _auctionRepository.AddManyAsync(auctions);
+            var rowsChanged = await _auctionRepository.AddManyAsync(auctions);
+            if(rowsChanged != products.Count())
+            {
+                throw new AuctionNotListedException();
+            }
         }
     }
 }

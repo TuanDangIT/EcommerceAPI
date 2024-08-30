@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Inventory.Domain.Auctions.Repositories;
+﻿using Ecommerce.Modules.Inventory.Domain.Auctions.Exceptions;
+using Ecommerce.Modules.Inventory.Domain.Auctions.Repositories;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Events;
 using Ecommerce.Shared.Abstractions.DomainEvents;
 using System;
@@ -19,7 +20,12 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Events.Handlers
         }
         async Task IDomainEventHandler<ProductUnlisted>.HandleAsync(ProductUnlisted @event)
         {
-            await _auctionRepository.DeleteManyAsync(@event.ProductIds.ToArray());
+            var productIds = @event.ProductIds.ToArray();
+            var rowsChanged = await _auctionRepository.DeleteManyAsync(productIds);
+            if(rowsChanged != productIds.Count())
+            {
+                throw new AuctionNotUnlistedException();
+            }
         }
     }
 }
