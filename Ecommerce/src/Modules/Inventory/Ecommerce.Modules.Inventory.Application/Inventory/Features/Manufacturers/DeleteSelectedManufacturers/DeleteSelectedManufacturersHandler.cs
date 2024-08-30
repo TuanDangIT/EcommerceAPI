@@ -20,7 +20,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
         public async Task Handle(DeleteSelectedManufacturers request, CancellationToken cancellationToken)
         {
             var rowsChanged = await _manufacturerRepository.DeleteManyAsync(request.ManufacturerIds);
-            if (rowsChanged != request.ManufacturerIds.Count())
+            if (rowsChanged != request.ManufacturerIds.Length)
             {
                 throw new ManufacturerNotAllDeletedException();
             }

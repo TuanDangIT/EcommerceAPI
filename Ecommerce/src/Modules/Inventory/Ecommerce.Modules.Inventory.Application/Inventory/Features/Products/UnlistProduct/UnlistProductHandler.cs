@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
+using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Events;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
 using Ecommerce.Shared.Abstractions.DomainEvents;
@@ -24,6 +25,18 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Un
         public async Task Handle(UnlistProduct request, CancellationToken cancellationToken)
         {
             var productIds = await _productRepository.GetAllIdThatContainsInArrayAsync(request.ProductIds);
+            if (productIds.Count() != request.ProductIds.Length)
+            {
+                var productIdsNotFound = new List<Guid>();
+                foreach (var productId in request.ProductIds)
+                {
+                    if (productIds.Contains(productId))
+                    {
+                        productIdsNotFound.Add(productId);
+                    }
+                }
+                throw new ProductNotAllFoundException(productIdsNotFound);
+            }
             await _domainEventDispatcher.DispatchAsync(new ProductUnlisted(productIds));
         }
     }

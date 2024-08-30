@@ -20,7 +20,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.
         public async Task Handle(DeleteSelectedParameters request, CancellationToken cancellationToken)
         {
             var rowsChanged = await _parameterRepository.DeleteManyAsync(request.ParameterIds);
-            if (rowsChanged != request.ParameterIds.Count())
+            if (rowsChanged != request.ParameterIds.Length)
             {
                 throw new ParameterNotAllDeletedException();
             }

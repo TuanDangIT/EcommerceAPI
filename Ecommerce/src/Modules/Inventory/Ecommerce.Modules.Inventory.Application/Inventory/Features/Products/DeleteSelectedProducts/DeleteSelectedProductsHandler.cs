@@ -28,7 +28,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.De
             var imagesIds = await _imageRepository.GetAllImagesForProductsAsync(request.ProductIds);
             await _blobStorageService.DeleteManyAsync(imagesIds.Select(i => i.ToString()), _containerName);
             var rowsChanged = await _productRepository.DeleteManyAsync(request.ProductIds);
-            if (rowsChanged != request.ProductIds.Count())
+            if (rowsChanged != request.ProductIds.Length)
             {
                 throw new ManufacturerNotAllDeletedException();
             }

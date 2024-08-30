@@ -20,7 +20,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
         public async Task Handle(DeleteSelectedCategories request, CancellationToken cancellationToken)
         {
             var rowsChanged = await _categoryRepository.DeleteManyAsync(request.CategoryIds);
-            if (rowsChanged != request.CategoryIds.Count())
+            if (rowsChanged != request.CategoryIds.Length)
             {
                 throw new ParameterNotAllDeletedException();
             }

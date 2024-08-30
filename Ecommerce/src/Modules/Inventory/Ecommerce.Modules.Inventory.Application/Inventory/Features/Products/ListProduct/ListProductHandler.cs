@@ -27,6 +27,18 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Li
         public async Task Handle(ListProduct request, CancellationToken cancellationToken)
         {
             var products = await _productRepository.GetAllThatContainsInArrayAsync(request.ProductIds);
+            if(products.Count() != request.ProductIds.Length)
+            {
+                var productIdsNotFound = new List<Guid>();
+                foreach(var productId in request.ProductIds)
+                {
+                    if(products.Select(p => p.Id).Contains(productId))
+                    {
+                        productIdsNotFound.Add(productId);
+                    }
+                }
+                throw new ProductNotAllFoundException(productIdsNotFound);
+            }
             await _domainEventDispatcher.DispatchAsync(new ProductListed(products, _timeProvider.GetUtcNow().UtcDateTime));
         }
     }
