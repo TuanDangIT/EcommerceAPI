@@ -12,6 +12,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public Guid CustomerId { get; set; }
         public Payment Payment { get; set; } = new();
         public Shipment Shipment { get; set; } = new();
+        public bool IsPaid { get; set; } = false;
         public List<CartProduct> _products = new();
         public IEnumerable<CartProduct> Products => _products;
         public CheckoutCart(Cart cart)
@@ -24,5 +25,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             => Shipment = shipment;
         public void SetPayment(Payment payment)
             => Payment = payment;
+        public void SetPaid()
+            => IsPaid = true;
     }
 }
