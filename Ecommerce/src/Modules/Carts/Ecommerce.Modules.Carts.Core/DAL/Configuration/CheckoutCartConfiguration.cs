@@ -19,6 +19,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configuration
                 s.Property(s => s.PostalCode).IsRequired().HasMaxLength(16);
                 s.Property(s => s.StreetName).IsRequired().HasMaxLength(64);
                 s.Property(s => s.StreetNumber).IsRequired().HasMaxLength(8);
+                s.Property(s => s.AparmentNumber).HasMaxLength(8);
                 s.Property(s => s.ReceiverFullName).IsRequired().HasMaxLength(32);
             });
             builder.Property(cc => cc.IsPaid)

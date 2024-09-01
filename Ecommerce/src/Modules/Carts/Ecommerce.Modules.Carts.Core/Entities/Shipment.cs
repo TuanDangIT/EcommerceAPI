@@ -12,9 +12,10 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public string City { get; private set; } = string.Empty;
         public string PostalCode { get; private set; } = string.Empty;
         public string StreetName { get; private set; } = string.Empty;
-        public int StreetNumber { get; private set; }
+        public string StreetNumber { get; private set; } = string.Empty;
+        public string AparmentNumber { get; private set; } = string.Empty;   
         public string ReceiverFullName { get; private set; } = string.Empty;
-        public Shipment(string city, string streetName, int streetNumber, string receiverFullName)
+        public Shipment(string city, string streetName, string streetNumber, string apartmentNumber, string receiverFullName)
         {
             if (string.IsNullOrWhiteSpace(city))
             {
@@ -34,6 +35,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             City = city;
             StreetName = streetName;
             StreetNumber = streetNumber;
+            AparmentNumber = apartmentNumber;
             ReceiverFullName = receiverFullName;
         }
         public Shipment()

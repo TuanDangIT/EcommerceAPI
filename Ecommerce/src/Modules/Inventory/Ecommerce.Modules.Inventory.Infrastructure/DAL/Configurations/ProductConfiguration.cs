@@ -13,11 +13,23 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
-            builder.Property(p => p.SKU).IsRequired();
+            builder.Property(p => p.SKU)
+                .HasMaxLength(16)
+                .IsRequired();
             builder.HasIndex(p => p.SKU).IsUnique();
-            builder.Property(p => p.Name).IsRequired();
-            builder.Property(p => p.Price).IsRequired();
+            builder.Property(p => p.EAN)
+                .HasMaxLength(13);
+            builder.Property(p => p.Name)
+                .HasMaxLength(24)
+                .IsRequired();
+            builder.Property(p => p.Price)
+                .HasPrecision(11, 2)
+                .IsRequired();
+            builder.Property(p => p.VAT)
+                .HasMaxLength(3);
             builder.Property(p => p.Description).IsRequired();
+            builder.Property(p => p.Location)
+                .HasMaxLength(64);
             builder.HasMany(p => p.Parameters)
                 .WithMany(p => p.Products)
                 .UsingEntity<ProductParameter>(

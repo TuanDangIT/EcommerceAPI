@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
 {
-    internal class ParameterConfiguration : IEntityTypeConfiguration<Parameter>
+    internal class CategoryConfiguration : IEntityTypeConfiguration<Category>
     {
-        public void Configure(EntityTypeBuilder<Parameter> builder)
+        public void Configure(EntityTypeBuilder<Category> builder)
         {
-            builder.Property(p => p.Name)
+            builder.Property(c => c.Name)
                 .HasMaxLength(32)
                 .IsRequired();
         }

@@ -26,6 +26,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
             RuleFor(c => c.Price)
                 .NotEmpty()
                 .NotNull()
+                .PrecisionScale(11, 2, false)
                 .GreaterThanOrEqualTo(0);
             RuleFor(c => c.VAT)
                 .NotEmpty()

@@ -16,6 +16,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configuration
             builder.Property(p => p.Name)
                 .IsRequired();
             builder.Property(p => p.Price)
+                .HasPrecision(11, 2)
                 .IsRequired();
             builder.Property(p => p.ImagePathUrl)
                 .IsRequired();

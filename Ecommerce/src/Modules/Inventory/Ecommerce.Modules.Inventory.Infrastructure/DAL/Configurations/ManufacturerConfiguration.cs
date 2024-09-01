@@ -13,7 +13,9 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<Manufacturer> builder)
         {
-            builder.Property(m => m.Name).IsRequired();
+            builder.Property(m => m.Name)
+                .HasMaxLength(32)
+                .IsRequired();
         }
     }
 }
