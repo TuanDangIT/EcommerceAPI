@@ -9,10 +9,11 @@ namespace Ecommerce.Modules.Carts.Core.Entities
 {
     internal class Shipment
     {
-        public string City { get; } = string.Empty;
-        public string StreetName { get; } = string.Empty;
-        public int StreetNumber { get; }
-        public string ReceiverFullName { get; } = string.Empty;
+        public string City { get; private set; } = string.Empty;
+        public string PostalCode { get; private set; } = string.Empty;
+        public string StreetName { get; private set; } = string.Empty;
+        public int StreetNumber { get; private set; }
+        public string ReceiverFullName { get; private set; } = string.Empty;
         public Shipment(string city, string streetName, int streetNumber, string receiverFullName)
         {
             if (string.IsNullOrWhiteSpace(city))

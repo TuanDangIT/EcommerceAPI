@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Ecommerce.Modules.Carts.Core.DAL;
+using Ecommerce.Shared.Infrastructure.Postgres;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,7 @@ namespace Ecommerce.Modules.Carts.Core
     {
         public static IServiceCollection AddCore(this IServiceCollection services)
         {
+            services.AddPostgres<CartsDbContext>();
             return services;
         }
     }

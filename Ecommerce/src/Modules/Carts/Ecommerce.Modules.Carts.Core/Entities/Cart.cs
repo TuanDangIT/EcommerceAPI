@@ -10,12 +10,16 @@ namespace Ecommerce.Modules.Carts.Core.Entities
     internal class Cart
     {
         public Guid Id { get; set; }
-        public Guid CustomerId {  get; set; }
-        public List<CartProduct> _products = new();
+        public Guid? CustomerId {  get; set; }
+        private List<CartProduct> _products = new();
         public IEnumerable<CartProduct> Products => _products;
         public Cart(Guid customerId)
         {
             CustomerId = customerId;
+        }
+        public Cart()
+        {
+            
         }
         public void AddProduct(Product product)
         {

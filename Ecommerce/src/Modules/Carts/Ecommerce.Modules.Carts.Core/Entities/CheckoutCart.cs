@@ -9,17 +9,22 @@ namespace Ecommerce.Modules.Carts.Core.Entities
     internal class CheckoutCart
     {
         public Guid Id { get; set; }
-        public Guid CustomerId { get; set; }
+        public Guid? CustomerId { get; set; }
         public Payment Payment { get; set; } = new();
+        public Guid PaymentId { get; set; }
         public Shipment Shipment { get; set; } = new();
         public bool IsPaid { get; set; } = false;
-        public List<CartProduct> _products = new();
+        private List<CartProduct> _products = new();
         public IEnumerable<CartProduct> Products => _products;
         public CheckoutCart(Cart cart)
         {
             Id = cart.Id;
-            CustomerId = cart.CustomerId;
+            CustomerId = cart.CustomerId ?? Guid.Empty;
             _products = cart.Products.ToList();
+        }
+        public CheckoutCart()
+        {
+            
         }
         public void SetShipment(Shipment shipment)
             => Shipment = shipment;

@@ -12,6 +12,8 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public string Name { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public string ImagePathUrl { get; set; } = string.Empty;
+        private List<CartProduct> _cartProducts { get; set; } = new();
+        public IEnumerable<CartProduct> CartProducts => _cartProducts;
         public Product(string name, decimal price, string imagePathUrl)
         {
             Name = name;
