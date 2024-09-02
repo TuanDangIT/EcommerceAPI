@@ -4,8 +4,8 @@ using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Create
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.DeleteProduct;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.DeleteSelectedProducts;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.GetProduct;
-using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.ListProduct;
-using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.UnlistProduct;
+using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.ListProducts;
+using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.UnlistProducts;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.UpdateProduct;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Shared.Abstractions.Api;
@@ -64,13 +64,13 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [HttpPost("list")]
         public async Task<ActionResult> ListProduct([FromBody]Guid[] ids)
         {
-            await _mediator.Send(new ListProduct(ids));
+            await _mediator.Send(new ListProducts(ids));
             return NoContent();
         }
         [HttpPost("unlist")]
         public async Task<ActionResult> UnlistProduct([FromBody] Guid[] ids)
         {
-            await _mediator.Send(new UnlistProduct(ids));
+            await _mediator.Send(new UnlistProducts(ids));
             return NoContent();
         }
     }

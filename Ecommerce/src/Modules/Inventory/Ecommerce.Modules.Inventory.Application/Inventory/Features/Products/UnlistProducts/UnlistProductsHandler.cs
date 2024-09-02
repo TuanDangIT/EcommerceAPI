@@ -1,28 +1,35 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
+using Ecommerce.Modules.Inventory.Application.Inventory.Services;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Events;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
 using Ecommerce.Shared.Abstractions.DomainEvents;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Ecommerce.Shared.Abstractions.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.UnlistProduct
+namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.UnlistProducts
 {
-    public sealed class UnlistProductHandler : ICommandHandler<UnlistProduct>
+    public sealed class UnlistProductsHandler : ICommandHandler<UnlistProducts>
     {
         private readonly IProductRepository _productRepository;
         private readonly IDomainEventDispatcher _domainEventDispatcher;
+        private readonly IEventMapper _eventMapper;
+        private readonly IMessageBroker _messageBroker;
 
-        public UnlistProductHandler(IProductRepository productRepository, IDomainEventDispatcher domainEventDispatcher)
+        public UnlistProductsHandler(IProductRepository productRepository, IDomainEventDispatcher domainEventDispatcher,
+            IEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _productRepository = productRepository;
             _domainEventDispatcher = domainEventDispatcher;
+            _eventMapper = eventMapper;
+            _messageBroker = messageBroker;
         }
-        public async Task Handle(UnlistProduct request, CancellationToken cancellationToken)
+        public async Task Handle(UnlistProducts request, CancellationToken cancellationToken)
         {
             var productIds = await _productRepository.GetAllIdThatContainsInArrayAsync(request.ProductIds);
             if (productIds.Count() != request.ProductIds.Length)
@@ -37,7 +44,10 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Un
                 }
                 throw new ProductNotAllFoundException(productIdsNotFound);
             }
-            await _domainEventDispatcher.DispatchAsync(new ProductUnlisted(productIds));
+            var domainEvent = new ProductUnlisted(productIds);
+            await _domainEventDispatcher.DispatchAsync(domainEvent);
+            var integrationEvent = _eventMapper.Map(domainEvent);
+            await _messageBroker.PublishAsync(integrationEvent);
         }
     }
 }

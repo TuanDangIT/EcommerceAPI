@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Entities
 {
-    internal class CheckoutCart
+    public class CheckoutCart
     {
         public Guid Id { get; set; }
         public Guid? CustomerId { get; set; }
-        public Payment Payment { get; set; } = new();
-        public Guid PaymentId { get; set; }
-        public Shipment Shipment { get; set; } = new();
+        public Payment? Payment { get; set; }
+        public Guid? PaymentId { get; set; }
+        public Shipment? Shipment { get; set; }
         public bool IsPaid { get; set; } = false;
-        private List<CartProduct> _products = new();
+        private List<CartProduct> _products = [];
         public IEnumerable<CartProduct> Products => _products;
         public CheckoutCart(Cart cart)
         {

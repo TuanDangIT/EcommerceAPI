@@ -11,10 +11,4 @@
     <ProjectReference Include="..\..\..\Shared\Ecommerce.Shared.Infrastructure\Ecommerce.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTO\" />
-    <Folder Include="Exceptions\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 </Project>

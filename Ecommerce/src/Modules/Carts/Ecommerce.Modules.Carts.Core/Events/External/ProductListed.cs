@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Shared.Abstractions.Events;
+using Ecommerce.Shared.Abstractions.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Events.External
 {
-    internal sealed record class AuctionCreated(Guid Id, string Name, decimal Price) : IEvent;
+    public sealed record class ProductListed(IEnumerable<object> Products) : IEvent;
 }

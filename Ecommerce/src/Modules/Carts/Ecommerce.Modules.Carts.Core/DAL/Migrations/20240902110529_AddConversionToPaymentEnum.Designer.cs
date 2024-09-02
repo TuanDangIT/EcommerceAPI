@@ -3,6 +3,7 @@ using System;
 using Ecommerce.Modules.Carts.Core.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 {
     [DbContext(typeof(CartsDbContext))]
-    partial class CartsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240902110529_AddConversionToPaymentEnum")]
+    partial class AddConversionToPaymentEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,7 +80,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                     b.Property<bool>("IsPaid")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid?>("PaymentId")
+                    b.Property<Guid>("PaymentId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -154,7 +157,9 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                 {
                     b.HasOne("Ecommerce.Modules.Carts.Core.Entities.Payment", "Payment")
                         .WithMany("CheckoutCarts")
-                        .HasForeignKey("PaymentId");
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.Shipment", "Shipment", b1 =>
                         {
@@ -201,7 +206,8 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 
                     b.Navigation("Payment");
 
-                    b.Navigation("Shipment");
+                    b.Navigation("Shipment")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.Cart", b =>

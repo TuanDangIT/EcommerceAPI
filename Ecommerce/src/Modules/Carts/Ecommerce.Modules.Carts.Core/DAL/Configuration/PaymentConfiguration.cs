@@ -15,7 +15,8 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configuration
         public void Configure(EntityTypeBuilder<Payment> builder)
         {
             builder.Property(p => p.PaymentMethod)
-                .IsRequired();
+                .IsRequired()
+                .HasConversion<string>();
         }
     }
 }

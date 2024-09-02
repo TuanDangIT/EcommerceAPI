@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Entities
 {
-    internal class Cart
+    public class Cart
     {
         public Guid Id { get; set; }
         public Guid? CustomerId {  get; set; }
-        private List<CartProduct> _products = new();
+        private List<CartProduct> _products = [];
         public IEnumerable<CartProduct> Products => _products;
         public Cart(Guid customerId)
         {
@@ -26,7 +26,8 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             var cartProduct = _products.SingleOrDefault(p => p.Id == product.Id);
             if(cartProduct is not null)
             {
-                cartProduct.DecreaseQuantity();
+                cartProduct.IncreaseQuantity();
+                return;
             }
             _products.Add(new CartProduct(product, 1));
         }

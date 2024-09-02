@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Entities
 {
-    internal class CartProduct
+    public class CartProduct
     {
         public Guid Id { get; set; }
         public Product Product { get; set; } = new();

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.ListProduct
+namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.UnlistProducts
 {
-    public sealed record class ListProduct(Guid[] ProductIds) : ICommand;
+    public record class UnlistProducts(Guid[] ProductIds) : ICommand;
 }

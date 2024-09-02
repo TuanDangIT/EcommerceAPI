@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Entities
 {
-    internal class Shipment
+    public class Shipment
     {
         public string City { get; private set; } = string.Empty;
         public string PostalCode { get; private set; } = string.Empty;
@@ -15,7 +15,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public string StreetNumber { get; private set; } = string.Empty;
         public string AparmentNumber { get; private set; } = string.Empty;   
         public string ReceiverFullName { get; private set; } = string.Empty;
-        public Shipment(string city, string streetName, string streetNumber, string apartmentNumber, string receiverFullName)
+        public Shipment(string city, string postalCode, string streetName, string streetNumber, string apartmentNumber, string receiverFullName)
         {
             if (string.IsNullOrWhiteSpace(city))
             {
@@ -33,6 +33,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             }
 
             City = city;
+            PostalCode = postalCode;
             StreetName = streetName;
             StreetNumber = streetNumber;
             AparmentNumber = apartmentNumber;
