@@ -23,6 +23,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.HasDefaultSchema("carts");
         }
 
         public Task<int> SaveChangesAsync()

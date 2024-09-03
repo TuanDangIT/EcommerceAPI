@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Behavior;
+using Ecommerce.Modules.Inventory.Application.Inventory.Services;
 using Ecommerce.Modules.Inventory.Application.Inventory.Sieve.CustomFilters;
 using Ecommerce.Modules.Inventory.Application.Sieve;
 using FluentValidation;
@@ -24,6 +25,7 @@ namespace Ecommerce.Modules.Inventory.Application
                 cfg.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
+            services.AddSingleton<IEventMapper, EventMapper>();
             services.Scan(i => i.FromAssemblies(Assembly.GetExecutingAssembly())
                 .AddClasses(c => c.AssignableTo(typeof(IValidator<>)))
                 .AsImplementedInterfaces()
