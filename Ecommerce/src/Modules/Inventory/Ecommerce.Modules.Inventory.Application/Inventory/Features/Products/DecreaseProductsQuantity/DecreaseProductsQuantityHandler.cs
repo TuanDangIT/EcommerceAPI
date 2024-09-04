@@ -25,11 +25,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.De
                 throw new ProductNotFoundException(request.ProductId);
             }
             product.DecreaseQuantity(request.Quantity);
-            var rowsChanged = await _productRepository.UpdateAsync();
-            if (rowsChanged != 1)
-            {
-                throw new ProductNotDecreasedException(request.ProductId);
-            }
+            await _productRepository.UpdateAsync();
         }
     }
 }

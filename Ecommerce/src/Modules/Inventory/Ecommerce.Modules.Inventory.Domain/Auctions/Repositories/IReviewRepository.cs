@@ -12,8 +12,8 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Repositories
     {
         //Task<PagedResult<ReviewBrowseDto>> BrowseAsync(SieveModel sieveModel, Guid auctionId);
         Task<Review?> GetAsync(Guid reviewId);
-        Task<int> DeleteAsync(Guid reviewId);
-        Task<int> UpdateAsync();
+        Task DeleteAsync(Guid reviewId);
+        Task UpdateAsync();
         //Task<int> AddAsync(Review review, Guid auctionId);
     }
 }

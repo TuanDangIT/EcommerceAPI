@@ -27,11 +27,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
                 throw new CategoryNotFoundException(request.CategoryId);
             }
             category.ChangeName(request.Name, _timeProvider.GetUtcNow().UtcDateTime);
-            var rowsChanged = await _categoryRepository.UpdateAsync(category);
-            if (rowsChanged != 1)
-            {
-                throw new CategoryNotUpdatedException(request.CategoryId);
-            }
+            await _categoryRepository.UpdateAsync();
         }
     }
 }

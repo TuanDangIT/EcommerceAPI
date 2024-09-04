@@ -17,13 +17,13 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<int> DeleteAsync(Guid reviewId)
+        public async Task DeleteAsync(Guid reviewId)
             => await _dbContext.Reviews.Where(r => r.Id == reviewId).ExecuteDeleteAsync();
 
         public async Task<Review?> GetAsync(Guid reviewId)
             => await _dbContext.Reviews.SingleOrDefaultAsync(r => r.Id == reviewId);
 
-        public async Task<int> UpdateAsync()
+        public async Task UpdateAsync()
             => await _dbContext.SaveChangesAsync();
     }
 }

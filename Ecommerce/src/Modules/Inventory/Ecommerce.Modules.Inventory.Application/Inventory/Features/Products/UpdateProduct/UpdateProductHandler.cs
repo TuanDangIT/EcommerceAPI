@@ -88,11 +88,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
             await _productRepository.DeleteProductParametersAndImagesRelatedToProduct(request.Id);
             product.ChangeProductParameters(productParameters);
             product.SetUpdateAt(_timeProvider.GetUtcNow().UtcDateTime);
-            var rowsChanged = await _productRepository.UpdateAsync();
-            if (rowsChanged != 1)
-            {
-                throw new ProductNotUpdatedException(request.Id);
-            }
+            await _productRepository.UpdateAsync();
         }
         private async Task UploadImagesToBlobStorageAsync(List<IFormFile> images, Product product)
         {

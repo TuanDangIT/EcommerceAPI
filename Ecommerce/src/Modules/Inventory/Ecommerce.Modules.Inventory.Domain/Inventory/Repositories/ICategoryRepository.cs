@@ -9,10 +9,10 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Repositories
 {
     public interface ICategoryRepository
     {
-        Task<int> AddAsync(Category category);
-        Task<int> UpdateAsync(Category category);
-        Task<int> DeleteAsync(Guid categoryId);
-        Task<int> DeleteManyAsync(Guid[] categoryIds);
+        Task AddAsync(Category category);
+        Task UpdateAsync();
+        Task DeleteAsync(Guid categoryId);
+        Task DeleteManyAsync(Guid[] categoryIds);
         //Task<IEnumerable<Parameter>> GetAllAsync();
         Task<Category?> GetAsync(Guid categoryId);
     }

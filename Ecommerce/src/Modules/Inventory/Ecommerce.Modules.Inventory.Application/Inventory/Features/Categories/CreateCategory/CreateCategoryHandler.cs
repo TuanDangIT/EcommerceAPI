@@ -22,11 +22,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
         }
         public async Task Handle(CreateCategory request, CancellationToken cancellationToken)
         {
-            var rowsChanged = await _categoryRepository.AddAsync(new Category(Guid.NewGuid(), request.Name, _timeProvider.GetUtcNow().UtcDateTime));
-            if (rowsChanged != 1)
-            {
-                throw new CategoryNotCreatedException();
-            }
+            await _categoryRepository.AddAsync(new Category(Guid.NewGuid(), request.Name, _timeProvider.GetUtcNow().UtcDateTime));
         }
     }
 }

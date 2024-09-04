@@ -65,7 +65,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
             }
             var imageList = await UploadImagesToBlobStorageAsync(request.Images);
             var productId = Guid.NewGuid();
-            var rowsChanged = await _productRepository.AddAsync(new Product
+            await _productRepository.AddAsync(new Product
                 (
                     id: productId,
                     sku: request.SKU,
@@ -83,10 +83,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
                     images: imageList.ToList(),
                     createdAt: _timeProvider.GetUtcNow().UtcDateTime
                 ));
-            if (rowsChanged != 1)
-            {
-                throw new ProductNotCreatedException();
-            }
             return productId;
         }
         private async Task<IEnumerable<Image>> UploadImagesToBlobStorageAsync(List<IFormFile> images)

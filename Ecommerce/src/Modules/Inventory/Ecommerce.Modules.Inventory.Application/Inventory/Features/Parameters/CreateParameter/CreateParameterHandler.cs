@@ -22,11 +22,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.
         }
         public async Task Handle(CreateParameter request, CancellationToken cancellationToken)
         {
-            var rowsChanged = await _parameterRepository.AddAsync(new Parameter(Guid.NewGuid(), request.Name, _timeProvider.GetUtcNow().UtcDateTime));
-            if (rowsChanged != 1)
-            {
-                throw new ParameterNotCreatedException();
-            }
+            await _parameterRepository.AddAsync(new Parameter(Guid.NewGuid(), request.Name, _timeProvider.GetUtcNow().UtcDateTime));
         }
     }
 }

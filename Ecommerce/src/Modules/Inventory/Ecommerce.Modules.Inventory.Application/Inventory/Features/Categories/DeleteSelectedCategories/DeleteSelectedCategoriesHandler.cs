@@ -18,12 +18,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
             _categoryRepository = categoryRepository;
         }
         public async Task Handle(DeleteSelectedCategories request, CancellationToken cancellationToken)
-        {
-            var rowsChanged = await _categoryRepository.DeleteManyAsync(request.CategoryIds);
-            if (rowsChanged != request.CategoryIds.Length)
-            {
-                throw new ParameterNotAllDeletedException();
-            }
-        }
+            => await _categoryRepository.DeleteManyAsync(request.CategoryIds);
     }
 }

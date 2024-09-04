@@ -32,11 +32,7 @@ namespace Ecommerce.Modules.Carts.Core.Events.External.Handlers
                 products.Add(product);
             }
             await _dbContext.Products.AddRangeAsync(products);
-            var rowsChanged = await _dbContext.SaveChangesAsync();
-            if(rowsChanged != @event.Products.Count())
-            {
-                throw new ProductsNotAddedException();
-            }
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

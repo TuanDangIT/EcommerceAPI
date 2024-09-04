@@ -18,12 +18,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.
             _parameterRepository = parameterRepository;
         }
         public async Task Handle(DeleteSelectedParameters request, CancellationToken cancellationToken)
-        {
-            var rowsChanged = await _parameterRepository.DeleteManyAsync(request.ParameterIds);
-            if (rowsChanged != request.ParameterIds.Length)
-            {
-                throw new ParameterNotAllDeletedException();
-            }
-        }
+            => await _parameterRepository.DeleteManyAsync(request.ParameterIds);  
     }
 }

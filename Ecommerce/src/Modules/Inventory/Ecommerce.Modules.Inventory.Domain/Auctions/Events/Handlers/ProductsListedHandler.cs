@@ -45,11 +45,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Events.Handlers
                     manufacturer: product.Manufacturer.Name
                 ));
             }
-            var rowsChanged = await _auctionRepository.AddManyAsync(auctions);
-            if(rowsChanged != products.Count())
-            {
-                throw new AuctionsNotCreatedException();
-            }
+            await _auctionRepository.AddManyAsync(auctions);
         }
     }
 }

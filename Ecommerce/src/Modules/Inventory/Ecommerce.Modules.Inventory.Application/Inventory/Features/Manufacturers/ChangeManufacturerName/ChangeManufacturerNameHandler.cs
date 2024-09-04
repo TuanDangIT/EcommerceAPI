@@ -27,11 +27,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
                 throw new ManufacturerNotFoundException(request.ManufaturerId);
             }
             manufacturer.ChangeName(request.Name, _timeProvider.GetUtcNow().UtcDateTime);
-            var rowsChanged = await _manufacturerRepository.UpdateAsync(manufacturer);
-            if (rowsChanged != 1)
-            {
-                throw new ManufacturerNotUpdatedException(request.ManufaturerId);
-            }
+            await _manufacturerRepository.UpdateAsync();
         }
     }
 }

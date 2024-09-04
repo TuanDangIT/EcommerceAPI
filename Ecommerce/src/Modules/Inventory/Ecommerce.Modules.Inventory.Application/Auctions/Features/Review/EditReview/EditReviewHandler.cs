@@ -34,11 +34,7 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.EditR
                 throw new ReviewNotFoundException(request.ReviewId);
             }
             review.EditReview(request.Text, request.Grade, _timeProvider.GetUtcNow().UtcDateTime);
-            var rowsChanged = await _reviewRepository.UpdateAsync();
-            if (rowsChanged != 1)   
-            {
-                throw new ReviewNotDeletedException();
-            }
+            await _reviewRepository.UpdateAsync();
         }
     }
 }

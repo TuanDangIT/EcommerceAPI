@@ -20,11 +20,7 @@ namespace Ecommerce.Modules.Carts.Core.Events.External.Handlers
         }
         public async Task HandleAsync(ProductsUnlisted @event)
         {
-            var rowsChanged = await _dbContext.Products.Where(p => @event.ProductIds.Contains(p.Id)).ExecuteDeleteAsync();
-            if(rowsChanged != @event.ProductIds.Count())
-            {
-                throw new ProductsNotDeletedException();
-            }
+            await _dbContext.Products.Where(p => @event.ProductIds.Contains(p.Id)).ExecuteDeleteAsync();
         }
     }
 }

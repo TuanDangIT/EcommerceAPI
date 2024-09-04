@@ -26,6 +26,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public void ChangeName(string name, DateTime updatedAt)
         {
+            if()
             Name = name;
             UpdatedAt = updatedAt;
         }

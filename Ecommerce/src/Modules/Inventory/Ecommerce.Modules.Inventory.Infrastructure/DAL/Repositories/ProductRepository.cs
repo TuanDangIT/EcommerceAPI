@@ -18,13 +18,13 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<int> AddAsync(Product product)
+        public async Task AddAsync(Product product)
         {
             await _dbContext.Products.AddAsync(product);
-            return await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<int> DeleteAsync(Guid productId) => await _dbContext.Products.Where(p => p.Id == productId).ExecuteDeleteAsync();
+        public async Task DeleteAsync(Guid productId) => await _dbContext.Products.Where(p => p.Id == productId).ExecuteDeleteAsync();
 
         public async Task<IEnumerable<Guid>> GetAllIdThatContainsInArrayAsync(Guid[] productIds) 
             => await _dbContext.Products
@@ -34,16 +34,15 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
 
         public Task<Product?> GetAsync(Guid productId) => _dbContext.Products.SingleOrDefaultAsync(p => p.Id == productId);
 
-        public async Task<int> UpdateAsync()
-        {
-            return await _dbContext.SaveChangesAsync();
-        }
+        public async Task UpdateAsync()
+            => await _dbContext.SaveChangesAsync();
+        
         public async Task DeleteProductParametersAndImagesRelatedToProduct(Guid productId)
         {
             await _dbContext.Images.Where(i => i.ProductId == productId).ExecuteDeleteAsync();
             await _dbContext.ProductParameters.Where(i => i.ProductId == productId).ExecuteDeleteAsync();
         }
-        public async Task<int> DeleteManyAsync(params Guid[] productIds) => await _dbContext.Products.Where(p => productIds.Contains(p.Id)).ExecuteDeleteAsync();
+        public async Task DeleteManyAsync(params Guid[] productIds) => await _dbContext.Products.Where(p => productIds.Contains(p.Id)).ExecuteDeleteAsync();
 
         public async Task<IEnumerable<Product>> GetAllThatContainsInArrayAsync(Guid[] productIds)
             => await _dbContext.Products

@@ -26,11 +26,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
             var cart = await GetByCartIdWithIncludesOrThrowIfNull(cartId);
             var product = await GetProductOrThrowNull(productId);
             cart.AddProduct(product);
-            var rowsChanged = await _dbContext.SaveChangesAsync();
-            if(rowsChanged != 1)
-            {
-                throw new ProductNotAddedException();
-            }
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task CheckoutAsync(Guid cartId)
@@ -39,42 +35,26 @@ namespace Ecommerce.Modules.Carts.Core.Services
             var checkoutCart = cart.Checkout();
             await _dbContext.CheckoutCarts.AddAsync(checkoutCart);
             _dbContext.Carts.Remove(cart);
-            var rowsChanged = await _dbContext.SaveChangesAsync();
-            if(rowsChanged == 0)
-            {
-                throw new CartCheckoutFailedException();
-            }
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task ClearCartAsync(Guid cartId)
         {
             var cart = await GetByCartIdOrThrowIfNull(cartId);
             cart.Clear();
-            var rowsChanged = await _dbContext.SaveChangesAsync();
-            if(rowsChanged != 1)
-            {
-                throw new CartNotClearedException();
-            }
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task CreateAsync(Guid customerId)
         {
             await _dbContext.Carts.AddAsync(new Cart(customerId));
-            var rowsChanged = await _dbContext.SaveChangesAsync();
-            if(rowsChanged != 1)
-            {
-                throw new CartNotCreatedException();
-            }
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task CreateAsync()
         {
             await _dbContext.Carts.AddAsync(new Cart());
-            var rowsChanged = await _dbContext.SaveChangesAsync();
-            if (rowsChanged != 1)
-            {
-                throw new CartNotCreatedException();
-            }
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<CartDto> GetAsync(Guid cartId)
@@ -88,11 +68,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
             var cart = await GetByCartIdWithIncludesOrThrowIfNull(cartId);
             var product = await GetProductOrThrowNull(productId);
             cart.RemoveProduct(product);
-            var rowsChanged = await _dbContext.SaveChangesAsync();
-            if(rowsChanged != 1)
-            {
-                throw new ProductNotRemovedException();
-            }
+            await _dbContext.SaveChangesAsync();
         }
         private async Task<Cart> GetByCartIdOrThrowIfNull(Guid cartId)
         {

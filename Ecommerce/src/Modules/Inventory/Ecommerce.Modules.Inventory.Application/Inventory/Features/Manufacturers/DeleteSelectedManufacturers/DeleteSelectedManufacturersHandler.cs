@@ -18,12 +18,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
             _manufacturerRepository = manufacturerRepository;
         }
         public async Task Handle(DeleteSelectedManufacturers request, CancellationToken cancellationToken)
-        {
-            var rowsChanged = await _manufacturerRepository.DeleteManyAsync(request.ManufacturerIds);
-            if (rowsChanged != request.ManufacturerIds.Length)
-            {
-                throw new ManufacturerNotAllDeletedException();
-            }
-        }
+            => await _manufacturerRepository.DeleteManyAsync(request.ManufacturerIds);
+        
     }
 }

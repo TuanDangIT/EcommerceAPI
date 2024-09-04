@@ -22,11 +22,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
         }
         public async Task Handle(CreateManufacturer request, CancellationToken cancellationToken)
         {
-            var rowsChanged = await _manufacturerRepository.AddAsync(new Manufacturer(Guid.NewGuid(), request.Name, _timeProvider.GetUtcNow().UtcDateTime));
-            if (rowsChanged != 1)
-            {
-                throw new ManufacturerNotCreatedException();
-            }
+            await _manufacturerRepository.AddAsync(new Manufacturer(Guid.NewGuid(), request.Name, _timeProvider.GetUtcNow().UtcDateTime));
         }
     }
 }

@@ -42,11 +42,7 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.AddRe
                 request.Text,
                 request.Grade,
                 _timeProvider.GetUtcNow().UtcDateTime));
-            var rowsChanged = await _reviewRepository.UpdateAsync();
-            if(rowsChanged != 1)
-            {
-                throw new ReviewNotAddedException();
-            }
+            await _reviewRepository.UpdateAsync();
         }
     }
 }

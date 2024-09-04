@@ -31,11 +31,7 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.Delet
             {
                 throw new ReviewNotFoundException(request.ReviewId);
             }
-            var rowsChanged = await _reviewRepository.DeleteAsync(request.ReviewId);
-            if(rowsChanged != 1)
-            {
-                throw new ReviewNotDeletedException();
-            }
+            await _reviewRepository.DeleteAsync(request.ReviewId);
         }
     }
 }

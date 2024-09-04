@@ -17,24 +17,21 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<int> AddAsync(Parameter parameter)
+        public async Task AddAsync(Parameter parameter)
         {
             await _dbContext.AddAsync(parameter);
-            return await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<int> DeleteAsync(Guid parameterId) => await _dbContext.Parameters.Where(p => p.Id == parameterId).ExecuteDeleteAsync();
+        public async Task DeleteAsync(Guid parameterId) => await _dbContext.Parameters.Where(p => p.Id == parameterId).ExecuteDeleteAsync();
 
-        public async Task<int> DeleteManyAsync(params Guid[] parameterIds) => await _dbContext.Parameters.Where(p => parameterIds.Contains(p.Id)).ExecuteDeleteAsync();
+        public async Task DeleteManyAsync(params Guid[] parameterIds) => await _dbContext.Parameters.Where(p => parameterIds.Contains(p.Id)).ExecuteDeleteAsync();
 
         public async Task<IEnumerable<Parameter>> GetAllAsync() => await _dbContext.Parameters.ToListAsync();
 
         public async Task<Parameter?> GetAsync(Guid parameterId) => await _dbContext.Parameters.SingleOrDefaultAsync(p => p.Id == parameterId);
 
-        public async Task<int> UpdateAsync(Parameter parameter)
-        {
-            _dbContext.Parameters.Update(parameter);
-            return await _dbContext.SaveChangesAsync();
-        }
+        public async Task UpdateAsync()
+            => await _dbContext.SaveChangesAsync();
     }
 }

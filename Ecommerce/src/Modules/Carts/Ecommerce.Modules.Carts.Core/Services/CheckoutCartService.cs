@@ -50,11 +50,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 throw new PaymentNotFoundException(paymentId);
             }
             checkoutCart.SetPayment(payment);
-            var rowsChange = await _dbContext.SaveChangesAsync();
-            if(rowsChange != 1)
-            {
-                throw new PaymentNotUpdatedException();
-            }
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task SetShipment(ShipmentDto shipmentDto, Guid checkoutCartId)
@@ -68,11 +64,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 shipmentDto.AparmentNumber,
                 shipmentDto.ReceiverFullName
                 ));
-            var rowsChanged = await _dbContext.SaveChangesAsync();
-            if(rowsChanged != 1)
-            {
-                throw new ShipmentNotUpdatedException();
-            }
+            await _dbContext.SaveChangesAsync();
         }
         private async Task<CheckoutCart> GetOrThrowIfNull(Guid checkoutCartId)
         {

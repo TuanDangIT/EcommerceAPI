@@ -18,24 +18,21 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<int> AddAsync(Manufacturer manufacturer)
+        public async Task AddAsync(Manufacturer manufacturer)
         {
             await _dbContext.AddAsync(manufacturer);
-            return await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<int> DeleteAsync(Guid manufacturerId) => await _dbContext.Manufacturers.Where(m => m.Id == manufacturerId).ExecuteDeleteAsync();
+        public async Task DeleteAsync(Guid manufacturerId) => await _dbContext.Manufacturers.Where(m => m.Id == manufacturerId).ExecuteDeleteAsync();
 
-        public async Task<int> DeleteManyAsync(params Guid[] manufacturerIds) => await _dbContext.Manufacturers.Where(m => manufacturerIds.Contains(m.Id)).ExecuteDeleteAsync();
+        public async Task DeleteManyAsync(params Guid[] manufacturerIds) => await _dbContext.Manufacturers.Where(m => manufacturerIds.Contains(m.Id)).ExecuteDeleteAsync();
 
         public async Task<IEnumerable<Manufacturer>> GetAllAsync() => await _dbContext.Manufacturers.ToListAsync();
 
         public Task<Manufacturer?> GetAsync(Guid id) => _dbContext.Manufacturers.SingleOrDefaultAsync(m => m.Id == id); 
 
-        public async Task<int> UpdateAsync(Manufacturer manufacturer)
-        {
-            _dbContext.Manufacturers.Update(manufacturer);
-            return await _dbContext.SaveChangesAsync();
-        }
+        public async Task UpdateAsync()
+            => await _dbContext.SaveChangesAsync();
     }
 }

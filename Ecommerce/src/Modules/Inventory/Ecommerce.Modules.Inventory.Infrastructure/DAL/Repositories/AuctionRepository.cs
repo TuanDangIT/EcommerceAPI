@@ -18,22 +18,22 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<int> AddAsync(Auction auction)
+        public async Task AddAsync(Auction auction)
         {
             await _dbContext.Auctions.AddAsync(auction);
-            return await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<int> AddManyAsync(IEnumerable<Auction> auctions)
+        public async Task AddManyAsync(IEnumerable<Auction> auctions)
         {
             await _dbContext.Auctions.AddRangeAsync(auctions);  
-            return await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<int> DeleteAsync(Guid auctionId)
+        public async Task DeleteAsync(Guid auctionId)
             => await _dbContext.Auctions.Where(a => a.Id == auctionId).ExecuteDeleteAsync();
 
-        public async Task<int> DeleteManyAsync(Guid[] auctionIds) 
+        public async Task DeleteManyAsync(Guid[] auctionIds) 
             => await _dbContext.Auctions.Where(a => auctionIds.Contains(a.Id)).ExecuteDeleteAsync();
 
         public async Task<IEnumerable<Auction>> GetAllThatContainsInArrayAsync(Guid[] auctionIds)
@@ -44,7 +44,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
         public async Task<Auction?> GetAsync(Guid auctionId)
             => await _dbContext.Auctions.SingleOrDefaultAsync(a => a.Id == auctionId);
 
-        public async Task<int> UpdateAsync()
+        public async Task UpdateAsync()
             => await _dbContext.SaveChangesAsync();
     }
 }

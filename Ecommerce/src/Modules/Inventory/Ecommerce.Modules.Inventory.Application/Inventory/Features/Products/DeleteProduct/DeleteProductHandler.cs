@@ -27,11 +27,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.De
         {
             var imagesIds = await _imageRepository.GetAllImagesForProductAsync(request.ProductId);
             await _blobStorageService.DeleteManyAsync(imagesIds.Select(i => i.ToString()), _containerName);
-            var rowsChanged = await _productRepository.DeleteAsync(request.ProductId);
-            if (rowsChanged != 1)
-            {
-                throw new ProductNotDeletedException(request.ProductId);
-            }
+            await _productRepository.DeleteAsync(request.ProductId);
         }
     }
 }

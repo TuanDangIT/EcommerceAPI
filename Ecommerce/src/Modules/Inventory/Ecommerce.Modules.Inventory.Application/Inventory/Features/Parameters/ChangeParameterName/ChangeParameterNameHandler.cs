@@ -27,11 +27,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.
                 throw new ParameterNotFoundException(request.ParameterId);
             }
             parameter.ChangeName(request.Name, _timeProvider.GetUtcNow().UtcDateTime);
-            var rowsChanged = await _parameterRepository.UpdateAsync(parameter);
-            if (rowsChanged != 1)   
-            {
-                throw new ParameterNotUpdatedException(request.ParameterId);
-            }
+            await _parameterRepository.UpdateAsync();
         }
     }
 }
