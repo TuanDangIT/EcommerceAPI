@@ -21,17 +21,17 @@ namespace Ecommerce.Shared.Infrastructure.Storage
         {
             _blobServiceClient = blobServiceClient;
         }
-        public async Task DeleteAsync(string fileName, string containerName)
-        {
-            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-            BlobClient blobClient = containerClient.GetBlobClient(fileName);
-            var a = blobClient.Uri;
-            using var response = await blobClient.DeleteAsync();
-            if(response.IsError)
-            {
-                throw new BlobStorageFileNotDeletedException(fileName);
-            }
-        }
+        //public async Task DeleteAsync(string fileName, string containerName)
+        //{
+        //    var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+        //    BlobClient blobClient = containerClient.GetBlobClient(fileName);
+        //    var a = blobClient.Uri;
+        //    using var response = await blobClient.DeleteAsync();
+        //    if(response.IsError)
+        //    {
+        //        throw new BlobStorageFileNotDeletedException(fileName);
+        //    }
+        //}
         public async Task DeleteManyAsync(IEnumerable<string> fileNames, string containerName)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);

@@ -103,13 +103,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
             {
                 var newGuid = Guid.NewGuid();
                 var imageUrlPath = await _blobStorageService.UploadAsync(image, newGuid.ToString(), _containerName);
-                imagesList.Add(new Image()
-                {
-                    Id = newGuid,
-                    ImageUrlPath = imageUrlPath,
-                    Order = counter++,
-                    Product = product
-                });
+                imagesList.Add(new Image(newGuid, imageUrlPath, counter++, product));
             }
             await _imageRepository.AddRangeAsync(imagesList);
         }

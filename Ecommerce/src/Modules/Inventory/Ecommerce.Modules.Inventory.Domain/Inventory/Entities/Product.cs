@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Ecommerce.Modules.Inventory.Domain.Inventory.Exceptions;
+using Microsoft.AspNetCore.Http.HttpResults;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,43 +60,6 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         {
             Quantity -= quantity;
         }
-        //public void Edit(string sku, string name, decimal price, int vat, string description
-        //    , List<ProductParameter> productParameters, Manufacturer manufacturer, Category category
-        //    , List<Image> images, DateTime updatedAt, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)
-        //{
-        //    SKU = sku;
-        //    EAN = ean;
-        //    Name = name;
-        //    Price = price;
-        //    VAT = vat;
-        //    Quantity = quantity;
-        //    Location = location;
-        //    Description = description;
-        //    AdditionalDescription = additionalDescription;
-        //    _productParameters = productParameters;
-        //    Manufacturer = manufacturer;
-        //    Category = category;
-        //    Images = images;
-        //    UpdatedAt = updatedAt;
-        //        //}
-        //        public void Edit(string sku, string name, decimal price, int vat, string description, List<ProductParameter> productParameters, Manufacturer manufacturer, Category category
-        ///*            , List<Image> images*/, DateTime updatedAt, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)
-        //        {
-        //            SKU = sku;
-        //            EAN = ean;
-        //            Name = name;
-        //            Price = price;
-        //            VAT = vat;
-        //            Quantity = quantity;
-        //            Location = location;
-        //            Description = description;
-        //            AdditionalDescription = additionalDescription;
-        //            _productParameters = productParameters;
-        //            Manufacturer = manufacturer;
-        //            Category = category;
-        //            //Images = images;
-        //            UpdatedAt = updatedAt;
-        //        }
         public void ChangeBaseDetails(string sku, string name, decimal price, int vat, string description, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)
         {
             SKU = sku;
@@ -118,5 +82,60 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             => _productParameters = parameters;
         public void SetUpdateAt(DateTime updateAt)
             => UpdatedAt = updateAt;
+        private static void IsSkuValid(string sku)
+        {
+            if (sku.Length >= 8 && sku.Length <= 16) 
+            { 
+                throw new ProductInvalidSkuException();
+            }
+        }
+        private static void IsEanValid(string ean)
+        {
+            if (ean.Length == 13)
+            {
+                throw new ProductInvalidEanException();
+            }
+        }
+
+        private static void IsNameValid(string name)
+        {
+            if (name.Length >= 2 && name.Length <= 24)
+            {
+                throw new ProductInvalidSkuException();
+            }
+        }
+
+        private static void IsPriceValid(decimal price)
+        {
+            if (price <= 0)
+            {
+                throw new ProductInvalidSkuException();
+            }
+        }
+
+        private static void IsVatValid(int vat)
+        {
+            if (vat <= 0 && vat <= 100)
+            {
+                throw new ProductInvalidSkuException();
+            }
+        }
+
+        private static void IsLocationValid(string location)
+        {
+            if (location.Length <= 64)
+            {
+                throw new ProductInvalidSkuException();
+            }
+        }
+
+        private static void IsQuantityValid(int quantity)
+        {
+            if (quantity <= 0)
+            {
+                throw new ProductInvalidSkuException();
+            }
+        }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ecommerce.Modules.Inventory.Domain.Inventory.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public DateTime? UpdatedAt { get; private set; }
         public Manufacturer(Guid id, string name, DateTime createdAt)
         {
+            IsNameValid(name);
             Id = id;
             Name = name;
             CreatedAt = createdAt;
@@ -26,8 +28,16 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public void ChangeName(string name, DateTime updatedAt)
         {
+            IsNameValid(name);
             Name = name;
             UpdatedAt = updatedAt;
+        }
+        private static void IsNameValid(string name)
+        {
+            if (name.Length >= 2 && name.Length <= 32)
+            {
+                throw new CategoryInvalidNameLengthException();
+            }
         }
     }
 }

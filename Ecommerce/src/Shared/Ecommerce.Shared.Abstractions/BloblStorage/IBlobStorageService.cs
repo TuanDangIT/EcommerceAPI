@@ -11,6 +11,6 @@ namespace Ecommerce.Shared.Abstractions.BloblStorage
     {
         Task<string> UploadAsync(IFormFile blub, string fileName, string containerName);
         Task DeleteManyAsync(IEnumerable<string> fileNames, string containerName);
-        Task DeleteAsync(string fileName, string containerName);
+        //Task DeleteAsync(string fileName, string containerName);
     }
 }

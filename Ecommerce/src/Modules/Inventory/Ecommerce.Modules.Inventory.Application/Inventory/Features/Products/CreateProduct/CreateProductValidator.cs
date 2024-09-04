@@ -31,7 +31,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
             RuleFor(c => c.VAT)
                 .NotEmpty()
                 .NotNull()
-                .GreaterThanOrEqualTo(0);
+                .GreaterThanOrEqualTo(0)
+                .LessThanOrEqualTo(100);
             RuleFor(c => c.Location)
                 .MaximumLength(64);
             RuleFor(c => c.Quantity)
