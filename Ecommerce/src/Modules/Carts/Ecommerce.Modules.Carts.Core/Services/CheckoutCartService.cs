@@ -40,7 +40,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
             var checkoutCart = await GetOrThrowIfNull(checkoutCartId);
         }
 
-        public async Task SetPaymentAsync(Guid paymentId, Guid checkoutCartId)
+        public async Task SetPaymentAsync(Guid checkoutCartId, Guid paymentId)
         {
             var checkoutCart = await GetOrThrowIfNull(checkoutCartId);
             var payment = await _dbContext.Payments
@@ -53,7 +53,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task SetShipment(ShipmentDto shipmentDto, Guid checkoutCartId)
+        public async Task SetShipmentAsync(Guid checkoutCartId, ShipmentDto shipmentDto)
         {
             var checkoutCart = await GetOrThrowIfNull(checkoutCartId);
             checkoutCart.SetShipment(new Shipment(

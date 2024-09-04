@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         {
             
         }
-        public void IncreaseQuantity() => Quantity++;
+        public void IncreaseQuantity(int quantity) => Quantity+=quantity;
         public void DecreaseQuantity()
         {
             if(Quantity -1 < 0)
@@ -35,5 +35,6 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             }
             Quantity--;
         }
+        public void SetQuantity(int quantity) => Quantity = quantity;
     }
 }

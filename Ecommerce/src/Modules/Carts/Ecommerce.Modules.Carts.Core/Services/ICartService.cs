@@ -11,10 +11,11 @@ namespace Ecommerce.Modules.Carts.Core.Services
     public interface ICartService
     {
         Task<CartDto> GetAsync(Guid cartId);
-        Task CreateAsync(Guid customerId);
-        Task CreateAsync();
-        Task AddProductAsync(Guid productId, Guid cartId);
-        Task RemoveProduct(Guid productId, Guid cartId);
+        Task<Guid> CreateAsync(Guid customerId);
+        Task<Guid> CreateAsync();
+        Task AddProductAsync(Guid cartId, Guid productId, int quantity);
+        Task RemoveProduct(Guid cartId, Guid productId);
+        Task SetProductQuantity(Guid cartId, Guid productId, int quantity);
         Task ClearCartAsync(Guid cartId);
         Task CheckoutAsync(Guid cartId);
     }

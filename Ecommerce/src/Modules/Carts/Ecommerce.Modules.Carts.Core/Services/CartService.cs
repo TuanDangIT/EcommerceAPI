@@ -21,11 +21,11 @@ namespace Ecommerce.Modules.Carts.Core.Services
             _dbContext = dbContext;
         }
 
-        public async Task AddProductAsync(Guid productId, Guid cartId)
+        public async Task AddProductAsync(Guid cartId, Guid productId, int quantity)
         {
             var cart = await GetByCartIdWithIncludesOrThrowIfNull(cartId);
             var product = await GetProductOrThrowNull(productId);
-            cart.AddProduct(product);
+            cart.AddProduct(product, quantity);
             await _dbContext.SaveChangesAsync();
         }
 
@@ -45,16 +45,20 @@ namespace Ecommerce.Modules.Carts.Core.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task CreateAsync(Guid customerId)
+        public async Task<Guid> CreateAsync(Guid customerId)
         {
-            await _dbContext.Carts.AddAsync(new Cart(customerId));
+            var newGuid = Guid.NewGuid();
+            await _dbContext.Carts.AddAsync(new Cart(newGuid, customerId));
             await _dbContext.SaveChangesAsync();
+            return newGuid;
         }
 
-        public async Task CreateAsync()
+        public async Task<Guid> CreateAsync()
         {
-            await _dbContext.Carts.AddAsync(new Cart());
+            var newGuid = Guid.NewGuid();
+            await _dbContext.Carts.AddAsync(new Cart(newGuid));
             await _dbContext.SaveChangesAsync();
+            return newGuid;
         }
 
         public async Task<CartDto> GetAsync(Guid cartId)
@@ -63,11 +67,18 @@ namespace Ecommerce.Modules.Carts.Core.Services
             return cart.AsDto();
         }
 
-        public async Task RemoveProduct(Guid productId, Guid cartId)
+        public async Task RemoveProduct(Guid cartId, Guid productId)
         {
             var cart = await GetByCartIdWithIncludesOrThrowIfNull(cartId);
             var product = await GetProductOrThrowNull(productId);
             cart.RemoveProduct(product);
+            await _dbContext.SaveChangesAsync();
+        }
+        public async Task SetProductQuantity(Guid cartId, Guid productId, int quantity)
+        {
+            var cart = await GetByCartIdWithIncludesOrThrowIfNull(cartId);
+            var product = await GetProductOrThrowNull(productId);
+            cart.SetProductQuantity(product, quantity);
             await _dbContext.SaveChangesAsync();
         }
         private async Task<Cart> GetByCartIdOrThrowIfNull(Guid cartId)

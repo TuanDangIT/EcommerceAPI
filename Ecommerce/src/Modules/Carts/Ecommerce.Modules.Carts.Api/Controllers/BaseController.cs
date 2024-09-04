@@ -14,15 +14,6 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
     [Route("api/" + CartsModule.BasePath + "/[controller]")]
     internal abstract class BaseController : ControllerBase
     {
-        protected ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse, TEntity>(TResponse? model)
-        {
-            if (model is not null)
-            {
-                return Ok(new ApiResponse<TResponse>(HttpStatusCode.OK, "success", model));
-            }
-            string entityName = typeof(TEntity).Name;
-            return NotFound(new ExceptionResponse(HttpStatusCode.NotFound, "error", $"{entityName} was not found"));
-        }
     }
 
 }

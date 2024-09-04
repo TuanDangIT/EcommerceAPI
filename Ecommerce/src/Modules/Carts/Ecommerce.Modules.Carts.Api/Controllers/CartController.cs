@@ -20,11 +20,47 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         {
             _cartService = cartService;
         }
+        [HttpPost]
+        public async Task<ActionResult> CreateCart()
+        {
+            var cartGuid = await _cartService.CreateAsync();
+            return CreatedAtAction(nameof(GetCart), new { cartGuid }, null);
+        }
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<ApiResponse<CartDto>>> GetCart([FromRoute]Guid id)
         {
             var cart = await _cartService.GetAsync(id);
             return Ok(new ApiResponse<CartDto>(HttpStatusCode.OK, "success", cart));
+        }
+        [HttpPost("{cartId:guid}")]
+        public async Task<ActionResult> AddProduct([FromRoute]Guid cartId, [FromBody]CartAddProductDto dto)
+        {
+            await _cartService.AddProductAsync(cartId, dto.ProductId, dto.Quantity);
+            return NoContent();
+        }
+        [HttpDelete("{cartId:guid}")]
+        public async Task<ActionResult> RemoveProduct([FromRoute]Guid cartId, [FromBody]Guid productId)
+        {
+            await _cartService.RemoveProduct(cartId, productId);
+            return NoContent();
+        }
+        [HttpPut]
+        public async Task<ActionResult> SetProductQuantity([FromRoute]Guid cartId, [FromBody]CartSetProductQuantityDto dto)
+        {
+            await _cartService.SetProductQuantity(cartId, dto.ProductId, dto.Quantity);
+            return NoContent();
+        }
+        [HttpDelete("{cartId:guid}/clear")]
+        public async Task<ActionResult> ClearCart([FromRoute] Guid cartId)
+        {
+            await _cartService.ClearCartAsync(cartId);
+            return NoContent();
+        }
+        [HttpPost("{cartId:guid}/checkout")]
+        public async Task<ActionResult> Checkout([FromRoute]Guid cartId)
+        {
+            await _cartService.CheckoutAsync(cartId);
+            return NoContent();
         }
     }
 }
