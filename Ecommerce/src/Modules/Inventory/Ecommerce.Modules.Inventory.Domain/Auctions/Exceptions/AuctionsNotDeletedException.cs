@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Auctions.Exceptions
 {
-    internal class AuctionNotUnlistedException : EcommerceException
+    internal class AuctionsNotDeletedException : EcommerceException
     {
-        public AuctionNotUnlistedException() : base("One or more auctions were not unlisted.")
+        public AuctionsNotDeletedException() : base("One or more auctions were not unlisted.")
         {
         }
     }

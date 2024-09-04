@@ -10,21 +10,27 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Auctions.Events.Handlers
 {
-    public sealed class ProductUnlistedHandler : IDomainEventHandler<ProductUnlisted>
+    public sealed class ProductsUnlistedHandler : IDomainEventHandler<ProductsUnlisted>
     {
         private readonly IAuctionRepository _auctionRepository;
 
-        public ProductUnlistedHandler(IAuctionRepository auctionRepository)
+        public ProductsUnlistedHandler(IAuctionRepository auctionRepository)
         {
             _auctionRepository = auctionRepository;
         }
-        async Task IDomainEventHandler<ProductUnlisted>.HandleAsync(ProductUnlisted @event)
+
+        public async Task HandleAsync(ProductsUnlisted @event)
         {
             var productIds = @event.ProductIds.ToArray();
-            var rowsChanged = await _auctionRepository.DeleteManyAsync(productIds);
-            if(rowsChanged != productIds.Length)
+            var auctions = await _auctionRepository.GetAllThatContainsInArrayAsync(productIds);
+            if (!auctions.Any())
             {
-                throw new AuctionNotUnlistedException();
+                throw new ProductsCannotBeUnlistedMoreThanOnceException(auctions.Select(a => a.Id).ToArray());
+            }
+            var rowsChanged = await _auctionRepository.DeleteManyAsync(productIds);
+            if (rowsChanged != productIds.Length)
+            {
+                throw new AuctionsNotDeletedException();
             }
         }
     }

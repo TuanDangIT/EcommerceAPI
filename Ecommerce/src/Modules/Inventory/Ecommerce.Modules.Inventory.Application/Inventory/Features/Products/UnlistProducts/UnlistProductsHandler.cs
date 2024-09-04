@@ -44,7 +44,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Un
                 }
                 throw new ProductNotAllFoundException(productIdsNotFound);
             }
-            var domainEvent = new ProductUnlisted(productIds);
+            var domainEvent = new ProductsUnlisted(productIds);
             await _domainEventDispatcher.DispatchAsync(domainEvent);
             var integrationEvent = _eventMapper.Map(domainEvent);
             await _messageBroker.PublishAsync(integrationEvent);

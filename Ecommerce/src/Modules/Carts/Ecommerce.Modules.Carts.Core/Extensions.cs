@@ -17,7 +17,7 @@ namespace Ecommerce.Modules.Carts.Core
         public static IServiceCollection AddCore(this IServiceCollection services)
         {
             services.AddPostgres<CartsDbContext>();
-            services.AddSingleton<ICartsDbContext>(sp =>
+            services.AddScoped<ICartsDbContext>(sp =>
             {
                 return sp.GetRequiredService<CartsDbContext>();
             });

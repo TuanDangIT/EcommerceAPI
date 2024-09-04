@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Ecommerce.Shared.Infrastructure.Modules
@@ -11,7 +12,8 @@ namespace Ecommerce.Shared.Infrastructure.Modules
     {
         private static readonly JsonSerializerOptions SerializerOptions = new()
         {
-            PropertyNameCaseInsensitive = true
+            PropertyNameCaseInsensitive = true,
+            ReferenceHandler = ReferenceHandler.IgnoreCycles
         };
 
         public byte[] Serialize<T>(T value)

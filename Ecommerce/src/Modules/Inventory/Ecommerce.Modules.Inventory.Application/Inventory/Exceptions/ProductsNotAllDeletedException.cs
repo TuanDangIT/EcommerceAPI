@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.Exceptions
 {
-    internal class ProductNotAllDeletedException : EcommerceException
+    internal class ProductsNotAllDeletedException : EcommerceException
     {
-        public ProductNotAllDeletedException() : base("One or more products were not deleted.")
+        public ProductsNotAllDeletedException() : base("One or more products were not deleted.")
         {
         }
     }

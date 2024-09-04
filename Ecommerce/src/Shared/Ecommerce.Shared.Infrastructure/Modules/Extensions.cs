@@ -29,10 +29,10 @@ namespace Ecommerce.Shared.Infrastructure.Modules
             var eventTypes = types
                 .Where(x => x.IsClass && typeof(IEvent).IsAssignableFrom(x))
                 .ToArray();
-            //foreach ( var type in eventTypes)
-            //{
-            //    Console.WriteLine(type.Name);
-            //}
+            foreach (var type in eventTypes)
+            {
+                Console.WriteLine(type.Name);
+            }
             services.AddSingleton<IModuleRegistry>(sp =>
             {
                 var eventDispatcher = sp.GetRequiredService<IEventDispatcher>();

@@ -36,6 +36,11 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
         public async Task<int> DeleteManyAsync(Guid[] auctionIds) 
             => await _dbContext.Auctions.Where(a => auctionIds.Contains(a.Id)).ExecuteDeleteAsync();
 
+        public async Task<IEnumerable<Auction>> GetAllThatContainsInArrayAsync(Guid[] auctionIds)
+            => await _dbContext.Auctions
+                .Where(p => auctionIds.Contains(p.Id))
+                .ToListAsync();
+
         public async Task<Auction?> GetAsync(Guid auctionId)
             => await _dbContext.Auctions.SingleOrDefaultAsync(a => a.Id == auctionId);
 

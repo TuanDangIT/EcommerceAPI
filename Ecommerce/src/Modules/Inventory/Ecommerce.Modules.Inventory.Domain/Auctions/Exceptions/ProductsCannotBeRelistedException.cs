@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Auctions.Exceptions
 {
-    internal class AuctionNotListedException : EcommerceException
+    internal class ProductsCannotBeRelistedException : EcommerceException
     {
-        public AuctionNotListedException() : base("One or more auctions were not listed.")
+        public Guid[] Ids { get; set; }
+        public ProductsCannotBeRelistedException(Guid[] ids) : base($"Auction: {string.Join(", ", ids)} cannot be relisted.")
         {
+            Ids = ids;
         }
     }
 }

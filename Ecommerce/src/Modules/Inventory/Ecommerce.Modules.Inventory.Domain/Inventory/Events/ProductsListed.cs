@@ -9,5 +9,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Inventory.Events
 {
-    public sealed record class ProductListed(IEnumerable<Product> Products, DateTime ListedAt) : IDomainEvent;
+    public sealed record class ProductsListed(IEnumerable<Product> Products, DateTime ListedAt) : IDomainEvent;
 }

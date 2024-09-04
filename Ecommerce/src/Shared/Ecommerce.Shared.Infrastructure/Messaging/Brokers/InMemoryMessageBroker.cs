@@ -31,15 +31,11 @@ namespace Ecommerce.Shared.Infrastructure.Messaging.Brokers
                 return;
             }
 
-            var tasks = new List<Task>();
 
             foreach (var message in messages)
             {
                 await _asyncMessageDispatcher.PublishAsync(message);
-                //tasks.Add(_moduleClient.PublishAsync(message));
             }
-
-            await Task.WhenAll(tasks);
         }
     }
 }

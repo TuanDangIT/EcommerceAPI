@@ -11,19 +11,23 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Auctions.Events.Handlers
 {
-    public sealed class ProductListedHandler : IDomainEventHandler<ProductListed>
+    public sealed class ProductsListedHandler : IDomainEventHandler<ProductsListed>
     {
         private readonly IAuctionRepository _auctionRepository;
 
-        public ProductListedHandler(IAuctionRepository auctionRepository)
+        public ProductsListedHandler(IAuctionRepository auctionRepository)
         {
             _auctionRepository = auctionRepository;
         }
 
-        public async Task HandleAsync(ProductListed @event)
+        public async Task HandleAsync(ProductsListed @event)
         {
             var products = @event.Products;
-            var auctions = new List<Auction>();
+            var auctions = (await _auctionRepository.GetAllThatContainsInArrayAsync(products.Select(p => p.Id).ToArray())).ToList();
+            if(auctions.Count != 0)
+            {
+                throw new ProductsCannotBeRelistedException(auctions.Select(a => a.Id).ToArray());
+            }
             foreach (var product in products)
             {
                 auctions.Add(new Auction(
@@ -37,14 +41,14 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Events.Handlers
                     createdAt: @event.ListedAt,
                     quantity: product.Quantity,
                     additionalDescription: product.AdditionalDescription,
-                    parameters: product.ProductParameters?.Select(pp => new Entities.AuctionParameter(pp.Parameter.Name, pp.Value)).ToList(),
+                    parameters: product.ProductParameters?.Select(pp => new AuctionParameter(pp.Parameter.Name, pp.Value)).ToList(),
                     manufacturer: product.Manufacturer.Name
                 ));
             }
             var rowsChanged = await _auctionRepository.AddManyAsync(auctions);
             if(rowsChanged != products.Count())
             {
-                throw new AuctionNotListedException();
+                throw new AuctionsNotCreatedException();
             }
         }
     }

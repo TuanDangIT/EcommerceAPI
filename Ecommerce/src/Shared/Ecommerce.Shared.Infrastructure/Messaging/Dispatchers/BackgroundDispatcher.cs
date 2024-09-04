@@ -26,7 +26,6 @@ namespace Ecommerce.Shared.Infrastructure.Messaging.Dispatchers
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("Running the background dispatcher.");
-            Console.WriteLine("123456");
             await foreach (var message in _messageChannel.Reader.ReadAllAsync(stoppingToken))
             {
                 try
@@ -38,7 +37,7 @@ namespace Ecommerce.Shared.Infrastructure.Messaging.Dispatchers
                     _logger.LogError(exception, exception.Message);
                 }
             }
-
+            Console.WriteLine("123");
             _logger.LogInformation("Finished running the background dispatcher.");
         }
     }

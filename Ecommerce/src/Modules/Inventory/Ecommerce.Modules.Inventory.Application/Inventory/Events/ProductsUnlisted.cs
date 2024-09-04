@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.Events
 {
-    public sealed record class ProductUnlisted(IEnumerable<Guid> ProductIds) : IEvent;
+    public sealed record class ProductsUnlisted(IEnumerable<Guid> ProductIds) : IEvent;
 }

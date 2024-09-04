@@ -15,8 +15,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Services
         public IMessage Map(IDomainEvent @event)
             => @event switch
             {
-                Domain.Inventory.Events.ProductListed e => new Events.ProductListed(e.Products.Select(p => new { p.Id, p.Name, p.Price, ImagePathUrl = p.Images.First() })),
-                Domain.Inventory.Events.ProductUnlisted e => new Events.ProductUnlisted(e.ProductIds),
+                Domain.Inventory.Events.ProductsListed e => new Events.ProductsListed(e.Products.Select(p => new { p.Id, p.Name, p.Price, ImagePathUrl = p.Images.First().ImageUrlPath })),
+                Domain.Inventory.Events.ProductsUnlisted e => new Events.ProductsUnlisted(e.ProductIds),
                 _ => throw new ArgumentException(nameof(@event)),
             };
     }

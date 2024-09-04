@@ -45,7 +45,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Li
                 }
                 throw new ProductNotAllFoundException(productIdsNotFound);
             }
-            var domainEvent = new ProductListed(products, _timeProvider.GetUtcNow().UtcDateTime);
+            var domainEvent = new ProductsListed(products, _timeProvider.GetUtcNow().UtcDateTime);
             await _domainEventDispatcher.DispatchAsync(domainEvent);
             var integrationEvent = _eventMapper.Map(domainEvent);
             await _messageBroker.PublishAsync(integrationEvent);

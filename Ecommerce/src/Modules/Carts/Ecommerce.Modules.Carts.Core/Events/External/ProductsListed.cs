@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Inventory.Application.Inventory.Events
+namespace Ecommerce.Modules.Carts.Core.Events.External
 {
-    public sealed record class ProductListed(IEnumerable<object> Products) : IEvent;
+    public sealed record class ProductsListed(IEnumerable<object> Products) : IEvent;
 }

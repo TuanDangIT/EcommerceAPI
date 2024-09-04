@@ -21,6 +21,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("Ecommerce.Bootstrapper")]
@@ -49,8 +50,13 @@ namespace Ecommerce.Shared.Infrastructure
                     {
                         Console.WriteLine(part.Name);
                     }
+                    Console.WriteLine("--------------");
                     manager.FeatureProviders.Add(new InternalControllerFeatureProvider());
                 });
+                //.AddJsonOptions(option =>
+                //{
+                //    option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                //});
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             return services;
