@@ -14,6 +14,8 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public string SKU { get; private set; } = string.Empty;
         public string? EAN { get; private set; }
         public string Name { get; private set; } = string.Empty;
+        // W następnej wersji WebAPI można dodać obsługiwanie różnych Currency.
+        //public string Currency { get; private set; } = string.Empty;
         public decimal Price { get; private set; }
         public int VAT { get; private set; }
         public int? Quantity { get; private set; }
