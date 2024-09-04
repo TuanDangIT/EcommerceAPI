@@ -3,6 +3,7 @@ using Ecommerce.Modules.Carts.Core.DTO;
 using Ecommerce.Modules.Carts.Core.Entities;
 using Ecommerce.Modules.Carts.Core.Exceptions;
 using Ecommerce.Modules.Carts.Core.Mappings;
+using Ecommerce.Shared.Abstractions.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,12 @@ namespace Ecommerce.Modules.Carts.Core.Services
     internal class CartService : ICartService
     {
         private readonly ICartsDbContext _dbContext;
+        private readonly IContextService _contextService;
 
-        public CartService(ICartsDbContext dbContext)
+        public CartService(ICartsDbContext dbContext, IContextService contextService)
         {
             _dbContext = dbContext;
+            _contextService = contextService;
         }
 
         public async Task AddProductAsync(Guid cartId, Guid productId, int quantity)
@@ -45,18 +48,29 @@ namespace Ecommerce.Modules.Carts.Core.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<Guid> CreateAsync(Guid customerId)
-        {
-            var newGuid = Guid.NewGuid();
-            await _dbContext.Carts.AddAsync(new Cart(newGuid, customerId));
-            await _dbContext.SaveChangesAsync();
-            return newGuid;
-        }
+        //public async Task<Guid> CreateAsync(Guid customerId)
+        //{
+        //    var newGuid = Guid.NewGuid();
+        //    await _dbContext.Carts.AddAsync(new Cart(newGuid, customerId));
+        //    await _dbContext.SaveChangesAsync();
+        //    return newGuid;
+        //}
 
         public async Task<Guid> CreateAsync()
         {
             var newGuid = Guid.NewGuid();
-            await _dbContext.Carts.AddAsync(new Cart(newGuid));
+            var userId = _contextService.Identity is not null &&
+                _contextService.Identity.IsAuthenticated ?
+                _contextService.Identity.Id :
+                Guid.Empty;
+            if(userId == Guid.Empty)
+            {
+                await _dbContext.Carts.AddAsync(new Cart(newGuid));
+            }
+            else
+            {
+                await _dbContext.Carts.AddAsync(new Cart(newGuid, userId));
+            }
             await _dbContext.SaveChangesAsync();
             return newGuid;
         }
