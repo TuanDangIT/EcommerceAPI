@@ -17,6 +17,11 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configuration
             builder.Property(p => p.PaymentMethod)
                 .IsRequired()
                 .HasConversion<string>();
+            builder.HasData(new Payment()
+            {
+                Id = Guid.NewGuid(),
+                PaymentMethod = PaymentMethod.card
+            });
         }
     }
 }

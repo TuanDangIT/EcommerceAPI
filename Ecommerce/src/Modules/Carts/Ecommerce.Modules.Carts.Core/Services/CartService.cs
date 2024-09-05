@@ -27,7 +27,12 @@ namespace Ecommerce.Modules.Carts.Core.Services
         public async Task AddProductAsync(Guid cartId, Guid productId, int quantity)
         {
             var cart = await GetByCartIdWithIncludesOrThrowIfNull(cartId);
-            var product = await GetProductOrThrowNull(productId);
+            var product = await _dbContext.Products
+                .SingleOrDefaultAsync(p => p.Id == productId);
+            if (product is null)
+            {
+                throw new ProductNotFoundException(productId);
+            }
             cart.AddProduct(product, quantity);
             await _dbContext.SaveChangesAsync();
         }
@@ -43,7 +48,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
 
         public async Task ClearCartAsync(Guid cartId)
         {
-            var cart = await GetByCartIdOrThrowIfNull(cartId);
+            var cart = await GetByCartIdWithIncludesOrThrowIfNull(cartId);
             cart.Clear();
             await _dbContext.SaveChangesAsync();
         }
@@ -84,27 +89,27 @@ namespace Ecommerce.Modules.Carts.Core.Services
         public async Task RemoveProduct(Guid cartId, Guid productId)
         {
             var cart = await GetByCartIdWithIncludesOrThrowIfNull(cartId);
-            var product = await GetProductOrThrowNull(productId);
+            var product = await GetCartProductOrThrowNull(cartId, productId);
             cart.RemoveProduct(product);
             await _dbContext.SaveChangesAsync();
         }
         public async Task SetProductQuantity(Guid cartId, Guid productId, int quantity)
         {
             var cart = await GetByCartIdWithIncludesOrThrowIfNull(cartId);
-            var product = await GetProductOrThrowNull(productId);
+            var product = await GetCartProductOrThrowNull(cartId, productId);
             cart.SetProductQuantity(product, quantity);
             await _dbContext.SaveChangesAsync();
         }
-        private async Task<Cart> GetByCartIdOrThrowIfNull(Guid cartId)
-        {
-            var cart = await _dbContext.Carts
-                .SingleOrDefaultAsync(c => c.Id == cartId);
-            if(cart is null)
-            {
-                throw new CartNotFoundException(cartId);
-            }
-            return cart;
-        }
+        //private async Task<Cart> GetByCartIdOrThrowIfNull(Guid cartId)
+        //{
+        //    var cart = await _dbContext.Carts
+        //        .SingleOrDefaultAsync(c => c.Id == cartId);
+        //    if(cart is null)
+        //    {
+        //        throw new CartNotFoundException(cartId);
+        //    }
+        //    return cart;
+        //}
         private async Task<Cart> GetByCartIdWithIncludesOrThrowIfNull(Guid cartId)
         {
             var cart = await _dbContext.Carts
@@ -117,15 +122,17 @@ namespace Ecommerce.Modules.Carts.Core.Services
             }
             return cart;
         }
-        private async Task<Product> GetProductOrThrowNull(Guid productId)
+        private async Task<Product> GetCartProductOrThrowNull(Guid cartId, Guid productId)
         {
-            var product = await _dbContext.Products
-                .SingleOrDefaultAsync(p => p.Id == productId);
-            if (product is null)
+            var cartProduct = await _dbContext.CartProducts
+                .Include(cp => cp.Product)
+                .Include(cp => cp.Cart)
+                .SingleOrDefaultAsync(cp => cp.Product.Id == productId && cp.Cart.Id == cartId);
+            if (cartProduct is null)
             {
                 throw new ProductNotFoundException(productId);
             }
-            return product;
+            return cartProduct.Product;
         }
     }
 }

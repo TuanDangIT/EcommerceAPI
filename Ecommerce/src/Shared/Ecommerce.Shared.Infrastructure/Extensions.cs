@@ -10,6 +10,7 @@ using Ecommerce.Shared.Infrastructure.Modules;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Ecommerce.Shared.Infrastructure.Services;
 using Ecommerce.Shared.Infrastructure.Storage;
+using Ecommerce.Shared.Infrastructure.Stripe;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -41,6 +42,7 @@ namespace Ecommerce.Shared.Infrastructure
             services.AddAuth();
             services.AddContext();
             services.AddPostgres();
+            services.AddStripe();
             services.AddAzureBlobStorage();
             services.AddHostedService<AppInitializer>();
             services.AddControllers()

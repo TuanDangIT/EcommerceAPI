@@ -40,10 +40,10 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             return NoContent();
         }
         [HttpPost("{id:guid}")]
-        public async Task<ActionResult> PlaceOrder([FromRoute]Guid id)
+        public async Task<ActionResult<ApiResponse<string>>> PlaceOrder([FromRoute]Guid id)
         {
-            await _checkoutCartService.PlaceOrderAsync(id);
-            return NoContent();
+            var checkoutUrl = await _checkoutCartService.PlaceOrderAsync(id);
+            return Ok(new ApiResponse<string>(HttpStatusCode.OK, "success", checkoutUrl));
         }
     }
 }

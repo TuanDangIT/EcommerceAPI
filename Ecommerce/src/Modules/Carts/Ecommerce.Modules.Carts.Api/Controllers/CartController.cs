@@ -24,12 +24,13 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         public async Task<ActionResult> CreateCart()
         {
             var cartGuid = await _cartService.CreateAsync();
-            return CreatedAtAction(nameof(GetCart), new { cartGuid }, null);
+            //return CreatedAtAction(nameof(GetCart), new { cartGuid }, null);
+            return NoContent();
         }
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ApiResponse<CartDto>>> GetCart([FromRoute]Guid id)
+        [HttpGet("{cartId:guid}")]
+        public async Task<ActionResult<ApiResponse<CartDto>>> GetCart([FromRoute]Guid cartId)
         {
-            var cart = await _cartService.GetAsync(id);
+            var cart = await _cartService.GetAsync(cartId);
             return Ok(new ApiResponse<CartDto>(HttpStatusCode.OK, "success", cart));
         }
         [HttpPost("{cartId:guid}")]
@@ -44,7 +45,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             await _cartService.RemoveProduct(cartId, productId);
             return NoContent();
         }
-        [HttpPut]
+        [HttpPut("{cartId:guid}")]
         public async Task<ActionResult> SetProductQuantity([FromRoute]Guid cartId, [FromBody]CartSetProductQuantityDto dto)
         {
             await _cartService.SetProductQuantity(cartId, dto.ProductId, dto.Quantity);

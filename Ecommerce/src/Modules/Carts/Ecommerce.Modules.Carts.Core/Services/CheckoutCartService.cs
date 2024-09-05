@@ -3,6 +3,7 @@ using Ecommerce.Modules.Carts.Core.DTO;
 using Ecommerce.Modules.Carts.Core.Entities;
 using Ecommerce.Modules.Carts.Core.Exceptions;
 using Ecommerce.Modules.Carts.Core.Mappings;
+using Ecommerce.Modules.Carts.Core.Services.Externals;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,12 @@ namespace Ecommerce.Modules.Carts.Core.Services
     internal class CheckoutCartService : ICheckoutCartService
     {
         private readonly ICartsDbContext _dbContext;
+        private readonly IStripeService _stripeService;
 
-        public CheckoutCartService(ICartsDbContext dbContext)
+        public CheckoutCartService(ICartsDbContext dbContext, IStripeService stripeService)
         {
             _dbContext = dbContext;
+            _stripeService = stripeService;
         }
 
         public async Task<CheckoutCartDto> GetAsync(Guid checkoutCartId)
@@ -35,9 +38,11 @@ namespace Ecommerce.Modules.Carts.Core.Services
             return checkoutCart.AsDto();
         }
 
-        public async Task PlaceOrderAsync(Guid checkoutCartId)
+        public async Task<string> PlaceOrderAsync(Guid checkoutCartId)
         {
             var checkoutCart = await GetOrThrowIfNull(checkoutCartId);
+            var checkoutUrl = await _stripeService.Checkout(checkoutCart);
+            return checkoutUrl;
         }
 
         public async Task SetPaymentAsync(Guid checkoutCartId, Guid paymentId)

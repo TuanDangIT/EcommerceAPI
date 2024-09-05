@@ -37,7 +37,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void RemoveProduct(Product product)
         {
-            var cartProduct = _products.SingleOrDefault(p => p.Id == product.Id);
+            var cartProduct = _products.SingleOrDefault(cp => cp.Product.Id == product.Id);
             if (cartProduct is null)
             {
                 throw new CartProductNotFoundException(product.Id);
@@ -53,7 +53,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void SetProductQuantity(Product product, int quantity)
         {
-            var cartProduct = _products.SingleOrDefault(p => p.Id == product.Id);
+            var cartProduct = _products.SingleOrDefault(cp => cp.Product.Id == product.Id);
             if (cartProduct is null)
             {
                 throw new CartProductNotFoundException(product.Id);

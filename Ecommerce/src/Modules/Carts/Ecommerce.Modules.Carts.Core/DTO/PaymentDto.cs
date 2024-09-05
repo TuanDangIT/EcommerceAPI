@@ -10,6 +10,6 @@ namespace Ecommerce.Modules.Carts.Core.DTO
     public class PaymentDto
     {
         public Guid Id { get; set; }
-        public PaymentMethod PaymentMethod { get; set; }
+        public string PaymentMethod { get; set; } = string.Empty;
     }
 }

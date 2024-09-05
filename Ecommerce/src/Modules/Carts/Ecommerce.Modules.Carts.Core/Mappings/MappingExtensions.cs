@@ -41,7 +41,7 @@ namespace Ecommerce.Modules.Carts.Core.Mappings
             => new PaymentDto()
             {
                 Id = payment.Id,
-                PaymentMethod = payment.PaymentMethod,
+                PaymentMethod = payment.PaymentMethod.ToString(),
             };
     }
 }

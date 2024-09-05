@@ -8,6 +8,6 @@ namespace Ecommerce.Modules.Carts.Core.Entities.Enums
 {
     public enum PaymentMethod
     {
-        Card,
+        card,
     }
 }
