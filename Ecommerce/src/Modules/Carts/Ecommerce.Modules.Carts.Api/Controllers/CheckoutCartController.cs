@@ -27,13 +27,13 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             var checkoutCart = await _checkoutCartService.GetAsync(id);
             return Ok(new ApiResponse<CheckoutCartDto>(HttpStatusCode.OK, "success", checkoutCart));
         }
-        [HttpPut("{checkoutCartId:guid/payment}")]
+        [HttpPut("{checkoutCartId:guid}/payment")]
         public async Task<ActionResult> SetPayment([FromRoute]Guid checkoutCartId, [FromBody]Guid paymentId)
         {
             await _checkoutCartService.SetPaymentAsync(checkoutCartId, paymentId);
             return NoContent();
         }
-        [HttpPut("{checkoutCartId:guid/shipment}")]
+        [HttpPut("{checkoutCartId:guid}/shipment")]
         public async Task<ActionResult> SetShipment([FromRoute] Guid checkoutCartId, [FromBody]ShipmentDto paymentId)
         {
             await _checkoutCartService.SetShipmentAsync(checkoutCartId, paymentId);
