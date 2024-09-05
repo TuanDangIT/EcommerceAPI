@@ -13,9 +13,10 @@ namespace Ecommerce.Shared.Infrastructure.Storage
 {
     internal static class Extensions
     {
+        private const string BlobAzureStorageOptionsSectionName = "BlobAzureStorage";
         public static IServiceCollection AddAzureBlobStorage(this IServiceCollection services)
         {
-            var options = services.GetOptions<BlobStorageOptions>("BlobAzureStorage");
+            var options = services.GetOptions<BlobStorageOptions>(BlobAzureStorageOptionsSectionName);
             services.AddSingleton<IBlobStorageService, BlobStorageService>();
             services.AddSingleton(_ => new BlobServiceClient(options.ConnectionString));
             return services;

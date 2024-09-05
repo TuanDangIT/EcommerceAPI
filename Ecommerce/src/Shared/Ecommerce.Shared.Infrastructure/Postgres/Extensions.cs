@@ -10,9 +10,10 @@ namespace Ecommerce.Shared.Infrastructure.Postgres
 {
     public static class Extensions
     {
+        private const string PostgresOptionsSectionName = "Postgres";
         internal static IServiceCollection AddPostgres(this IServiceCollection services)
         {
-            var options = services.GetOptions<PostgresOptions>("Postgres");
+            var options = services.GetOptions<PostgresOptions>(PostgresOptionsSectionName);
             services.AddSingleton(options);
 
             return services;
