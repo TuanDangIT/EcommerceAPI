@@ -13,6 +13,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public Payment? Payment { get; set; }
         public Guid? PaymentId { get; set; }
         public Shipment? Shipment { get; set; }
+        public string? StripeSessionId { get; set; }
         public bool IsPaid { get; set; } = false;
         private List<CartProduct> _products = [];
         public IEnumerable<CartProduct> Products => _products;
@@ -30,6 +31,8 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             => Shipment = shipment;
         public void SetPayment(Payment payment)
             => Payment = payment;
+        public void SetStripeSessionId(string sessionId)
+            => StripeSessionId = sessionId;
         public void SetPaid()
             => IsPaid = true;
     }

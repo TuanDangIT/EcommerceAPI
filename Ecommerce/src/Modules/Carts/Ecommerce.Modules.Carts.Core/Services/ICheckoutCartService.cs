@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Carts.Core.DTO;
 using Ecommerce.Modules.Carts.Core.Entities;
+using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace Ecommerce.Modules.Carts.Core.Services
         Task SetPaymentAsync(Guid checkoutCartId, Guid paymentId);
         Task SetShipmentAsync(Guid checkoutCartId, ShipmentDto shipmentDto);
         Task<CheckoutStripeSessionDto> PlaceOrderAsync(Guid checkoutCartId);
+        Task HandleCheckoutSessionCompleted(Session? session);
     }
 }

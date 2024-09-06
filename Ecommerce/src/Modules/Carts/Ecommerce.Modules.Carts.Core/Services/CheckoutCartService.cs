@@ -4,7 +4,9 @@ using Ecommerce.Modules.Carts.Core.Entities;
 using Ecommerce.Modules.Carts.Core.Exceptions;
 using Ecommerce.Modules.Carts.Core.Mappings;
 using Ecommerce.Modules.Carts.Core.Services.Externals;
+using Ecommerce.Shared.Abstractions.Messaging;
 using Microsoft.EntityFrameworkCore;
+using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +19,13 @@ namespace Ecommerce.Modules.Carts.Core.Services
     {
         private readonly ICartsDbContext _dbContext;
         private readonly IStripeService _stripeService;
+        private readonly IMessageBroker _messageBroker;
 
-        public CheckoutCartService(ICartsDbContext dbContext, IStripeService stripeService)
+        public CheckoutCartService(ICartsDbContext dbContext, IStripeService stripeService, IMessageBroker messageBroker)
         {
             _dbContext = dbContext;
             _stripeService = stripeService;
+            _messageBroker = messageBroker;
         }
 
         public async Task<CheckoutCartDto> GetAsync(Guid checkoutCartId)
@@ -42,6 +46,8 @@ namespace Ecommerce.Modules.Carts.Core.Services
         {
             var checkoutCart = await GetOrThrowIfNull(checkoutCartId);
             var dto = await _stripeService.Checkout(checkoutCart);
+            checkoutCart.SetStripeSessionId(dto.SessionId);
+            await _dbContext.SaveChangesAsync();
             return dto;
         }
 
@@ -69,6 +75,25 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 shipmentDto.AparmentNumber,
                 shipmentDto.ReceiverFullName
                 ));
+            await _dbContext.SaveChangesAsync();
+        }
+        public async Task HandleCheckoutSessionCompleted(Session? session)
+        {
+            if(session is null)
+            {
+                throw new NullReferenceException();
+            }
+            var sessionId = session.Id;
+            var checkoutCart = await _dbContext.CheckoutCarts
+                .Include(cc => cc.Products)
+                .ThenInclude(cp => cp.Product)
+                .Include(cc => cc.Payment)
+                .SingleOrDefaultAsync(cc => cc.StripeSessionId == sessionId);
+            if(checkoutCart is null)
+            {
+                throw new CheckoutCartNotFoundException();
+            }
+            checkoutCart.SetPaid();
             await _dbContext.SaveChangesAsync();
         }
         private async Task<CheckoutCart> GetOrThrowIfNull(Guid checkoutCartId)

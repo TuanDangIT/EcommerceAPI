@@ -58,7 +58,8 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
                 if(stripeEvent.Type == Events.CheckoutSessionCompleted)
                 {
                     var session = stripeEvent.Data.Object as Session;
-                    Console.WriteLine(session.Id);
+                    Console.WriteLine(session?.Id);
+                    await _checkoutCartService.HandleCheckoutSessionCompleted(session);
                 }
                 return Ok();
             }

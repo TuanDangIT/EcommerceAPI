@@ -7,7 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Events
 {
-    internal class CustomerPlacedOrder : IEvent
-    {
-    }
+    internal class CustomerPlacedOrder : IEvent;
 }

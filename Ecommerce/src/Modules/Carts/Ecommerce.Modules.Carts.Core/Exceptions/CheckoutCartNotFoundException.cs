@@ -14,5 +14,9 @@ namespace Ecommerce.Modules.Carts.Core.Exceptions
         {
             Id = id;
         }
+        public CheckoutCartNotFoundException() : base("Checkout cart was not found.")
+        {
+            
+        }
     }
 }
