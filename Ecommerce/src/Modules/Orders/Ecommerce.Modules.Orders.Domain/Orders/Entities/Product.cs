@@ -11,5 +11,15 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public string Name { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public string ImagePathUrl { get; set; } = string.Empty;
+        public Product(string name, decimal price, string imagePathUrl)
+        {
+            Name = name;
+            Price = price;
+            ImagePathUrl = imagePathUrl;
+        }
+        public Product()
+        {
+
+        }
     }
 }
