@@ -38,11 +38,11 @@ namespace Ecommerce.Modules.Carts.Core.Services
             return checkoutCart.AsDto();
         }
 
-        public async Task<string> PlaceOrderAsync(Guid checkoutCartId)
+        public async Task<CheckoutStripeSessionDto> PlaceOrderAsync(Guid checkoutCartId)
         {
             var checkoutCart = await GetOrThrowIfNull(checkoutCartId);
-            var checkoutUrl = await _stripeService.Checkout(checkoutCart);
-            return checkoutUrl;
+            var dto = await _stripeService.Checkout(checkoutCart);
+            return dto;
         }
 
         public async Task SetPaymentAsync(Guid checkoutCartId, Guid paymentId)
@@ -74,6 +74,9 @@ namespace Ecommerce.Modules.Carts.Core.Services
         private async Task<CheckoutCart> GetOrThrowIfNull(Guid checkoutCartId)
         {
             var checkoutCart = await _dbContext.CheckoutCarts
+                .Include(cc => cc.Products)
+                .ThenInclude(cp => cp.Product)
+                .Include(cc => cc.Payment)
                 .SingleOrDefaultAsync(cc => cc.Id == checkoutCartId);
             if (checkoutCart is null)
             {

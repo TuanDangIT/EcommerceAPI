@@ -42,7 +42,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
             var cart = await GetByCartIdWithIncludesOrThrowIfNull(cartId);
             var checkoutCart = cart.Checkout();
             await _dbContext.CheckoutCarts.AddAsync(checkoutCart);
-            _dbContext.Carts.Remove(cart);
+            //_dbContext.Carts.Remove(cart);
             await _dbContext.SaveChangesAsync();
         }
 

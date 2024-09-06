@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Carts.Core.DTO;
 using Ecommerce.Modules.Carts.Core.Entities;
+using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace Ecommerce.Modules.Carts.Core.Mappings
             {
                 Id = cart.Id,
                 CustomerId = cart.CustomerId,
-                Payment = cart.Payment,
+                Payment = cart.Payment?.AsDto(),
                 Shipment = cart.Shipment,
                 IsPaid = cart.IsPaid,
                 Products = cart.Products.Select(p => p.AsDto()),
@@ -42,6 +43,12 @@ namespace Ecommerce.Modules.Carts.Core.Mappings
             {
                 Id = payment.Id,
                 PaymentMethod = payment.PaymentMethod.ToString(),
+            };
+        public static CheckoutStripeSessionDto AsDto(this Session session)
+            => new CheckoutStripeSessionDto()
+            {
+                SessionId = session.Id,
+                CheckoutUrl = session.Url
             };
     }
 }

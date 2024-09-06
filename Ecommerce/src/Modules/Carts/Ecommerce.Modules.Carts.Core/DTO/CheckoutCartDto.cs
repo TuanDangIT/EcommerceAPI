@@ -11,7 +11,7 @@ namespace Ecommerce.Modules.Carts.Core.DTO
     {
         public Guid Id { get; set; }
         public Guid? CustomerId { get; set; }
-        public Payment? Payment { get; set; } = new();
+        public PaymentDto? Payment { get; set; } = new();
         public Shipment? Shipment { get; set; } = new();
         public bool IsPaid { get; set; } = false;
         public IEnumerable<CartProductDto> Products { get; set; } = [];

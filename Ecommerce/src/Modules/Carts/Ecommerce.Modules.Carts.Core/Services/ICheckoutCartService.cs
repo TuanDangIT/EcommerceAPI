@@ -13,6 +13,6 @@ namespace Ecommerce.Modules.Carts.Core.Services
         Task<CheckoutCartDto> GetAsync(Guid checkoutCartId);
         Task SetPaymentAsync(Guid checkoutCartId, Guid paymentId);
         Task SetShipmentAsync(Guid checkoutCartId, ShipmentDto shipmentDto);
-        Task<string> PlaceOrderAsync(Guid checkoutCartId);
+        Task<CheckoutStripeSessionDto> PlaceOrderAsync(Guid checkoutCartId);
     }
 }
