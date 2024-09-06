@@ -52,21 +52,14 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         public async Task<ActionResult> WebhookHandler()
         {
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-            try
+            var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], WebhookSecret);
+            if (stripeEvent.Type == Events.CheckoutSessionCompleted)
             {
-                var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], WebhookSecret);
-                if(stripeEvent.Type == Events.CheckoutSessionCompleted)
-                {
-                    var session = stripeEvent.Data.Object as Session;
-                    Console.WriteLine(session?.Id);
-                    await _checkoutCartService.HandleCheckoutSessionCompleted(session);
-                }
-                return Ok();
+                var session = stripeEvent.Data.Object as Session;
+                Console.WriteLine(session?.Id);
+                await _checkoutCartService.HandleCheckoutSessionCompleted(session);
             }
-            catch(StripeException)
-            {
-                return BadRequest();
-            }
+            return Ok();
         }
     }
 }
