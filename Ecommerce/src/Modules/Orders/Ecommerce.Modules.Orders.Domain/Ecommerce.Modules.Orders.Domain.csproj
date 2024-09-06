@@ -11,4 +11,9 @@
     <ProjectReference Include="..\..\..\Shared\Ecommerce.Shared.Infrastructure\Ecommerce.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Orders\Repositories\" />
+    <Folder Include="Returns\" />
+  </ItemGroup>
+
 </Project>

@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Ecommerce.Modules.Orders.Domain\Ecommerce.Modules.Orders.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Orders\" />
+  </ItemGroup>
+
 </Project>

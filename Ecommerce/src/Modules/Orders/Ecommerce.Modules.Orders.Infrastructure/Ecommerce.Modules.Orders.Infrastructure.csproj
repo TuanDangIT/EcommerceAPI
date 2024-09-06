@@ -10,4 +10,11 @@
     <ProjectReference Include="..\Ecommerce.Modules.Orders.Application\Ecommerce.Modules.Orders.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DAL\Configuration\" />
+    <Folder Include="DAL\Mappings\" />
+    <Folder Include="DAL\QueryHandlers\" />
+    <Folder Include="DAL\Repositories\" />
+  </ItemGroup>
+
 </Project>

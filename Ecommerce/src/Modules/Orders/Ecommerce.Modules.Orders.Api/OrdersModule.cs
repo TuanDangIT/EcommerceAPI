@@ -1,4 +1,5 @@
-﻿using Ecommerce.Shared.Abstractions.Modules;
+﻿using Ecommerce.Modules.Orders.Infrastructure;
+using Ecommerce.Shared.Abstractions.Modules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,7 @@ namespace Ecommerce.Modules.Orders.Api
 
         public void Register(IServiceCollection services, IConfiguration configuration)
         {
+            services.AddInfrastructure();
         }
 
         public void Use(WebApplication app)
