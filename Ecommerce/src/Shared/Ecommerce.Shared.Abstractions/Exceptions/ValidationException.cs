@@ -8,8 +8,8 @@ namespace Ecommerce.Shared.Abstractions.Exceptions
 {
     public class ValidationException : EcommerceException
     {
-        public Error[] Errors { get; set; }
-        public ValidationException(string message, Error[] errors) : base(message)
+        public Dictionary<string, string[]> Errors { get; set; }
+        public ValidationException(string title, Dictionary<string, string[]> errors) : base(title)
         {
             Errors = errors;
         }

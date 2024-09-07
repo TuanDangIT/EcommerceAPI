@@ -16,6 +16,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
     internal abstract class BaseController : ControllerBase
     {
         protected readonly IMediator _mediator;
+        private const string NotFoundTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.5";
 
         public BaseController(IMediator mediator)
         {
@@ -28,7 +29,12 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
                 return Ok(new ApiResponse<TResponse>(HttpStatusCode.OK, "success", model));
             }
             string entityName = typeof(TEntity).Name;
-             return NotFound(new ExceptionResponse(HttpStatusCode.NotFound, "error", $"{entityName} was not found"));
+            return NotFound(new ProblemDetails()
+            {
+                Type = NotFoundTypeUrl,
+                Title = $"{entityName} was not found.",
+                Status = (int)HttpStatusCode.NotFound
+            });
         }
     }
 }

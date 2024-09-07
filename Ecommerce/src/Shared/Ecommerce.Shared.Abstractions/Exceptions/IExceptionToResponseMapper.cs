@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace Ecommerce.Shared.Abstractions.Exceptions
 {
     public interface IExceptionToResponseMapper
     {
-        ExceptionResponse Map(Exception exception);
+        ProblemDetails Map(Exception exception);
     }
 }

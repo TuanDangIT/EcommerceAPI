@@ -14,6 +14,7 @@ namespace Ecommerce.Modules.Users.Api.Controllers
     [Route("api/" + UsersModule.BasePath + "/[controller]")]
     internal abstract class BaseController : ControllerBase
     {
+        private const string NotFoundTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.5";
         protected ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse, TEntity>(TResponse? model)
         {
             if (model is not null)
@@ -21,7 +22,12 @@ namespace Ecommerce.Modules.Users.Api.Controllers
                 return Ok(new ApiResponse<TResponse>(HttpStatusCode.OK, "success", model));
             }
             string entityName = typeof(TEntity).Name;
-            return NotFound(new ExceptionResponse(HttpStatusCode.NotFound, "error", $"{entityName} was not found"));
+            return NotFound(new ProblemDetails()
+            {
+                Type = NotFoundTypeUrl,
+                Title = $"{entityName} was not found.",
+                Status = (int)HttpStatusCode.NotFound
+            });
         }
     }
 }

@@ -25,13 +25,18 @@ namespace Ecommerce.Modules.Inventory.Application.Behavior
             { 
                 return await next(); 
             }
-            Error[] errors = _validators
+            var errors = _validators
                 .Select(validator => validator.Validate(request))
                 .SelectMany(validationResult => validationResult.Errors)
                 .Where(validationFailure => validationFailure is not null)
-                .Select(failure => new Error(failure.PropertyName, failure.ErrorMessage))
-                .Distinct()
-                .ToArray();
+                .GroupBy(
+                    validationFailure => validationFailure.PropertyName,
+                    validationFailure => validationFailure.ErrorMessage,
+                    (propertyName, errorMessages) => new
+                    {
+                        Key = propertyName,
+                        Values = errorMessages.Distinct().ToArray()
+                    }).ToDictionary(x => x.Key, x => x.Values);
             if (errors.Any())
             {
                 throw new Shared.Abstractions.Exceptions.ValidationException("One or more validation errors occured", errors);
