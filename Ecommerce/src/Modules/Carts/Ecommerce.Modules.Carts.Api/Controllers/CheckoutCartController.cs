@@ -25,11 +25,8 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             _checkoutCartService = checkoutCartService;
         }
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ApiResponse<CheckoutCartDto>>> GetCheckoutCart([FromRoute]Guid id)
-        {
-            var checkoutCart = await _checkoutCartService.GetAsync(id);
-            return Ok(new ApiResponse<CheckoutCartDto>(HttpStatusCode.OK, "success", checkoutCart));
-        }
+        public async Task<ActionResult<ApiResponse<CheckoutCartDto?>>> GetCheckoutCart([FromRoute]Guid id)
+            => OkOrNotFound<CheckoutCartDto?>(await _checkoutCartService.GetAsync(id), "Checkout cart");
         [HttpPut("{checkoutCartId:guid}/customer")]
         public async Task<ActionResult> SetCustomer([FromRoute] Guid checkoutCartId, [FromBody]CustomerDto customerDto)
         {

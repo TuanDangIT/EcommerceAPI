@@ -10,7 +10,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
 {
     public interface ICartService
     {
-        Task<CartDto> GetAsync(Guid cartId);
+        Task<CartDto?> GetAsync(Guid cartId);
         //Task<Guid> CreateAsync(Guid customerId);
         Task<Guid> CreateAsync();
         Task AddProductAsync(Guid cartId, Guid productId, int quantity);

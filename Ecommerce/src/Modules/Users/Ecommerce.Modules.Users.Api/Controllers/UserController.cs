@@ -38,6 +38,6 @@ namespace Ecommerce.Modules.Users.Api.Controllers
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<ApiResponse<UserDto?>>> GetAsync()
-            => OkOrNotFound<UserDto?, User>(await _identityService.GetAsync(_contextService.Identity!.Id));
+            => OkOrNotFound<UserDto?>(await _identityService.GetAsync(_contextService.Identity!.Id), "User");
     }
 }

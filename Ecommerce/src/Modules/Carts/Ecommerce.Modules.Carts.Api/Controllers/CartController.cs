@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Carts.Core.DTO;
+using Ecommerce.Modules.Carts.Core.Entities;
 using Ecommerce.Modules.Carts.Core.Services;
 using Ecommerce.Shared.Abstractions.Api;
 using Microsoft.AspNetCore.Http;
@@ -28,11 +29,8 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             return NoContent();
         }
         [HttpGet("{cartId:guid}")]
-        public async Task<ActionResult<ApiResponse<CartDto>>> GetCart([FromRoute]Guid cartId)
-        {
-            var cart = await _cartService.GetAsync(cartId);
-            return Ok(new ApiResponse<CartDto>(HttpStatusCode.OK, "success", cart));
-        }
+        public async Task<ActionResult<ApiResponse<CartDto?>>> GetCart([FromRoute]Guid cartId)
+            => OkOrNotFound<CartDto?>(await _cartService.GetAsync(cartId), "Cart");
         [HttpPost("{cartId:guid}")]
         public async Task<ActionResult> AddProduct([FromRoute]Guid cartId, [FromBody]CartAddProductDto dto)
         {

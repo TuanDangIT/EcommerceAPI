@@ -29,18 +29,14 @@ namespace Ecommerce.Modules.Carts.Core.Services
             _messageBroker = messageBroker;
         }
 
-        public async Task<CheckoutCartDto> GetAsync(Guid checkoutCartId)
+        public async Task<CheckoutCartDto?> GetAsync(Guid checkoutCartId)
         {
             var checkoutCart = await _dbContext.CheckoutCarts
                 .Include(cc => cc.Payment)
                 .Include(cc => cc.Products)
                 .ThenInclude(cp => cp.Product)
                 .SingleOrDefaultAsync(cc => cc.Id== checkoutCartId);
-            if(checkoutCart is null)
-            {
-                throw new CheckoutCartNotFoundException(checkoutCartId);
-            }
-            return checkoutCart.AsDto();
+            return checkoutCart?.AsDto();
         }
 
         public async Task<CheckoutStripeSessionDto> PlaceOrderAsync(Guid checkoutCartId)
@@ -118,7 +114,10 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 throw new PaymentNotFoundException(paymentId);
             }
             checkoutCart.SetPayment(payment);
-            checkoutCart.SetAdditionalInformation(additionalInformation);
+            if(additionalInformation is not null)
+            {
+                checkoutCart.SetAdditionalInformation(additionalInformation);
+            }
             await _dbContext.SaveChangesAsync();
         }
         public async Task HandleCheckoutSessionCompleted(Session? session)

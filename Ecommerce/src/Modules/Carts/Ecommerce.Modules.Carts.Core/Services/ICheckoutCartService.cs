@@ -11,7 +11,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
 {
     public interface ICheckoutCartService
     {
-        Task<CheckoutCartDto> GetAsync(Guid checkoutCartId);
+        Task<CheckoutCartDto?> GetAsync(Guid checkoutCartId);
         Task SetCustomer(Guid checkoutCartId, CustomerDto customerDto);
         Task SetPaymentAsync(Guid checkoutCartId, Guid paymentId);
         Task SetShipmentAsync(Guid checkoutCartId, ShipmentDto shipmentDto);
