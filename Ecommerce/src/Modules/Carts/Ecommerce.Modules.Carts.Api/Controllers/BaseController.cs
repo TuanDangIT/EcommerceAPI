@@ -19,7 +19,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         {
             if (model is not null)
             {
-                return Ok(new ApiResponse<TResponse>(HttpStatusCode.OK, "success", model));
+                return Ok(new ApiResponse<TResponse>(HttpStatusCode.OK, model));
             }
             return NotFound(new ProblemDetails()
             {

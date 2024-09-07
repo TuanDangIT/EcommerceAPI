@@ -28,7 +28,7 @@ namespace Ecommerce.Modules.Users.Api.Controllers
         }
         [HttpPost("sign-in")]
         public async Task<ActionResult<ApiResponse<JsonWebToken>>> SignIn([FromBody]SignInDto dto)
-            => Ok(new ApiResponse<JsonWebToken>(HttpStatusCode.OK, "success", await _identityService.SignInAsync(dto)));
+            => Ok(new ApiResponse<JsonWebToken>(HttpStatusCode.OK, await _identityService.SignInAsync(dto)));
         [HttpPost("sign-up")]
         public async Task<ActionResult> SignUp([FromBody]SignUpDto dto)
         {

@@ -32,7 +32,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public async Task<ActionResult<ApiResponse<PagedResult<ParameterBrowseDto>>>> BrowseParameters([FromQuery] BrowseParameters query)
         {
             var result = await _mediator.Send(query);
-            return Ok(new ApiResponse<PagedResult<ParameterBrowseDto>>(HttpStatusCode.OK, "success", result));
+            return Ok(new ApiResponse<PagedResult<ParameterBrowseDto>>(HttpStatusCode.OK, result));
         }
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteParameter([FromRoute] Guid id)

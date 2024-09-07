@@ -55,7 +55,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         public async Task<ActionResult<ApiResponse<CheckoutStripeSessionDto>>> PlaceOrder([FromRoute]Guid id)
         {
             var checkoutUrl = await _checkoutCartService.PlaceOrderAsync(id);
-            return Ok(new ApiResponse<CheckoutStripeSessionDto>(HttpStatusCode.OK, "success", checkoutUrl));
+            return Ok(new ApiResponse<CheckoutStripeSessionDto>(HttpStatusCode.OK, checkoutUrl));
         }
         [HttpPost("webhook")]
         public async Task<ActionResult> WebhookHandler()

@@ -29,7 +29,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         {
             query.AuctionId = auctionId;
             var result = await _mediator.Send(query);
-            return Ok(new ApiResponse<PagedResult<ReviewDto>>(HttpStatusCode.OK, "success", result));
+            return Ok(new ApiResponse<PagedResult<ReviewDto>>(HttpStatusCode.OK, result));
         }
         [HttpPost("{auctionId:guid}")]
         public async Task<ActionResult> AddReview([FromRoute] Guid auctionId, [FromForm]AddReview command)

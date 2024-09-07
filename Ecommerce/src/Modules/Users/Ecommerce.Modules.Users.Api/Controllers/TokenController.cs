@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Users.Api.Controllers
         public async Task<ActionResult<ApiResponse<JsonWebToken>>> RefreshToken(TokenDto dto)
         {
             var jwt = await _identityService.RefreshTokenAsync(dto);
-            return Ok(new ApiResponse<JsonWebToken>(HttpStatusCode.OK, "success", jwt));
+            return Ok(new ApiResponse<JsonWebToken>(HttpStatusCode.OK, jwt));
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public async Task<ActionResult<ApiResponse<PagedResult<CategoryBrowseDto>>>> BrowseCategories([FromQuery] BrowseCategories query)
         {
             var result = await _mediator.Send(query);
-            return Ok(new ApiResponse<PagedResult<CategoryBrowseDto>>(HttpStatusCode.OK, "success", result));
+            return Ok(new ApiResponse<PagedResult<CategoryBrowseDto>>(HttpStatusCode.OK, result));
         }
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteCategory([FromRoute] Guid id)

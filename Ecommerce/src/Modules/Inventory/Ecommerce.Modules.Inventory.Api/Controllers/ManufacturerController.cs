@@ -37,7 +37,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public async Task<ActionResult<ApiResponse<PagedResult<ManufacturerBrowseDto>>>> BrowseManufacturers([FromQuery] BrowseManufacturers query)
         {
             var result = await _mediator.Send(query);
-            return Ok(new ApiResponse<PagedResult<ManufacturerBrowseDto>>(HttpStatusCode.OK, "success", result));
+            return Ok(new ApiResponse<PagedResult<ManufacturerBrowseDto>>(HttpStatusCode.OK, result));
         }
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteManufacturer([FromRoute]Guid id)

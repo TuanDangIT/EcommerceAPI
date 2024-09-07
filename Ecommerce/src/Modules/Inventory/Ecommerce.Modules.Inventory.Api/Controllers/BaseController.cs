@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         {
             if (model is not null)
             {
-                return Ok(new ApiResponse<TResponse>(HttpStatusCode.OK, "success", model));
+                return Ok(new ApiResponse<TResponse>(HttpStatusCode.OK, model));
             }
             string entityName = typeof(TEntity).Name;
             return NotFound(new ProblemDetails()

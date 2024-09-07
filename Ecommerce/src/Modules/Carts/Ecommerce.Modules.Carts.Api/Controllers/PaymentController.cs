@@ -24,7 +24,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         public async Task<ActionResult<ApiResponse<IEnumerable<PaymentDto>>>> BrowsePayments()
         {
             var payments = await _paymentService.BrowseAsync();
-            return Ok(new ApiResponse<IEnumerable<PaymentDto>>(HttpStatusCode.OK, "success", payments));
+            return Ok(new ApiResponse<IEnumerable<PaymentDto>>(HttpStatusCode.OK, payments));
         }
     }
 }

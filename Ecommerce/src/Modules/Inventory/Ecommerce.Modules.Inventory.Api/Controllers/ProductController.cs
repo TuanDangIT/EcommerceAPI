@@ -38,7 +38,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public async Task<ActionResult<ApiResponse<PagedResult<ProductBrowseDto>>>> BrowseProducts([FromQuery] BrowseProducts query)
         {
             var result = await _mediator.Send(query);
-            return Ok(new ApiResponse<PagedResult<ProductBrowseDto>>(HttpStatusCode.OK, "success", result));
+            return Ok(new ApiResponse<PagedResult<ProductBrowseDto>>(HttpStatusCode.OK, result));
         }
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<ApiResponse<ProductDetailsDto>>> GetProduct([FromRoute]Guid id)

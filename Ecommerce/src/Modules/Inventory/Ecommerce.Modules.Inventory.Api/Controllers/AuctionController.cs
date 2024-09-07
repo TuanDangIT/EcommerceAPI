@@ -25,7 +25,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public async Task<ActionResult<ApiResponse<PagedResult<AuctionBrowseDto>>>> BrowseAuctions([FromQuery]BrowseAuctions query)
         {
             var result = await _mediator.Send(query);
-            return Ok(new ApiResponse<PagedResult<AuctionBrowseDto>>(HttpStatusCode.OK, "success", result));
+            return Ok(new ApiResponse<PagedResult<AuctionBrowseDto>>(HttpStatusCode.OK, result));
         }
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<ApiResponse<AuctionDetailsDto>>> GetAuction([FromRoute] Guid id)
