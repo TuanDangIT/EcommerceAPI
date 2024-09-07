@@ -8,17 +8,17 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
 {
     public class Auction
     {
-        public Guid Id { get; set; }
-        public string SKU { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-        public decimal Price { get; set; }
-        public int? Quantity { get; set; }
-        public string Description { get; set; } = string.Empty;
-        public string? AdditionalDescription { get; set; }
-        public List<AuctionParameter>? Parameters { get; set; } 
-        public string? Manufacturer { get; set; }
-        public List<string> ImagePathUrls { get; set; } = [];
-        public string Category { get; set; } = string.Empty;
+        public Guid Id { get; private set; }
+        public string SKU { get; private set; } = string.Empty;
+        public string Name { get; private set; } = string.Empty;
+        public decimal Price { get; private set; }
+        public int? Quantity { get; private set; }
+        public string Description { get; private set; } = string.Empty;
+        public string? AdditionalDescription { get; private set; }
+        public List<AuctionParameter>? Parameters { get; private set; } 
+        public string? Manufacturer { get; private set; }
+        public List<string> ImagePathUrls { get; private set; } = [];
+        public string Category { get; private set; } = string.Empty;
         private readonly List<Review> _review = [];
         public IEnumerable<Review> Reviews => _review;
         public DateTime CreatedAt { get; private set; }

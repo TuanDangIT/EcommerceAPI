@@ -8,8 +8,8 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
 {
     public class AuctionParameter
     {
-        public string Name { get; set; } = string.Empty;
-        public string Value { get; set; } = string.Empty;
+        public string Name { get; private set; } = string.Empty;
+        public string Value { get; private set; } = string.Empty;
         public AuctionParameter(string name, string value)
         {
             Name = name;
