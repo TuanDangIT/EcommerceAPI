@@ -20,8 +20,6 @@
     <ProjectReference Include="..\..\Modules\Inventory\Ecommerce.Modules.Inventory.Api\Ecommerce.Modules.Inventory.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Mails\Ecommerce.Modules.Mails.Api\Ecommerce.Modules.Mails.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Orders\Ecommerce.Modules.Orders.Api\Ecommerce.Modules.Orders.Api.csproj" />
-    <ProjectReference Include="..\..\Modules\Payments\Ecommerce.Modules.Payments.Api\Ecommerce.Modules.Payments.Api.csproj" />
-    <ProjectReference Include="..\..\Modules\Returns\Ecommerce.Modules.Returns.Api\Ecommerce.Modules.Returns.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Users\Ecommerce.Modules.Users.Api\Ecommerce.Modules.Users.Api.csproj" />
     <ProjectReference Include="..\..\Shared\Ecommerce.Shared.Infrastructure\Ecommerce.Shared.Infrastructure.csproj" />
   </ItemGroup>
