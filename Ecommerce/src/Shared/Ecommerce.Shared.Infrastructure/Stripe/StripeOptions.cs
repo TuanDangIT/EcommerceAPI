@@ -9,5 +9,8 @@ namespace Ecommerce.Shared.Infrastructure.Stripe
     public class StripeOptions
     {
         public string ApiKey { get; set; } = string.Empty;
+        public string Mode {  get; set; } = string.Empty;
+        public string Currency {  get; set; } = string.Empty;
+        public string BlobStorageUrl { get; set; } = string.Empty;
     }
 }

@@ -17,9 +17,6 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
     {
         private readonly StripeOptions _stripeOptions;
         private readonly RequestOptions _requestOptions;
-        private const string Currency = "USD";
-        private const string Mode = "payment";
-        private const string BlobStorageUrl = "http://localhost:10000";
 
         public StripeService(StripeOptions stripeOptions)
         {
@@ -40,12 +37,12 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                     {
                         //UnitAmount = (long)Math.Truncate(product.Product.Price),
                         UnitAmountDecimal = product.Product.Price,
-                        Currency = Currency,
+                        Currency = _stripeOptions.Currency,
                         ProductData = new SessionLineItemPriceDataProductDataOptions()
                         {
                             Name = product.Product.Name,
                             //Images = new List<string>() { product.Product.ImagePathUrl }
-                            Images = new List<string>() { BlobStorageUrl + product.Product.ImagePathUrl }
+                            Images = new List<string>() { _stripeOptions.BlobStorageUrl + product.Product.ImagePathUrl }
                         }
                     },
                     Quantity = product.Quantity,
@@ -61,7 +58,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                     checkoutCart.Payment is not null ? checkoutCart.Payment.PaymentMethod.ToString() : throw new PaymentNotSetException()
                 },
                 LineItems = lineItems,
-                Mode = Mode
+                Mode = _stripeOptions.Mode
             };
             var sessionService = new SessionService();
             var session = await sessionService.CreateAsync(sessionOptions, _requestOptions);
