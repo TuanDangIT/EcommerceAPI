@@ -9,8 +9,8 @@ namespace Ecommerce.Modules.Carts.Core.Entities
 {
     public class Cart
     {
-        public Guid Id { get; set; }
-        public Guid? CustomerId {  get; set; }
+        public Guid Id { get; private set; }
+        public Guid? CustomerId {  get; private set; }
         private List<CartProduct> _products = [];
         public IEnumerable<CartProduct> Products => _products;
         public Cart(Guid id, Guid customerId)

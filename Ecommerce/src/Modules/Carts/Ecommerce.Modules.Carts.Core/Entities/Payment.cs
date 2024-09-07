@@ -9,9 +9,9 @@ namespace Ecommerce.Modules.Carts.Core.Entities
 {
     public class Payment
     {
-        public Guid Id { get; set; }
-        public PaymentMethod PaymentMethod { get; set; }
-        public List<CheckoutCart> CheckoutCarts { get; set; } = [];
+        public Guid Id { get; private set; }
+        public PaymentMethod PaymentMethod { get; private set; }
+        public List<CheckoutCart> CheckoutCarts { get; private set; } = [];
         public Payment(Guid id, PaymentMethod paymentMethod)
         {
             Id = id;
