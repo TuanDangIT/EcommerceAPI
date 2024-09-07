@@ -15,12 +15,16 @@ namespace Ecommerce.Modules.Users.Core.DAL.Configuration
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.Property(x => x.Email).IsRequired();
+            builder.Property(x => x.Email)
+                .IsRequired()
+                .HasMaxLength(64);
             builder.HasIndex(x => x.Email).IsUnique();
-            builder.Property(x => x.Password).IsRequired();
+            builder.Property(x => x.Password).IsRequired()
+                .HasMaxLength(64);
             builder.Property(x => x.Role).IsRequired();
             builder.Property(x => x.Username)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(16);
             builder.HasIndex(x => x.Username).IsUnique();
             //builder.Property(x => x.CreatedAt)
             //    .HasColumnType("timestamp without time zone");
