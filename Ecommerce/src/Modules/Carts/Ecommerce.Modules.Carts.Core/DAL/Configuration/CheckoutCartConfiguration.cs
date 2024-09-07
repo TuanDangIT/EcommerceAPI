@@ -20,10 +20,18 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configuration
                 s.Property(s => s.StreetName).IsRequired().HasMaxLength(64);
                 s.Property(s => s.StreetNumber).IsRequired().HasMaxLength(8);
                 s.Property(s => s.AparmentNumber).HasMaxLength(8);
-                s.Property(s => s.ReceiverFullName).IsRequired().HasMaxLength(32);
+            });
+            builder.OwnsOne(cc => cc.Customer, c =>
+            {
+                c.Property(c => c.FirstName).IsRequired().HasMaxLength(48);
+                c.Property(c => c.LastName).IsRequired().HasMaxLength(48);
+                c.Property(c => c.Email).IsRequired().HasMaxLength(64);
+                c.Property(c => c.PhoneNumber).IsRequired().HasMaxLength(16);
             });
             builder.Property(cc => cc.IsPaid)
                 .IsRequired();
+            builder.Property(cc => cc.AdditionalInformation)
+                .HasMaxLength(256);
             builder.HasOne(cc => cc.Payment)
                 .WithMany(p => p.CheckoutCarts)
                 .HasForeignKey(cc => cc.PaymentId);

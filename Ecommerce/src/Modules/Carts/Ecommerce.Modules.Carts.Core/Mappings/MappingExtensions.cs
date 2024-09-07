@@ -4,6 +4,7 @@ using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,9 +23,9 @@ namespace Ecommerce.Modules.Carts.Core.Mappings
             => new CheckoutCartDto()
             {
                 Id = cart.Id,
-                CustomerId = cart.CustomerId,
+                Customer = cart.Customer.AsDto(),
                 Payment = cart.Payment?.AsDto(),
-                Shipment = cart.Shipment,
+                Shipment = cart.Shipment?.AsDto(),
                 IsPaid = cart.IsPaid,
                 Products = cart.Products.Select(p => p.AsDto()),
             };
@@ -49,6 +50,24 @@ namespace Ecommerce.Modules.Carts.Core.Mappings
             {
                 SessionId = session.Id,
                 CheckoutUrl = session.Url
+            };
+        public static ShipmentDto AsDto(this Shipment shipment)
+            => new ShipmentDto()
+            {
+                City = shipment.City,
+                PostalCode = shipment.PostalCode,
+                StreetName = shipment.StreetName,
+                StreetNumber = shipment.StreetNumber,
+                AparmentNumber = shipment.AparmentNumber
+            };
+        public static CustomerDto AsDto(this Customer customer)
+            => new CustomerDto()
+            {
+                CustomerId = customer.CustomerId,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Email = customer.Email,
+                PhoneNumber = customer.PhoneNumber
             };
     }
 }

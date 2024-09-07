@@ -10,9 +10,10 @@ namespace Ecommerce.Modules.Carts.Core.DTO
     public class CheckoutCartDto
     {
         public Guid Id { get; set; }
-        public Guid? CustomerId { get; set; }
+        public CustomerDto Customer { get; set; } = new();
         public PaymentDto? Payment { get; set; } = new();
-        public Shipment? Shipment { get; set; } = new();
+        public ShipmentDto? Shipment { get; set; } = new();
+        public string AdditionalInformation { get; set; } = string.Empty;
         public bool IsPaid { get; set; } = false;
         public IEnumerable<CartProductDto> Products { get; set; } = [];
     }

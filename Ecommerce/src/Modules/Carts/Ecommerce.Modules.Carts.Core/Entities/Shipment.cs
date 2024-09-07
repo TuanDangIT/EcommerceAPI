@@ -14,8 +14,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public string StreetName { get; private set; } = string.Empty;
         public string StreetNumber { get; private set; } = string.Empty;
         public string AparmentNumber { get; private set; } = string.Empty;   
-        public string ReceiverFullName { get; private set; } = string.Empty;
-        public Shipment(string city, string postalCode, string streetName, string streetNumber, string apartmentNumber, string receiverFullName)
+        public Shipment(string city, string postalCode, string streetName, string streetNumber, string apartmentNumber)
         {
             if (string.IsNullOrWhiteSpace(city))
             {
@@ -27,17 +26,11 @@ namespace Ecommerce.Modules.Carts.Core.Entities
                 throw new ShipmentNullException("Street name");
             }
 
-            if (string.IsNullOrWhiteSpace(receiverFullName))
-            {
-                throw new ShipmentNullException("Receiver full name");
-            }
-
             City = city;
             PostalCode = postalCode;
             StreetName = streetName;
             StreetNumber = streetNumber;
             AparmentNumber = apartmentNumber;
-            ReceiverFullName = receiverFullName;
         }
         public Shipment()
         {

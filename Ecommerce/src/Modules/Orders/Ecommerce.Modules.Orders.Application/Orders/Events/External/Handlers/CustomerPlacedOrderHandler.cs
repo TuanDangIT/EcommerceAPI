@@ -26,7 +26,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
             var products = new List<Product>();
             foreach (var productObject in @event.Products)
             {
-                var product = JsonSerializer.Deserialize<Product>(JsonSerializer.Serialize(productObject));
+                var serializedObject = JsonSerializer.Serialize(productObject);
+                var product = JsonSerializer.Deserialize<Product>(serializedObject);
                 if (product is null)
                 {
                     throw new ArgumentNullException(nameof(@event));
@@ -34,13 +35,18 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
                 products.Add(product);
             }
             var newGuid = Guid.NewGuid();
+            var customer = new Customer(@event.FirstName, @event.LastName, @event.Email, @event.PhoneNumber, @event.CustomerId);
+            var shipment = new Shipment(@event.City, @event.PostalCode, @event.StreetName, @event.StreetNumber, @event.ApartmentNumber);
+            var paymentMethod = (PaymentMethod)Enum.Parse(typeof(PaymentMethod), @event.PaymentMethod);
+            var additionalInformation = @event.AdditionalInformation;
             var order = new Order(
-                newGuid, 
+                newGuid,
+                customer, 
                 products, 
-                new Shipment(@event.City, @event.PostalCode, @event.StreetName, @event.StreetNumber, @event.AparmentNumber, @event.ReceiverFullName),
-                (PaymentMethod)Enum.Parse(typeof(PaymentMethod), @event.PaymentMethod),
+                shipment,
+                paymentMethod,
                 _timeProvider.GetUtcNow().UtcDateTime,
-                @event.CustomerId
+                additionalInformation
                 );
             await _orderRepository.CreateOrder(order);
         }

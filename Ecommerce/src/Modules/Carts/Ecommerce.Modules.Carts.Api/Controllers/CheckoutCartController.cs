@@ -30,6 +30,12 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             var checkoutCart = await _checkoutCartService.GetAsync(id);
             return Ok(new ApiResponse<CheckoutCartDto>(HttpStatusCode.OK, "success", checkoutCart));
         }
+        [HttpPut("{checkoutCartId:guid}/customer")]
+        public async Task<ActionResult> SetCustomer([FromRoute] Guid checkoutCartId, [FromBody]CustomerDto customerDto)
+        {
+            await _checkoutCartService.SetCustomer(checkoutCartId, customerDto);
+            return NoContent();
+        }
         [HttpPut("{checkoutCartId:guid}/payment")]
         public async Task<ActionResult> SetPayment([FromRoute]Guid checkoutCartId, [FromBody]Guid paymentId)
         {
@@ -37,9 +43,15 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             return NoContent();
         }
         [HttpPut("{checkoutCartId:guid}/shipment")]
-        public async Task<ActionResult> SetShipment([FromRoute] Guid checkoutCartId, [FromBody]ShipmentDto paymentId)
+        public async Task<ActionResult> SetShipment([FromRoute] Guid checkoutCartId, [FromBody]ShipmentDto shipmentDto)
         {
-            await _checkoutCartService.SetShipmentAsync(checkoutCartId, paymentId);
+            await _checkoutCartService.SetShipmentAsync(checkoutCartId, shipmentDto);
+            return NoContent();
+        }
+        [HttpPut("{checkoutCartId:guid}/checkoutcart-details")]
+        public async Task<ActionResult> SetCheckoutCartDetails([FromRoute] Guid checkoutCartId, [FromBody]CheckoutCartSetDetailsDto checkoutCartSetDetailsDto)
+        {
+            await _checkoutCartService.SetCheckoutCartDetails(checkoutCartId, checkoutCartSetDetailsDto);
             return NoContent();
         }
         [HttpPost("{id:guid}")]

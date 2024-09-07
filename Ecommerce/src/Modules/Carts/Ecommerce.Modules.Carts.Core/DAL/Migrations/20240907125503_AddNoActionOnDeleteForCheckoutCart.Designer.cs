@@ -3,6 +3,7 @@ using System;
 using Ecommerce.Modules.Carts.Core.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 {
     [DbContext(typeof(CartsDbContext))]
-    partial class CartsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240907125503_AddNoActionOnDeleteForCheckoutCart")]
+    partial class AddNoActionOnDeleteForCheckoutCart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,6 +76,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("AdditionalInformation")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
@@ -147,7 +151,8 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 
                     b.HasOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart", "CheckoutCart")
                         .WithMany("Products")
-                        .HasForeignKey("CheckoutCartId");
+                        .HasForeignKey("CheckoutCartId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Ecommerce.Modules.Carts.Core.Entities.Product", "Product")
                         .WithMany("CartProducts")

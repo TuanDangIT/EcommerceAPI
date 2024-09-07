@@ -3,6 +3,7 @@ using System;
 using Ecommerce.Modules.Carts.Core.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 {
     [DbContext(typeof(CartsDbContext))]
-    partial class CartsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240907102331_AddSessionIdToCheckoutCart")]
+    partial class AddSessionIdToCheckoutCart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,9 +75,8 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("AdditionalInformation")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsPaid")
                         .HasColumnType("boolean");
@@ -168,42 +170,6 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .WithMany("CheckoutCarts")
                         .HasForeignKey("PaymentId");
 
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.Customer", "Customer", b1 =>
-                        {
-                            b1.Property<Guid>("CheckoutCartId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid?>("CustomerId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Email")
-                                .IsRequired()
-                                .HasMaxLength(64)
-                                .HasColumnType("character varying(64)");
-
-                            b1.Property<string>("FirstName")
-                                .IsRequired()
-                                .HasMaxLength(48)
-                                .HasColumnType("character varying(48)");
-
-                            b1.Property<string>("LastName")
-                                .IsRequired()
-                                .HasMaxLength(48)
-                                .HasColumnType("character varying(48)");
-
-                            b1.Property<string>("PhoneNumber")
-                                .IsRequired()
-                                .HasMaxLength(16)
-                                .HasColumnType("character varying(16)");
-
-                            b1.HasKey("CheckoutCartId");
-
-                            b1.ToTable("CheckoutCarts", "carts");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CheckoutCartId");
-                        });
-
                     b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.Shipment", "Shipment", b1 =>
                         {
                             b1.Property<Guid>("CheckoutCartId")
@@ -224,6 +190,11 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                                 .HasMaxLength(16)
                                 .HasColumnType("character varying(16)");
 
+                            b1.Property<string>("ReceiverFullName")
+                                .IsRequired()
+                                .HasMaxLength(32)
+                                .HasColumnType("character varying(32)");
+
                             b1.Property<string>("StreetName")
                                 .IsRequired()
                                 .HasMaxLength(64)
@@ -241,9 +212,6 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("CheckoutCartId");
                         });
-
-                    b.Navigation("Customer")
-                        .IsRequired();
 
                     b.Navigation("Payment");
 

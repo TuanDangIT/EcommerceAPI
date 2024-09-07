@@ -13,6 +13,5 @@ namespace Ecommerce.Modules.Carts.Core.DTO
         public string StreetName { get; set; } = string.Empty;
         public string StreetNumber { get; set; } = string.Empty;
         public string AparmentNumber { get; set; } = string.Empty;
-        public string ReceiverFullName { get; set; } = string.Empty;
     }
 }

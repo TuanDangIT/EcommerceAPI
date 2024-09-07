@@ -30,7 +30,13 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
                 s.Property(s => s.StreetName).IsRequired().HasMaxLength(64);
                 s.Property(s => s.StreetNumber).IsRequired().HasMaxLength(8);
                 s.Property(s => s.AparmentNumber).HasMaxLength(8);
-                s.Property(s => s.ReceiverFullName).IsRequired().HasMaxLength(32);
+            });
+            builder.OwnsOne(cc => cc.Customer, c =>
+            {
+                c.Property(c => c.FirstName).IsRequired().HasMaxLength(48);
+                c.Property(c => c.LastName).IsRequired().HasMaxLength(48);
+                c.Property(c => c.Email).IsRequired().HasMaxLength(64);
+                c.Property(c => c.PhoneNumber).IsRequired().HasMaxLength(16);
             });
             builder.Property(o => o.Payment)
                 .IsRequired()
@@ -38,6 +44,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
             builder.Property(o => o.Status)
                 .IsRequired()
                 .HasConversion<string>();
+            builder.Property(cc => cc.AdditionalInformation)
+                .HasMaxLength(256);
             //builder.Property(o => o.IsCompleted)
             //    .IsRequired();
             builder.Property(o => o.OrderPlacedAt)

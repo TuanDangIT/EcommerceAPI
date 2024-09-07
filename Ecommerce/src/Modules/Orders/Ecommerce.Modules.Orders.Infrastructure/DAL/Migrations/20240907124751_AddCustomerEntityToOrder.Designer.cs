@@ -3,6 +3,7 @@ using System;
 using Ecommerce.Modules.Orders.Infrastructure.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 {
     [DbContext(typeof(OrdersDbContext))]
-    partial class OrdersDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240907124751_AddCustomerEntityToOrder")]
+    partial class AddCustomerEntityToOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,10 +31,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<string>("AdditionalInformation")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
 
                     b.Property<DateTime>("OrderPlacedAt")
                         .HasColumnType("timestamp with time zone");
@@ -137,6 +136,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                 .IsRequired()
                                 .HasMaxLength(16)
                                 .HasColumnType("character varying(16)");
+
+                            b1.Property<string>("ReceiverFullName")
+                                .IsRequired()
+                                .HasMaxLength(32)
+                                .HasColumnType("character varying(32)");
 
                             b1.Property<string>("StreetName")
                                 .IsRequired()
