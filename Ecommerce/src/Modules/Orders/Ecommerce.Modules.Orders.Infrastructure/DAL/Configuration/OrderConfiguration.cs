@@ -15,6 +15,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
         {
             builder.OwnsMany(o => o.Products, p =>
             {
+                p.Property(p => p.SKU)
+                    .HasMaxLength(16)
+                    .IsRequired();
                 p.Property(p => p.Name)
                     .IsRequired();
                 p.Property(p => p.Price)

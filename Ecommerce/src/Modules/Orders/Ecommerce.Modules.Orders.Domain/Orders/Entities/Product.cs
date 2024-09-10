@@ -8,6 +8,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 {
     public class Product
     {
+        public string SKU { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public string ImagePathUrl { get; set; } = string.Empty;

@@ -34,6 +34,7 @@ namespace Ecommerce.Modules.Carts.Core.Mappings
             {
                 Id = product.Id,
                 ProductId = product.ProductId,
+                SKU = product.Product.SKU,
                 Name = product.Product.Name,
                 Price = product.Product.Price,
                 ImagePathUrl = product.Product.ImagePathUrl,

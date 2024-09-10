@@ -10,6 +10,7 @@ namespace Ecommerce.Modules.Carts.Core.DTO
     {
         public Guid Id { get; set; }
         public Guid ProductId { get; set; }
+        public string SKU { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public string ImagePathUrl { get; set; } = string.Empty;

@@ -13,6 +13,9 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configuration
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
+            builder.Property(p => p.SKU)
+                .HasMaxLength(16)
+                .IsRequired();
             builder.Property(p => p.Name)
                 .IsRequired();
             builder.Property(p => p.Price)

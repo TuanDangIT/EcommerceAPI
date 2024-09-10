@@ -42,13 +42,16 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                         {
                             Name = product.Product.Name,
                             //Images = new List<string>() { product.Product.ImagePathUrl }
-                            Images = new List<string>() { _stripeOptions.BlobStorageUrl + product.Product.ImagePathUrl }
+                            Images = new List<string>() { _stripeOptions.BlobStorageUrl + product.Product.ImagePathUrl },
+                            Metadata = new Dictionary<string, string>()
+                            {
+                                { "SKU", product.Product.SKU }
+                            }
                         }
                     },
                     Quantity = product.Quantity,
                 });
             }
-            var a = new StripeClient();
             var sessionOptions = new SessionCreateOptions()
             {
                 SuccessUrl = "https://localhost:7089/api",
