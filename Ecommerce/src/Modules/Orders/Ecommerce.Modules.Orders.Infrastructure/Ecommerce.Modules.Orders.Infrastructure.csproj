@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <Folder Include="DAL\Mappings\" />
-    <Folder Include="DAL\QueryHandlers\" />
   </ItemGroup>
 
 </Project>

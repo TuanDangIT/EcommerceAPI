@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Orders\Features\" />
     <Folder Include="Returns\" />
   </ItemGroup>
 
