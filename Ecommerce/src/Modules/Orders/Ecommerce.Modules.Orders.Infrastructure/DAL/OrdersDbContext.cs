@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL
 {
     internal class OrdersDbContext : DbContext
     {
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Status> Statuses { get; set; }
         public OrdersDbContext(DbContextOptions<OrdersDbContext> options) : base(options)
         {
             
