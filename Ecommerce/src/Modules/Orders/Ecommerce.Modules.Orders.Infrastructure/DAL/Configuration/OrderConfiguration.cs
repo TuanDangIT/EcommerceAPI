@@ -13,19 +13,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
-            builder.OwnsMany(o => o.Products, p =>
-            {
-                p.Property(p => p.SKU)
-                    .HasMaxLength(16)
-                    .IsRequired();
-                p.Property(p => p.Name)
-                    .IsRequired();
-                p.Property(p => p.Price)
-                    .HasPrecision(11, 2)
-                    .IsRequired();
-                p.Property(p => p.ImagePathUrl)
-                    .IsRequired();
-            });
             builder.OwnsOne(o => o.Shipment, s =>
             {
                 s.Property(s => s.City).IsRequired().HasMaxLength(32);
@@ -53,6 +40,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
             //    .IsRequired();
             builder.Property(o => o.OrderPlacedAt)
                 .IsRequired();
+            builder.HasMany(o => o.Products)
+                .WithOne(p => p.Order)
+                .HasForeignKey(p => p.OrderId);
         }
     }
 }
