@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 {
     [DbContext(typeof(OrdersDbContext))]
-    [Migration("20240911215446_AddOneToManyRelationOrderToProduct")]
-    partial class AddOneToManyRelationOrderToProduct
+    [Migration("20240911220605_ChangeProductTableNameAndFixPreviousChanges")]
+    partial class ChangeProductTableNameAndFixPreviousChanges
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,39 +50,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Orders", "orders");
-                });
-
-            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Product", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ImagePathUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(11, 2)
-                        .HasColumnType("numeric(11,2)");
-
-                    b.Property<string>("SKU")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("Product", "orders");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Status", b =>
@@ -162,6 +129,44 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                 .HasForeignKey("OrderId");
                         });
 
+                    b.OwnsMany("Ecommerce.Modules.Orders.Domain.Orders.Entities.Product", "Products", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("ImagePathUrl")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<decimal>("Price")
+                                .HasPrecision(11, 2)
+                                .HasColumnType("numeric(11,2)");
+
+                            b1.Property<string>("SKU")
+                                .IsRequired()
+                                .HasMaxLength(16)
+                                .HasColumnType("character varying(16)");
+
+                            b1.HasKey("OrderId", "Id");
+
+                            b1.ToTable("Products", "orders");
+
+                            b1.WithOwner("Order")
+                                .HasForeignKey("OrderId");
+
+                            b1.Navigation("Order");
+                        });
+
                     b.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Shipment", "Shipment", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
@@ -203,24 +208,10 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.Navigation("Customer")
                         .IsRequired();
 
+                    b.Navigation("Products");
+
                     b.Navigation("Shipment")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Product", b =>
-                {
-                    b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", "Order")
-                        .WithMany("Products")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", b =>
-                {
-                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }
