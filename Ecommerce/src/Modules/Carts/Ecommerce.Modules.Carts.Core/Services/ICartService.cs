@@ -14,7 +14,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
         //Task<Guid> CreateAsync(Guid customerId);
         Task<Guid> CreateAsync();
         Task AddProductAsync(Guid cartId, Guid productId, int quantity);
-        Task RemoveProduct(Guid cartId, Guid productId);
+        Task RemoveProduct(Guid cartId, Guid productId, int quantity);
         Task SetProductQuantity(Guid cartId, Guid productId, int quantity);
         Task ClearCartAsync(Guid cartId);
         Task CheckoutAsync(Guid cartId);

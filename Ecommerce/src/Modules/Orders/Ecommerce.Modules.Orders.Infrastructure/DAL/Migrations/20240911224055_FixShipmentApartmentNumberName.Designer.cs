@@ -3,6 +3,7 @@ using System;
 using Ecommerce.Modules.Orders.Infrastructure.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 {
     [DbContext(typeof(OrdersDbContext))]
-    partial class OrdersDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240911224055_FixShipmentApartmentNumberName")]
+    partial class FixShipmentApartmentNumberName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,8 +48,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Id", "OrderPlacedAt");
 
                     b.ToTable("Orders", "orders");
                 });
@@ -150,9 +151,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                             b1.Property<decimal>("Price")
                                 .HasPrecision(11, 2)
                                 .HasColumnType("numeric(11,2)");
-
-                            b1.Property<int?>("Quantity")
-                                .HasColumnType("integer");
 
                             b1.Property<string>("SKU")
                                 .IsRequired()

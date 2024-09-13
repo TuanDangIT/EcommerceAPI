@@ -4,21 +4,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
 {
     public class Product
     {
+        [JsonInclude]
         public Guid Id { get; private set; }
+        [JsonInclude]
         public string SKU { get; private set; } = string.Empty;
         public string? EAN { get; private set; }
+        [JsonInclude]
         public string Name { get; private set; } = string.Empty;
         // W następnej wersji WebAPI można dodać obsługiwanie różnych Currency.
         //public string Currency { get; private set; } = string.Empty;
+        [JsonInclude]
         public decimal Price { get; private set; }
         public int VAT { get; private set; }
+        [JsonInclude]
         public int? Quantity { get; private set; }
+        public bool HasQuantity => Quantity != null;
         public string? Location { get; private set; }
         public string Description { get; private set; } = string.Empty;
         public string? AdditionalDescription { get; private set; }
@@ -60,6 +67,10 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public void DecreaseQuantity(int quantity)
         {
+            if (Quantity is null)
+            {
+                throw new ProductInvalidChangeOfQuantityException();
+            }
             Quantity -= quantity;
         }
         public void ChangeBaseDetails(string sku, string name, decimal price, int vat, string description, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)

@@ -89,11 +89,11 @@ namespace Ecommerce.Modules.Carts.Core.Services
             return cart?.AsDto();
         }
 
-        public async Task RemoveProduct(Guid cartId, Guid productId)
+        public async Task RemoveProduct(Guid cartId, Guid productId, int quantity)
         {
             var cart = await GetByCartOrThrowIfNull(cartId);
             var product = await GetCartProductOrThrowIfNull(cartId, productId);
-            cart.RemoveProduct(product);
+            cart.RemoveProduct(product, quantity);
             await _dbContext.SaveChangesAsync();
         }
         public async Task SetProductQuantity(Guid cartId, Guid productId, int quantity)

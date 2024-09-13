@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Application.Orders.Features.GetOrder
+namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.GetOrder
 {
-    public sealed record class GetOrder(Guid OrderId) : IQuery<OrderDetailsDto>;
+    public sealed record class GetOrder(Guid OrderId) : IQuery<OrderDetailsDto?>;
 }

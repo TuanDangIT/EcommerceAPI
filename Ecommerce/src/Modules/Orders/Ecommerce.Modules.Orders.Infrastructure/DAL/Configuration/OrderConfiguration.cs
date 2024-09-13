@@ -33,7 +33,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
                 s.Property(s => s.PostalCode).IsRequired().HasMaxLength(16);
                 s.Property(s => s.StreetName).IsRequired().HasMaxLength(64);
                 s.Property(s => s.StreetNumber).IsRequired().HasMaxLength(8);
-                s.Property(s => s.AparmentNumber).HasMaxLength(8);
+                s.Property(s => s.ApartmentNumber).HasMaxLength(8);
             });
             builder.OwnsOne(cc => cc.Customer, c =>
             {
@@ -54,6 +54,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
             //    .IsRequired();
             builder.Property(o => o.OrderPlacedAt)
                 .IsRequired();
+            builder.HasIndex(o => new { o.Id, o.OrderPlacedAt });
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
                 .AsQueryable();
             var dtos = await _sieveProcessor
                 .Apply(request, products)
-                .Select(p => p.AsListingDto())
+                .Select(p => p.AsBrowseDto())
                 .ToListAsync();
             var totalCount = await _sieveProcessor
                 .Apply(request, products, applyPagination: false)

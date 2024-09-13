@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Inventory.Application.Inventory.Exceptions
+namespace Ecommerce.Shared.Infrastructure.Pagination
 {
     public sealed class PaginationException : EcommerceException
     {

@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 namespace Ecommerce.Shared.Infrastructure.Pagination
 {
     //Generyczne DTO do paginacja dla metody w program.cs
-    public class PagedResult<T>
+    public sealed record class PagedResult<T>
     {
         //Potrzebne informację do przekazania użytkownikowi
-        public List<T> Items { get; set; }
-        public int CurrentPageNumber { get; set; }
-        public int TotalPages { get; set; }
-        public int ItemsFrom { get; set; }
-        public int ItemsTo { get; set; }
-        public int TotalItemsCount { get; set; }
+        public IEnumerable<T> Items { get; private set; }
+        public int CurrentPageNumber { get; private set; }
+        public int TotalPages { get; private set; }
+        public int ItemsFrom { get; private set; }
+        public int ItemsTo { get; private set; }
+        public int TotalItemsCount { get; private set; }
 
-        public PagedResult(List<T> items, int totalCount, int pageSize, int pageNumber)
+        public PagedResult(IEnumerable<T> items, int totalCount, int pageSize, int pageNumber)
         {
             //Tutaj mamy przypisanie do konstruktora, aby działało. Potrzebne nam są tu wyliczenia matematyczne, żeby to działało.
             Items = items;

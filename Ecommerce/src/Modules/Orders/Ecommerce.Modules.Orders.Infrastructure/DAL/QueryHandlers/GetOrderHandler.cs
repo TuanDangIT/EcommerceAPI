@@ -1,6 +1,8 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.DTO;
-using Ecommerce.Modules.Orders.Application.Orders.Features.GetOrder;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Order.GetOrder;
+using Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +11,21 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
 {
-    internal class GetOrderHandler : IQueryHandler<GetOrder, OrderDetailsDto>
+    internal class GetOrderHandler : IQueryHandler<GetOrder, OrderDetailsDto?>
     {
-        public GetOrderHandler()
+        private readonly OrdersDbContext _dbContext;
+
+        public GetOrderHandler(OrdersDbContext dbContext)
         {
-            
+            _dbContext = dbContext;
         }
-        public Task<OrderDetailsDto> Handle(GetOrder request, CancellationToken cancellationToken)
+        public async Task<OrderDetailsDto?> Handle(GetOrder request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var order = await _dbContext.Orders
+                .Include(o => o.Products)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(o => o.Id == request.OrderId);
+            return order?.AsDetailsDto();
         }
     }
 }

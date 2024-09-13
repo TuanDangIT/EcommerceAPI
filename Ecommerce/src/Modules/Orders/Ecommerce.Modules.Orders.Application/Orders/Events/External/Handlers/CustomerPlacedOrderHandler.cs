@@ -24,6 +24,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
         public async Task HandleAsync(CustomerPlacedOrder @event)
         {
             var products = new List<Product>();
+            //try serialize whole list
             foreach (var productObject in @event.Products)
             {
                 var serializedObject = JsonSerializer.Serialize(productObject);

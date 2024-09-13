@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Modules.Carts.Core.Entities.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,9 +26,9 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         {
             
         }
-        public void AddProduct(Product product, int quantity = 1)
+        public void AddProduct(Product product, int quantity)
         {
-            var cartProduct = _products.SingleOrDefault(p => p.Id == product.Id);
+            var cartProduct = _products.SingleOrDefault(p => p.ProductId == product.Id);
             if(cartProduct is not null)
             {
                 cartProduct.IncreaseQuantity(quantity);
@@ -35,31 +36,26 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             }
             _products.Add(new CartProduct(product, quantity));
         }
-        public void RemoveProduct(Product product)
+        public void RemoveProduct(Product product, int quantity)
         {
-            var cartProduct = _products.SingleOrDefault(cp => cp.Product.Id == product.Id);
-            if (cartProduct is null)
+            var cartProduct = _products.SingleOrDefault(cp => cp.ProductId == product.Id) ?? throw new CartProductNotFoundException(product.Id);
+            if (cartProduct.Quantity == quantity)
             {
-                throw new CartProductNotFoundException(product.Id);
-            }
-            if (cartProduct.Quantity == 1)
-            {
+                cartProduct.DecreaseQuantity(quantity);
                 _products.Remove(cartProduct);
             }
             else
             {
-                cartProduct.DecreaseQuantity();
+                cartProduct.DecreaseQuantity(quantity);
             }
         }
         public void SetProductQuantity(Product product, int quantity)
         {
-            var cartProduct = _products.SingleOrDefault(cp => cp.Product.Id == product.Id);
-            if (cartProduct is null)
+
+            var cartProduct = _products.SingleOrDefault(cp => cp.ProductId == product.Id) ?? throw new CartProductNotFoundException(product.Id);
+            if (quantity == 0)
             {
-                throw new CartProductNotFoundException(product.Id);
-            }
-            if (cartProduct.Quantity == 0)
-            {
+                cartProduct.SetQuantity(quantity);
                 _products.Remove(cartProduct);
             }
             else
@@ -67,11 +63,17 @@ namespace Ecommerce.Modules.Carts.Core.Entities
                 cartProduct.SetQuantity(quantity);
             }
         }
-        public void Clear() 
-            => _products.Clear();
+        public void Clear()
+        {
+            foreach(var cartProduct in _products)
+            {
+                cartProduct.SetQuantity(0);
+            }
+            _products.Clear();
+        }
         public CheckoutCart Checkout()
         {
-            if(_products.Count() == 0)
+            if (_products.Count == 0)
             {
                 throw new CartCheckoutWithNoProductsException();
             }

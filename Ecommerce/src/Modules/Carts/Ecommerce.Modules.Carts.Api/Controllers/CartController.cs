@@ -38,9 +38,9 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             return NoContent();
         }
         [HttpDelete("{cartId:guid}")]
-        public async Task<ActionResult> RemoveProduct([FromRoute]Guid cartId, [FromBody]Guid productId)
+        public async Task<ActionResult> RemoveProduct([FromRoute]Guid cartId, [FromBody]CartRemoveProductDto dto)
         {
-            await _cartService.RemoveProduct(cartId, productId);
+            await _cartService.RemoveProduct(cartId, dto.ProductId, dto.Quantity);
             return NoContent();
         }
         [HttpPut("{cartId:guid}")]

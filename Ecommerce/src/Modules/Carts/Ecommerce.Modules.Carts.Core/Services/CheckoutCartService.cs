@@ -48,6 +48,15 @@ namespace Ecommerce.Modules.Carts.Core.Services
             }
             var dto = await _stripeService.Checkout(checkoutCart);
             checkoutCart.SetStripeSessionId(dto.SessionId);
+            //foreach (var cartProduct in checkoutCart.Products)
+            //{
+            //    var product = cartProduct.Product;
+            //    if(product.Quantity < cartProduct.Quantity)
+            //    {
+
+            //    }
+            //    product.DecreaseQuantity(cartProduct.Quantity);
+            //}
             await _dbContext.SaveChangesAsync();
             return dto;
         }
@@ -145,7 +154,15 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 LastName = checkoutCart.Customer.LastName,
                 Email = checkoutCart.Customer.Email,
                 PhoneNumber = checkoutCart.Customer.PhoneNumber,
-                Products = checkoutCart.Products.Select(cp => cp.Product),
+                Products = checkoutCart.Products.Select(cp => new
+                {
+                    cp.Product.Id,
+                    cp.Product.SKU,
+                    cp.Product.Name,
+                    cp.Product.Price,
+                    cp.Quantity,
+                    cp.Product.ImagePathUrl
+                }),
                 City = checkoutCart.Shipment!.City,
                 PostalCode = checkoutCart.Shipment.PostalCode,
                 StreetName = checkoutCart.Shipment.StreetName,
