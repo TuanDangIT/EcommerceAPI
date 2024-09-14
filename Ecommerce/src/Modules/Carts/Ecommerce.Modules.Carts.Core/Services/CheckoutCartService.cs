@@ -96,6 +96,12 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 ));
             await _dbContext.SaveChangesAsync();
         }
+        public async Task SetAdditionalInformation(Guid checkoutCartId, string additionalInformation)
+        {
+            var checkoutCart = await GetOrThrowIfNull(checkoutCartId);
+            checkoutCart.SetAdditionalInformation(additionalInformation);
+            await _dbContext.SaveChangesAsync();
+        }
         public async Task SetCheckoutCartDetails(Guid checkoutCartId, CheckoutCartSetDetailsDto checkoutCartSetDetailsDto)
         {
             var checkoutCart = await GetOrThrowIfNull(checkoutCartId);
