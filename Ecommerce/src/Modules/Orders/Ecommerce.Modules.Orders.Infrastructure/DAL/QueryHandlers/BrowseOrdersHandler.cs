@@ -24,7 +24,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
         {
             var ordersAsQueryable = _dbContext.Orders.OrderBy(o => o.OrderPlacedAt).AsQueryable();
             int takeAmount = request.PageSize + 1;
-            if(request.CursorDto.CursorId is not null && request.CursorDto.CursorOrderPlacedAt is not null)
+            if(request.CursorDto is not null)
             {
                 if(request.IsNextPage is true)
                 {
@@ -36,7 +36,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 }
             }
             ordersAsQueryable = ordersAsQueryable.Take(takeAmount);
-            if (request.IsNextPage == false && request.CursorDto.CursorId is not null && request.CursorDto.CursorOrderPlacedAt is not null)
+            if (request.IsNextPage is false && request.CursorDto is not null)
             {
                 ordersAsQueryable = ordersAsQueryable.Reverse();
             }
@@ -45,10 +45,10 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 .Select(o => o.AsBrowseDto())
                 .AsNoTracking()
                 .ToListAsync();
-            bool isFirstPage = (!request.CursorDto.CursorId.HasValue && !request.CursorDto.CursorOrderPlacedAt.HasValue)
-                || (request.CursorDto.CursorId.HasValue && request.CursorDto.CursorOrderPlacedAt.HasValue && orders.First().Id == _dbContext.Orders.OrderBy(g => g.Id).AsNoTracking().First().Id);
+            bool isFirstPage = request.CursorDto is null
+                || (request.CursorDto is not null && orders.First().Id == _dbContext.Orders.OrderBy(g => g.Id).AsNoTracking().First().Id);
             bool hasNextPage = orders.Count > request.PageSize 
-                || (request.CursorDto.CursorId is not null && request.CursorDto.CursorOrderPlacedAt is not null && request.IsNextPage == false);
+                || (request.CursorDto is not null && request.IsNextPage == false);
             CursorDto nextCursor = hasNextPage ?
                 new CursorDto()
                 {

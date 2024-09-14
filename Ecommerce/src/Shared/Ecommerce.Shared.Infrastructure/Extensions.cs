@@ -60,7 +60,10 @@ namespace Ecommerce.Shared.Infrastructure
                 //    option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 //});
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(options =>
+            {
+                options.CustomSchemaIds(type => type.ToString());
+            });
             return services;
         }
         public static WebApplication UseInfrastructure(this WebApplication app)
