@@ -40,7 +40,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             PostalCode = postalCode;
             StreetName = streetName;
             StreetNumber = streetNumber;
-            AparmentNumber = apartmentNumber;
+            ApartmentNumber = apartmentNumber;
         }
         public Shipment()
         {

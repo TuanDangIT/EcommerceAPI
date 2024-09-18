@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Returns.Entity
 {
-    internal class ReturnProduct
+    public class ReturnProduct
     {
         public int Id { get; private set; }
         [JsonInclude]
