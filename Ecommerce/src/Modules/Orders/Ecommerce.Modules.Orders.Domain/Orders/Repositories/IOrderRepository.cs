@@ -9,6 +9,6 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Repositories
 {
     public interface IOrderRepository
     {
-        Task CreateOrder(Order order);
+        Task CreateOrderAsync(Order order);
     }
 }

@@ -16,9 +16,10 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public Shipment Shipment { get; set; } = new();
         public PaymentMethod Payment { get; set; }
         public OrderStatus Status { get; set; } = OrderStatus.Placed;
-        public bool IsCompleted => Status is OrderStatus.Cancelled || Status is OrderStatus.Completed;
+        public bool IsCompleted => Status is OrderStatus.Cancelled || Status is OrderStatus.Completed || Status is OrderStatus.Returned;
         public string? AdditionalInformation { get; set; }
         public DateTime OrderPlacedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public Order(Guid id, Customer customer, IEnumerable<Product> products, Shipment shipment,
             PaymentMethod paymentMethod, DateTime orderPlacedAt, string? additionalInformation = null)
         {
@@ -34,9 +35,15 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         {
             
         }
-        public void ChangeStatus(OrderStatus status)
-            => Status = status;
-        public void EditShipment(Shipment shipment)
-            => Shipment = shipment;
+        public void ChangeStatus(OrderStatus status, DateTime updatedAt)
+        {
+            Status = status;
+            UpdatedAt = updatedAt;
+        }
+        public void EditShipment(Shipment shipment, DateTime updatedAt)
+        {
+            Shipment = shipment;
+            UpdatedAt = updatedAt;
+        }
     }
 }

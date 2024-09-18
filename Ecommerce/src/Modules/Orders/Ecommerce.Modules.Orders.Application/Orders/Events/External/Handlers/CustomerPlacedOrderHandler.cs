@@ -49,7 +49,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
                 _timeProvider.GetUtcNow().UtcDateTime,
                 additionalInformation
                 );
-            await _orderRepository.CreateOrder(order);
+            await _orderRepository.CreateOrderAsync(order);
         }
     }
 }

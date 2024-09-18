@@ -16,7 +16,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task CreateOrder(Order order)
+        public async Task CreateOrderAsync(Order order)
         {
             await _dbContext.AddAsync(order);
             await _dbContext.SaveChangesAsync();
