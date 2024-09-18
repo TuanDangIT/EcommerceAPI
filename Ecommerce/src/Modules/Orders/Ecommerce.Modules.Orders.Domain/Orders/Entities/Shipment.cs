@@ -18,18 +18,29 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         {
             if (string.IsNullOrWhiteSpace(city))
             {
-                throw new ShipmentNullException("City");
+                throw new ShipmentNullException(nameof(City));
+            }
+
+            if (string.IsNullOrWhiteSpace(postalCode))
+            {
+                throw new ShipmentNullException("Postal code");
             }
 
             if (string.IsNullOrWhiteSpace(streetName))
             {
                 throw new ShipmentNullException("Street name");
             }
+
+            if (string.IsNullOrWhiteSpace(streetNumber))
+            {
+                throw new ShipmentNullException("Street number");
+            }
+
             City = city;
             PostalCode = postalCode;
             StreetName = streetName;
             StreetNumber = streetNumber;
-            ApartmentNumber = apartmentNumber;
+            AparmentNumber = apartmentNumber;
         }
         public Shipment()
         {

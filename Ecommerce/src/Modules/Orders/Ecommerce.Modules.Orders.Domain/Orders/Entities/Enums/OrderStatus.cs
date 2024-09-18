@@ -9,8 +9,10 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums
     public enum OrderStatus
     {
         Placed,
+        ParcelPacked,
         Shipped,
         Completed,
-        Cancelled
+        Cancelled,
+        Returned
     }
 }

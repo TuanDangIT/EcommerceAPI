@@ -18,12 +18,22 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         {
             if (string.IsNullOrWhiteSpace(city))
             {
-                throw new ShipmentNullException("City");
+                throw new ShipmentNullException(nameof(City));
+            }
+
+            if (string.IsNullOrWhiteSpace(postalCode))
+            {
+                throw new ShipmentNullException("Postal code");
             }
 
             if (string.IsNullOrWhiteSpace(streetName))
             {
                 throw new ShipmentNullException("Street name");
+            }
+
+            if (string.IsNullOrWhiteSpace(streetNumber))
+            {
+                throw new ShipmentNullException("Street number");
             }
 
             City = city;

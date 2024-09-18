@@ -34,5 +34,9 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         {
             
         }
+        public void ChangeStatus(OrderStatus status)
+            => Status = status;
+        public void EditShipment(Shipment shipment)
+            => Shipment = shipment;
     }
 }

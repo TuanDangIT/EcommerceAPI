@@ -18,9 +18,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
                 .HasConversion<string>();
             builder.HasData(
                 new Status(1, Domain.Orders.Entities.Enums.OrderStatus.Placed),
-                new Status(2, Domain.Orders.Entities.Enums.OrderStatus.Shipped),
-                new Status(3, Domain.Orders.Entities.Enums.OrderStatus.Completed),
-                new Status(4, Domain.Orders.Entities.Enums.OrderStatus.Cancelled)
+                new Status(2, Domain.Orders.Entities.Enums.OrderStatus.ParcelPacked),
+                new Status(3, Domain.Orders.Entities.Enums.OrderStatus.Shipped),
+                new Status(4, Domain.Orders.Entities.Enums.OrderStatus.Completed),
+                new Status(5, Domain.Orders.Entities.Enums.OrderStatus.Cancelled),
+                new Status(6, Domain.Orders.Entities.Enums.OrderStatus.Returned)
                 );
         }
     }
