@@ -14,7 +14,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
             => new()
             {
                 Id = order.Id,
-                CustomerId = order.Customer.CustomerId,
+                CustomerId = order.Customer.UserId,
                 FullName = order.Customer.FirstName + " " + order.Customer.LastName,
                 Status = order.Status,
                 OrderPlacedAt = order.OrderPlacedAt
@@ -52,7 +52,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
         public static CustomerDto AsDto(this Customer customer)
             => new()
             {
-                CustomerId = customer.CustomerId,
+                CustomerId = customer.UserId,
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 Email = customer.Email,

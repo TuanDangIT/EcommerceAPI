@@ -1,4 +1,6 @@
-﻿using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
+﻿using Ecommerce.Modules.Orders.Domain.Complaints.Repositories;
+using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
+using Ecommerce.Modules.Orders.Domain.Returns.Repositories;
 using Ecommerce.Modules.Orders.Infrastructure.DAL;
 using Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories;
 using Ecommerce.Shared.Infrastructure.Postgres;
@@ -19,6 +21,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddPostgres<OrdersDbContext>();
             services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IReturnRepository, ReturnRepository>();
+            services.AddScoped<IComplaintRepository, ComplaintRepository>();
             return services;
         }
     }

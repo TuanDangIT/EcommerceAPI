@@ -1,5 +1,4 @@
-﻿using Ecommerce.Shared.Abstractions.Exceptions;
-using Ecommerce.Shared.Abstractions.MediatR;
+﻿using Ecommerce.Shared.Abstractions.MediatR;
 using FluentValidation;
 using MediatR;
 using System;
@@ -8,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Inventory.Application.Behavior
+namespace Ecommerce.Modules.Orders.Application.Behaviors
 {
     public class ValidationPipelineBehavior<TRequest, TResponse>
         : IPipelineBehavior<TRequest, TResponse>
@@ -21,9 +20,9 @@ namespace Ecommerce.Modules.Inventory.Application.Behavior
         }
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
-            if (!_validators.Any()) 
-            { 
-                return await next(); 
+            if (!_validators.Any())
+            {
+                return await next();
             }
             var errors = _validators
                 .Select(validator => validator.Validate(request))

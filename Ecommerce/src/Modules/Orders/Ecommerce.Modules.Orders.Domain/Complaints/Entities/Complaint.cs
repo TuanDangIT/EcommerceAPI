@@ -13,17 +13,17 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
     {
         public Guid Id { get; set; }
         public Customer Customer { get; set; } = new();
+        public Guid CustomerId { get; set; }
         public Order Order { get; set; } = new();
         public Guid OrderId { get; set; }
-        private readonly List<ComplaintProduct> _products = [];
-        public IEnumerable<ComplaintProduct> Products => _products;
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public string AdditionalNote { get; set; } = string.Empty;
+        public string? AdditionalNote { get; set; }
+        public Decision? Decision { get; set; } = new();
         public ComplainStatus Status { get; set; } = ComplainStatus.NotDecided;
         public bool IsCompleted => Status is ComplainStatus.Approved || Status is ComplainStatus.Rejected;
         public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set;}
+        public DateTime? UpdatedAt { get; set;}
         public Complaint(Guid id, Customer customer, Order order, string title, string description, DateTime createdAt)
         {
             Id = id;
@@ -32,6 +32,10 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
             Title = title;
             Description = description;
             CreatedAt = createdAt;
+        }
+        public Complaint()
+        {
+            
         }
         public void ChangeStatus(ComplainStatus status, DateTime updatedAt)
         {
@@ -42,6 +46,14 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
         {
             AdditionalNote = notes;
             UpdatedAt = updatedAt;
+        }
+        public void ApproveComplaint(DateTime updatedAt)
+        {
+            Status = ComplainStatus.Approved;
+        }
+        public void RejectComplaint(DateTime updatedAt)
+        {
+            Status = ComplainStatus.Rejected;
         }
     }
 }

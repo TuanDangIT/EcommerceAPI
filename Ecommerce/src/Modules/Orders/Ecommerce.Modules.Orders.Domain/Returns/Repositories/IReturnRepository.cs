@@ -10,5 +10,8 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Repositories
     public interface IReturnRepository
     {
         Task CreateReturnAsync(Return @return);
+        Task<Return?> GetReturnByOrderIdAsync(Guid orderId);
+        Task<Return?> GetReturnAsync(Guid returnId);
+        Task UpdateAsync();
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.DTO
 {
-    public class CursorDto
+    public class OrderCursorDto
     {
         public Guid? CursorId { get; set; }
         public DateTime? CursorOrderPlacedAt { get; set; }

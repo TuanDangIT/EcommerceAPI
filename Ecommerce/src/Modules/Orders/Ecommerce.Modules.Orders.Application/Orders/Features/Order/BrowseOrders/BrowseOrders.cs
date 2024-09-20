@@ -9,5 +9,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrders
 {
-    public sealed record class BrowseOrders(CursorDto? CursorDto, bool? IsNextPage, int PageSize) : IQuery<CursorPagedResult<OrderBrowseDto, CursorDto>>;
+    public sealed record class BrowseOrders(OrderCursorDto? CursorDto, bool? IsNextPage, int PageSize) : IQuery<CursorPagedResult<OrderBrowseDto, OrderCursorDto>>;
 }

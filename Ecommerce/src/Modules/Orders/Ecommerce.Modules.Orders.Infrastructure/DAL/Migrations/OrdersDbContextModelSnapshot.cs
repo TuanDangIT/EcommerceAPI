@@ -23,6 +23,84 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Complaints.Entities.Complaint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AdditionalNote")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId")
+                        .IsUnique();
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Comaplaints", "orders");
+                });
+
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Customers", "orders");
+                });
+
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
@@ -32,6 +110,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.Property<string>("AdditionalInformation")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("OrderPlacedAt")
                         .HasColumnType("timestamp with time zone");
@@ -44,7 +125,13 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId")
+                        .IsUnique();
 
                     b.HasIndex("Id", "OrderPlacedAt");
 
@@ -76,57 +163,138 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         new
                         {
                             Id = 2,
-                            OrderStatus = "Shipped"
+                            OrderStatus = "ParcelPacked"
                         },
                         new
                         {
                             Id = 3,
-                            OrderStatus = "Completed"
+                            OrderStatus = "Shipped"
                         },
                         new
                         {
                             Id = 4,
+                            OrderStatus = "Completed"
+                        },
+                        new
+                        {
+                            Id = 5,
                             OrderStatus = "Cancelled"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            OrderStatus = "Returned"
                         });
                 });
 
-            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", b =>
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Returns.Entity.Return", b =>
                 {
-                    b.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", "Customer", b1 =>
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AdditionalNote")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReasonForReturn")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId")
+                        .IsUnique();
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Returns", "orders");
+                });
+
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Complaints.Entities.Complaint", b =>
+                {
+                    b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", "Customer")
+                        .WithOne("Complaint")
+                        .HasForeignKey("Ecommerce.Modules.Orders.Domain.Complaints.Entities.Complaint", "CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsMany("Ecommerce.Modules.Orders.Domain.Complaints.Entities.ComplaintProduct", "Products", b1 =>
                         {
-                            b1.Property<Guid>("OrderId")
+                            b1.Property<Guid>("ComplaintId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<Guid?>("CustomerId")
-                                .HasColumnType("uuid");
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
 
-                            b1.Property<string>("Email")
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("ImagePathUrl")
                                 .IsRequired()
-                                .HasMaxLength(64)
-                                .HasColumnType("character varying(64)");
+                                .HasColumnType("text");
 
-                            b1.Property<string>("FirstName")
+                            b1.Property<string>("Name")
                                 .IsRequired()
-                                .HasMaxLength(48)
-                                .HasColumnType("character varying(48)");
+                                .HasMaxLength(24)
+                                .HasColumnType("character varying(24)");
 
-                            b1.Property<string>("LastName")
-                                .IsRequired()
-                                .HasMaxLength(48)
-                                .HasColumnType("character varying(48)");
+                            b1.Property<decimal>("Price")
+                                .HasPrecision(11, 2)
+                                .HasColumnType("numeric(11,2)");
 
-                            b1.Property<string>("PhoneNumber")
+                            b1.Property<int?>("Quantity")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("SKU")
                                 .IsRequired()
                                 .HasMaxLength(16)
                                 .HasColumnType("character varying(16)");
 
-                            b1.HasKey("OrderId");
+                            b1.HasKey("ComplaintId", "Id");
 
-                            b1.ToTable("Orders", "orders");
+                            b1.ToTable("ComplaintProducts", "orders");
 
                             b1.WithOwner()
-                                .HasForeignKey("OrderId");
+                                .HasForeignKey("ComplaintId");
                         });
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", b =>
+                {
+                    b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", "Customer")
+                        .WithOne("Order")
+                        .HasForeignKey("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", "CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.OwnsMany("Ecommerce.Modules.Orders.Domain.Orders.Entities.Product", "Products", b1 =>
                         {
@@ -145,7 +313,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
                             b1.Property<string>("Name")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasMaxLength(24)
+                                .HasColumnType("character varying(24)");
 
                             b1.Property<decimal>("Price")
                                 .HasPrecision(11, 2)
@@ -205,13 +374,83 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                 .HasForeignKey("OrderId");
                         });
 
-                    b.Navigation("Customer")
-                        .IsRequired();
+                    b.Navigation("Customer");
 
                     b.Navigation("Products");
 
                     b.Navigation("Shipment")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Returns.Entity.Return", b =>
+                {
+                    b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", "Customer")
+                        .WithOne("Return")
+                        .HasForeignKey("Ecommerce.Modules.Orders.Domain.Returns.Entity.Return", "CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsMany("Ecommerce.Modules.Orders.Domain.Returns.Entity.ReturnProduct", "Products", b1 =>
+                        {
+                            b1.Property<Guid>("ReturnId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("ImagePathUrl")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasMaxLength(24)
+                                .HasColumnType("character varying(24)");
+
+                            b1.Property<decimal>("Price")
+                                .HasPrecision(11, 2)
+                                .HasColumnType("numeric(11,2)");
+
+                            b1.Property<int?>("Quantity")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("SKU")
+                                .IsRequired()
+                                .HasMaxLength(16)
+                                .HasColumnType("character varying(16)");
+
+                            b1.HasKey("ReturnId", "Id");
+
+                            b1.ToTable("ReturnProducts", "orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ReturnId");
+                        });
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", b =>
+                {
+                    b.Navigation("Complaint");
+
+                    b.Navigation("Order")
+                        .IsRequired();
+
+                    b.Navigation("Return");
                 });
 #pragma warning restore 612, 618
         }

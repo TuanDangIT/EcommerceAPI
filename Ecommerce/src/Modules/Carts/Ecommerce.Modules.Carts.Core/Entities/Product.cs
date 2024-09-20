@@ -41,7 +41,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         {
             if(Quantity is null)
             {
-                throw new ProductInvalidChangeOfQuantityException();
+                throw new ProductInvalidChangeInQuantityException();
             }
             if(Quantity < quantity)
             {
@@ -53,7 +53,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         {
             if (Quantity is null)
             {
-                throw new ProductInvalidChangeOfQuantityException();
+                throw new ProductInvalidChangeInQuantityException();
             }
             Quantity += quantity;
         }

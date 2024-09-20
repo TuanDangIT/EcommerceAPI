@@ -20,10 +20,10 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         {
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<CursorPagedResult<OrderBrowseDto, CursorDto>>>> BrowseOrders([FromQuery] BrowseOrders query)
+        public async Task<ActionResult<ApiResponse<CursorPagedResult<OrderBrowseDto, OrderCursorDto>>>> BrowseOrders([FromQuery] BrowseOrders query)
         {
             var result = await _mediator.Send(query);
-            return Ok(new ApiResponse<CursorPagedResult<OrderBrowseDto, CursorDto>>(HttpStatusCode.OK, result));
+            return Ok(new ApiResponse<CursorPagedResult<OrderBrowseDto, OrderCursorDto>>(HttpStatusCode.OK, result));
         }
         [HttpGet("{orderId:guid}")]
         public async Task<ActionResult<ApiResponse<OrderDetailsDto>>> GetOrder([FromRoute]Guid orderId)

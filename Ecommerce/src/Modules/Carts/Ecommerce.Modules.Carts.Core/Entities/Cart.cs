@@ -39,7 +39,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public void RemoveProduct(Product product, int quantity)
         {
             var cartProduct = _products.SingleOrDefault(cp => cp.ProductId == product.Id) ?? throw new CartProductNotFoundException(product.Id);
-            if (cartProduct.Quantity == quantity)
+            if (cartProduct.Quantity == quantity || cartProduct.Quantity == 1)
             {
                 cartProduct.DecreaseQuantity(quantity);
                 _products.Remove(cartProduct);

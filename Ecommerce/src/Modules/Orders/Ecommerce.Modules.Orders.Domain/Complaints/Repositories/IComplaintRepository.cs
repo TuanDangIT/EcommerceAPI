@@ -10,5 +10,7 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Repositories
     public interface IComplaintRepository
     {
         Task CreateComplaintAsync(Complaint complaint);
+        Task<Complaint?> GetComplaintAsync(Guid complaintId);
+        Task UpdateAsync();
     }
 }

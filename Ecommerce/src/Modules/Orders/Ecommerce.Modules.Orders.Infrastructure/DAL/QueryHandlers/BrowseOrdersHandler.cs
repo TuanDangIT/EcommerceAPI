@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
 {
-    internal class BrowseOrdersHandler : IQueryHandler<BrowseOrders, CursorPagedResult<OrderBrowseDto, CursorDto>>
+    internal class BrowseOrdersHandler : IQueryHandler<BrowseOrders, CursorPagedResult<OrderBrowseDto, OrderCursorDto>>
     {
         private readonly OrdersDbContext _dbContext;
 
@@ -20,7 +20,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
         {
             _dbContext = dbContext;
         }
-        public async Task<CursorPagedResult<OrderBrowseDto, CursorDto>> Handle(BrowseOrders request, CancellationToken cancellationToken)
+        public async Task<CursorPagedResult<OrderBrowseDto, OrderCursorDto>> Handle(BrowseOrders request, CancellationToken cancellationToken)
         {
             var ordersAsQueryable = _dbContext.Orders.OrderBy(o => o.OrderPlacedAt).AsQueryable();
             int takeAmount = request.PageSize + 1;
@@ -49,21 +49,21 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 || (request.CursorDto is not null && orders.First().Id == _dbContext.Orders.OrderBy(g => g.Id).AsNoTracking().First().Id);
             bool hasNextPage = orders.Count > request.PageSize 
                 || (request.CursorDto is not null && request.IsNextPage == false);
-            CursorDto nextCursor = hasNextPage ?
-                new CursorDto()
+            OrderCursorDto nextCursor = hasNextPage ?
+                new OrderCursorDto()
                 {
                     CursorId = orders.Last().Id,
                     CursorOrderPlacedAt = orders.Last().OrderPlacedAt
                 }
                 : new();
-            CursorDto previousCursor = orders.Count > 0 ?
-                new CursorDto()
+            OrderCursorDto previousCursor = orders.Count > 0 ?
+                new OrderCursorDto()
                 {
                     CursorId = orders.First().Id,
                     CursorOrderPlacedAt = orders.First().OrderPlacedAt
                 }
                 : new();
-            return new CursorPagedResult<OrderBrowseDto, CursorDto>(orders, nextCursor, previousCursor, isFirstPage);
+            return new CursorPagedResult<OrderBrowseDto, OrderCursorDto>(orders, nextCursor, previousCursor, isFirstPage);
 
         }
     }

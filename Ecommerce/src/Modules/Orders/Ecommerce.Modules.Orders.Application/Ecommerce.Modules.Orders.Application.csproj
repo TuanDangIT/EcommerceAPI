@@ -15,9 +15,4 @@
     <ProjectReference Include="..\Ecommerce.Modules.Orders.Domain\Ecommerce.Modules.Orders.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Complaints\" />
-    <Folder Include="Returns\" />
-  </ItemGroup>
-
 </Project>

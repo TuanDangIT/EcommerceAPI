@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,5 +22,13 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
             await _dbContext.AddAsync(order);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<Order?> GetOrderAsync(Guid orderId)
+            => await _dbContext.Orders
+                .Include(o => o.Products)
+                .SingleOrDefaultAsync(o => o.Id == orderId);
+
+        public async Task UpdateAsync()
+            => await _dbContext.SaveChangesAsync();
     }
 }

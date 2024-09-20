@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
+using Ecommerce.Modules.Orders.Domain.Returns.Entity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,18 +10,22 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 {
     public class Customer
     {
-        public Guid? CustomerId { get; set; }
+        public Guid Id { get; set; }
+        public Guid? UserId { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
-        public Customer(string firstName, string lastName, string email, string phoneNumber, Guid? customerId = null)
+        public Order Order { get; set; } = new();
+        public Return? Return { get; set; } 
+        public Complaint? Complaint { get; set; }
+        public Customer(string firstName, string lastName, string email, string phoneNumber, Guid? userId = null)
         {
             FirstName = firstName;
             LastName = lastName;
             Email = email;
             PhoneNumber = phoneNumber;
-            CustomerId = customerId ?? Guid.Empty;
+            UserId = userId ?? Guid.Empty;
         }
         public Customer()
         {

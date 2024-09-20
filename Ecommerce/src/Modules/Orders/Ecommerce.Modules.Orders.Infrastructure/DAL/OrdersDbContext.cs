@@ -17,6 +17,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL
         public DbSet<Return> Returns { get; set; }
         public DbSet<Complaint> Comaplaints { get; set; }   
         public DbSet<Status> Statuses { get; set; }
+        public DbSet<Customer> Customers { get; set; }
         public OrdersDbContext(DbContextOptions<OrdersDbContext> options) : base(options)
         {
             

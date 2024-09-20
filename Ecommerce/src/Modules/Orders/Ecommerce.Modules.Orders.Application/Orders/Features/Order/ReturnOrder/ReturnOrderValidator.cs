@@ -11,7 +11,27 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
     {
         public ReturnOrderValidator()
         {
-
+            RuleFor(r => r.ReasonForReturn)
+                .MinimumLength(2)
+                .MaximumLength(32)
+                .NotEmpty()
+                .NotNull();
+            RuleFor(r => r.ProductsToReturn)
+                .NotEmpty()
+                .NotNull();
+            RuleForEach(r => r.ProductsToReturn).ChildRules(ptr =>
+            {
+                ptr.RuleFor(ptr => ptr.SKU)
+                    .NotEmpty()
+                    .NotNull();
+                ptr.RuleFor(ptr => ptr.Quantity)
+                    .GreaterThan(0)
+                    .NotEmpty()
+                    .NotNull();
+            });
+            RuleFor(r => r.OrderId)
+                .NotEmpty()
+                .NotNull();
         }
     }
 }

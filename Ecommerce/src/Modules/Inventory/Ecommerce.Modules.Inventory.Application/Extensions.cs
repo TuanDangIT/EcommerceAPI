@@ -1,4 +1,4 @@
-﻿using Ecommerce.Modules.Inventory.Application.Behavior;
+﻿using Ecommerce.Modules.Inventory.Application.Behaviors;
 using Ecommerce.Modules.Inventory.Application.Inventory.Services;
 using Ecommerce.Modules.Inventory.Application.Inventory.Sieve.CustomFilters;
 using Ecommerce.Modules.Inventory.Application.Sieve;

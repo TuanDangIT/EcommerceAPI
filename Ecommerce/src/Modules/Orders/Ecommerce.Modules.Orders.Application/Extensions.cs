@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
+﻿using Ecommerce.Modules.Orders.Application.Behaviors;
+using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -16,6 +17,7 @@ namespace Ecommerce.Modules.Orders.Application
         {
             services.AddMediatR(cfg =>
             {
+                cfg.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
             services.Scan(i => i.FromAssemblies(Assembly.GetExecutingAssembly())

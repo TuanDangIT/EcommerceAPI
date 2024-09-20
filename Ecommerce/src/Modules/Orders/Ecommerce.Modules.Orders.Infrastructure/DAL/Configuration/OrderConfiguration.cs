@@ -19,6 +19,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
                     .HasMaxLength(16)
                     .IsRequired();
                 p.Property(p => p.Name)
+                    .HasMaxLength(24)
                     .IsRequired();
                 p.Property(p => p.Price)
                     .HasPrecision(11, 2)
@@ -35,13 +36,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
                 s.Property(s => s.StreetNumber).IsRequired().HasMaxLength(8);
                 s.Property(s => s.ApartmentNumber).HasMaxLength(8);
             });
-            builder.OwnsOne(cc => cc.Customer, c =>
-            {
-                c.Property(c => c.FirstName).IsRequired().HasMaxLength(48);
-                c.Property(c => c.LastName).IsRequired().HasMaxLength(48);
-                c.Property(c => c.Email).IsRequired().HasMaxLength(64);
-                c.Property(c => c.PhoneNumber).IsRequired().HasMaxLength(16);
-            });
+            builder.HasOne(o => o.Customer)
+                .WithOne(c => c.Order)
+                .HasForeignKey(nameof(Order));
             builder.Property(o => o.Payment)
                 .IsRequired()
                 .HasConversion<string>();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ecommerce.Modules.Orders.Domain.Orders.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 {
-    public class Product
+    public class Product //OrderItem could be a better name.
     {
         public int Id { get; private set; }
         [JsonInclude]
@@ -17,10 +18,10 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         [JsonInclude]
         public decimal Price { get; private set; }
         [JsonInclude]
-        public int? Quantity { get; private set; }
+        public int Quantity { get; private set; }
         [JsonInclude]
         public string ImagePathUrl { get; private set; } = string.Empty;
-        public Product(string sku, string name, decimal price, int? quantity, string imagePathUrl)
+        public Product(string sku, string name, decimal price, int quantity, string imagePathUrl)
         {
             SKU = sku;
             Name = name;
@@ -31,6 +32,14 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public Product()
         {
 
+        }
+        public void DecreaseQuantity(int quantity)
+        {
+            if(Quantity < quantity)
+            {
+                throw new ProductQuantityBelowZeroException();
+            }
+            Quantity -= quantity;
         }
     }
 }
