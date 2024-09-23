@@ -1,6 +1,6 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
-using Ecommerce.Modules.Orders.Domain.Returns.Entity;
+using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL
     {
         public DbSet<Order> Orders { get; set; }
         public DbSet<Return> Returns { get; set; }
-        public DbSet<Complaint> Comaplaints { get; set; }   
+        public DbSet<Complaint> Complaints { get; set; }   
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public OrdersDbContext(DbContextOptions<OrdersDbContext> options) : base(options)

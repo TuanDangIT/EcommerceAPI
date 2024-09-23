@@ -1,4 +1,4 @@
-﻿using Ecommerce.Modules.Orders.Domain.Returns.Entity;
+﻿using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +9,9 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Repositories
 {
     public interface IReturnRepository
     {
-        Task CreateReturnAsync(Return @return);
-        Task<Return?> GetReturnByOrderIdAsync(Guid orderId);
-        Task<Return?> GetReturnAsync(Guid returnId);
+        Task CreateAsync(Return @return);
+        Task<Return?> GetByOrderIdAsync(Guid orderId);
+        Task<Return?> GetAsync(Guid returnId);
         Task UpdateAsync();
     }
 }

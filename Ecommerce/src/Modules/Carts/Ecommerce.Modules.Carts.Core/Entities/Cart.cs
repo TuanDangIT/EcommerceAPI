@@ -14,6 +14,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public Guid? CustomerId {  get; private set; }
         private List<CartProduct> _products = [];
         public IEnumerable<CartProduct> Products => _products;
+        public decimal TotalSum => _products.Sum(cp => cp.Product.Price);
         public Cart(Guid id, Guid customerId)
         {
             CustomerId = customerId;

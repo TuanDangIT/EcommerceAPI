@@ -1,5 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
-using Ecommerce.Modules.Orders.Domain.Returns.Entity;
+using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +16,8 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
-        public Order Order { get; set; } = new();
-        public Return? Return { get; set; } 
-        public Complaint? Complaint { get; set; }
+        public Order Order { get; set; } = default!;
+        public Guid OrderId { get; set; }
         public Customer(string firstName, string lastName, string email, string phoneNumber, Guid? userId = null)
         {
             FirstName = firstName;

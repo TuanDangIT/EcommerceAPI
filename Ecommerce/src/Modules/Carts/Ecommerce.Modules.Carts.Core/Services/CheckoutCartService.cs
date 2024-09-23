@@ -46,8 +46,9 @@ namespace Ecommerce.Modules.Carts.Core.Services
             {
                 throw new CheckoutCartInvalidPlaceOrderException();
             }
-            var dto = await _stripeService.Checkout(checkoutCart);
+            var (dto, paymentIntendId) = await _stripeService.Checkout(checkoutCart);
             checkoutCart.SetStripeSessionId(dto.SessionId);
+            checkoutCart.SetStripePaymentIntendId(paymentIntendId);
             //foreach (var cartProduct in checkoutCart.Products)
             //{
             //    var product = cartProduct.Product;

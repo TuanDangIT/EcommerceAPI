@@ -22,5 +22,6 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External
         public string ApartmentNumber { get; set; } = string.Empty;
         public string PaymentMethod { get; set; } = string.Empty;
         public string AdditionalInformation { get; set; } = string.Empty;
+        public string StripePaymentIntentId { get; set; } = string.Empty;
     }
 }

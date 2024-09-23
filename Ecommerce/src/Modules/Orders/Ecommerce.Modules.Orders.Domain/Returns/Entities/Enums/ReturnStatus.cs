@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Domain.Returns.Entity.Enum
+namespace Ecommerce.Modules.Orders.Domain.Returns.Entities.Enums
 {
     public enum ReturnStatus
     {
+        NotHandled,
         Handled,
-        NotHandled
+        Rejected
     }
 }

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Stripe.net" Version="45.15.0-beta.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Ecommerce.Modules.Orders.Application\Ecommerce.Modules.Orders.Application.csproj" />
   </ItemGroup>
 

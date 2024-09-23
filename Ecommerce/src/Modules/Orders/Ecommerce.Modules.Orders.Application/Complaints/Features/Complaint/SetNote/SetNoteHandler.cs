@@ -1,6 +1,6 @@
 ﻿using Ecommerce.Modules.Orders.Application.Complaints.Exceptions;
 using Ecommerce.Modules.Orders.Domain.Complaints.Repositories;
-using Ecommerce.Modules.Orders.Domain.Returns.Entity;
+using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using Ecommerce.Modules.Orders.Domain.Returns.Repositories;
 using Ecommerce.Shared.Abstractions.MediatR;
 using System;
@@ -24,7 +24,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Set
         }
         public async Task Handle(SetNote request, CancellationToken cancellationToken)
         {
-            var complaint = await _complaintRepository.GetComplaintAsync(request.ComplaintId);
+            var complaint = await _complaintRepository.GetAsync(request.ComplaintId);
             if(complaint is null)
             {
                 throw new ComplaintNotFoundException(request.ComplaintId);

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ecommerce.Modules.Orders.Application.Orders.DTO;
+using Ecommerce.Modules.Orders.Domain.Returns.Entities.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +8,16 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Returns.DTO
 {
-    internal class ReturnDetailsDto
+    public class ReturnDetailsDto
     {
+        public Guid Id { get; set; }
+        public CustomerDto Customer { get; set; } = new();
+        public OrderShortenedDetailsDto Order { get; set; } = new();
+        public IEnumerable<ReturnProductDto> Products { get; set; } = [];
+        public string ReasonForReturn { get; set; } = string.Empty;
+        public string? AdditionalNote { get; set; }
+        public ReturnStatus Status { get; set; } 
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Returns.DTO
 {
-    internal class ReturnCursorDto
+    public class ReturnCursorDto
     {
+        public Guid? CursorId { get; set; }
+        public DateTime? CursorCreatedAt { get; set; }
     }
 }

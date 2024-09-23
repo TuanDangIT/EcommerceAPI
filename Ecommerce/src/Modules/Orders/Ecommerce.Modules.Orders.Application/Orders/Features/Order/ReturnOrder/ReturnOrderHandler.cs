@@ -39,10 +39,20 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
             {
                 order.DecreaseProductQuantity(product.SKU, product.Quantity);
             }
-            var orderProducts = order.Products.Where(p => request.ProductsToReturn.Select(ptr => ptr.SKU).Contains(p.SKU));
-            order.ReturnOrder(now);
+            //usuwanie w order tutaj dać logikę
+            order.Return(now);
             await _orderRepository.UpdateAsync();
-            await _domainEventDispatcher.DispatchAsync(new OrderReturned(request.ReasonForReturn, order.Customer, order, orderProducts, now));
+            var orderProducts = order.Products
+                .Where(p => request.ProductsToReturn.Select(ptr => ptr.SKU).Contains(p.SKU))
+                .Select(p =>
+                {
+                    var returnedQuantity = request.ProductsToReturn.Single(ptr => ptr.SKU == p.SKU).Quantity;
+                    p = new Domain.Orders.Entities.Product(p.SKU, p.Name, p.Price, returnedQuantity, p.ImagePathUrl);
+                    return p;
+                });
+            bool isFullReturn = orderProducts.Count() == order.Products.Count();
+            await _domainEventDispatcher.DispatchAsync(new OrderReturned(request.ReasonForReturn, order.Id, orderProducts, isFullReturn, now));
+            //More logic here
         }
     }
 }

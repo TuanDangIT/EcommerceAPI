@@ -18,9 +18,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
                 d.Property(d => d.DecisionText)
                     .IsRequired();
             });
-            builder.HasOne(o => o.Customer)
-                .WithOne(c => c.Complaint)
-                .HasForeignKey(nameof(Complaint));
             builder.Property(c => c.CreatedAt)
                 .IsRequired();
             builder.Property(c => c.Title)
@@ -31,6 +28,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
             builder.Property(c => c.Status)
                  .IsRequired()
                  .HasConversion<string>();
+            builder.HasOne(c => c.Order)
+                .WithMany()
+                .HasForeignKey(c => c.OrderId);
+            builder
+                .HasIndex(c => new { c.Id, c.CreatedAt });
         }
     }
 }

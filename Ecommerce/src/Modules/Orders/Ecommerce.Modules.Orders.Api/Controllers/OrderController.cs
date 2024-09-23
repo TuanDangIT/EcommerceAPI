@@ -1,6 +1,10 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.DTO;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrders;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.GetOrder;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitComplaint;
+using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using MediatR;
@@ -27,9 +31,26 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         }
         [HttpGet("{orderId:guid}")]
         public async Task<ActionResult<ApiResponse<OrderDetailsDto>>> GetOrder([FromRoute]Guid orderId)
+            => OkOrNotFound<OrderDetailsDto, Order>(await _mediator.Send(new GetOrder(orderId)));
+        [HttpPost("{orderId:guid}/cancel")]
+        public async Task<ActionResult> CancelOrder([FromRoute] Guid orderId)
         {
-            var result = await _mediator.Send(new GetOrder(orderId));
-            return Ok(new ApiResponse<OrderDetailsDto>(HttpStatusCode.OK, result));
+            await _mediator.Send(new CancelOrder(orderId));
+            return NoContent();
+        }
+        [HttpPost("{orderId:guid}/return")]
+        public async Task<ActionResult> ReturnOrder([FromRoute] Guid orderId, [FromForm]ReturnOrder command)
+        {
+            command = command with { OrderId = orderId };
+            await _mediator.Send(command);
+            return NoContent();
+        }
+        [HttpPost("{orderId:guid}/submit-complaint")]
+        public async Task<ActionResult> SubmitComplaint([FromRoute] Guid orderId, [FromForm]SubmitComplaint command)
+        {
+            command = command with { OrderId = orderId };
+            await _mediator.Send(command);
+            return NoContent();
         }
     }
 }

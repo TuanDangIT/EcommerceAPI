@@ -17,7 +17,8 @@ namespace Ecommerce.Modules.Carts.Core.Mappings
             {
                 Id = cart.Id,
                 CustomerId = cart.CustomerId,
-                Products = cart.Products.Select(p => p.AsDto())
+                Products = cart.Products.Select(p => p.AsDto()),
+                TotalSum = cart.TotalSum,
             };
         public static CheckoutCartDto AsDto(this CheckoutCart cart)
             => new CheckoutCartDto()
@@ -28,6 +29,8 @@ namespace Ecommerce.Modules.Carts.Core.Mappings
                 Shipment = cart.Shipment?.AsDto(),
                 IsPaid = cart.IsPaid,
                 Products = cart.Products.Select(p => p.AsDto()),
+                TotalSum = cart.TotalSum,
+                AdditionalInformation = cart.AdditionalInformation
             };
         public static CartProductDto AsDto(this CartProduct product)
             => new CartProductDto()

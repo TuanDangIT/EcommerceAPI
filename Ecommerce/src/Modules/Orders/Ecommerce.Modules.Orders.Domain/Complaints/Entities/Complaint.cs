@@ -12,8 +12,6 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
     public class Complaint
     {
         public Guid Id { get; set; }
-        public Customer Customer { get; set; } = new();
-        public Guid CustomerId { get; set; }
         public Order Order { get; set; } = new();
         public Guid OrderId { get; set; }
         public string Title { get; set; } = string.Empty;
@@ -24,10 +22,9 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
         public bool IsCompleted => Status is ComplainStatus.Approved || Status is ComplainStatus.Rejected;
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set;}
-        public Complaint(Guid id, Customer customer, Order order, string title, string description, DateTime createdAt)
+        public Complaint(Guid id, Order order, string title, string description, DateTime createdAt)
         {
             Id = id;
-            Customer = customer;
             Order = order;
             Title = title;
             Description = description;
@@ -47,11 +44,11 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
             AdditionalNote = notes;
             UpdatedAt = updatedAt;
         }
-        public void ApproveComplaint(DateTime updatedAt)
+        public void Approve(DateTime updatedAt)
         {
             Status = ComplainStatus.Approved;
         }
-        public void RejectComplaint(DateTime updatedAt)
+        public void Reject(DateTime updatedAt)
         {
             Status = ComplainStatus.Rejected;
         }

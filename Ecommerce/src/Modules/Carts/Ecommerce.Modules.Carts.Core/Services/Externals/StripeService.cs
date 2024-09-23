@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                 ApiKey = _stripeOptions.ApiKey
             };
         }
-        public async Task<CheckoutStripeSessionDto> Checkout(CheckoutCart checkoutCart)
+        public async Task<(CheckoutStripeSessionDto Dto, string PaymentIntendId)> Checkout(CheckoutCart checkoutCart)
         {
             var lineItems = new List<SessionLineItemOptions>();
             foreach (var product in checkoutCart.Products)
@@ -61,11 +61,12 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                     checkoutCart.Payment is not null ? checkoutCart.Payment.PaymentMethod.ToString() : throw new PaymentNotSetException()
                 },
                 LineItems = lineItems,
-                Mode = _stripeOptions.Mode
+                Mode = _stripeOptions.Mode,
             };
             var sessionService = new SessionService();
             var session = await sessionService.CreateAsync(sessionOptions, _requestOptions);
-            return session.AsDto();
+            var id = session.PaymentIntentId;
+            return (Dto: session.AsDto(), PaymentIntendId: session.PaymentIntentId);
         }
     }
 }

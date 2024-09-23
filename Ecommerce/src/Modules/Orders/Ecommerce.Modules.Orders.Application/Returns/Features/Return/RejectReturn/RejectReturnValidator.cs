@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Application.Orders.Events
+namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.RejectReturn
 {
-    internal class ComplaintApproved
+    internal class RejectReturnValidator
     {
     }
 }

@@ -33,8 +33,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitCompl
             await _domainEventDispatcher.DispatchAsync(new ComplaintSubmitted(
                     request.Title,
                     request.Description,
-                    order.Customer,
-                    order,
+                    order.Id,
                     _timeProvider.GetUtcNow().UtcDateTime
                 ));
         }

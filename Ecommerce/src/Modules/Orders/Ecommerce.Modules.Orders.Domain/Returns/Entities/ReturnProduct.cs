@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Domain.Returns.Entity
+namespace Ecommerce.Modules.Orders.Domain.Returns.Entities
 {
     public class ReturnProduct
     {

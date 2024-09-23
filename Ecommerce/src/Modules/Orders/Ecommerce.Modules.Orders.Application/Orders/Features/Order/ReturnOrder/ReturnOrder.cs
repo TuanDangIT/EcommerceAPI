@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
 {
-    internal sealed record class ReturnOrder(string ReasonForReturn, IEnumerable<ProductToReturnDto> ProductsToReturn, Guid OrderId) : ICommand;
+    public sealed record class ReturnOrder(string ReasonForReturn, IEnumerable<ProductToReturnDto> ProductsToReturn, Guid OrderId) : ICommand;
 }

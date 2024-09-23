@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Events
 {
-    public sealed record class ComplaintSubmitted(string Title, string Description, Customer Customer, Order Order, DateTime CreatedAt) : IDomainEvent;
+    public sealed record class ComplaintSubmitted(string Title, string Description, Guid OrderId, DateTime CreatedAt) : IDomainEvent;
 }

@@ -1,4 +1,4 @@
-﻿using Ecommerce.Modules.Orders.Domain.Returns.Entity;
+﻿using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using Ecommerce.Modules.Orders.Domain.Returns.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,16 +17,18 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task CreateReturnAsync(Return @return)
+        public async Task CreateAsync(Return @return)
         {
             await _dbContext.Returns.AddAsync(@return);
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<Return?> GetReturnAsync(Guid returnId)
-            => await _dbContext.Returns.SingleOrDefaultAsync(r => r.Id == returnId);
+        public async Task<Return?> GetAsync(Guid returnId)
+            => await _dbContext.Returns
+                .Include(r => r.Order)
+                .SingleOrDefaultAsync(r => r.Id == returnId);
 
-        public async Task<Return?> GetReturnByOrderIdAsync(Guid orderId)
+        public async Task<Return?> GetByOrderIdAsync(Guid orderId)
             => await _dbContext.Returns
                 .Include(r => r.Order)
                 .SingleOrDefaultAsync(r => r.Order.Id == orderId);

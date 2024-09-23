@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Events
 {
-    public sealed record class OrderReturned(string ReasonForReturn, Customer Customer, Order Order, IEnumerable<Product> Products, DateTime CreatedAt) : IDomainEvent;
+    public sealed record class OrderReturned(string ReasonForReturn, Guid OrderId, IEnumerable<Product> Products, bool IsFullReturn, DateTime CreatedAt) : IDomainEvent;
 }

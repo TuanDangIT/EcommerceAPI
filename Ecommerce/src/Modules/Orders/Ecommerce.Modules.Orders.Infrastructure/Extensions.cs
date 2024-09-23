@@ -1,8 +1,10 @@
-﻿using Ecommerce.Modules.Orders.Domain.Complaints.Repositories;
+﻿using Ecommerce.Modules.Orders.Application.Stripe;
+using Ecommerce.Modules.Orders.Domain.Complaints.Repositories;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Modules.Orders.Domain.Returns.Repositories;
 using Ecommerce.Modules.Orders.Infrastructure.DAL;
 using Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories;
+using Ecommerce.Modules.Orders.Infrastructure.Stripe;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -23,6 +25,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IReturnRepository, ReturnRepository>();
             services.AddScoped<IComplaintRepository, ComplaintRepository>();
+            services.AddSingleton<IStripeService, StripeService>();
             return services;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
 using Ecommerce.Modules.Orders.Domain.Complaints.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,16 +17,16 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task CreateComplaintAsync(Complaint complaint)
+        public async Task CreateAsync(Complaint complaint)
         {
             await _dbContext.AddAsync(complaint);
             await _dbContext.SaveChangesAsync();
         }
 
-        public Task<Complaint?> GetComplaintAsync(Guid complaintId)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<Complaint?> GetAsync(Guid complaintId)
+            => await _dbContext.Complaints
+                .Include(c => c.Order)
+                .SingleOrDefaultAsync(c => c.Id == complaintId);    
         public async Task UpdateAsync()
             => await _dbContext.SaveChangesAsync();
     }

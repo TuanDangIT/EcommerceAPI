@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.GetComplaint
 {
-    public sealed record class GetComplaint(Guid ComplaintId) : IQuery<ComplaintDetailsDto>;
+    public sealed record class GetComplaint(Guid ComplaintId) : IQuery<ComplaintDetailsDto?>;
 }

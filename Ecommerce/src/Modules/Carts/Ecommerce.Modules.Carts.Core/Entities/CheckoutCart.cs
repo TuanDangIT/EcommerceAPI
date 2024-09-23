@@ -14,10 +14,12 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public Guid? PaymentId { get; private set; }
         public Shipment? Shipment { get; private set; }
         public string? AdditionalInformation { get; private set; }
+        public string? StripePaymentIntendId { get; private set; }
         public string? StripeSessionId { get; private set; }
         public bool IsPaid { get; private set; } = false;
         private List<CartProduct> _products = [];
         public IEnumerable<CartProduct> Products => _products;
+        public decimal TotalSum => _products.Sum(cp => cp.Product.Price);
         public CheckoutCart(Cart cart)
         {
             Id = cart.Id;
@@ -40,6 +42,8 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             => AdditionalInformation = additionalInformation;
         public void SetStripeSessionId(string sessionId)
             => StripeSessionId = sessionId;
+        public void SetStripePaymentIntendId(string stripePaymentIntendId)
+            => StripePaymentIntendId = stripePaymentIntendId;
         public void SetPaid()
             => IsPaid = true;
     }

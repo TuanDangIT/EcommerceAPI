@@ -23,7 +23,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.SetNote
         }
         public async Task Handle(SetNote request, CancellationToken cancellationToken)
         {
-            var @return = await _returnRepository.GetReturnAsync(request.ReturnId);
+            var @return = await _returnRepository.GetAsync(request.ReturnId);
             if (@return is null)
             {
                 throw new ReturnNotFoundException(request.ReturnId);

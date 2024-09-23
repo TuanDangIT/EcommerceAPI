@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Domain.Returns.Entity;
+﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
+using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -28,9 +29,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
                     .IsRequired();
                 p.ToTable("ReturnProducts");
             });
-            builder.HasOne(o => o.Customer)
-                .WithOne(c => c.Return)
-                .HasForeignKey(nameof(Return));
             builder.Property(c => c.CreatedAt)
                 .IsRequired();
             builder.Property(c => c.ReasonForReturn)
@@ -39,6 +37,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
             builder.Property(c => c.Status)
                  .IsRequired()
                  .HasConversion<string>();
+            builder.HasOne(r => r.Order)
+                .WithOne()
+                .HasForeignKey<Return>(r => r.OrderId);
+            builder
+                .HasIndex(r => new { r.Id, r.CreatedAt });
         }
     }
 }

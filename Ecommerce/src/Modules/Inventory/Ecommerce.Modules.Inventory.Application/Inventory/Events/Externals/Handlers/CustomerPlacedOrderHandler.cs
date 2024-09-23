@@ -30,8 +30,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
             {
                 return;
             }
-            productsFromEvent = productsFromEvent?.Where(pfe => pfe.Quantity is not null);
-            if(productsFromEvent is not null)
+            if(productsFromEvent is not null && productsFromEvent.Count() > 0)
             {
                 var products = await _productRepository.GetAllThatContainsInArrayAsync(productsFromEvent.Select(pfe => pfe.Id).ToArray());
                 var auctions = await _auctionRepository.GetAllThatContainsInArrayAsync(productsFromEvent.Select(pfe => pfe.Id).ToArray());

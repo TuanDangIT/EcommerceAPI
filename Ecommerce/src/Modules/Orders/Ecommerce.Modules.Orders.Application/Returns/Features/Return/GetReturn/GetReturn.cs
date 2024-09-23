@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.GetReturn
 {
-    public sealed record class GetReturn(Guid ReturnId) : IQuery<ReturnDetailsDto>;
+    public sealed record class GetReturn(Guid ReturnId) : IQuery<ReturnDetailsDto?>;
 }

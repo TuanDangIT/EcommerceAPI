@@ -35,9 +35,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -59,12 +56,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId")
-                        .IsUnique();
-
                     b.HasIndex("OrderId");
 
-                    b.ToTable("Comaplaints", "orders");
+                    b.HasIndex("Id", "CreatedAt");
+
+                    b.ToTable("Complaints", "orders");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", b =>
@@ -88,6 +84,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .HasMaxLength(48)
                         .HasColumnType("character varying(48)");
 
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(16)
@@ -97,6 +96,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
 
                     b.ToTable("Customers", "orders");
                 });
@@ -111,9 +113,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("OrderPlacedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -125,13 +124,14 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("StripePaymentIntentId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CustomerId")
-                        .IsUnique();
 
                     b.HasIndex("Id", "OrderPlacedAt");
 
@@ -187,7 +187,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Returns.Entity.Return", b =>
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Returns.Entities.Return", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -199,8 +199,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
+                    b.Property<bool>("IsFullReturn")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
@@ -219,22 +219,16 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId")
+                    b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("Id", "CreatedAt");
 
                     b.ToTable("Returns", "orders");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Complaints.Entities.Complaint", b =>
                 {
-                    b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", "Customer")
-                        .WithOne("Complaint")
-                        .HasForeignKey("Ecommerce.Modules.Orders.Domain.Complaints.Entities.Complaint", "CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", "Order")
                         .WithMany()
                         .HasForeignKey("OrderId")
@@ -255,27 +249,30 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
                             b1.HasKey("ComplaintId");
 
-                            b1.ToTable("Comaplaints", "orders");
+                            b1.ToTable("Complaints", "orders");
 
                             b1.WithOwner()
                                 .HasForeignKey("ComplaintId");
                         });
-
-                    b.Navigation("Customer");
 
                     b.Navigation("Decision");
 
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", b =>
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", b =>
                 {
-                    b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", "Customer")
-                        .WithOne("Order")
-                        .HasForeignKey("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", "CustomerId")
+                    b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", "Order")
+                        .WithOne("Customer")
+                        .HasForeignKey("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", b =>
+                {
                     b.OwnsMany("Ecommerce.Modules.Orders.Domain.Orders.Entities.Product", "Products", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
@@ -354,29 +351,21 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                 .HasForeignKey("OrderId");
                         });
 
-                    b.Navigation("Customer");
-
                     b.Navigation("Products");
 
                     b.Navigation("Shipment")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Returns.Entity.Return", b =>
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Returns.Entities.Return", b =>
                 {
-                    b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", "Customer")
-                        .WithOne("Return")
-                        .HasForeignKey("Ecommerce.Modules.Orders.Domain.Returns.Entity.Return", "CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
+                        .WithOne()
+                        .HasForeignKey("Ecommerce.Modules.Orders.Domain.Returns.Entities.Return", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("Ecommerce.Modules.Orders.Domain.Returns.Entity.ReturnProduct", "Products", b1 =>
+                    b.OwnsMany("Ecommerce.Modules.Orders.Domain.Returns.Entities.ReturnProduct", "Products", b1 =>
                         {
                             b1.Property<Guid>("ReturnId")
                                 .HasColumnType("uuid");
@@ -416,21 +405,15 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                 .HasForeignKey("ReturnId");
                         });
 
-                    b.Navigation("Customer");
-
                     b.Navigation("Order");
 
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", b =>
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", b =>
                 {
-                    b.Navigation("Complaint");
-
-                    b.Navigation("Order")
+                    b.Navigation("Customer")
                         .IsRequired();
-
-                    b.Navigation("Return");
                 });
 #pragma warning restore 612, 618
         }

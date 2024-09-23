@@ -11,6 +11,7 @@ namespace Ecommerce.Modules.Carts.Core.DTO
     {
         public Guid Id { get; set; }
         public Guid? CustomerId { get; set; }
+        public decimal TotalSum { get; set; }
         public IEnumerable<CartProductDto> Products { get; set; } = [];
     }
 }

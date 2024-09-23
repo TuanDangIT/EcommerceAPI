@@ -38,7 +38,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configuration
             });
             builder.HasOne(o => o.Customer)
                 .WithOne(c => c.Order)
-                .HasForeignKey(nameof(Order));
+                .HasForeignKey<Customer>(o => o.OrderId);
             builder.Property(o => o.Payment)
                 .IsRequired()
                 .HasConversion<string>();

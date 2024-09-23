@@ -52,7 +52,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
-                    b.Property<int?>("Quantity")
+                    b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -81,6 +81,9 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 
                     b.Property<Guid?>("PaymentId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("StripePaymentIntendId")
+                        .HasColumnType("text");
 
                     b.Property<string>("StripeSessionId")
                         .HasColumnType("text");
@@ -176,7 +179,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .WithMany("CheckoutCarts")
                         .HasForeignKey("PaymentId");
 
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.Customer", "Customer", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart.Customer#Ecommerce.Modules.Carts.Core.Entities.Customer", "Customer", b1 =>
                         {
                             b1.Property<Guid>("CheckoutCartId")
                                 .HasColumnType("uuid");
@@ -212,7 +215,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                                 .HasForeignKey("CheckoutCartId");
                         });
 
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.Shipment", "Shipment", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart.Shipment#Ecommerce.Modules.Carts.Core.Entities.Shipment", "Shipment", b1 =>
                         {
                             b1.Property<Guid>("CheckoutCartId")
                                 .HasColumnType("uuid");

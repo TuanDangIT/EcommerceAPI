@@ -13,8 +13,9 @@ namespace Ecommerce.Modules.Carts.Core.DTO
         public CustomerDto Customer { get; set; } = new();
         public PaymentDto? Payment { get; set; } = new();
         public ShipmentDto? Shipment { get; set; } = new();
-        public string AdditionalInformation { get; set; } = string.Empty;
+        public string? AdditionalInformation { get; set; } = string.Empty;
         public bool IsPaid { get; set; } = false;
+        public decimal TotalSum { get; set; }
         public IEnumerable<CartProductDto> Products { get; set; } = [];
     }
 }

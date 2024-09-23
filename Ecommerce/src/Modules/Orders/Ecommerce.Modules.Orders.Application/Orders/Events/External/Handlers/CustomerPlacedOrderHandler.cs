@@ -47,6 +47,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
                 shipment,
                 paymentMethod,
                 _timeProvider.GetUtcNow().UtcDateTime,
+                @event.StripePaymentIntentId,
                 additionalInformation
                 );
             await _orderRepository.CreateOrderAsync(order);

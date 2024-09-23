@@ -18,7 +18,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
     internal class CheckoutCartController : BaseController
     {
         private readonly ICheckoutCartService _checkoutCartService;
-        private const string WebhookSecret = "whsec_bcd675ccca84c19fe21093304007e2eff80eebfea4b99552b4097f438ca22955";
+        private const string _webhookSecret = "whsec_bcd675ccca84c19fe21093304007e2eff80eebfea4b99552b4097f438ca22955";
 
         public CheckoutCartController(ICheckoutCartService checkoutCartService)
         {
@@ -67,7 +67,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         public async Task<ActionResult> WebhookHandler()
         {
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-            var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], WebhookSecret);
+            var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _webhookSecret);
             if (stripeEvent.Type == Events.CheckoutSessionCompleted)
             {
                 var session = stripeEvent.Data.Object as Session;

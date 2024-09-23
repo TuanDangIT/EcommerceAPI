@@ -7,7 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Returns.Events
 {
-    internal class ReturnHandled : IEvent
-    {
-    }
+    public sealed record class ReturnHandled(IEnumerable<object> Products) : IEvent;
 }
