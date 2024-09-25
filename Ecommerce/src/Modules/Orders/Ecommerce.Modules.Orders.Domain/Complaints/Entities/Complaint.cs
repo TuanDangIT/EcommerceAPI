@@ -47,10 +47,21 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
         public void Approve(DateTime updatedAt)
         {
             Status = ComplainStatus.Approved;
+            UpdatedAt = updatedAt;
         }
         public void Reject(DateTime updatedAt)
         {
             Status = ComplainStatus.Rejected;
+            UpdatedAt = updatedAt;
+        }
+        public void WriteDecision(Decision decision)
+        {
+            Decision = decision;
+        }
+        public void EditDecision(Decision decision, DateTime updatedAt)
+        {
+            Decision = decision;
+            UpdatedAt = updatedAt;
         }
     }
 }

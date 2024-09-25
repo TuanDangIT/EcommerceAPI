@@ -14,7 +14,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public Guid? CustomerId {  get; private set; }
         private List<CartProduct> _products = [];
         public IEnumerable<CartProduct> Products => _products;
-        public decimal TotalSum => _products.Sum(cp => cp.Product.Price);
+        public decimal TotalSum => _products.Sum(cp => cp.Product.Price*cp.Quantity);
         public Cart(Guid id, Guid customerId)
         {
             CustomerId = customerId;
@@ -70,6 +70,10 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 cartProduct.SetQuantity(0);
             }
+            _products.Clear();
+        }
+        public void Reset()
+        {
             _products.Clear();
         }
         public CheckoutCart Checkout()

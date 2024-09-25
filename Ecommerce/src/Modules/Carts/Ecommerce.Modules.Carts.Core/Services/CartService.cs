@@ -103,16 +103,12 @@ namespace Ecommerce.Modules.Carts.Core.Services
             cart.SetProductQuantity(product, quantity);
             await _dbContext.SaveChangesAsync();
         }
-        //private async Task<Cart> GetByCartIdOrThrowIfNull(Guid cartId)
-        //{
-        //    var cart = await _dbContext.Carts
-        //        .SingleOrDefaultAsync(c => c.Id == cartId);
-        //    if(cart is null)
-        //    {
-        //        throw new CartNotFoundException(cartId);
-        //    }
-        //    return cart;
-        //}
+        public async Task ResetCartAsync(Guid cartId)
+        {
+            var cart = await GetByCartOrThrowIfNull(cartId);
+            cart.Reset();
+            await _dbContext.SaveChangesAsync();
+        }
         private async Task<Cart> GetByCartOrThrowIfNull(Guid cartId)
         {
             var cart = await _dbContext.Carts

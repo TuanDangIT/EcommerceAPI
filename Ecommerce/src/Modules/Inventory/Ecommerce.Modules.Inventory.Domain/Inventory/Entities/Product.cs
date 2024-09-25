@@ -71,6 +71,10 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             {
                 throw new ProductInvalidChangeOfQuantityException();
             }
+            if(Quantity < quantity)
+            {
+                throw new ProductQuantityBelowZeroException();
+            }
             Quantity -= quantity;
         }
         public void ChangeBaseDetails(string sku, string name, decimal price, int vat, string description, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)

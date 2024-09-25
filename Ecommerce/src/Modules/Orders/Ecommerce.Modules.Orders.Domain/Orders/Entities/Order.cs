@@ -17,7 +17,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         //public Guid CustomerId { get; set; }
         private readonly List<Product> _products = [];
         public IEnumerable<Product> Products => _products;
-        public decimal TotalSum => _products.Sum(p => p.Price);
+        public decimal TotalSum => _products.Sum(p => p.Price*p.Quantity);
         public Shipment Shipment { get; set; } = new();
         public PaymentMethod Payment { get; set; }
         public OrderStatus Status { get; set; } = OrderStatus.Placed;

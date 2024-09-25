@@ -40,7 +40,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
             }
             else
             {
-                await _stripeService.Refund(@return.Order, @return.Products.Sum(p => p.Price));
+                await _stripeService.Refund(@return.Order, @return.Products.Sum(p => p.Price*p.Quantity));
             }
             @return.Handle(_timeProvider.GetUtcNow().UtcDateTime);
             await _returnRepository.UpdateAsync();

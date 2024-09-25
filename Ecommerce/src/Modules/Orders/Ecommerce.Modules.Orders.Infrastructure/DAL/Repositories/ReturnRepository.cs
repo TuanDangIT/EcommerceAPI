@@ -26,6 +26,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
         public async Task<Return?> GetAsync(Guid returnId)
             => await _dbContext.Returns
                 .Include(r => r.Order)
+                .ThenInclude(o => o.Customer)
                 .SingleOrDefaultAsync(r => r.Id == returnId);
 
         public async Task<Return?> GetByOrderIdAsync(Guid orderId)

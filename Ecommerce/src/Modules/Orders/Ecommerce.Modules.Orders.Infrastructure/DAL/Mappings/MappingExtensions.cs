@@ -74,6 +74,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
             => new()
             {
                 OrderId = order.Id,
+                Customer = order.Customer.AsDto(),
                 TotalSum = order.TotalSum,
                 Products = order.Products.Select(p => p.AsDto()),
                 OrderPlacedAt = order.OrderPlacedAt
@@ -101,7 +102,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Decision = new DecisionDto()
                 {
                     DecisionText = complaint.Decision!.DecisionText,
-                    AdditionalInformation = complaint.Decision.AdditionalInformation
+                    AdditionalInformation = complaint.Decision.AdditionalInformation,
+                    RefundedAmount = complaint.Decision.RefundedAmount
                 },
                 Status = complaint.Status,
                 CreatedAt = complaint.CreatedAt,
@@ -121,7 +123,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
             => new()
             {
                 Id = @return.Id,
-                Customer = @return.Order.Customer.AsDto(),
                 Order = @return.Order.AsShortenedDetailsDto(),
                 Products = @return.Products.Select(p => p.AsDto()),
                 ReasonForReturn = @return.ReasonForReturn,

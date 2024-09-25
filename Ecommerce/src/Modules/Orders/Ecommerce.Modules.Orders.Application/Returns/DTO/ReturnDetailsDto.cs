@@ -11,7 +11,6 @@ namespace Ecommerce.Modules.Orders.Application.Returns.DTO
     public class ReturnDetailsDto
     {
         public Guid Id { get; set; }
-        public CustomerDto Customer { get; set; } = new();
         public OrderShortenedDetailsDto Order { get; set; } = new();
         public IEnumerable<ReturnProductDto> Products { get; set; } = [];
         public string ReasonForReturn { get; set; } = string.Empty;

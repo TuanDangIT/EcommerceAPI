@@ -23,7 +23,10 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         {
             Product = product;
             Quantity = quantity;
-            product.DecreaseQuantity(quantity);
+            if (product.HasQuantity)
+            {
+                product.DecreaseQuantity(quantity);
+            }
         }
         public CartProduct()
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ecommerce.Modules.Inventory.Domain.Auctions.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,6 +51,10 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
             if(Quantity is null)
             {
                 return;
+            }
+            if (Quantity < quantity)
+            {
+                throw new AuctionQuantityBelowZeroException();
             }
             Quantity -= quantity;
         }

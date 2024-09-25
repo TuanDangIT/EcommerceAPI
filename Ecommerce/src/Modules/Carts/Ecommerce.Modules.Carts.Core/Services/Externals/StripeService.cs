@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                 ApiKey = _stripeOptions.ApiKey
             };
         }
-        public async Task<(CheckoutStripeSessionDto Dto, string PaymentIntendId)> Checkout(CheckoutCart checkoutCart)
+        public async Task<CheckoutStripeSessionDto> Checkout(CheckoutCart checkoutCart)
         {
             var lineItems = new List<SessionLineItemOptions>();
             foreach (var product in checkoutCart.Products)
@@ -36,7 +36,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                     PriceData = new SessionLineItemPriceDataOptions()
                     {
                         //UnitAmount = (long)Math.Truncate(product.Product.Price),
-                        UnitAmountDecimal = product.Product.Price,
+                        UnitAmountDecimal = product.Product.Price * 100,
                         Currency = _stripeOptions.Currency,
                         ProductData = new SessionLineItemPriceDataProductDataOptions()
                         {
@@ -65,8 +65,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
             };
             var sessionService = new SessionService();
             var session = await sessionService.CreateAsync(sessionOptions, _requestOptions);
-            var id = session.PaymentIntentId;
-            return (Dto: session.AsDto(), PaymentIntendId: session.PaymentIntentId);
+            return session.AsDto();
         }
     }
 }

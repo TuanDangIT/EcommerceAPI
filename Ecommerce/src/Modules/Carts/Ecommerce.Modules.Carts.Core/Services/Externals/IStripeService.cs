@@ -10,6 +10,6 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
 {
     internal interface IStripeService
     {
-        Task<(CheckoutStripeSessionDto Dto, string PaymentIntendId)> Checkout(CheckoutCart checkoutCart);
+        Task<CheckoutStripeSessionDto> Checkout(CheckoutCart checkoutCart);
     }
 }

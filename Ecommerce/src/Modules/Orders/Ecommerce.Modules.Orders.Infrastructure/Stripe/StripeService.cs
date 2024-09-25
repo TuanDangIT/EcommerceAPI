@@ -28,7 +28,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Stripe
             var refundOptions = new RefundCreateOptions()
             {
                 PaymentIntent = order.StripePaymentIntentId,
-                Currency = _stripeOptions.Currency
+                //Currency = _stripeOptions.Currency
             };
             var refundService = new RefundService();
             await refundService.CreateAsync(refundOptions, _requestOptions);
@@ -40,7 +40,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Stripe
                 PaymentIntent = order.StripePaymentIntentId,
                 //In cents or the charge currency’s smallest currency unit
                 Amount = (long)(amount * 100),
-                Currency = _stripeOptions.Currency
+                //Currency = _stripeOptions.Currency.ToLower()
             };
             var refundService = new RefundService();
             await refundService.CreateAsync(refundOptions, _requestOptions);

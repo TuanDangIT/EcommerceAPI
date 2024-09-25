@@ -29,6 +29,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
             {
                 throw new ComplaintNotFoundException(request.ComplaintId);
             }
+            complaint.WriteDecision(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation, request.Amount));
             if(request.Amount is null)
             {
                 await _stripeService.Refund(complaint.Order);

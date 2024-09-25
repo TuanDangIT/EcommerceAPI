@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.Events;
 using Ecommerce.Modules.Orders.Application.Orders.Exceptions;
 using Ecommerce.Modules.Orders.Application.Stripe;
+using Ecommerce.Modules.Orders.Domain.Orders.Policies;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Abstractions.Messaging;
@@ -17,13 +18,15 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
         private readonly IOrderRepository _orderRepository;
         private readonly IStripeService _stripeService;
         private readonly IMessageBroker _messageBroker;
+        private readonly IOrderCancellationPolicy _orderCancellationPolicy;
         private readonly TimeProvider _timeProvider;
 
-        public CancelOrderHandler(IOrderRepository orderRepository, IStripeService stripeService, IMessageBroker messageBroker,TimeProvider timeProvider)
+        public CancelOrderHandler(IOrderRepository orderRepository, IStripeService stripeService, IMessageBroker messageBroker, IOrderCancellationPolicy orderCancellationPolicy, TimeProvider timeProvider)
         {
             _orderRepository = orderRepository;
             _stripeService = stripeService;
             _messageBroker = messageBroker;
+            _orderCancellationPolicy = orderCancellationPolicy;
             _timeProvider = timeProvider;
         }
         public async Task Handle(CancelOrder request, CancellationToken cancellationToken)
@@ -32,6 +35,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
             if (order is null)
             {
                 throw new OrderNotFoundException(request.OrderId);
+            }
+            if (!await _orderCancellationPolicy.CanCancel(order))
+            {
+                throw new OrderCannotCancelException();
             }
             await _stripeService.Refund(order);
             order.Cancel(_timeProvider.GetUtcNow().UtcDateTime);

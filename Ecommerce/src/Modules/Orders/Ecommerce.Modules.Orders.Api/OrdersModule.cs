@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Application;
+using Ecommerce.Modules.Orders.Domain;
 using Ecommerce.Modules.Orders.Infrastructure;
 using Ecommerce.Shared.Abstractions.Modules;
 using Microsoft.AspNetCore.Builder;
@@ -21,6 +22,7 @@ namespace Ecommerce.Modules.Orders.Api
 
         public void Register(IServiceCollection services, IConfiguration configuration)
         {
+            services.AddDomain();
             services.AddApplication();
             services.AddInfrastructure();
         }

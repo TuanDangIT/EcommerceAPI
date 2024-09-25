@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Modules.Orders.Application.Complaints.DTO;
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.ApproveComplaint;
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.BrowseComplaints;
+using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.EditDecision;
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.GetComplaint;
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.RejectComplaint;
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.SetNote;
@@ -36,21 +37,29 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         public async Task<ActionResult<ApiResponse<ComplaintDetailsDto>>> GetOrder([FromRoute] Guid complaintId)
             => OkOrNotFound<ComplaintDetailsDto, Complaint>(await _mediator.Send(new GetComplaint(complaintId)));
         [HttpPost("{complaintId:guid}/approve")]
-        public async Task<ActionResult> ApproveComplaint([FromRoute] Guid complaintId, [FromForm]decimal amount)
+        public async Task<ActionResult> ApproveComplaint([FromRoute] Guid complaintId, [FromForm] ApproveComplaint command)
         {
-            await _mediator.Send(new ApproveComplaint(amount, complaintId));
+            command = command with { ComplaintId = complaintId };
+            await _mediator.Send(command);
             return NoContent();
         }
         [HttpPost("{complaintId:guid}/reject")]
-        public async Task<ActionResult> RejectComplaint([FromRoute] Guid complaintId)
+        public async Task<ActionResult> RejectComplaint([FromRoute] Guid complaintId, [FromForm] DecisionDto decision)
         {
-            await _mediator.Send(new RejectComplaint(complaintId));
+            await _mediator.Send(new RejectComplaint(decision, complaintId));
             return NoContent();
         }
         [HttpPut("{complaintId:guid}/note")]
-        public async Task<ActionResult> SetNote([FromRoute] Guid complaintId, [FromForm]string note)
+        public async Task<ActionResult> SetNote([FromRoute] Guid complaintId, [FromForm] string note)
         {
             await _mediator.Send(new SetNote(note, complaintId));
+            return NoContent();
+        }
+        [HttpPut("{complaintId:guid}/decision")]
+        public async Task<ActionResult> EditDecision([FromRoute]Guid complaintId, [FromForm] EditDecision command)
+        {
+            command = command with { ComplaintId=complaintId };
+            await _mediator.Send(command);
             return NoContent();
         }
     }

@@ -39,7 +39,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return NoContent();
         }
         [HttpPost("{orderId:guid}/return")]
-        public async Task<ActionResult> ReturnOrder([FromRoute] Guid orderId, [FromForm]ReturnOrder command)
+        public async Task<ActionResult> ReturnOrder([FromRoute] Guid orderId, [FromBody]ReturnOrder command)
         {
             command = command with { OrderId = orderId };
             await _mediator.Send(command);

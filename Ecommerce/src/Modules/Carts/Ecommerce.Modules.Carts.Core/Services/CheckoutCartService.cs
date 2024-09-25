@@ -20,12 +20,15 @@ namespace Ecommerce.Modules.Carts.Core.Services
     {
         private readonly ICartsDbContext _dbContext;
         private readonly IStripeService _stripeService;
+        private readonly ICartService _cartService;
         private readonly IMessageBroker _messageBroker;
 
-        public CheckoutCartService(ICartsDbContext dbContext, IStripeService stripeService, IMessageBroker messageBroker)
+        public CheckoutCartService(ICartsDbContext dbContext, IStripeService stripeService, 
+            ICartService cartService, IMessageBroker messageBroker)
         {
             _dbContext = dbContext;
             _stripeService = stripeService;
+            _cartService = cartService;
             _messageBroker = messageBroker;
         }
 
@@ -46,18 +49,8 @@ namespace Ecommerce.Modules.Carts.Core.Services
             {
                 throw new CheckoutCartInvalidPlaceOrderException();
             }
-            var (dto, paymentIntendId) = await _stripeService.Checkout(checkoutCart);
+            var dto = await _stripeService.Checkout(checkoutCart);
             checkoutCart.SetStripeSessionId(dto.SessionId);
-            checkoutCart.SetStripePaymentIntendId(paymentIntendId);
-            //foreach (var cartProduct in checkoutCart.Products)
-            //{
-            //    var product = cartProduct.Product;
-            //    if(product.Quantity < cartProduct.Quantity)
-            //    {
-
-            //    }
-            //    product.DecreaseQuantity(cartProduct.Quantity);
-            //}
             await _dbContext.SaveChangesAsync();
             return dto;
         }
@@ -152,8 +145,10 @@ namespace Ecommerce.Modules.Carts.Core.Services
             {
                 throw new CheckoutCartNotFoundException();
             }
+            checkoutCart.SetStripePaymentIntentId(session.PaymentIntentId);
             checkoutCart.SetPaid();
             await _dbContext.SaveChangesAsync();
+            //await _cartService.ResetCartAsync(checkoutCart.Id);
             await _messageBroker.PublishAsync(new CustomerPlacedOrder()
             {
                 CustomerId = checkoutCart.Customer.CustomerId,
@@ -175,7 +170,10 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 StreetName = checkoutCart.Shipment.StreetName,
                 StreetNumber = checkoutCart.Shipment.StreetNumber,
                 ApartmentNumber = checkoutCart.Shipment.AparmentNumber,
-                PaymentMethod = checkoutCart.Payment!.PaymentMethod.ToString()
+                PaymentMethod = checkoutCart.Payment!.PaymentMethod.ToString(),
+                AdditionalInformation = checkoutCart.AdditionalInformation,
+                StripePaymentIntentId = checkoutCart.StripePaymentIntentId!
+
             });
         }
         private async Task<CheckoutCart> GetOrThrowIfNull(Guid checkoutCartId)

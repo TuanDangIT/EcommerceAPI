@@ -10,5 +10,6 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.DTO
     {
         public string DecisionText { get; set; } = string.Empty;
         public string? AdditionalInformation { get; set; } = string.Empty;
+        public decimal? RefundedAmount { get; set; }
     }
 }

@@ -57,10 +57,10 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             await _checkoutCartService.SetCheckoutCartDetails(checkoutCartId, checkoutCartSetDetailsDto);
             return NoContent();
         }
-        [HttpPost("{id:guid}")]
-        public async Task<ActionResult<ApiResponse<CheckoutStripeSessionDto>>> PlaceOrder([FromRoute]Guid id)
+        [HttpPost("{checkoutCartId:guid}/place-order")]
+        public async Task<ActionResult<ApiResponse<CheckoutStripeSessionDto>>> PlaceOrder([FromRoute]Guid checkoutCartId)
         {
-            var checkoutUrl = await _checkoutCartService.PlaceOrderAsync(id);
+            var checkoutUrl = await _checkoutCartService.PlaceOrderAsync(checkoutCartId);
             return Ok(new ApiResponse<CheckoutStripeSessionDto>(HttpStatusCode.OK, checkoutUrl));
         }
         [HttpPost("webhook")]

@@ -17,10 +17,10 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Entities
         [JsonInclude]
         public decimal Price { get; private set; }
         [JsonInclude]
-        public int? Quantity { get; private set; }
+        public int Quantity { get; private set; }
         [JsonInclude]
         public string ImagePathUrl { get; private set; } = string.Empty;
-        public ReturnProduct(string sku, string name, decimal price, int? quantity, string imagePathUrl)
+        public ReturnProduct(string sku, string name, decimal price, int quantity, string imagePathUrl)
         {
             SKU = sku;
             Name = name;
