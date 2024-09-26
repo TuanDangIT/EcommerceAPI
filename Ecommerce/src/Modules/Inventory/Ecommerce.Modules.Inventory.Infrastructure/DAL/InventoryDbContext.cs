@@ -18,14 +18,15 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL
         public DbSet<Image> Images { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Auction> Auctions { get; set; }
-        public DbSet<Review> Reviews { get; set; }  
+        public DbSet<Review> Reviews { get; set; }
+        public const string Schema = "inventory";
         public InventoryDbContext(DbContextOptions<InventoryDbContext> options) : base(options)
         {
             
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("inventory");
+            modelBuilder.HasDefaultSchema(Schema);
             modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
         }
     }

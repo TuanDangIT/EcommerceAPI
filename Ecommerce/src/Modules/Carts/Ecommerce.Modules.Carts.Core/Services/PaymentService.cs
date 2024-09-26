@@ -1,6 +1,6 @@
 ﻿using Ecommerce.Modules.Carts.Core.DAL;
+using Ecommerce.Modules.Carts.Core.DAL.Mappings;
 using Ecommerce.Modules.Carts.Core.DTO;
-using Ecommerce.Modules.Carts.Core.Mappings;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

@@ -1,7 +1,7 @@
-﻿using Ecommerce.Modules.Carts.Core.DTO;
+﻿using Ecommerce.Modules.Carts.Core.DAL.Mappings;
+using Ecommerce.Modules.Carts.Core.DTO;
 using Ecommerce.Modules.Carts.Core.Entities;
 using Ecommerce.Modules.Carts.Core.Exceptions;
-using Ecommerce.Modules.Carts.Core.Mappings;
 using Ecommerce.Shared.Infrastructure.Stripe;
 using Stripe;
 using Stripe.Checkout;

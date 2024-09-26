@@ -1,6 +1,6 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Behaviors;
 using Ecommerce.Modules.Inventory.Application.Inventory.Services;
-using Ecommerce.Modules.Inventory.Application.Inventory.Sieve.CustomFilters;
+using Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Filters;
 using Ecommerce.Modules.Inventory.Application.Sieve;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;

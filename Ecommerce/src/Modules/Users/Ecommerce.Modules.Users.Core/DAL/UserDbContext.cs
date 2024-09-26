@@ -12,13 +12,14 @@ namespace Ecommerce.Modules.Users.Core.DAL
     {
         public DbSet<User> Users { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public const string Schema = "users";
         public UsersDbContext(DbContextOptions<UsersDbContext> options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("users");
+            modelBuilder.HasDefaultSchema(Schema);
             modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
         }
     }

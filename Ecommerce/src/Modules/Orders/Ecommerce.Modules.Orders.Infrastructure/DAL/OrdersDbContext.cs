@@ -18,13 +18,14 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL
         public DbSet<Complaint> Complaints { get; set; }   
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public const string Schema = "orders";
         public OrdersDbContext(DbContextOptions<OrdersDbContext> options) : base(options)
         {
             
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("orders");
+            modelBuilder.HasDefaultSchema(Schema);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }

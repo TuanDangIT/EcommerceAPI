@@ -16,6 +16,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL
         public DbSet<CartProduct> CartProducts { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public const string Schema = "carts";
         public CartsDbContext(DbContextOptions<CartsDbContext> options) : base(options)
         {
             
@@ -23,7 +24,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-            modelBuilder.HasDefaultSchema("carts");
+            modelBuilder.HasDefaultSchema(Schema);
         }
 
         public Task<int> SaveChangesAsync()

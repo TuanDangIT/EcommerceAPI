@@ -1,9 +1,9 @@
 ﻿using Ecommerce.Modules.Carts.Core.DAL;
+using Ecommerce.Modules.Carts.Core.DAL.Mappings;
 using Ecommerce.Modules.Carts.Core.DTO;
 using Ecommerce.Modules.Carts.Core.Entities;
 using Ecommerce.Modules.Carts.Core.Events;
 using Ecommerce.Modules.Carts.Core.Exceptions;
-using Ecommerce.Modules.Carts.Core.Mappings;
 using Ecommerce.Modules.Carts.Core.Services.Externals;
 using Ecommerce.Shared.Abstractions.Messaging;
 using Microsoft.EntityFrameworkCore;
