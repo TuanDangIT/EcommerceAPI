@@ -17,6 +17,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.DTO
         public PaymentMethod Payment { get; set; }
         public OrderStatus Status { get; set; }
         public string? AdditionalInformation { get; set; }
+        public string? DiscountCode { get; set; }
         public DateTime OrderPlacedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

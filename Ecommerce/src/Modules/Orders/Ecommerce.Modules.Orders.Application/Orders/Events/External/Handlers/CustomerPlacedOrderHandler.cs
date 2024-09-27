@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
+﻿using Ecommerce.Modules.Orders.Application.Orders.Exceptions;
+using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Shared.Abstractions.Events;
@@ -38,17 +39,22 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
             var newGuid = Guid.NewGuid();
             var customer = new Customer(@event.FirstName, @event.LastName, @event.Email, @event.PhoneNumber, @event.CustomerId);
             var shipment = new Shipment(@event.City, @event.PostalCode, @event.StreetName, @event.StreetNumber, @event.ApartmentNumber);
-            var paymentMethod = (PaymentMethod)Enum.Parse(typeof(PaymentMethod), @event.PaymentMethod);
+            if(!Enum.TryParse(typeof(PaymentMethod), @event.PaymentMethod, out var paymentMethod))
+            {
+                throw new InvalidPaymentMethodException();
+            }
             var additionalInformation = @event.AdditionalInformation;
             var order = new Order(
                 newGuid,
                 customer, 
                 products, 
+                @event.TotalSum,
                 shipment,
-                paymentMethod,
+                (PaymentMethod)paymentMethod!,
                 _timeProvider.GetUtcNow().UtcDateTime,
-                @event.StripePaymentIntentId,
-                additionalInformation
+                additionalInformation,
+                @event.DiscountCode,
+                @event.StripePaymentIntentId
                 );
             await _orderRepository.CreateOrderAsync(order);
         }

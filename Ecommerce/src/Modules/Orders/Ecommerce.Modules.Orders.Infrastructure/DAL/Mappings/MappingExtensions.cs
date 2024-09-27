@@ -31,6 +31,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Payment = order.Payment,
                 Status = order.Status,
                 AdditionalInformation = order.AdditionalInformation,
+                DiscountCode = order.DiscountCode,
                 OrderPlacedAt = order.OrderPlacedAt,
                 UpdatedAt = order.UpdatedAt
             };

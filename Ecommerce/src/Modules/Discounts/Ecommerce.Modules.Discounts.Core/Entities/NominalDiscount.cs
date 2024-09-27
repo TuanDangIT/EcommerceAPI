@@ -9,7 +9,7 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
     public class NominalDiscount : Discount
     {
         public decimal NominalValue { get; set; }
-        public NominalDiscount(string code, decimal nominalValue, DateTime? endingDate, DateTime createdAt) : base(code, endingDate, createdAt)
+        public NominalDiscount(string code, decimal nominalValue, DateTime endingDate, DateTime createdAt) : base(code, endingDate, createdAt)
         {
             NominalValue = nominalValue; 
         }

@@ -17,5 +17,6 @@ namespace Ecommerce.Modules.Carts.Core.DTO
         public bool IsPaid { get; set; } = false;
         public decimal TotalSum { get; set; }
         public IEnumerable<CartProductDto> Products { get; set; } = [];
+        public DiscountDto? Discount { get; set; } = new();
     }
 }

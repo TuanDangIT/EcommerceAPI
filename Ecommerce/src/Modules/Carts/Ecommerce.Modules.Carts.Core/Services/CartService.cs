@@ -40,7 +40,12 @@ namespace Ecommerce.Modules.Carts.Core.Services
         public async Task CheckoutAsync(Guid cartId)
         {
             var cart = await GetByCartOrThrowIfNull(cartId);
-            var checkoutCart = cart.Checkout();
+            var checkoutCart = await _dbContext.CheckoutCarts.SingleOrDefaultAsync(cc => cc.Id == cartId);
+            if(checkoutCart is not null)
+            {
+                return;
+            }
+            checkoutCart = cart.Checkout();
             await _dbContext.CheckoutCarts.AddAsync(checkoutCart);
             //_dbContext.Carts.Remove(cart);
             await _dbContext.SaveChangesAsync();
@@ -103,12 +108,12 @@ namespace Ecommerce.Modules.Carts.Core.Services
             cart.SetProductQuantity(product, quantity);
             await _dbContext.SaveChangesAsync();
         }
-        public async Task ResetCartAsync(Guid cartId)
-        {
-            var cart = await GetByCartOrThrowIfNull(cartId);
-            cart.Reset();
-            await _dbContext.SaveChangesAsync();
-        }
+        //public async Task ResetCartAsync(Guid cartId)
+        //{
+        //    var cart = await GetByCartOrThrowIfNull(cartId);
+        //    cart.Reset();
+        //    await _dbContext.SaveChangesAsync();
+        //}
         private async Task<Cart> GetByCartOrThrowIfNull(Guid cartId)
         {
             var cart = await _dbContext.Carts

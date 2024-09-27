@@ -76,6 +76,9 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<int?>("DiscountId")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsPaid")
                         .HasColumnType("boolean");
 
@@ -90,9 +93,42 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DiscountId");
+
                     b.HasIndex("PaymentId");
 
                     b.ToTable("CheckoutCarts", "carts");
+                });
+
+            modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.Discount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<DateTime?>("EndingDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("Discounts", "carts");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.Payment", b =>
@@ -158,7 +194,8 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 
                     b.HasOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart", "CheckoutCart")
                         .WithMany("Products")
-                        .HasForeignKey("CheckoutCartId");
+                        .HasForeignKey("CheckoutCartId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Ecommerce.Modules.Carts.Core.Entities.Product", "Product")
                         .WithMany("CartProducts")
@@ -175,11 +212,15 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 
             modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart", b =>
                 {
+                    b.HasOne("Ecommerce.Modules.Carts.Core.Entities.Discount", "Discount")
+                        .WithMany("CheckoutCarts")
+                        .HasForeignKey("DiscountId");
+
                     b.HasOne("Ecommerce.Modules.Carts.Core.Entities.Payment", "Payment")
                         .WithMany("CheckoutCarts")
                         .HasForeignKey("PaymentId");
 
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.Customer", "Customer", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart.Customer#Ecommerce.Modules.Carts.Core.Entities.Customer", "Customer", b1 =>
                         {
                             b1.Property<Guid>("CheckoutCartId")
                                 .HasColumnType("uuid");
@@ -215,7 +256,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                                 .HasForeignKey("CheckoutCartId");
                         });
 
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.Shipment", "Shipment", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart.Shipment#Ecommerce.Modules.Carts.Core.Entities.Shipment", "Shipment", b1 =>
                         {
                             b1.Property<Guid>("CheckoutCartId")
                                 .HasColumnType("uuid");
@@ -256,6 +297,8 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                     b.Navigation("Customer")
                         .IsRequired();
 
+                    b.Navigation("Discount");
+
                     b.Navigation("Payment");
 
                     b.Navigation("Shipment");
@@ -269,6 +312,11 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
             modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.Discount", b =>
+                {
+                    b.Navigation("CheckoutCarts");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.Payment", b =>

@@ -17,20 +17,21 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         //public Guid CustomerId { get; set; }
         private readonly List<Product> _products = [];
         public IEnumerable<Product> Products => _products;
-        public decimal TotalSum => _products.Sum(p => p.Price*p.Quantity);
+        public decimal TotalSum { get; set; }
         public Shipment Shipment { get; set; } = new();
         public PaymentMethod Payment { get; set; }
         public OrderStatus Status { get; set; } = OrderStatus.Placed;
         public bool IsCompleted => Status is OrderStatus.Cancelled || Status is OrderStatus.Completed || Status is OrderStatus.Returned;
         public string? AdditionalInformation { get; set; }
+        public string? DiscountCode { get; set; }
         public string StripePaymentIntentId { get; set; } = string.Empty;
         public DateTime OrderPlacedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         //private readonly List<Complaint> _complaints = [];
         //public IEnumerable<Complaint> Complaints => _complaints;
         //public Return? ReturnOrder { get; set; }
-        public Order(Guid id, Customer customer, IEnumerable<Product> products, Shipment shipment,
-            PaymentMethod paymentMethod, DateTime orderPlacedAt, string stripePaymentIntentId, string? additionalInformation = null)
+        public Order(Guid id, Customer customer, IEnumerable<Product> products, decimal totalSum, Shipment shipment,
+            PaymentMethod paymentMethod, DateTime orderPlacedAt, string? additionalInformation, string? discountCode, string stripePaymentIntentId)
         {
             Id = id;
             Customer = customer;
@@ -39,6 +40,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             Payment = paymentMethod;
             OrderPlacedAt = orderPlacedAt;
             AdditionalInformation = additionalInformation;
+            DiscountCode = discountCode;
             StripePaymentIntentId = stripePaymentIntentId;
         }
         public Order()

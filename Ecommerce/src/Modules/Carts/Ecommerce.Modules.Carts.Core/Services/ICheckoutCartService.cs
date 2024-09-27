@@ -17,6 +17,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
         Task SetShipmentAsync(Guid checkoutCartId, ShipmentDto shipmentDto);
         Task SetAdditionalInformation(Guid checkoutCartId, string additionalInformation);
         Task<CheckoutStripeSessionDto> PlaceOrderAsync(Guid checkoutCartId);
+        Task AddDiscountAsync(Guid checkoutCartId, string code);
         Task SetCheckoutCartDetails(Guid checkoutCartId, CheckoutCartSetDetailsDto checkoutCartSetDetailsDto);
         Task HandleCheckoutSessionCompleted(Session? session);
     }

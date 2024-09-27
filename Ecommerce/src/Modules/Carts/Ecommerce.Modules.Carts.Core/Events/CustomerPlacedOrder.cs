@@ -16,6 +16,7 @@ namespace Ecommerce.Modules.Carts.Core.Events
         public string Email { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public IEnumerable<object> Products { get; set; } = Enumerable.Empty<object>();
+        public decimal TotalSum { get; set; }
         public string City { get; set; } = string.Empty;
         public string PostalCode { get; set; } = string.Empty;
         public string StreetName { get; set; } = string.Empty;
@@ -23,6 +24,7 @@ namespace Ecommerce.Modules.Carts.Core.Events
         public string ApartmentNumber { get; set; } = string.Empty;
         public string PaymentMethod {  get; set; } = string.Empty;
         public string? AdditionalInformation {  get; set; } 
+        public string? DiscountCode { get; set; } 
         public string StripePaymentIntentId { get; set; } = string.Empty;
     };
 }

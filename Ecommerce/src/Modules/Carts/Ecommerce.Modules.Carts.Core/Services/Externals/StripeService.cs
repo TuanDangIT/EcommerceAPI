@@ -31,6 +31,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
             var lineItems = new List<SessionLineItemOptions>();
             foreach (var product in checkoutCart.Products)
             {
+                var discount = checkoutCart.Discount;
                 lineItems.Add(new SessionLineItemOptions()
                 {
                     PriceData = new SessionLineItemPriceDataOptions()

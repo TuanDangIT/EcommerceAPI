@@ -15,13 +15,15 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External
         public string Email { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public IEnumerable<object> Products { get; set; } = Enumerable.Empty<object>();
+        public decimal TotalSum { get; set; }
         public string City { get; set; } = string.Empty;
         public string PostalCode { get; set; } = string.Empty;
         public string StreetName { get; set; } = string.Empty;
         public string StreetNumber { get; set; } = string.Empty;
         public string ApartmentNumber { get; set; } = string.Empty;
         public string PaymentMethod { get; set; } = string.Empty;
-        public string AdditionalInformation { get; set; } = string.Empty;
+        public string? AdditionalInformation { get; set; }
+        public string? DiscountCode { get; set; }
         public string StripePaymentIntentId { get; set; } = string.Empty;
-    }
+    };
 }

@@ -47,7 +47,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
             var result = await _discountService.BrowsePercentageDiscountsAsync(model);
             return Ok(new ApiResponse<PagedResult<PercentageDiscountBrowseDto>>(HttpStatusCode.OK, result));
         }
-        [HttpDelete]
+        [HttpDelete()]
         public async Task<ActionResult> DeleteDiscount([FromBody]string code)
         {
             await _discountService.DeleteAsync(code);

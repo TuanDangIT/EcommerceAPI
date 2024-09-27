@@ -15,6 +15,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL
         DbSet<CartProduct> CartProducts { get; set; }
         DbSet<Product> Products { get; set; }
         DbSet<Payment> Payments { get; set; }
+        DbSet<Discount> Discounts { get; set; }
         Task<int> SaveChangesAsync();
     }
 }

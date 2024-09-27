@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Discounts.Core.Entities.Enums;
+using Ecommerce.Modules.Discounts.Core.Entities.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,15 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
         public DiscountType Type { get; set; }
         public DateTime? EndingDate { get; set; }
         public DateTime CreatedAt { get; set; }
-        protected Discount(string code, DateTime? endingDate, DateTime createdAt)
+        protected Discount(string code, DateTime endingDate, DateTime createdAt)
         {
             Code = code;
-            EndingDate = endingDate;
             CreatedAt = createdAt;
+            if(EndingDate < TimeProvider.System.GetUtcNow().UtcDateTime)
+            {
+                throw new DiscountInvalidEndingDateException(endingDate);
+            }
+            EndingDate = endingDate;
         }
         protected Discount(string code, DateTime createdAt)
         {

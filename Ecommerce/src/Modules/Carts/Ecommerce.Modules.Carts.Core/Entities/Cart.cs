@@ -72,10 +72,10 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             }
             _products.Clear();
         }
-        public void Reset()
-        {
-            _products.Clear();
-        }
+        //public void Reset()
+        //{
+        //    _products.Clear();
+        //}
         public CheckoutCart Checkout()
         {
             if (_products.Count == 0)

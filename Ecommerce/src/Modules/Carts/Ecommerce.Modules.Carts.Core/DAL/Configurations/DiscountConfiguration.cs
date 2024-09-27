@@ -1,5 +1,4 @@
-﻿using Ecommerce.Modules.Discounts.Core.Entities;
-using Ecommerce.Modules.Discounts.Core.Entities.Enums;
+﻿using Ecommerce.Modules.Carts.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -8,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
+namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
 {
     internal class DiscountConfiguration : IEntityTypeConfiguration<Discount>
     {
@@ -19,14 +18,12 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
                 .IsRequired();
             builder.HasIndex(d => d.Code)
                 .IsUnique();
-            builder.Property(d => d.CreatedAt) 
-                .IsRequired();
             builder.Property(d => d.Type)
                 .HasConversion<string>()
                 .IsRequired();
-            builder.HasDiscriminator(d => d.Type)
-                .HasValue<NominalDiscount>(DiscountType.NominalDiscount)
-                .HasValue<PercentageDiscount>(DiscountType.PercentageDiscount);
+            builder.HasMany(d => d.CheckoutCarts)
+                .WithOne(cc => cc.Discount)
+                .HasForeignKey(cc => cc.DiscountId);
         }
     }
 }

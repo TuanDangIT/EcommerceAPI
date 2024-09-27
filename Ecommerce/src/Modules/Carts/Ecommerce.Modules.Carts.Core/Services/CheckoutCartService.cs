@@ -38,6 +38,8 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 .Include(cc => cc.Payment)
                 .Include(cc => cc.Products)
                 .ThenInclude(cp => cp.Product)
+                .Include(cc => cc.Discount)
+                .AsNoTracking()
                 .SingleOrDefaultAsync(cc => cc.Id== checkoutCartId);
             return checkoutCart?.AsDto();
         }
@@ -129,6 +131,18 @@ namespace Ecommerce.Modules.Carts.Core.Services
             }
             await _dbContext.SaveChangesAsync();
         }
+        public async Task AddDiscountAsync(Guid checkoutCartId, string code)
+        {
+            var checkoutCart = await GetOrThrowIfNull(checkoutCartId);
+            var discount = await _dbContext.Discounts
+                .SingleOrDefaultAsync(d => d.Code == code);
+            if(discount is null)
+            {
+                throw new DiscountNotFoundException(code);
+            }
+            checkoutCart.AddDiscount(discount);
+            await _dbContext.SaveChangesAsync();
+        }
         public async Task HandleCheckoutSessionCompleted(Session? session)
         {
             if(session is null)
@@ -140,6 +154,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 .Include(cc => cc.Products)
                 .ThenInclude(cp => cp.Product)
                 .Include(cc => cc.Payment)
+                .Include(cc => cc.Discount)
                 .SingleOrDefaultAsync(cc => cc.StripeSessionId == sessionId);
             if(checkoutCart is null)
             {
@@ -165,6 +180,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                     cp.Quantity,
                     cp.Product.ImagePathUrl
                 }),
+                TotalSum = checkoutCart.TotalSum(),
                 City = checkoutCart.Shipment!.City,
                 PostalCode = checkoutCart.Shipment.PostalCode,
                 StreetName = checkoutCart.Shipment.StreetName,
@@ -172,9 +188,12 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 ApartmentNumber = checkoutCart.Shipment.AparmentNumber,
                 PaymentMethod = checkoutCart.Payment!.PaymentMethod.ToString(),
                 AdditionalInformation = checkoutCart.AdditionalInformation,
+                DiscountCode = checkoutCart.Discount?.Code,
                 StripePaymentIntentId = checkoutCart.StripePaymentIntentId!
 
             });
+            await _dbContext.CheckoutCarts.Where(cc => cc.Id == checkoutCart.Id)
+                .ExecuteDeleteAsync();
         }
         private async Task<CheckoutCart> GetOrThrowIfNull(Guid checkoutCartId)
         {

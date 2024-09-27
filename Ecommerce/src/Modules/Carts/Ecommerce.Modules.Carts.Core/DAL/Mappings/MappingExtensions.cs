@@ -13,7 +13,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
     internal static class MappingExtensions
     {
         public static CartDto AsDto(this Cart cart)
-            => new CartDto()
+            => new()
             {
                 Id = cart.Id,
                 CustomerId = cart.CustomerId,
@@ -21,7 +21,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
                 TotalSum = cart.TotalSum,
             };
         public static CheckoutCartDto AsDto(this CheckoutCart cart)
-            => new CheckoutCartDto()
+            => new()
             {
                 Id = cart.Id,
                 Customer = cart.Customer.AsDto(),
@@ -29,11 +29,12 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
                 Shipment = cart.Shipment?.AsDto(),
                 IsPaid = cart.IsPaid,
                 Products = cart.Products.Select(p => p.AsDto()),
-                TotalSum = cart.TotalSum,
-                AdditionalInformation = cart.AdditionalInformation
+                TotalSum = cart.TotalSum(),
+                AdditionalInformation = cart.AdditionalInformation,
+                Discount = cart.Discount?.AsDto()
             };
         public static CartProductDto AsDto(this CartProduct product)
-            => new CartProductDto()
+            => new()
             {
                 Id = product.Id,
                 ProductId = product.ProductId,
@@ -44,19 +45,19 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
                 Quantity = product.Quantity
             };
         public static PaymentDto AsDto(this Payment payment)
-            => new PaymentDto()
+            => new()
             {
                 Id = payment.Id,
                 PaymentMethod = payment.PaymentMethod.ToString(),
             };
         public static CheckoutStripeSessionDto AsDto(this Session session)
-            => new CheckoutStripeSessionDto()
+            => new()
             {
                 SessionId = session.Id,
                 CheckoutUrl = session.Url
             };
         public static ShipmentDto AsDto(this Shipment shipment)
-            => new ShipmentDto()
+            => new()
             {
                 City = shipment.City,
                 PostalCode = shipment.PostalCode,
@@ -65,13 +66,21 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
                 AparmentNumber = shipment.AparmentNumber
             };
         public static CustomerDto AsDto(this Customer customer)
-            => new CustomerDto()
+            => new()
             {
                 CustomerId = customer.CustomerId,
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 Email = customer.Email,
                 PhoneNumber = customer.PhoneNumber
+            };
+        public static DiscountDto AsDto(this Discount discount)
+            => new()
+            {
+                Code = discount.Code,
+                Type = discount.Type.ToString(),
+                Value = discount.Value,
+                EndingDate = discount.EndingDate
             };
     }
 }

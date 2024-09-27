@@ -18,6 +18,6 @@ namespace Ecommerce.Modules.Carts.Core.Services
         Task SetProductQuantity(Guid cartId, Guid productId, int quantity);
         Task ClearCartAsync(Guid cartId);
         Task CheckoutAsync(Guid cartId);
-        Task ResetCartAsync(Guid cartId);
+        //Task ResetCartAsync(Guid cartId);
     }
 }

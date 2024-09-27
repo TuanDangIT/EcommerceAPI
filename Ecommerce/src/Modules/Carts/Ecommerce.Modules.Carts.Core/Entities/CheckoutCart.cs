@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ecommerce.Modules.Carts.Core.Entities.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,9 +18,10 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public string? StripePaymentIntentId { get; private set; }
         public string? StripeSessionId { get; private set; }
         public bool IsPaid { get; private set; } = false;
-        private List<CartProduct> _products = [];
+        private readonly List<CartProduct> _products = [];
         public IEnumerable<CartProduct> Products => _products;
-        public decimal TotalSum => _products.Sum(cp => cp.Product.Price*cp.Quantity);
+        public Discount? Discount { get; private set; }
+        public int? DiscountId { get; private set; }
         public CheckoutCart(Cart cart)
         {
             Id = cart.Id;
@@ -29,6 +31,19 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public CheckoutCart()
         {
             
+        }
+        public decimal TotalSum()
+        {
+            var productsTotal = _products.Sum(cp => cp.Product.Price * cp.Quantity);
+            if (Discount is null)
+            {
+                return productsTotal;
+            }
+            if(Discount.Type is DiscountType.NominalDiscount)
+            {
+                return productsTotal - Discount.Value;
+            }
+            return productsTotal * Discount.Value;
         }
         public void SetCustomer(Customer customer)
         {
@@ -46,5 +61,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             => StripePaymentIntentId = stripePaymentIntentId;
         public void SetPaid()
             => IsPaid = true;
+        public void AddDiscount(Discount discount)
+            => Discount = discount;
     }
 }
