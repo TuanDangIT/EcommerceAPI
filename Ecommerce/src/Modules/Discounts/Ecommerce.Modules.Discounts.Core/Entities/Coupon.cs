@@ -13,7 +13,7 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
         public string Name { get; set; } = string.Empty;
         public CouponType Type { get; set; }
         public string StripeCouponId { get; set; } = string.Empty;
-        public int Redemptions { get; set; } = 0;
+        public int Redemptions => _discounts.Sum(d => d.Redemptions);
         public DateTime UpdatedAt { get; set; } 
         public DateTime CreatedAt { get; set; }
         private readonly List<Discount> _discounts = [];

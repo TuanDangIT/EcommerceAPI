@@ -19,8 +19,6 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
             builder.Property(c => c.Type)
                 .HasConversion<string>()
                 .IsRequired();
-            builder.Property(c => c.Redemptions)
-                .IsRequired();
             builder.Property(c => c.StripeCouponId)
                 .IsRequired();
             builder.Property(c => c.CreatedAt)
