@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Core.Entities.Enums
 {
-    public enum DiscountType
+    public enum CouponType
     {
-        PercentageDiscount,
-        NominalDiscount
+        PercentageCoupon,
+        NominalCoupon
     }
 }

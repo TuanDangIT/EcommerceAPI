@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Core.Exceptions
 {
-    internal class DiscountNotFoundException(string code) : EcommerceException($"Code: {code} was not found.")
+    internal class DiscountAlreadyActivated(string code) : EcommerceException($"Code: {code} was already activated.")
     {
     }
 }

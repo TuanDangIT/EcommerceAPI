@@ -3,6 +3,7 @@ using System;
 using Ecommerce.Modules.Discounts.Core.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Discounts.Core.DAL.Migrations
 {
     [DbContext(typeof(DiscountsDbContext))]
-    partial class DiscountsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240930133059_FixDiscountsModuleEntitiesAndAddCoupons")]
+    partial class FixDiscountsModuleEntitiesAndAddCoupons
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,8 +39,8 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
+                        .HasMaxLength(24)
+                        .HasColumnType("character varying(24)");
 
                     b.Property<int>("Redemptions")
                         .HasColumnType("integer");
@@ -75,8 +78,8 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(48)
-                        .HasColumnType("character varying(48)");
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
 
                     b.Property<int>("CouponId")
                         .HasColumnType("integer");
@@ -150,8 +153,8 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Migrations
                     b.HasBaseType("Ecommerce.Modules.Discounts.Core.Entities.Coupon");
 
                     b.Property<decimal>("NominalValue")
-                        .HasPrecision(8, 2)
-                        .HasColumnType("numeric(8,2)");
+                        .HasPrecision(11, 2)
+                        .HasColumnType("numeric(11,2)");
 
                     b.HasDiscriminator().HasValue("NominalCoupon");
                 });

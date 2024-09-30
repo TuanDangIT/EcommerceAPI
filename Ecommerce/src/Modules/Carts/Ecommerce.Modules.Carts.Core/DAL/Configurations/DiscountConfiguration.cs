@@ -21,6 +21,10 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
             builder.Property(d => d.Type)
                 .HasConversion<string>()
                 .IsRequired();
+            builder.Property(d => d.StripePromotionCodeId)
+                .IsRequired();
+            builder.Property(d => d.Value)
+                .IsRequired();
             builder.HasMany(d => d.CheckoutCarts)
                 .WithOne(cc => cc.Discount)
                 .HasForeignKey(cc => cc.DiscountId);

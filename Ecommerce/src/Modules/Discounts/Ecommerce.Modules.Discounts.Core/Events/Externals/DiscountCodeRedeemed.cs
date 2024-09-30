@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Discounts.Core.Events
+namespace Ecommerce.Modules.Discounts.Core.Events.Externals
 {
-    public sealed record class DiscountDeleted(string Code) : IEvent;
+    public sealed record class DiscountCodeRedeemed(string Code) : IEvent;
 }

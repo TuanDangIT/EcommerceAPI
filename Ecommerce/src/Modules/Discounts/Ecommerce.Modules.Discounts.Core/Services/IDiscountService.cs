@@ -12,10 +12,15 @@ namespace Ecommerce.Modules.Discounts.Core.Services
 {
     public interface IDiscountService
     {
-        Task CreateAsync(NominalDiscountCreateDto dto);
-        Task CreateAsync(PercentageDiscountCreateDto dto);
-        Task DeleteAsync(string code);
-        Task<PagedResult<NominalDiscountBrowseDto>> BrowseNominalDiscountsAsync(SieveModel model);
-        Task<PagedResult<PercentageDiscountBrowseDto>> BrowsePercentageDiscountsAsync(SieveModel model);
+        //Task CreateAsync(NominalDiscountCreateDto dto);
+        //Task CreateAsync(PercentageDiscountCreateDto dto);
+        Task<PagedResult<DiscountDto>> BrowseDiscountsAsync(SieveModel model);
+        Task CreateAsync(string stripeCouponId, DiscountCreateDto dto);
+        //Task ActivateAsync(string stripePromotionCodeId);
+        //Task DeactivateAsync(string stripePromotionCodeId);
+        Task ActivateAsync(string code);
+        Task DeactivateAsync(string code);
+        //Task<PagedResult<NominalDiscountBrowseDto>> BrowseNominalDiscountsAsync(SieveModel model);
+        //Task<PagedResult<PercentageDiscountBrowseDto>> BrowsePercentageDiscountsAsync(SieveModel model);
     }
 }

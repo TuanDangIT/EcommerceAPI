@@ -13,6 +13,7 @@ namespace Ecommerce.Modules.Discounts.Core.DAL
     {
         public DbSet<Offer> Offers { get; set; }
         public DbSet<Discount> Discounts { get; set; }
+        public DbSet<Coupon> Coupons { get; set; }
         public const string Schema = "discounts";
         public DiscountsDbContext(DbContextOptions<DiscountsDbContext> options) : base(options)
         {

@@ -113,8 +113,12 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
 
-                    b.Property<DateTime?>("EndingDate")
+                    b.Property<DateTime?>("ExpiresAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("StripePromotionCodeId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -194,8 +198,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 
                     b.HasOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart", "CheckoutCart")
                         .WithMany("Products")
-                        .HasForeignKey("CheckoutCartId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CheckoutCartId");
 
                     b.HasOne("Ecommerce.Modules.Carts.Core.Entities.Product", "Product")
                         .WithMany("CartProducts")
@@ -220,7 +223,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .WithMany("CheckoutCarts")
                         .HasForeignKey("PaymentId");
 
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart.Customer#Ecommerce.Modules.Carts.Core.Entities.Customer", "Customer", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.Customer", "Customer", b1 =>
                         {
                             b1.Property<Guid>("CheckoutCartId")
                                 .HasColumnType("uuid");
@@ -256,7 +259,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                                 .HasForeignKey("CheckoutCartId");
                         });
 
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart.Shipment#Ecommerce.Modules.Carts.Core.Entities.Shipment", "Shipment", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.Shipment", "Shipment", b1 =>
                         {
                             b1.Property<Guid>("CheckoutCartId")
                                 .HasColumnType("uuid");

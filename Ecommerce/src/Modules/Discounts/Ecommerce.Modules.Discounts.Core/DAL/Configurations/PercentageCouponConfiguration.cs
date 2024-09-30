@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
 {
-    internal class PercentageDiscountConfiguration : IEntityTypeConfiguration<PercentageDiscount>
+    internal class PercentageCouponConfiguration : IEntityTypeConfiguration<PercentageCoupon>
     {
-        public void Configure(EntityTypeBuilder<PercentageDiscount> builder)
+        public void Configure(EntityTypeBuilder<PercentageCoupon> builder)
         {
             builder.Property(pd => pd.Percent)
                 .HasPrecision(2, 2)

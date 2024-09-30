@@ -54,7 +54,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [HttpPut("{checkoutCartId:guid}/checkoutcart-details")]
         public async Task<ActionResult> SetCheckoutCartDetails([FromRoute] Guid checkoutCartId, [FromBody]CheckoutCartSetDetailsDto checkoutCartSetDetailsDto)
         {
-            await _checkoutCartService.SetCheckoutCartDetails(checkoutCartId, checkoutCartSetDetailsDto);
+            await _checkoutCartService.SetCheckoutCartDetailsAsync(checkoutCartId, checkoutCartSetDetailsDto);
             return NoContent();
         }
         [HttpPost("{checkoutCartId:guid}/place-order")]
@@ -78,7 +78,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             {
                 var session = stripeEvent.Data.Object as Session;
                 Console.WriteLine(session?.Id);
-                await _checkoutCartService.HandleCheckoutSessionCompleted(session);
+                await _checkoutCartService.HandleCheckoutSessionCompletedAsync(session);
             }
             return Ok();
         }

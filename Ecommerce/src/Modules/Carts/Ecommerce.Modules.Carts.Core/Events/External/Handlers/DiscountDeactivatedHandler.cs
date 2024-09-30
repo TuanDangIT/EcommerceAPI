@@ -10,15 +10,15 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Events.External.Handlers
 {
-    internal class DiscountDeletedHandler : IEventHandler<DiscountDeleted>
+    internal class DiscountDeactivatedHandler : IEventHandler<DiscountDeactivated>
     {
         private readonly ICartsDbContext _dbContext;
 
-        public DiscountDeletedHandler(ICartsDbContext dbContext)
+        public DiscountDeactivatedHandler(ICartsDbContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public async Task HandleAsync(DiscountDeleted @event)
+        public async Task HandleAsync(DiscountDeactivated @event)
             => await _dbContext.Discounts
                 .Where(d => d.Code == @event.Code)
                 .ExecuteDeleteAsync();

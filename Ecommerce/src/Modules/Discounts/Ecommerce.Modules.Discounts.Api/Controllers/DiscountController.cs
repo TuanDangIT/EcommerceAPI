@@ -23,35 +23,54 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         {
             _discountService = discountService;
         }
-        [HttpPost("nominal-discount")]
-        public async Task<ActionResult> CreateNominalDiscount([FromBody]NominalDiscountCreateDto dto)
+        [HttpPost("{stripeCouponId}")]
+        public async Task<ActionResult> CreateDiscount([FromRoute] string stripeCouponId, [FromBody] DiscountCreateDto dto)
         {
-            await _discountService.CreateAsync(dto);
+            await _discountService.CreateAsync(stripeCouponId, dto);
             return NoContent();
         }
-        [HttpPost("percentage-discount")]
-        public async Task<ActionResult> CreatePercentageDiscount([FromBody] PercentageDiscountCreateDto dto)
+        [HttpPut("{code}/activate")]
+        public async Task<ActionResult> ActivateDiscount([FromRoute] string code)
         {
-            await _discountService.CreateAsync(dto);
+            await _discountService.ActivateAsync(code);
             return NoContent();
         }
-        [HttpGet("nominal-discount")]
-        public async Task<ActionResult<ApiResponse<PagedResult<NominalDiscountBrowseDto>>>> BrowseNominalDiscounts([FromQuery] SieveModel model)
+        [HttpPut("{code}/deactivate")]
+        public async Task<ActionResult> DeactivateDiscount([FromRoute] string code)
         {
-            var result = await _discountService.BrowseNominalDiscountsAsync(model);
-            return Ok(new ApiResponse<PagedResult<NominalDiscountBrowseDto>>(HttpStatusCode.OK, result));
-        }
-        [HttpGet("percentage-discount")]
-        public async Task<ActionResult<ApiResponse<PagedResult<PercentageDiscountBrowseDto>>>> BrowsePercentageDiscounts([FromQuery] SieveModel model)
-        {
-            var result = await _discountService.BrowsePercentageDiscountsAsync(model);
-            return Ok(new ApiResponse<PagedResult<PercentageDiscountBrowseDto>>(HttpStatusCode.OK, result));
-        }
-        [HttpDelete()]
-        public async Task<ActionResult> DeleteDiscount([FromBody]string code)
-        {
-            await _discountService.DeleteAsync(code);
+            await _discountService.DeactivateAsync(code);
             return NoContent();
         }
+
+        //[HttpPost("nominal-discount")]
+        //public async Task<ActionResult> CreateNominalCoupon([FromBody] NominalCouponCreateDto dto)
+        //{
+        //    await _discountService.CreateAsync(dto);
+        //    return NoContent();
+        //}
+        //[HttpPost("percentage-discount")]
+        //public async Task<ActionResult> CreatePercentageDiscount([FromBody] PercentageDiscountCreateDto dto)
+        //{
+        //    await _discountService.CreateAsync(dto);
+        //    return NoContent();
+        //}
+        //[HttpGet("nominal-discount")]
+        //public async Task<ActionResult<ApiResponse<PagedResult<NominalDiscountBrowseDto>>>> BrowseNominalDiscounts([FromQuery] SieveModel model)
+        //{
+        //    var result = await _discountService.BrowseNominalDiscountsAsync(model);
+        //    return Ok(new ApiResponse<PagedResult<NominalDiscountBrowseDto>>(HttpStatusCode.OK, result));
+        //}
+        //[HttpGet("percentage-discount")]
+        //public async Task<ActionResult<ApiResponse<PagedResult<PercentageDiscountBrowseDto>>>> BrowsePercentageDiscounts([FromQuery] SieveModel model)
+        //{
+        //    var result = await _discountService.BrowsePercentageDiscountsAsync(model);
+        //    return Ok(new ApiResponse<PagedResult<PercentageDiscountBrowseDto>>(HttpStatusCode.OK, result));
+        //}
+        //[HttpDelete()]
+        //public async Task<ActionResult> DeleteDiscount([FromBody]string code)
+        //{
+        //    await _discountService.DeleteAsync(code);
+        //    return NoContent();
+        //}
     }
 }

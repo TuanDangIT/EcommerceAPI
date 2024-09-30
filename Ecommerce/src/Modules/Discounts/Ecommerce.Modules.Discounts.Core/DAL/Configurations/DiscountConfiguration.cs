@@ -15,18 +15,28 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
         public void Configure(EntityTypeBuilder<Discount> builder)
         {
             builder.Property(d => d.Code)
-                .HasMaxLength(10)
+                .HasMaxLength(48)
                 .IsRequired();
             builder.HasIndex(d => d.Code)
                 .IsUnique();
+            builder.Property(d => d.IsActive)
+                .IsRequired();
+            builder.Property(d => d.Redemptions)
+                .IsRequired();
             builder.Property(d => d.CreatedAt) 
                 .IsRequired();
-            builder.Property(d => d.Type)
-                .HasConversion<string>()
+            builder.Property(d => d.StripePromotionCodeId)
                 .IsRequired();
-            builder.HasDiscriminator(d => d.Type)
-                .HasValue<NominalDiscount>(DiscountType.NominalDiscount)
-                .HasValue<PercentageDiscount>(DiscountType.PercentageDiscount);
+            builder.HasIndex(d => d.StripePromotionCodeId)
+                .IsUnique();
+            //builder.Property(d => d.Coupon)
+            //    .IsRequired();
+            //builder.Property(d => d.Type)
+            //    .HasConversion<string>()
+            //    .IsRequired();
+            //builder.HasDiscriminator(d => d.Type)
+            //    .HasValue<NominalDiscount>(DiscountType.NominalDiscount)
+            //    .HasValue<PercentageDiscount>(DiscountType.PercentageDiscount);
         }
     }
 }

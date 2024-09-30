@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Core.Entities.Exceptions
 {
-    internal class DiscountInvalidEndingDateException(DateTime endingDate) : EcommerceException($"Ending date: {endingDate} is invalid. Cannot be in the past.")
+    internal class DiscountInvalidExpiresAtDateException(DateTime endingDate) : EcommerceException($"Ending date: {endingDate} is invalid. Cannot be in the past.")
     {
     }
 }

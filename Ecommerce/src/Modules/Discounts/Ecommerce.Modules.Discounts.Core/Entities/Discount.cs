@@ -8,31 +8,53 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Core.Entities
 {
-    public abstract class Discount
+    public class Discount
     {
         public int Id { get; set; }
         public string Code { get; set; } = string.Empty;
-        public DiscountType Type { get; set; }
-        public DateTime? EndingDate { get; set; }
-        public DateTime CreatedAt { get; set; }
-        protected Discount(string code, DateTime endingDate, DateTime createdAt)
+        //public DiscountType Type { get; set; }
+        public bool IsActive { get; private set; } = false;
+        public int Redemptions { get; private set; } = 0;
+        public string StripePromotionCodeId { get; set; } = string.Empty;
+        public DateTime? ExpiresAt { get; set; }
+        public DateTime UpdatedAt { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public Coupon Coupon { get; set; } = default!;
+        public int CouponId { get; set; }
+        public Discount(string code, string stripePromotionCodeId, DateTime? expiresAt, DateTime createdAt)
         {
             Code = code;
             CreatedAt = createdAt;
-            if(EndingDate < TimeProvider.System.GetUtcNow().UtcDateTime)
+            StripePromotionCodeId = stripePromotionCodeId;
+            if(expiresAt is not null && expiresAt < TimeProvider.System.GetUtcNow().UtcDateTime)
             {
-                throw new DiscountInvalidEndingDateException(endingDate);
+                throw new DiscountInvalidExpiresAtDateException((DateTime)expiresAt!);
             }
-            EndingDate = endingDate;
+            ExpiresAt = expiresAt;
         }
-        protected Discount(string code, DateTime createdAt)
+        public Discount(string code, DateTime createdAt)
         {
             Code = code;
             CreatedAt = createdAt;
         }
-        protected Discount()
+        public Discount()
         {
             
+        }
+        public void Activate(DateTime updatedAt)
+        {
+            UpdatedAt = updatedAt;
+            IsActive = true;
+        }
+        public void Deactive(DateTime updatedAt)
+        {
+            UpdatedAt = updatedAt;
+            IsActive = false;
+        }
+        public void Redeem(DateTime updatedAt)
+        {
+            UpdatedAt = updatedAt;
+            Redemptions++;
         }
     }
 }

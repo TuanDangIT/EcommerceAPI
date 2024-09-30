@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Core.Entities
 {
-    public class PercentageDiscount : Discount
+    public class PercentageCoupon : Coupon
     {
         public decimal Percent { get; set; }
-        public PercentageDiscount(string code, decimal percent, DateTime endingDate, DateTime createdAt) : base(code, endingDate, createdAt)
+        public PercentageCoupon(string name, decimal percent, DateTime createdAt) : base(name, createdAt)
         {
             Percent = percent;
         }
-        public PercentageDiscount(string code, decimal percent, DateTime createdAt) : base(code, createdAt)
+        public PercentageCoupon(string code, decimal percent, DateTime createdAt, string stripeCouponId) : base(code, createdAt, stripeCouponId)
         {
             Percent = percent;
         }

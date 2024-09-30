@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
 {
-    internal class NominalDiscountConfiguration : IEntityTypeConfiguration<NominalDiscount>
+    internal class NominalCouponConfiguration : IEntityTypeConfiguration<NominalCoupon>
     {
-        public void Configure(EntityTypeBuilder<NominalDiscount> builder)
+        public void Configure(EntityTypeBuilder<NominalCoupon> builder)
         {
             builder.Property(nd => nd.NominalValue)
-                .HasPrecision(11, 2)
+                .HasPrecision(8, 2)
                 .IsRequired();
         }
     }

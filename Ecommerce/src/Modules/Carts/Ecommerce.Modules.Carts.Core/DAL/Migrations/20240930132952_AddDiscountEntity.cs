@@ -28,8 +28,9 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Code = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     Type = table.Column<string>(type: "text", nullable: false),
+                    StripePromotionCodeId = table.Column<string>(type: "text", nullable: false),
                     Value = table.Column<decimal>(type: "numeric", nullable: false),
-                    EndingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    ExpiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {

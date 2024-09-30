@@ -10,23 +10,28 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Mappings
 {
     public static class MappingExtensions
     {
-        public static NominalDiscountBrowseDto AsNominalDto(this NominalDiscount discount)
-            => new NominalDiscountBrowseDto()
+        public static NominalCouponBrowseDto AsNominalDto(this NominalCoupon coupon)
+            => new()
             {
-                Code = discount.Code,
-                //Type = discount.Type.ToString(),
-                NominalValue = discount.NominalValue,
-                EndingDate = discount.EndingDate,
-                CreatedAt = discount.CreatedAt,
+                Name = coupon.Name,
+                NominalValue = coupon.NominalValue,
+                UpdatedAt = coupon.UpdatedAt,
+                CreatedAt = coupon.CreatedAt
             };
-        public static PercentageDiscountBrowseDto AsPercentageDto(this PercentageDiscount discount)
-            => new PercentageDiscountBrowseDto()
+        public static PercentageCouponBrowseDto AsPercentageDto(this PercentageCoupon coupon)
+            => new()
+            {
+                Name = coupon.Name,
+                Percent = coupon.Percent,
+                UpdatedAt = coupon.UpdatedAt,
+                CreatedAt = coupon.CreatedAt
+            };
+        public static DiscountDto AsDto(this Discount discount)
+            => new()
             {
                 Code = discount.Code,
-                //Type = discount.Type.ToString(),
-                Percent = discount.Percent,
-                EndingDate = discount.EndingDate,
-                CreatedAt = discount.CreatedAt,
+                EndingDate = discount.ExpiresAt,
+                CreatedAt = discount.CreatedAt
             };
     }
 }

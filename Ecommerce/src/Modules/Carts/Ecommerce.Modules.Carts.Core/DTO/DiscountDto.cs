@@ -11,6 +11,6 @@ namespace Ecommerce.Modules.Carts.Core.DTO
         public string Code { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public decimal Value { get; set; }
-        public DateTime? EndingDate { get; set; }
+        public DateTime? ExpiresAt { get; set; }
     }
 }

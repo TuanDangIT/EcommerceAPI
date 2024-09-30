@@ -1,5 +1,4 @@
-﻿using Ecommerce.Modules.Discounts.Core.DataAnnotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -8,14 +7,12 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Core.DTO
 {
-    public class NominalDiscountCreateDto
+    public class NominalCouponCreateDto
     {
         [Required]
-        public string Code { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         [Required]
-        [Range(0, int.MaxValue)]
+        [Range(0.01, 999999)]
         public decimal NominalValue { get; set; }
-        [FutureDateTime]
-        public DateTime? EndingDate { get; set; }
     }
 }

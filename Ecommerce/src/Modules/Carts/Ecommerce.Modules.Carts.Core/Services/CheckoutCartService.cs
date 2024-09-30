@@ -51,7 +51,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
             {
                 throw new CheckoutCartInvalidPlaceOrderException();
             }
-            var dto = await _stripeService.Checkout(checkoutCart);
+            var dto = await _stripeService.CheckoutAsync(checkoutCart);
             checkoutCart.SetStripeSessionId(dto.SessionId);
             await _dbContext.SaveChangesAsync();
             return dto;
@@ -98,7 +98,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
             checkoutCart.SetAdditionalInformation(additionalInformation);
             await _dbContext.SaveChangesAsync();
         }
-        public async Task SetCheckoutCartDetails(Guid checkoutCartId, CheckoutCartSetDetailsDto checkoutCartSetDetailsDto)
+        public async Task SetCheckoutCartDetailsAsync(Guid checkoutCartId, CheckoutCartSetDetailsDto checkoutCartSetDetailsDto)
         {
             var checkoutCart = await GetOrThrowIfNull(checkoutCartId);
             var shipmentDto = checkoutCartSetDetailsDto.ShipmentDto;
@@ -142,8 +142,9 @@ namespace Ecommerce.Modules.Carts.Core.Services
             }
             checkoutCart.AddDiscount(discount);
             await _dbContext.SaveChangesAsync();
+            //await _messageBroker.PublishAsync(new DiscountCodeRedeemed(code));
         }
-        public async Task HandleCheckoutSessionCompleted(Session? session)
+        public async Task HandleCheckoutSessionCompletedAsync(Session? session)
         {
             if(session is null)
             {
@@ -192,8 +193,13 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 StripePaymentIntentId = checkoutCart.StripePaymentIntentId!
 
             });
-            await _dbContext.CheckoutCarts.Where(cc => cc.Id == checkoutCart.Id)
-                .ExecuteDeleteAsync();
+            //Dodać to potem. Na razie dla testów bez.
+            //await _dbContext.CheckoutCarts.Where(cc => cc.Id == checkoutCart.Id)
+            //    .ExecuteDeleteAsync();
+            if(checkoutCart.Discount is not null)
+            {
+                await _messageBroker.PublishAsync(new DiscountCodeRedeemed(checkoutCart.Discount.Code));
+            }
         }
         private async Task<CheckoutCart> GetOrThrowIfNull(Guid checkoutCartId)
         {
@@ -201,6 +207,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 .Include(cc => cc.Products)
                 .ThenInclude(cp => cp.Product)
                 .Include(cc => cc.Payment)
+                .Include(cc => cc.Discount)
                 .SingleOrDefaultAsync(cc => cc.Id == checkoutCartId);
             if (checkoutCart is null)
             {

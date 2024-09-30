@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 {
     [DbContext(typeof(CartsDbContext))]
-    [Migration("20240927183042_AddDiscountEntity")]
+    [Migration("20240930132952_AddDiscountEntity")]
     partial class AddDiscountEntity
     {
         /// <inheritdoc />
@@ -116,8 +116,12 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
 
-                    b.Property<DateTime?>("EndingDate")
+                    b.Property<DateTime?>("ExpiresAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("StripePromotionCodeId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -197,8 +201,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 
                     b.HasOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart", "CheckoutCart")
                         .WithMany("Products")
-                        .HasForeignKey("CheckoutCartId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("CheckoutCartId");
 
                     b.HasOne("Ecommerce.Modules.Carts.Core.Entities.Product", "Product")
                         .WithMany("CartProducts")

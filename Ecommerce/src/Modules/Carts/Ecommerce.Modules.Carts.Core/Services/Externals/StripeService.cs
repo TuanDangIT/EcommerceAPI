@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                 ApiKey = _stripeOptions.ApiKey
             };
         }
-        public async Task<CheckoutStripeSessionDto> Checkout(CheckoutCart checkoutCart)
+        public async Task<CheckoutStripeSessionDto> CheckoutAsync(CheckoutCart checkoutCart)
         {
             var lineItems = new List<SessionLineItemOptions>();
             foreach (var product in checkoutCart.Products)
@@ -57,13 +57,23 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
             {
                 SuccessUrl = "https://localhost:7089/api",
                 CancelUrl = "https://localhost:7089/api",
-                PaymentMethodTypes = new List<string>
-                {
+                PaymentMethodTypes =
+                [
                     checkoutCart.Payment is not null ? checkoutCart.Payment.PaymentMethod.ToString() : throw new PaymentNotSetException()
-                },
+                ],
                 LineItems = lineItems,
                 Mode = _stripeOptions.Mode,
             };
+            if(checkoutCart.Discount is not null)
+            {
+                sessionOptions.Discounts =
+                [
+                    new()
+                    {
+                        PromotionCode = checkoutCart.Discount.StripePromotionCodeId
+                    }
+                ];
+            }
             var sessionService = new SessionService();
             var session = await sessionService.CreateAsync(sessionOptions, _requestOptions);
             return session.AsDto();

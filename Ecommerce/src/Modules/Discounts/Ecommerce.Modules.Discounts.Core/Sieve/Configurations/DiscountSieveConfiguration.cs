@@ -15,7 +15,7 @@ namespace Ecommerce.Modules.Discounts.Core.Sieve.Configurations
             mapper.Property<Discount>(d => d.Code)
                 .CanSort()
                 .CanFilter();
-            mapper.Property<Discount>(d => d.EndingDate)
+            mapper.Property<Discount>(d => d.ExpiresAt)
                 .CanSort();
             mapper.Property<Discount>(d => d.CreatedAt)
                 .CanSort();

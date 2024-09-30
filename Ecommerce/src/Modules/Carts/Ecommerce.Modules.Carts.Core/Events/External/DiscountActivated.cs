@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Events.External
 {
-    public sealed record class DiscountCreated(string Code, string Type, decimal Value, DateTime? EndingDate) : IEvent;
+    public sealed record class DiscountActivated(string Code, string Type, string StripePromotionCodeId, decimal Value, DateTime? ExpiresAt) : IEvent;
 }

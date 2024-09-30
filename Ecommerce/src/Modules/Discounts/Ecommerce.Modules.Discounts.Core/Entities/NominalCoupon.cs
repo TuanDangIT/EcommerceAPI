@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Core.Entities
 {
-    public class NominalDiscount : Discount
+    public class NominalCoupon : Coupon
     {
         public decimal NominalValue { get; set; }
-        public NominalDiscount(string code, decimal nominalValue, DateTime endingDate, DateTime createdAt) : base(code, endingDate, createdAt)
+        public NominalCoupon(string name, decimal nominalValue, DateTime createdAt) : base(name, createdAt)
         {
             NominalValue = nominalValue; 
         }
-        public NominalDiscount(string code, decimal nominalValue, DateTime createdAt) : base(code, createdAt)
+        public NominalCoupon(string code, decimal nominalValue, DateTime createdAt, string stripeCouponId) : base(code, createdAt, stripeCouponId)
         {
             NominalValue = nominalValue;
         }

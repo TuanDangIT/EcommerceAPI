@@ -8,14 +8,12 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Core.DTO
 {
-    public class PercentageDiscountCreateDto
+    public class PercentageCouponCreateDto
     {
         [Required]
-        public string Code { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         [Required]
-        [Range(0, 1)]
+        [Range(0.01, 0.99)]
         public decimal Percent { get; set; }
-        [FutureDateTime]
-        public DateTime? EndingDate { get; set; }
     }
 }

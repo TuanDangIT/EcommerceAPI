@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Discounts.Core.DAL;
 using Ecommerce.Modules.Discounts.Core.Services;
+using Ecommerce.Modules.Discounts.Core.Services.Externals;
 using Ecommerce.Modules.Discounts.Core.Sieve;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +25,8 @@ namespace Ecommerce.Modules.Discounts.Core
             });
             services.AddScoped<IOfferService, OfferService>();
             services.AddScoped<IDiscountService, DiscountService>();
+            services.AddScoped<ICouponService, CouponService>();
+            services.AddScoped<IStripeService, StripeService>();    
             services.AddPostgres<DiscountsDbContext>();
             services.Configure<SieveOptions>(configuration.GetSection("Sieve"));
             services.AddScoped<ISieveProcessor, DiscountsModuleSieveProcessor>();

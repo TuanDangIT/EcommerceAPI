@@ -80,7 +80,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
                 Code = discount.Code,
                 Type = discount.Type.ToString(),
                 Value = discount.Value,
-                EndingDate = discount.EndingDate
+                ExpiresAt = discount.ExpiresAt
             };
     }
 }
