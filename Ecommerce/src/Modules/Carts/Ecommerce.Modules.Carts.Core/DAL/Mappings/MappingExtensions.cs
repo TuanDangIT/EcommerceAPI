@@ -49,6 +49,13 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
             {
                 Id = payment.Id,
                 PaymentMethod = payment.PaymentMethod.ToString(),
+                IsActive = payment.IsActive
+            };
+        public static AvailablePaymentDto AsAvailableDto(this Payment payment)
+            => new()
+            {
+                Id = payment.Id,
+                PaymentMethod = payment.PaymentMethod.ToString(),
             };
         public static CheckoutStripeSessionDto AsDto(this Session session)
             => new()

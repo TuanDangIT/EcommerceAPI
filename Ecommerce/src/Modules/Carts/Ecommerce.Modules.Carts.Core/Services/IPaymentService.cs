@@ -10,5 +10,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
     public interface IPaymentService
     {
         Task<IEnumerable<PaymentDto>> BrowseAsync();
+        Task<IEnumerable<AvailablePaymentDto>> BrowseAvailableAsync();
+        Task SetActivePaymentMethod(bool isActive, Guid paymentId);
     }
 }

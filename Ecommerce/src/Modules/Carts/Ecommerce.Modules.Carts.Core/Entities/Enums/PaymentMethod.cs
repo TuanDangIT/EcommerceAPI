@@ -9,5 +9,12 @@ namespace Ecommerce.Modules.Carts.Core.Entities.Enums
     public enum PaymentMethod
     {
         card,
+        paypal,
+        blik,
+        apple_pay,
+        google_pay,
+        revolut_pay,
+        affirm,
+        cashapp,
     }
 }

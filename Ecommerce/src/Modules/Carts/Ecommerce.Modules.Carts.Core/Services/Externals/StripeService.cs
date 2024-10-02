@@ -59,10 +59,23 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                 CancelUrl = "https://localhost:7089/api",
                 PaymentMethodTypes =
                 [
-                    checkoutCart.Payment is not null ? checkoutCart.Payment.PaymentMethod.ToString() : throw new PaymentNotSetException()
+                    checkoutCart.Payment is not null ? checkoutCart.Payment.PaymentMethod.ToString() : throw new PaymentNotSetException(), 
                 ],
                 LineItems = lineItems,
                 Mode = _stripeOptions.Mode,
+                //InvoiceCreation = new SessionInvoiceCreationOptions()
+                //{
+                //    Enabled = true,
+                //    InvoiceData = new SessionInvoiceCreationInvoiceDataOptions()
+                //    {
+                //        Description = "some description",
+                //        Issuer = new SessionInvoiceCreationInvoiceDataIssuerOptions()
+                //        {
+                //            Type = "self"
+                //        }
+                        
+                //    }
+                //}
             };
             if(checkoutCart.Discount is not null)
             {
