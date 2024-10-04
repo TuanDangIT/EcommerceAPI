@@ -14,7 +14,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
     {
         //Task CreateAsync(NominalDiscountCreateDto dto);
         //Task CreateAsync(PercentageDiscountCreateDto dto);
-        Task<PagedResult<DiscountDto>> BrowseDiscountsAsync(SieveModel model);
+        Task<PagedResult<DiscountBrowseDto>> BrowseDiscountsAsync(string stripeCouponId, SieveModel model);
         Task CreateAsync(string stripeCouponId, DiscountCreateDto dto);
         //Task ActivateAsync(string stripePromotionCodeId);
         //Task DeactivateAsync(string stripePromotionCodeId);

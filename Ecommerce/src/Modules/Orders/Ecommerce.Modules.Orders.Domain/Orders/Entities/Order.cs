@@ -2,6 +2,7 @@
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Orders.Exceptions;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities;
+using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,25 +19,27 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         private readonly List<Product> _products = [];
         public IEnumerable<Product> Products => _products;
         public decimal TotalSum { get; set; }
-        public Shipment Shipment { get; set; } = new();
+        //public ShipmentDetails ShipmentDetails { get; set; } = new();
         public PaymentMethod Payment { get; set; }
         public OrderStatus Status { get; set; } = OrderStatus.Placed;
         public bool IsCompleted => Status is OrderStatus.Cancelled || Status is OrderStatus.Completed || Status is OrderStatus.Returned;
         public string? AdditionalInformation { get; set; }
         public string? DiscountCode { get; set; }
         public string StripePaymentIntentId { get; set; } = string.Empty;
+        public Shipment Shipment { get; set; } = default!;
         public DateTime OrderPlacedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         //private readonly List<Complaint> _complaints = [];
         //public IEnumerable<Complaint> Complaints => _complaints;
         //public Return? ReturnOrder { get; set; }
-        public Order(Guid id, Customer customer, IEnumerable<Product> products, decimal totalSum, Shipment shipment,
+        public Order(Guid id, Customer customer, IEnumerable<Product> products, decimal totalSum, /*ShipmentDetails shipmentDetails,*/Shipment shipment,
             PaymentMethod paymentMethod, DateTime orderPlacedAt, string? additionalInformation, string? discountCode, string stripePaymentIntentId)
         {
             Id = id;
             Customer = customer;
             _products = products.ToList();
             Shipment = shipment;
+            //ShipmentDetails = shipmentDetails;
             Payment = paymentMethod;
             OrderPlacedAt = orderPlacedAt;
             AdditionalInformation = additionalInformation;
@@ -52,11 +55,11 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             Status = status;
             UpdatedAt = updatedAt;
         }
-        public void EditShipment(Shipment shipment, DateTime updatedAt)
-        {
-            Shipment = shipment;
-            UpdatedAt = updatedAt;
-        }
+        //public void EditShipment(ShipmentDetails shipmentDetails, DateTime updatedAt)
+        //{
+        //    ShipmentDetails = shipmentDetails;
+        //    UpdatedAt = updatedAt;
+        //}
         public void Cancel(DateTime updatedAt)
         {
             Status = OrderStatus.Cancelled;
@@ -98,5 +101,17 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
                 product.DecreaseQuantity(quantity); 
             }
         }
+        public void SetParcels(IEnumerable<Parcel> parcels, DateTime updatedAt)
+        {
+            UpdatedAt = updatedAt;
+            Shipment.SetParcels(parcels);
+        }
+        public void SetLabelDetails(string trackingNumber, string labelId, DateTime updatedAt)
+        {
+            UpdatedAt = updatedAt;
+            Shipment.SetLabelId(labelId);
+            Shipment.SetTrackingNumber(trackingNumber); 
+        }
+        
     }
 }

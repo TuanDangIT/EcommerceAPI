@@ -2,6 +2,7 @@
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
+using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
 using Ecommerce.Shared.Abstractions.Events;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
             }
             var newGuid = Guid.NewGuid();
             var customer = new Customer(@event.FirstName, @event.LastName, @event.Email, @event.PhoneNumber, @event.CustomerId);
-            var shipment = new Shipment(@event.City, @event.PostalCode, @event.StreetName, @event.StreetNumber, @event.ApartmentNumber);
+            //var shipment = new ShipmentDetails(@event.City, @event.PostalCode, @event.StreetName, @event.StreetNumber, @event.ApartmentNumber);
+            var address = new Address(@event.StreetName, @event.StreetNumber + "/" + @event.ApartmentNumber, @event.City, @event.PostalCode);
+            var receiver = new Receiver(@event.FirstName, @event.LastName, @event.Email, @event.PhoneNumber, address);
+            var shipment = new Shipment(receiver, @event.TotalSum);
             if(!Enum.TryParse(typeof(PaymentMethod), @event.PaymentMethod, out var paymentMethod))
             {
                 throw new InvalidPaymentMethodException();

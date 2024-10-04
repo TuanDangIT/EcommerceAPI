@@ -1,13 +1,18 @@
-﻿using Ecommerce.Modules.Orders.Application.Orders.DTO;
+﻿using Ecommerce.Modules.Orders.Application.Delivery;
+using Ecommerce.Modules.Orders.Application.Orders.DTO;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrders;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateLabel;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Order.GetLabel;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.GetOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Order.SetParcels;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitComplaint;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -47,6 +52,25 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         }
         [HttpPost("{orderId:guid}/submit-complaint")]
         public async Task<ActionResult> SubmitComplaint([FromRoute] Guid orderId, [FromForm]SubmitComplaint command)
+        {
+            command = command with { OrderId = orderId };
+            await _mediator.Send(command);
+            return NoContent();
+        }
+        [HttpGet("{orderId:guid}/label")]
+        public async Task<ActionResult<IFormFile>> GetLabel([FromRoute]Guid orderId)
+        {
+            var result = await _mediator.Send(new GetLabel(orderId));
+            return File(result.FileStream, result.MimeType, result.FileName);
+        }
+        [HttpPost("{orderId:guid}/label")]
+        public async Task<ActionResult> CreateLabel([FromRoute]Guid orderId)
+        {
+            await _mediator.Send(new CreateLabel(orderId));
+            return NoContent();
+        }
+        [HttpPut("{orderId:guid}/parcel")]
+        public async Task<ActionResult> SetParcels([FromRoute]Guid orderId, [FromBody]SetParcels command)
         {
             command = command with { OrderId = orderId };
             await _mediator.Send(command);

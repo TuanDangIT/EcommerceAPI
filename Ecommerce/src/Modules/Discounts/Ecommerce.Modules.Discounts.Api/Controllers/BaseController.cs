@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Shared.Abstractions.Api;
+using Ecommerce.Shared.Infrastructure.Pagination;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,10 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
                 Title = $"{entityName} was not found.",
                 Status = (int)HttpStatusCode.NotFound
             });
+        }
+        protected ActionResult<ApiResponse<PagedResult<T>>> PagedResult<T>(PagedResult<T> model)
+        {
+            return Ok(new ApiResponse<PagedResult<T>>(HttpStatusCode.OK, model));
         }
     }
 }

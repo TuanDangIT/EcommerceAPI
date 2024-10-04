@@ -40,9 +40,31 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         }
 
 
-        public Task<PagedResult<DiscountDto>> BrowseDiscountsAsync(SieveModel model)
+        public async Task<PagedResult<DiscountBrowseDto>> BrowseDiscountsAsync(string stripeCouponId, SieveModel model)
         {
-            throw new NotImplementedException();
+            var coupon = await _dbContext.Coupons.SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId);
+            if (coupon is null)
+            {
+                throw new CouponNotFoundException(stripeCouponId);
+            }
+            var discounts = _dbContext.Discounts
+                .AsNoTracking()
+                .AsQueryable();
+            var dtos = await _sieveProcessor
+                .Apply(model, discounts)
+                .Where(d => d.CouponId == coupon.Id)
+                .Select(d => d.AsBrowseDto())
+                .ToListAsync();
+            var totalCount = await _sieveProcessor
+                .Apply(model, discounts, applyPagination: false, applySorting: false)
+                .Where(d => d.CouponId == coupon.Id)
+                .CountAsync();
+            if (model.PageSize is null || model.Page is null)
+            {
+                throw new PaginationException();
+            }
+            var pagedResult = new PagedResult<DiscountBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
+            return pagedResult;
         }
 
         public async Task CreateAsync(string stripeCouponId, DiscountCreateDto dto)

@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Customer = order.Customer.AsDto(),
                 TotalSum = order.TotalSum,
                 Products = order.Products.Select(p => p.AsDto()),
-                Shipment = order.Shipment.AsDto(),
+                //Shipment = order.ShipmentDetails.AsDto(),
                 Payment = order.Payment,
                 Status = order.Status,
                 AdditionalInformation = order.AdditionalInformation,
@@ -35,7 +35,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 OrderPlacedAt = order.OrderPlacedAt,
                 UpdatedAt = order.UpdatedAt
             };
-        public static ShipmentDto AsDto(this Shipment shipment)
+        public static ShipmentDto AsDto(this ShipmentDetails shipment)
             => new()
             {
                 City = shipment.City,

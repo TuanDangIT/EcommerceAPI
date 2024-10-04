@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 {
-    public class Shipment
+    public class ShipmentDetails
     {
         public string City { get; private set; } = string.Empty;
         public string PostalCode { get; private set; } = string.Empty;
         public string StreetName { get; private set; } = string.Empty;
         public string StreetNumber { get; private set; } = string.Empty;
         public string ApartmentNumber { get; private set; } = string.Empty;
-        public Shipment(string city, string postalCode, string streetName, string streetNumber, string apartmentNumber)
+        public ShipmentDetails(string city, string postalCode, string streetName, string streetNumber, string apartmentNumber)
         {
             if (string.IsNullOrWhiteSpace(city))
             {
@@ -42,7 +42,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             StreetNumber = streetNumber;
             ApartmentNumber = apartmentNumber;
         }
-        public Shipment()
+        public ShipmentDetails()
         {
 
         }

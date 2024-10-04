@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
+using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -28,14 +29,14 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                     .IsRequired();
                 p.ToTable("Products");
             });
-            builder.OwnsOne(o => o.Shipment, s =>
-            {
-                s.Property(s => s.City).IsRequired().HasMaxLength(32);
-                s.Property(s => s.PostalCode).IsRequired().HasMaxLength(16);
-                s.Property(s => s.StreetName).IsRequired().HasMaxLength(64);
-                s.Property(s => s.StreetNumber).IsRequired().HasMaxLength(8);
-                s.Property(s => s.ApartmentNumber).HasMaxLength(8);
-            });
+            //builder.OwnsOne(o => o.ShipmentDetails, s =>
+            //{
+            //    s.Property(s => s.City).IsRequired().HasMaxLength(32);
+            //    s.Property(s => s.PostalCode).IsRequired().HasMaxLength(16);
+            //    s.Property(s => s.StreetName).IsRequired().HasMaxLength(64);
+            //    s.Property(s => s.StreetNumber).IsRequired().HasMaxLength(8);
+            //    s.Property(s => s.ApartmentNumber).HasMaxLength(8);
+            //});
             builder.HasOne(o => o.Customer)
                 .WithOne(c => c.Order)
                 .HasForeignKey<Customer>(o => o.OrderId);
@@ -52,6 +53,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
             builder.Property(o => o.OrderPlacedAt)
                 .IsRequired();
             builder.HasIndex(o => new { o.Id, o.OrderPlacedAt });
+            builder.HasOne(o => o.Shipment)
+                .WithOne(s => s.Order)
+                .HasForeignKey<Shipment>(s => s.OrderId);
         }
     }
 }

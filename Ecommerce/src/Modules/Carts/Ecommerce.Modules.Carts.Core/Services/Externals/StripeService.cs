@@ -17,6 +17,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
     {
         private readonly StripeOptions _stripeOptions;
         private readonly RequestOptions _requestOptions;
+        private readonly decimal _defaultDeliveryPrice = 15;
 
         public StripeService(StripeOptions stripeOptions)
         {
@@ -59,10 +60,26 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                 CancelUrl = "https://localhost:7089/api",
                 PaymentMethodTypes =
                 [
-                    checkoutCart.Payment is not null ? checkoutCart.Payment.PaymentMethod.ToString() : throw new PaymentNotSetException(), 
+                    checkoutCart.Payment is not null ? checkoutCart.Payment.PaymentMethod.ToString() : throw new PaymentNotSetException(),
                 ],
                 LineItems = lineItems,
                 Mode = _stripeOptions.Mode,
+                ShippingOptions = new List<SessionShippingOptionOptions>()
+                {
+                    new SessionShippingOptionOptions()
+                    {
+                        ShippingRateData = new SessionShippingOptionShippingRateDataOptions()
+                        {
+                            DisplayName = "Kurier InPost",
+                            FixedAmount = new SessionShippingOptionShippingRateDataFixedAmountOptions()
+                            {
+                                Amount = (long)(_defaultDeliveryPrice * 100),
+                                Currency = _stripeOptions.Currency,
+                            },
+                            Type = "fixed_amount"
+                        }
+                    }
+                }
                 //InvoiceCreation = new SessionInvoiceCreationOptions()
                 //{
                 //    Enabled = true,

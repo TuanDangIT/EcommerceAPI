@@ -233,6 +233,35 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.ToTable("Returns", "orders");
                 });
 
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Shipping.Entities.Shipment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("LabelId")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Service")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TrackingNumber")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("Shipments", "orders");
+                });
+
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Complaints.Entities.Complaint", b =>
                 {
                     b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", "Order")
@@ -322,48 +351,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                 .HasForeignKey("OrderId");
                         });
 
-                    b.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Shipment", "Shipment", b1 =>
-                        {
-                            b1.Property<Guid>("OrderId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("ApartmentNumber")
-                                .IsRequired()
-                                .HasMaxLength(8)
-                                .HasColumnType("character varying(8)");
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasMaxLength(32)
-                                .HasColumnType("character varying(32)");
-
-                            b1.Property<string>("PostalCode")
-                                .IsRequired()
-                                .HasMaxLength(16)
-                                .HasColumnType("character varying(16)");
-
-                            b1.Property<string>("StreetName")
-                                .IsRequired()
-                                .HasMaxLength(64)
-                                .HasColumnType("character varying(64)");
-
-                            b1.Property<string>("StreetNumber")
-                                .IsRequired()
-                                .HasMaxLength(8)
-                                .HasColumnType("character varying(8)");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("Orders", "orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
-                        });
-
                     b.Navigation("Products");
-
-                    b.Navigation("Shipment")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Returns.Entities.Return", b =>
@@ -419,9 +407,200 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Shipping.Entities.Shipment", b =>
+                {
+                    b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", "Order")
+                        .WithOne("Shipment")
+                        .HasForeignKey("Ecommerce.Modules.Orders.Domain.Shipping.Entities.Shipment", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Ecommerce.Modules.Orders.Domain.Shipping.Entities.Insurance", "Insurance", b1 =>
+                        {
+                            b1.Property<int>("ShipmentId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("Amount")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("ShipmentId");
+
+                            b1.ToTable("Shipments", "orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ShipmentId");
+                        });
+
+                    b.OwnsMany("Ecommerce.Modules.Orders.Domain.Shipping.Entities.Parcel", "Parcels", b1 =>
+                        {
+                            b1.Property<int>("ShipmentId")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+
+                            b1.HasKey("ShipmentId", "Id");
+
+                            b1.ToTable("Parcel", "orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ShipmentId");
+
+                            b1.OwnsOne("Ecommerce.Modules.Orders.Domain.Shipping.Entities.Dimensions", "Dimensions", b2 =>
+                                {
+                                    b2.Property<int>("ParcelShipmentId")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<int>("ParcelId")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<string>("Height")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<string>("Length")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<string>("Unit")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<string>("Width")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.HasKey("ParcelShipmentId", "ParcelId");
+
+                                    b2.ToTable("Parcel", "orders");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ParcelShipmentId", "ParcelId");
+                                });
+
+                            b1.OwnsOne("Ecommerce.Modules.Orders.Domain.Shipping.Entities.Weight", "Weight", b2 =>
+                                {
+                                    b2.Property<int>("ParcelShipmentId")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<int>("ParcelId")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<string>("Amount")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<string>("Unit")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.HasKey("ParcelShipmentId", "ParcelId");
+
+                                    b2.ToTable("Parcel", "orders");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ParcelShipmentId", "ParcelId");
+                                });
+
+                            b1.Navigation("Dimensions")
+                                .IsRequired();
+
+                            b1.Navigation("Weight")
+                                .IsRequired();
+                        });
+
+                    b.OwnsOne("Ecommerce.Modules.Orders.Domain.Shipping.Entities.Receiver", "Receiver", b1 =>
+                        {
+                            b1.Property<int>("ShipmentId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("CompanyName")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Email")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("FirstName")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("LastName")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Phone")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("ShipmentId");
+
+                            b1.ToTable("Shipments", "orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ShipmentId");
+
+                            b1.OwnsOne("Ecommerce.Modules.Orders.Domain.Shipping.Entities.Address", "Address", b2 =>
+                                {
+                                    b2.Property<int>("ReceiverShipmentId")
+                                        .HasColumnType("integer");
+
+                                    b2.Property<string>("BuildingNumber")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<string>("City")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<string>("CountryCode")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<string>("PostCode")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<string>("Street")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.HasKey("ReceiverShipmentId");
+
+                                    b2.ToTable("Shipments", "orders");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ReceiverShipmentId");
+                                });
+
+                            b1.Navigation("Address")
+                                .IsRequired();
+                        });
+
+                    b.Navigation("Insurance");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Parcels");
+
+                    b.Navigation("Receiver")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", b =>
                 {
                     b.Navigation("Customer")
+                        .IsRequired();
+
+                    b.Navigation("Shipment")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

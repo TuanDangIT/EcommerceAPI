@@ -1,9 +1,13 @@
 ﻿using Ecommerce.Modules.Discounts.Core.DTO;
 using Ecommerce.Modules.Discounts.Core.Services;
+using Ecommerce.Shared.Abstractions.Api;
+using Ecommerce.Shared.Infrastructure.Pagination;
 using Microsoft.AspNetCore.Mvc;
+using Sieve.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +21,18 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         public CouponController(ICouponService couponService)
         {
             _couponService = couponService;
+        }
+        [HttpGet("nominal-coupon")]
+        public async  Task<ActionResult<ApiResponse<PagedResult<NominalCouponBrowseDto>>>> BrowseNominalCoupons([FromQuery]SieveModel model)
+        {
+            var result = await _couponService.BrowseNominalCouponsAsync(model);
+            return PagedResult(result);
+        }
+        [HttpGet("percentage-coupon")]
+        public async Task<ActionResult<ApiResponse<PagedResult<PercentageCouponBrowseDto>>>> BrowsePercentageCoupons([FromQuery] SieveModel model)
+        {
+            var result = await _couponService.BrowsePercentageCouponsAsync(model);
+            return PagedResult(result);
         }
         [HttpPost("nominal-coupon")]
         public async Task<ActionResult> CreateNominalCoupon([FromBody]NominalCouponCreateDto dto)

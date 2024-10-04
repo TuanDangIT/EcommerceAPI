@@ -1,6 +1,8 @@
 ﻿using Ecommerce.Modules.Discounts.Core.DAL;
+using Ecommerce.Modules.Discounts.Core.DAL.Mappings;
 using Ecommerce.Modules.Discounts.Core.DTO;
 using Ecommerce.Modules.Discounts.Core.Entities;
+using Ecommerce.Modules.Discounts.Core.Entities.Enums;
 using Ecommerce.Modules.Discounts.Core.Events;
 using Ecommerce.Modules.Discounts.Core.Exceptions;
 using Ecommerce.Modules.Discounts.Core.Services.Externals;
@@ -8,6 +10,7 @@ using Ecommerce.Shared.Abstractions.Messaging;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using Microsoft.EntityFrameworkCore;
 using Sieve.Models;
+using Sieve.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,23 +24,61 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         private readonly IDiscountDbContext _dbContext;
         private readonly IStripeService _stripeService;
         private readonly IMessageBroker _messageBroker;
+        private readonly ISieveProcessor _sieveProcessor;
         private readonly TimeProvider _timeProvider;
 
-        public CouponService(IDiscountDbContext dbContext, IStripeService stripeService, IMessageBroker messageBroker, TimeProvider timeProvider)
+        public CouponService(IDiscountDbContext dbContext, IStripeService stripeService, IMessageBroker messageBroker, ISieveProcessor sieveProcessor, TimeProvider timeProvider)
         {
             _dbContext = dbContext;
             _stripeService = stripeService;
             _messageBroker = messageBroker;
+            _sieveProcessor = sieveProcessor;
             _timeProvider = timeProvider;
         }
-        public Task<PagedResult<NominalCouponBrowseDto>> BrowseNominalCouponsAsync(SieveModel model)
+        public async Task<PagedResult<NominalCouponBrowseDto>> BrowseNominalCouponsAsync(SieveModel model)
         {
-            throw new NotImplementedException();
+            var coupons = _dbContext.Coupons
+                .AsNoTracking()
+                .AsQueryable();
+            var dtos = await _sieveProcessor
+                .Apply(model, coupons)
+                .Where(c => c.Type == CouponType.NominalCoupon)
+                .Cast<NominalCoupon>()
+                .Select(nd => nd.AsNominalBrowseDto())
+                .ToListAsync();
+            var totalCount = await _sieveProcessor
+                .Apply(model, coupons, applyPagination: false, applySorting: false)
+                .Where(c => c.Type == CouponType.NominalCoupon)
+                .CountAsync();
+            if (model.PageSize is null || model.Page is null)
+            {
+                throw new PaginationException();
+            }
+            var pagedResult = new PagedResult<NominalCouponBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
+            return pagedResult;
         }
 
-        public Task<PagedResult<PercentageCouponBrowseDto>> BrowsePercentageCouponsAsync(SieveModel model)
+        public async Task<PagedResult<PercentageCouponBrowseDto>> BrowsePercentageCouponsAsync(SieveModel model)
         {
-            throw new NotImplementedException();
+            var coupons = _dbContext.Coupons
+                .AsNoTracking()
+                .AsQueryable();
+            var dtos = await _sieveProcessor
+                .Apply(model, coupons)
+                .Where(c => c.Type == CouponType.PercentageCoupon)
+                .Cast<PercentageCoupon>()
+                .Select(nd => nd.AsPercentageBrowseDto())
+                .ToListAsync();
+            var totalCount = await _sieveProcessor
+                .Apply(model, coupons, applyPagination: false, applySorting: false)
+                .Where(c => c.Type == CouponType.NominalCoupon)
+                .CountAsync();
+            if (model.PageSize is null || model.Page is null)
+            {
+                throw new PaginationException();
+            }
+            var pagedResult = new PagedResult<PercentageCouponBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
+            return pagedResult;
         }
 
         public async Task CreateAsync(NominalCouponCreateDto dto)

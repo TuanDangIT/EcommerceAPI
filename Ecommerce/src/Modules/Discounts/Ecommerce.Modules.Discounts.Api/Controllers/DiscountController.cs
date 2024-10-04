@@ -23,6 +23,13 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         {
             _discountService = discountService;
         }
+        [HttpGet("{stripeCouponId}")]
+        public async Task<ActionResult<ApiResponse<PagedResult<DiscountBrowseDto>>>> BrowseDiscounts([FromRoute]string stripeCouponId, [FromQuery]SieveModel model)
+        {
+            var result = await _discountService.BrowseDiscountsAsync(stripeCouponId, model);
+            return PagedResult(result);
+            //return Ok(new ApiResponse<PagedResult<DiscountBrowseDto>>(HttpStatusCode.OK, result));
+        }
         [HttpPost("{stripeCouponId}")]
         public async Task<ActionResult> CreateDiscount([FromRoute] string stripeCouponId, [FromBody] DiscountCreateDto dto)
         {

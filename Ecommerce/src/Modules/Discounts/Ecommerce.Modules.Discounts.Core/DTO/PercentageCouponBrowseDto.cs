@@ -9,6 +9,8 @@ namespace Ecommerce.Modules.Discounts.Core.DTO
 {
     public class PercentageCouponBrowseDto
     {
+        public int Id { get; set; }
+        public string StripeCouponId { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public decimal Percent { get; set; }
         public DateTime UpdatedAt { get; set; }
