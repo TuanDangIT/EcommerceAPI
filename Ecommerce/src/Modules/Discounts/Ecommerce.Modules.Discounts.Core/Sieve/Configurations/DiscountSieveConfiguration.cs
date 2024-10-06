@@ -19,6 +19,10 @@ namespace Ecommerce.Modules.Discounts.Core.Sieve.Configurations
                 .CanSort();
             mapper.Property<Discount>(d => d.CreatedAt)
                 .CanSort();
+            mapper.Property<Discount>(d => d.IsActive)
+                .CanFilter();
+            mapper.Property<Discount>(d => d.Redemptions)
+                .CanSort();
         }
     }
 }

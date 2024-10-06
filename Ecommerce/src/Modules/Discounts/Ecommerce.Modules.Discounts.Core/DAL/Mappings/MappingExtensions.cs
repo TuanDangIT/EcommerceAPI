@@ -39,5 +39,27 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Mappings
                 EndingDate = discount.ExpiresAt,
                 CreatedAt = discount.CreatedAt
             };
+        public static OfferBrowseDto AsBrowseDto(this Offer offer)
+            => new()
+            {
+                Id = offer.Id,
+                Price = offer.Price,
+                OldPrice = offer.OldPrice,
+                Status = offer.Status.ToString(),
+                CreatedAt = offer.CreatedAt,
+                UpdatedAt = offer.UpdatedAt
+            };
+        public static OfferDetailsDto AsDetailsDto(this Offer offer)
+            => new()
+            {
+                Id = offer.Id,
+                Price = offer.Price,
+                OldPrice = offer.OldPrice,
+                Difference = offer.Difference,
+                Reason = offer.Reason,
+                Status = offer.Status.ToString(),
+                UpdatedAt = offer.UpdatedAt,
+                CreatedAt = offer.CreatedAt
+            };
     }
 }

@@ -5,6 +5,7 @@ using Ecommerce.Modules.Carts.Core.Entities;
 using Ecommerce.Modules.Carts.Core.Events;
 using Ecommerce.Modules.Carts.Core.Exceptions;
 using Ecommerce.Modules.Carts.Core.Services.Externals;
+using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Stripe.Checkout;
@@ -20,16 +21,16 @@ namespace Ecommerce.Modules.Carts.Core.Services
     {
         private readonly ICartsDbContext _dbContext;
         private readonly IStripeService _stripeService;
-        private readonly ICartService _cartService;
         private readonly IMessageBroker _messageBroker;
+        private readonly IContextService _contextService;
 
         public CheckoutCartService(ICartsDbContext dbContext, IStripeService stripeService, 
-            ICartService cartService, IMessageBroker messageBroker)
+            ICartService cartService, IMessageBroker messageBroker, IContextService contextService)
         {
             _dbContext = dbContext;
             _stripeService = stripeService;
-            _cartService = cartService;
             _messageBroker = messageBroker;
+            _contextService = contextService;
         }
 
         public async Task<CheckoutCartDto?> GetAsync(Guid checkoutCartId)
@@ -139,6 +140,11 @@ namespace Ecommerce.Modules.Carts.Core.Services
             if(discount is null)
             {
                 throw new DiscountNotFoundException(code);
+            }
+            if (discount.CustomerId != _contextService.Identity?.Id &&
+                !checkoutCart.Products.Select(p => p.Product.SKU).Contains(discount.SKU))
+            {
+                throw new IndividualDiscountCannotBeAppliedException();
             }
             checkoutCart.AddDiscount(discount);
             await _dbContext.SaveChangesAsync();

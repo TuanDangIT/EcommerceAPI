@@ -32,5 +32,12 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         {
             return Ok(new ApiResponse<PagedResult<T>>(HttpStatusCode.OK, model));
         }
+        //private string FirstCharToUpper(string input) =>
+        //    input switch
+        //{
+        //    null => throw new ArgumentNullException(nameof(input)),
+        //    "" => throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input)),
+        //    _ => string.Concat(input[0].ToString().ToUpper(), input.AsSpan(1))
+        //};
     }
 }

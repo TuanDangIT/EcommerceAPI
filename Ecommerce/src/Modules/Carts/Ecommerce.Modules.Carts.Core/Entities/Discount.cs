@@ -13,7 +13,9 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public int Id { get; private set; }
         public string Code { get; private set; } = string.Empty;
         public DiscountType Type { get; private set; }
-        public string StripePromotionCodeId { get; private set; } = string.Empty;
+        public string? SKU { get; private set; }
+        public Guid? CustomerId { get; private set; }
+        public string? StripePromotionCodeId { get; private set; } 
         public decimal Value { get; private set; }
         public DateTime? ExpiresAt { get; private set; }
         private readonly List<CheckoutCart> _checkoutCarts = [];
@@ -27,6 +29,18 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             if (expiresAt is not null && expiresAt < TimeProvider.System.GetUtcNow().UtcDateTime)
             {
                 throw new DiscountInvalidExpiresAtDateException((DateTime)expiresAt!);
+            }
+            ExpiresAt = expiresAt;
+        }
+        public Discount(string code, string sku, decimal value, Guid CustomerId, DateTime expiresAt)
+        {
+            Code = code;
+            Type = DiscountType.NominalDiscount;
+            SKU = sku;
+            Value = value;
+            if (expiresAt < TimeProvider.System.GetUtcNow().UtcDateTime)
+            {
+                throw new DiscountInvalidExpiresAtDateException(expiresAt!);
             }
             ExpiresAt = expiresAt;
         }

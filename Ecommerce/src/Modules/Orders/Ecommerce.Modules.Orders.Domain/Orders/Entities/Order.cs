@@ -28,7 +28,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public string StripePaymentIntentId { get; set; } = string.Empty;
         public Shipment Shipment { get; set; } = default!;
         public DateTime OrderPlacedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         //private readonly List<Complaint> _complaints = [];
         //public IEnumerable<Complaint> Complaints => _complaints;
         //public Return? ReturnOrder { get; set; }

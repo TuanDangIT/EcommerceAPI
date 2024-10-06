@@ -14,14 +14,12 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
         public void Configure(EntityTypeBuilder<Discount> builder)
         {
             builder.Property(d => d.Code)
-                .HasMaxLength(10)
+                .HasMaxLength(48)
                 .IsRequired();
             builder.HasIndex(d => d.Code)
                 .IsUnique();
             builder.Property(d => d.Type)
                 .HasConversion<string>()
-                .IsRequired();
-            builder.Property(d => d.StripePromotionCodeId)
                 .IsRequired();
             builder.Property(d => d.Value)
                 .IsRequired();

@@ -33,12 +33,17 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
             foreach (var product in checkoutCart.Products)
             {
                 var discount = checkoutCart.Discount;
+                var productPrice = product.Product.Price;
+                if(discount?.SKU == product.Product.SKU)
+                {
+                    productPrice = product.Product.Price - discount.Value;
+                }
                 lineItems.Add(new SessionLineItemOptions()
                 {
                     PriceData = new SessionLineItemPriceDataOptions()
                     {
                         //UnitAmount = (long)Math.Truncate(product.Product.Price),
-                        UnitAmountDecimal = product.Product.Price * 100,
+                        UnitAmountDecimal = productPrice * 100,
                         Currency = _stripeOptions.Currency,
                         ProductData = new SessionLineItemPriceDataProductDataOptions()
                         {
@@ -56,6 +61,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
             }
             var sessionOptions = new SessionCreateOptions()
             {
+                //Urls are just temporary here
                 SuccessUrl = "https://localhost:7089/api",
                 CancelUrl = "https://localhost:7089/api",
                 PaymentMethodTypes =
@@ -94,7 +100,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                 //    }
                 //}
             };
-            if(checkoutCart.Discount is not null)
+            if (checkoutCart.Discount is not null && checkoutCart.Discount.StripePromotionCodeId is not null)
             {
                 sessionOptions.Discounts =
                 [

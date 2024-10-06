@@ -13,7 +13,7 @@ namespace Ecommerce.Modules.Discounts.Core.DTO
         public string StripeCouponId { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public decimal NominalValue { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }

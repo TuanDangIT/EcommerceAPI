@@ -19,7 +19,7 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
             builder.Property(o => o.Status)
                 .HasConversion<string>()
                 .IsRequired();
-            builder.Property(o => o.Justification)
+            builder.Property(o => o.Reason)
                 .HasMaxLength(256)
                 .IsRequired();
             builder.Property(o => o.CreatedAt)

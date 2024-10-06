@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Core.DTO
 {
-    public class PercentageCouponBrowseDto
+    public class OfferDetailsDto
     {
         public int Id { get; set; }
-        public string StripeCouponId { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-        public decimal Percent { get; set; }
+        public decimal Price { get; set; }
+        public decimal OldPrice { get; set; }
+        public decimal Difference { get; set; }
+        public string Reason { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
     }
