@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Shared.Abstractions.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -49,6 +50,12 @@ namespace Ecommerce.Shared.Infrastructure.Auth
 
                 });
             return services;
+        }
+        public static WebApplication UseAuth(this WebApplication app)
+        {
+            app.UseAuthentication();
+            app.UseAuthorization();
+            return app;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Ecommerce.Shared.Infrastructure.Auth
             _timeProvider = timeProvider;
             _signingCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authOptions.IssuerSigningKey)), SecurityAlgorithms.HmacSha256);
         }
-        public JsonWebToken GenerateAccessToken(string userId, string username, string role = "Customer")
+        public JsonWebToken GenerateAccessToken(string userId, string username, string role)
         {
             if (string.IsNullOrWhiteSpace(userId))
             {

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Core.DTO
 {
-    public class SignUpDto
+    public class EmployeeCreateDto
     {
-        [Required]  
+        [Required]
         public string FullName { get; set; } = string.Empty;
         [EmailAddress]
         [Length(2, 64)]
@@ -28,6 +28,11 @@ namespace Ecommerce.Modules.Users.Core.DTO
         [Required]
         [Length(2, 16)]
         public string Username { get; set; } = string.Empty;
-        //public string? Role { get; set; }
+        [Required]
+        public string JobPosition { get; set; } = string.Empty;
+        [Required]
+        [AllowedValues("Manager", "Employee",
+            ErrorMessage = "You only have 2 options: Manager or Employee.")]
+        public string Role { get; set; } = string.Empty;
     }
 }

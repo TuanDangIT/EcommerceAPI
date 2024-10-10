@@ -16,13 +16,19 @@ namespace Ecommerce.Modules.Users.Core.Services
     internal class IdentityService : IIdentityService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IRoleRepository _roleRepository;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly TimeProvider _timeProvider;
         private readonly IAuthManager _authManager;
+        private const int _maxFailedAccessAttempts = 5;
+        private const int _lockoutTimeSpan = 5;
+        private const string _customerRoleName = "Customer";
 
-        public IdentityService(IUserRepository userRepository, IPasswordHasher<User> passwordHasher, TimeProvider timeProvider, IAuthManager authManager)
+        public IdentityService(IUserRepository userRepository, IRoleRepository roleRepository, IPasswordHasher<User> passwordHasher, 
+            TimeProvider timeProvider, IAuthManager authManager)
         {
             _userRepository = userRepository;
+            _roleRepository = roleRepository;
             _passwordHasher = passwordHasher;
             _timeProvider = timeProvider;
             _authManager = authManager;
@@ -30,20 +36,36 @@ namespace Ecommerce.Modules.Users.Core.Services
         public async Task<JsonWebToken> SignInAsync(SignInDto dto)
         {
             var user = await _userRepository.GetByEmailAsync(dto.Email);
-            if(user is null)
+            var now = _timeProvider.GetUtcNow().UtcDateTime;
+            if (user is null)
             {
                 throw new InvalidCredentialsException();
+            }
+            if(user.LockoutEnd is not null && user.LockoutEnd > now)
+            {
+                throw new UserLockedOutException((TimeSpan)(user.LockoutEnd - now));
             }
             var passwordResult = _passwordHasher.VerifyHashedPassword(user, user.Password, dto.Password);
             if(passwordResult is PasswordVerificationResult.Failed)
             {
+                user.FailedAttempts++;
+                if(user.FailedAttempts > _maxFailedAccessAttempts)
+                {
+                    user.LockoutEnd = now + TimeSpan.FromMinutes(_lockoutTimeSpan);
+                }
+                await _userRepository.UpdateAsync();
                 throw new InvalidCredentialsException();
             }
             if(user.IsActive is false)
             {
                 throw new UserNotActiveException(user.Id);
             }
-            var jwt = _authManager.GenerateAccessToken(user.Id.ToString(), user.Username);
+            if(user.LockoutEnd is not null)
+            {
+                user.LockoutEnd = null;
+                user.FailedAttempts = 0;
+            }
+            var jwt = _authManager.GenerateAccessToken(user.Id.ToString(), user.Username, user.Role.Name);
             var generatedRefreshToken = _authManager.GenerateRefreshToken();
             var refreshToken = await _userRepository.AddRefreshTokenAsync(user, generatedRefreshToken);
             jwt.RefreshTokenExpiryTime = refreshToken.RefreshTokenExpiryTime;
@@ -64,17 +86,9 @@ namespace Ecommerce.Modules.Users.Core.Services
                 throw new UsernameInUseException();
             }
             var password = _passwordHasher.HashPassword(default!, dto.Password);
-            var user = new User()
-            {
-                Id = dto.Id,
-                Email = email,
-                Password = password,
-                Username = dto.Username,
-                Role = dto.Role?.ToLowerInvariant() ?? "Customer",
-                CreatedAt = _timeProvider.GetUtcNow().UtcDateTime,
-                IsActive = true,
-            };
-            await _userRepository.AddAsync(user);
+            var role = await _roleRepository.GetAsync(_customerRoleName);
+            var customer = new Customer(Guid.NewGuid(), dto.FullName, email, password, dto.Username, role!, _timeProvider.GetUtcNow().UtcDateTime);
+            await _userRepository.AddAsync(customer);
         }
         public async Task<JsonWebToken> RefreshTokenAsync(TokenDto dto)
         {
@@ -93,46 +107,47 @@ namespace Ecommerce.Modules.Users.Core.Services
             jwt.RefreshToken = newRefreshToken.Token;
             return jwt;
         }
-        public async Task DeleteAsync(Guid id)
-        {
-            await _userRepository.DeleteAsync(id);
-        }
+        //public async Task DeleteAsync(Guid id)
+        //{
+        //    await _userRepository.DeleteAsync(id);
+        //}
 
 
-        public async Task UpdateAsync(UserDto userDto)
-        {
-            await _userRepository.UpdateAsync(new User()
-            {
-                Id = userDto.Id,
-                Email = userDto.Email,
-                Role = userDto.Role,
-                UpdatedAt = _timeProvider.GetUtcNow().UtcDateTime
-            });
-        }
-        public async Task<UserDto?> GetAsync(Guid id)
-        {
-            var user = await _userRepository.GetByIdAsync(id);
-            return user is null ? null : new UserDto()
-            {
-                Id = user.Id,
-                Email = user.Email,
-                Role = user.Role,
-                CreatedAt = user.CreatedAt,
-                LastUpdatedAt = user.UpdatedAt,
-            };
-        }
+        //public async Task UpdateAsync(UserDto userDto)
+        //{
+        //    await _userRepository.UpdateAsync(new User()
+        //    {
+        //        Id = userDto.Id,
+        //        Email = userDto.Email,
+        //        Role = userDto.Role,
+        //        UpdatedAt = _timeProvider.GetUtcNow().UtcDateTime
+        //    });
+        //}
+        //public async Task<UserDto?> GetAsync(Guid id)
+        //{
+        //    var user = await _userRepository.GetByIdAsync(id);
+        //    return user is null ? null : new UserDto()
+        //    {
+        //        Id = user.Id,
+        //        Email = user.Email,
+        //        Role = user.Role.Name,
+        //        CreatedAt = user.CreatedAt,
+        //        UpdatedAt = user.UpdatedAt,
+        //    };
+        //}
 
-        public async Task<UserDto?> GetAsync(string email)
-        {
-            var user = await _userRepository.GetByEmailAsync(email);
-            return user is null ? null : new UserDto()
-            {
-                Id = user.Id,
-                Email = user.Email,
-                Role = user.Role,
-                CreatedAt = user.CreatedAt,
-                LastUpdatedAt = user.UpdatedAt,
-            };
-        }
+        //public async Task<UserDto?> GetAsync(string email)
+        //{
+        //    var user = await _userRepository.GetByEmailAsync(email);
+        //    return user is null ? null : new UserDto()
+        //    {
+        //        Id = user.Id,
+        //        Email = user.Email,
+        //        Role = user.Role.Name,
+        //        CreatedAt = user.CreatedAt,
+        //        UpdatedAt = user.UpdatedAt,
+        //    };
+        //}
+
     }
 }

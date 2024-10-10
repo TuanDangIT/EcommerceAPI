@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Ecommerce.Modules.Users.Core.Entities.Enums;
 
 namespace Ecommerce.Modules.Users.Core.DAL.Configuration
 {
@@ -19,9 +20,7 @@ namespace Ecommerce.Modules.Users.Core.DAL.Configuration
                 .IsRequired()
                 .HasMaxLength(64);
             builder.HasIndex(x => x.Email).IsUnique();
-            builder.Property(x => x.Password).IsRequired()
-                .HasMaxLength(64);
-            builder.Property(x => x.Role).IsRequired();
+            builder.Property(x => x.Password).IsRequired();
             builder.Property(x => x.Username)
                 .IsRequired()
                 .HasMaxLength(16);
@@ -31,6 +30,16 @@ namespace Ecommerce.Modules.Users.Core.DAL.Configuration
             //builder.Property(x => x.LastUpdatedAt)
             //    .HasColumnType("timestamp without time zone");
             builder.OwnsOne(x => x.RefreshToken);
+            //builder.Property(u => u.Role)
+            //    .IsRequired();
+            //builder.HasOne(u => u.Role)
+            //    .WithMany(r => r.Users)
+            //    .HasForeignKey(u => u.RoleId);
+            builder.HasDiscriminator(u => u.Type)
+                .HasValue<Employee>(UserType.Employee)
+                .HasValue<Customer>(UserType.Customer);
+            builder.Property(u => u.Type)
+                .HasConversion<string>();
         }
     }
 }

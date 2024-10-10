@@ -27,17 +27,17 @@ namespace Ecommerce.Modules.Users.Api.Controllers
             _contextService = contextService;
         }
         [HttpPost("sign-in")]
-        public async Task<ActionResult<ApiResponse<JsonWebToken>>> SignIn([FromBody]SignInDto dto)
+        public async Task<ActionResult<ApiResponse<JsonWebToken>>> SignIn([FromBody] SignInDto dto)
             => Ok(new ApiResponse<JsonWebToken>(HttpStatusCode.OK, await _identityService.SignInAsync(dto)));
         [HttpPost("sign-up")]
-        public async Task<ActionResult> SignUp([FromBody]SignUpDto dto)
+        public async Task<ActionResult> SignUp([FromBody] SignUpDto dto)
         {
             await _identityService.SignUpAsync(dto);
             return Created();
         }
-        [HttpGet]
-        [Authorize]
-        public async Task<ActionResult<ApiResponse<UserDto?>>> GetAsync()
-            => OkOrNotFound<UserDto?>(await _identityService.GetAsync(_contextService.Identity!.Id), "User");
+        //[HttpGet]
+        //[Authorize]
+        //public async Task<ActionResult<ApiResponse<UserDto?>>> GetAsync()
+        //    => OkOrNotFound<UserDto?>(await _identityService.GetAsync(_contextService.Identity!.Id), "User");
     }
 }

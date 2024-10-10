@@ -81,6 +81,7 @@ namespace Ecommerce.Shared.Infrastructure
                 return Results.Ok("Ecommerce API is working!");
             });
             app.UseHttpsRedirection();
+            app.UseAuth();
             app.MapControllers();
             return app;
         }

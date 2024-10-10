@@ -28,7 +28,7 @@ namespace Ecommerce.Shared.Infrastructure.Storage
         //    var a = blobClient.Uri;
         //    using var response = await blobClient.DeleteAsync();
         //    if(response.IsError)
-        //    {
+        //    { 
         //        throw new BlobStorageFileNotDeletedException(fileName);
         //    }
         //}

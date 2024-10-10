@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Users.Core.Entities;
+using Ecommerce.Modules.Users.Core.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -38,28 +39,29 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
             await _dbContext.SaveChangesAsync();
             return refreshToken;
         }
-        public async Task DeleteAsync(Guid id)
+        //public async Task DeleteAsync(Guid userId)
+        //    => await _dbContext.Users.Where(u => u.Id == userId).ExecuteDeleteAsync();
+
+        public async Task DeleteAsync(Guid userId)
         {
-            var user = new User()
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user is null)
             {
-                Id = id
-            };
-            var entry = _dbContext.Attach(user);
-            entry.State = EntityState.Deleted;
+                throw new UserNotFoundException(userId);
+            }
             await _dbContext.SaveChangesAsync();
         }
-
-        public Task<User?> GetByIdAsync(Guid id) => _dbContext.Users.SingleOrDefaultAsync(x => x.Id == id);
+        public Task<User?> GetByIdAsync(Guid userId)
+            => _dbContext.Users
+            .Include(u => u.Role)
+            .SingleOrDefaultAsync(x => x.Id == userId);
 
         public Task<User?> GetByEmailAsync(string email) => _dbContext.Users.SingleOrDefaultAsync(x => x.Email == email);
 
         public Task<User?> GetByUsernameAsync(string username) => _dbContext.Users.SingleOrDefaultAsync(x => x.Username == username);
 
-        public async Task UpdateAsync(User user)
-        {
-            _dbContext.Users.Update(user);
-            await _dbContext.SaveChangesAsync();
-        }
-        public Task<List<User>> GetAllAsync() => _dbContext.Users.ToListAsync();
+        public async Task UpdateAsync()
+            => await _dbContext.SaveChangesAsync();
+        //public Task<List<User>> GetAllAsync() => _dbContext.Users.ToListAsync();
     }
 }
