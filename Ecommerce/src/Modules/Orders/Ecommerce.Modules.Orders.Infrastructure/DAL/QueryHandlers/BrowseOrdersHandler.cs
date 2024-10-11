@@ -46,7 +46,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 .AsNoTracking()
                 .ToListAsync();
             bool isFirstPage = request.CursorDto is null
-                || (request.CursorDto is not null && orders.First().Id == _dbContext.Orders.OrderBy(g => g.Id).AsNoTracking().First().Id);
+                || (request.CursorDto is not null && orders.First().Id == _dbContext.Orders.OrderBy(o => o.Id).AsNoTracking().First().Id);
             bool hasNextPage = orders.Count > request.PageSize 
                 || (request.CursorDto is not null && request.IsNextPage == false);
             OrderCursorDto nextCursor = hasNextPage ?

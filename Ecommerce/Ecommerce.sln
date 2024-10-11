@@ -59,7 +59,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce.Modules.Inventory
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce.Modules.Discounts.Api", "src\Modules\Discounts\Ecommerce.Modules.Discounts.Api\Ecommerce.Modules.Discounts.Api.csproj", "{824E6850-4CC1-42C2-BAAA-882E70A63F56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Modules.Discounts.Core", "src\Modules\Discounts\Ecommerce.Modules.Discounts.Core\Ecommerce.Modules.Discounts.Core.csproj", "{DF57367F-3339-47D4-89C9-811F95BBD075}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce.Modules.Discounts.Core", "src\Modules\Discounts\Ecommerce.Modules.Discounts.Core\Ecommerce.Modules.Discounts.Core.csproj", "{DF57367F-3339-47D4-89C9-811F95BBD075}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

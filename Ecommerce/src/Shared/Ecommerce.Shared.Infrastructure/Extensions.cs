@@ -6,6 +6,7 @@ using Ecommerce.Shared.Infrastructure.DomainEvents;
 using Ecommerce.Shared.Infrastructure.Events;
 using Ecommerce.Shared.Infrastructure.Exceptions;
 using Ecommerce.Shared.Infrastructure.InPost;
+using Ecommerce.Shared.Infrastructure.Mails;
 using Ecommerce.Shared.Infrastructure.Messaging;
 using Ecommerce.Shared.Infrastructure.Modules;
 using Ecommerce.Shared.Infrastructure.Postgres;
@@ -45,6 +46,7 @@ namespace Ecommerce.Shared.Infrastructure
             services.AddPostgres();
             services.AddStripe();
             services.AddInpost();
+            services.AddMails();
             services.AddAzureBlobStorage();
             services.AddHostedService<AppInitializer>();
             services.AddControllers()
