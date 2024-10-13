@@ -15,4 +15,10 @@
     <ProjectReference Include="..\Ecommerce.Modules.Orders.Domain\Ecommerce.Modules.Orders.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Invoices\Features\BrowseInvoices\" />
+    <Folder Include="Invoices\Features\CreateInvoice\" />
+    <Folder Include="Invoices\Features\DownloadInvoice\" />
+  </ItemGroup>
+
 </Project>

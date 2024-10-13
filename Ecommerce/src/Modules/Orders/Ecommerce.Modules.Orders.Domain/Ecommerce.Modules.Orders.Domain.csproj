@@ -11,4 +11,9 @@
     <ProjectReference Include="..\..\..\Shared\Ecommerce.Shared.Infrastructure\Ecommerce.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Invoices\Entities\" />
+    <Folder Include="Invoices\InvoiceTemplates\" />
+  </ItemGroup>
+
 </Project>

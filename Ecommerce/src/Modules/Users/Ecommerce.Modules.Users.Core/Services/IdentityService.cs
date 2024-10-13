@@ -1,8 +1,10 @@
 ﻿using Ecommerce.Modules.Users.Core.DAL.Repositories;
 using Ecommerce.Modules.Users.Core.DTO;
 using Ecommerce.Modules.Users.Core.Entities;
+using Ecommerce.Modules.Users.Core.Events;
 using Ecommerce.Modules.Users.Core.Exceptions;
 using Ecommerce.Shared.Abstractions.Auth;
+using Ecommerce.Shared.Abstractions.Messaging;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,7 @@ namespace Ecommerce.Modules.Users.Core.Services
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly IPasswordHasher<User> _passwordHasher;
+        private readonly IMessageBroker _messageBroker;
         private readonly TimeProvider _timeProvider;
         private readonly IAuthManager _authManager;
         private const int _maxFailedAccessAttempts = 5;
@@ -25,11 +28,12 @@ namespace Ecommerce.Modules.Users.Core.Services
         private const string _customerRoleName = "Customer";
 
         public IdentityService(IUserRepository userRepository, IRoleRepository roleRepository, IPasswordHasher<User> passwordHasher, 
-            TimeProvider timeProvider, IAuthManager authManager)
+            IMessageBroker messageBroker, TimeProvider timeProvider, IAuthManager authManager)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
             _passwordHasher = passwordHasher;
+            _messageBroker = messageBroker;
             _timeProvider = timeProvider;
             _authManager = authManager;
         }
@@ -87,8 +91,10 @@ namespace Ecommerce.Modules.Users.Core.Services
             }
             var password = _passwordHasher.HashPassword(default!, dto.Password);
             var role = await _roleRepository.GetAsync(_customerRoleName);
-            var customer = new Customer(Guid.NewGuid(), dto.FullName, email, password, dto.Username, role!, _timeProvider.GetUtcNow().UtcDateTime);
+            var newGuid = Guid.NewGuid();
+            var customer = new Customer(newGuid, dto.FullName, email, password, dto.Username, role!, _timeProvider.GetUtcNow().UtcDateTime);
             await _userRepository.AddAsync(customer);
+            await _messageBroker.PublishAsync(new CustomerActivated(newGuid, email));
         }
         public async Task<JsonWebToken> RefreshTokenAsync(TokenDto dto)
         {
