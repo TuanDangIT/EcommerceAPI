@@ -1,9 +1,11 @@
 ﻿using Ecommerce.Modules.Orders.Application.Delivery;
+using Ecommerce.Modules.Orders.Application.Invoices.Features.CreateInvoice;
 using Ecommerce.Modules.Orders.Application.Orders.DTO;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrders;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateInvoice;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateLabel;
-using Ecommerce.Modules.Orders.Application.Orders.Features.Order.GetLabel;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Order.DownloadLabel;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.GetOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.SetParcels;
@@ -58,9 +60,9 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return NoContent();
         }
         [HttpGet("{orderId:guid}/label")]
-        public async Task<ActionResult<IFormFile>> GetLabel([FromRoute]Guid orderId)
+        public async Task<ActionResult<IFormFile>> DownloadLabel([FromRoute]Guid orderId)
         {
-            var result = await _mediator.Send(new GetLabel(orderId));
+            var result = await _mediator.Send(new DownloadLabel(orderId));
             return File(result.FileStream, result.MimeType, result.FileName);
         }
         [HttpPost("{orderId:guid}/label")]
@@ -75,6 +77,12 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             command = command with { OrderId = orderId };
             await _mediator.Send(command);
             return NoContent();
+        }
+        [HttpPost("{orderId:guid}/invoice")]
+        public async Task<ActionResult> CreateInvoice([FromRoute]Guid orderId)
+        {
+            var result = await _mediator.Send(new CreateInvoice(orderId));
+            return Ok(result);
         }
     }
 }

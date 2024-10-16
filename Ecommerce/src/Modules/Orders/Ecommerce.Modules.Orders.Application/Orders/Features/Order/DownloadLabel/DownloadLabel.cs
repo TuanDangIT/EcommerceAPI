@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.GetLabel
+namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.DownloadLabel
 {
-    public sealed record class GetLabel(Guid OrderId) : ICommand<(Stream FileStream, string MimeType, string FileName)>;
+    public sealed record class DownloadLabel(Guid OrderId) : ICommand<(Stream FileStream, string MimeType, string FileName)>;
 }

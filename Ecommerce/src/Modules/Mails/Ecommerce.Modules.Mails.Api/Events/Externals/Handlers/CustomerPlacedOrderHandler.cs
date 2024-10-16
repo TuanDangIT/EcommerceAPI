@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
 {
-    internal class CustomerPlacedOrderHandler : IEventHandler<CustomerPlacedOrder>
-    {
-        private readonly IMailService _mailService;
+    //internal class CustomerPlacedOrderHandler : IEventHandler<CustomerPlacedOrder>
+    //{
+    //    private readonly IMailService _mailService;
 
-        public CustomerPlacedOrderHandler(IMailService mailService)
-        {
-            _mailService = mailService;
-        }
-        public Task HandleAsync(CustomerPlacedOrder @event)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    //    public CustomerPlacedOrderHandler(IMailService mailService)
+    //    {
+    //        _mailService = mailService;
+    //    }
+    //    public Task HandleAsync(CustomerPlacedOrder @event)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 }

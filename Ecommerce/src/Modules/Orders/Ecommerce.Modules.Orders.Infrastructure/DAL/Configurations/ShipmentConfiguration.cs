@@ -57,6 +57,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                     w.Property(w => w.Unit)
                         .IsRequired();
                 });
+                p.ToTable("Parcels");
             });
             builder.OwnsOne(s => s.Insurance, i =>
             {

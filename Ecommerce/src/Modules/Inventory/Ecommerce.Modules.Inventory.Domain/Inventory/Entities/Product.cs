@@ -29,6 +29,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public string? Location { get; private set; }
         public string Description { get; private set; } = string.Empty;
         public string? AdditionalDescription { get; private set; }
+        public bool IsListed { get; private set; } = false;
         private readonly List<Parameter> _parameters = [];
         public IEnumerable<Parameter> Parameters => _parameters;
         private List<ProductParameter> _productParameters = [];
@@ -99,6 +100,10 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             => _productParameters = parameters;
         public void SetUpdateAt(DateTime updateAt)
             => UpdatedAt = updateAt;
+        public void List()
+            => IsListed = true;
+        public void Unlist()
+            => IsListed = false;
         private static void IsSkuValid(string sku)
         {
             if (sku.Length >= 8 && sku.Length <= 16) 
@@ -153,6 +158,5 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
                 throw new ProductInvalidSkuException();
             }
         }
-
     }
 }

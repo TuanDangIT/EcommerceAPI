@@ -1,8 +1,10 @@
 ﻿using Ecommerce.Modules.Orders.Application.Delivery;
 using Ecommerce.Modules.Orders.Application.Stripe;
 using Ecommerce.Modules.Orders.Domain.Complaints.Repositories;
+using Ecommerce.Modules.Orders.Domain.Invoices.Repositories;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Modules.Orders.Domain.Returns.Repositories;
+using Ecommerce.Modules.Orders.Domain.Shipping.Repositories;
 using Ecommerce.Modules.Orders.Infrastructure.DAL;
 using Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories;
 using Ecommerce.Modules.Orders.Infrastructure.Delivery;
@@ -29,6 +31,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IReturnRepository, ReturnRepository>();
             services.AddScoped<IComplaintRepository, ComplaintRepository>();
+            services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+            services.AddScoped<IShipmentRepository, ShipmentRepository>();
             services.AddSingleton<IStripeService, StripeService>();
             services.AddScoped<IDeliveryService, DeliveryService>();
             services.AddHttpClient(_inPost, (sp, client) =>

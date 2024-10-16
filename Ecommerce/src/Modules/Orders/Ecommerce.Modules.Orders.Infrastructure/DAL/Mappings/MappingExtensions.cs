@@ -1,9 +1,13 @@
 ﻿using Ecommerce.Modules.Orders.Application.Complaints.DTO;
+using Ecommerce.Modules.Orders.Application.Invoices.DTO;
 using Ecommerce.Modules.Orders.Application.Orders.DTO;
 using Ecommerce.Modules.Orders.Application.Returns.DTO;
+using Ecommerce.Modules.Orders.Application.Shipping.DTO;
 using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
+using Ecommerce.Modules.Orders.Domain.Invoices.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities;
+using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
 
 namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
 {
@@ -15,7 +19,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Id = order.Id,
                 CustomerId = order.Customer.UserId,
                 FullName = order.Customer.FirstName + " " + order.Customer.LastName,
-                Status = order.Status,
+                Status = order.Status.ToString(),
                 TotalSum = order.TotalSum,
                 OrderPlacedAt = order.OrderPlacedAt,
                 UpdatedAt = order.UpdatedAt,
@@ -28,21 +32,13 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 TotalSum = order.TotalSum,
                 Products = order.Products.Select(p => p.AsDto()),
                 //Shipment = order.ShipmentDetails.AsDto(),
-                Payment = order.Payment,
-                Status = order.Status,
-                AdditionalInformation = order.AdditionalInformation,
+                Payment = order.Payment.ToString(),
+                Status = order.Status.ToString(),
+                ClientAdditionalInformation = order.ClientAdditionalInformation,
+                CompanyAdditionalInformation = order.CompanyAdditionalInformation,
                 DiscountCode = order.DiscountCode,
                 OrderPlacedAt = order.OrderPlacedAt,
                 UpdatedAt = order.UpdatedAt
-            };
-        public static ShipmentDto AsDto(this ShipmentDetails shipment)
-            => new()
-            {
-                City = shipment.City,
-                PostalCode = shipment.PostalCode,
-                StreetName = shipment.StreetName,
-                StreetNumber = shipment.StreetNumber,
-                AparmentNumber = shipment.ApartmentNumber
             };
         public static ProductDto AsDto(this Product product)
             => new()
@@ -87,7 +83,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 CustomerFullName = complaint.Order.Customer.FirstName + " " + complaint.Order.Customer.LastName,
                 OrderId = complaint.Order.Id,
                 Title = complaint.Title,
-                Status = complaint.Status,
+                Status = complaint.Status.ToString(),
                 CreatedAt = complaint.CreatedAt,
                 UpdatedAt = complaint.UpdatedAt,
             };
@@ -106,7 +102,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                     AdditionalInformation = complaint.Decision.AdditionalInformation,
                     RefundedAmount = complaint.Decision.RefundedAmount
                 },
-                Status = complaint.Status,
+                Status = complaint.Status.ToString(),
                 CreatedAt = complaint.CreatedAt,
                 UpdatedAt = complaint.UpdatedAt
             };
@@ -116,7 +112,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Id = @return.Id,
                 OrderId = @return.Order.Id,
                 ReasonForReturn = @return.ReasonForReturn,
-                Status = @return.Status,
+                Status = @return.Status.ToString(),
                 CreatedAt = @return.CreatedAt,
                 UpdatedAt = @return.UpdatedAt
             };
@@ -128,9 +124,28 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Products = @return.Products.Select(p => p.AsDto()),
                 ReasonForReturn = @return.ReasonForReturn,
                 AdditionalNote = @return.AdditionalNote,
-                Status = @return.Status,
+                Status = @return.Status.ToString(),
                 CreatedAt = @return.CreatedAt,
                 UpdatedAt = @return.UpdatedAt
+            };
+        public static InvoiceBrowseDto AsBrowseDto(this Invoice invoice)
+            => new()
+            {
+                Id = invoice.Id,
+                CustomerFullName = invoice.Order.Customer.FirstName + " " + invoice.Order.Customer.LastName,
+                InvoiceNo = invoice.InvoiceNo,
+                InvoiceUrlPath = invoice.InvoiceUrlPath,
+                CreatedAt = invoice.CreatedAt
+            };
+        public static ShipmentBrowseDto AsBrowseDto(this Shipment shipment)
+            => new()
+            {
+                Id = shipment.Id,
+                OrderId = shipment.OrderId,
+                LabelId = shipment.LabelId!,
+                CreatedAt = (DateTime)shipment.LabelCreatedAt!,
+                ShippingService = shipment.Service,
+                TrackingNumber = shipment.TrackingNumber!
             };
     }
 }

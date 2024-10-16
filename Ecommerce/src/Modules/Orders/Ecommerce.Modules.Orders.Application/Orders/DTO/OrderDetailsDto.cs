@@ -14,9 +14,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.DTO
         public decimal TotalSum { get; set; }
         public IEnumerable<ProductDto> Products { get; set; } = [];
         public ShipmentDto Shipment { get; set; } = new();
-        public PaymentMethod Payment { get; set; }
-        public OrderStatus Status { get; set; }
-        public string? AdditionalInformation { get; set; }
+        public string Payment { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public string? ClientAdditionalInformation { get; set; }
+        public string? CompanyAdditionalInformation { get; set; }
         public string? DiscountCode { get; set; }
         public DateTime OrderPlacedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }

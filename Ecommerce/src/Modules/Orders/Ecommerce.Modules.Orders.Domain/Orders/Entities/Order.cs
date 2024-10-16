@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
+using Ecommerce.Modules.Orders.Domain.Invoices.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Orders.Exceptions;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities;
@@ -23,17 +24,19 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public PaymentMethod Payment { get; set; }
         public OrderStatus Status { get; set; } = OrderStatus.Placed;
         public bool IsCompleted => Status is OrderStatus.Cancelled || Status is OrderStatus.Completed || Status is OrderStatus.Returned;
-        public string? AdditionalInformation { get; set; }
+        public string? ClientAdditionalInformation { get; set; }
+        public string? CompanyAdditionalInformation { get; set; }
         public string? DiscountCode { get; set; }
         public string StripePaymentIntentId { get; set; } = string.Empty;
         public Shipment Shipment { get; set; } = default!;
         public DateTime OrderPlacedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public Invoice? Invoice { get; set; } 
         //private readonly List<Complaint> _complaints = [];
         //public IEnumerable<Complaint> Complaints => _complaints;
         //public Return? ReturnOrder { get; set; }
         public Order(Guid id, Customer customer, IEnumerable<Product> products, decimal totalSum, /*ShipmentDetails shipmentDetails,*/Shipment shipment,
-            PaymentMethod paymentMethod, DateTime orderPlacedAt, string? additionalInformation, string? discountCode, string stripePaymentIntentId)
+            PaymentMethod paymentMethod, DateTime orderPlacedAt, string? clientAdditionalInformation, string? discountCode, string stripePaymentIntentId)
         {
             Id = id;
             Customer = customer;
@@ -42,9 +45,10 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             //ShipmentDetails = shipmentDetails;
             Payment = paymentMethod;
             OrderPlacedAt = orderPlacedAt;
-            AdditionalInformation = additionalInformation;
+            ClientAdditionalInformation = clientAdditionalInformation;
             DiscountCode = discountCode;
             StripePaymentIntentId = stripePaymentIntentId;
+            TotalSum = totalSum;
         }
         public Order()
         {
@@ -111,6 +115,11 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             UpdatedAt = updatedAt;
             Shipment.SetLabelId(labelId);
             Shipment.SetTrackingNumber(trackingNumber); 
+        }
+        public void SetCompanyAdditionalInformation(string companyAdditionalInformation, DateTime updatedAt)
+        {
+            UpdatedAt = updatedAt;
+            CompanyAdditionalInformation = companyAdditionalInformation;
         }
         
     }

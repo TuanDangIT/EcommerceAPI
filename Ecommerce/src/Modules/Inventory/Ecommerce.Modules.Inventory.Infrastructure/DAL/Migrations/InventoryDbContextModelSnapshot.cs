@@ -215,6 +215,9 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                         .HasMaxLength(13)
                         .HasColumnType("character varying(13)");
 
+                    b.Property<bool>("IsListed")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Location")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");

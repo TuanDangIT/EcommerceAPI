@@ -35,7 +35,7 @@ namespace Ecommerce.Shared.Infrastructure.Storage
         public async Task DeleteManyAsync(IEnumerable<string> fileNames, string containerName)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-            BlobBatchClient blobBatchClient = containerClient.GetBlobBatchClient();
+            var blobBatchClient = containerClient.GetBlobBatchClient();
             var blobStorageUri = blobBatchClient.Uri;
             List<Uri> imageUris = new();
             foreach(var fileName in fileNames)
@@ -51,12 +51,12 @@ namespace Ecommerce.Shared.Infrastructure.Storage
         public async Task<string> UploadAsync(IFormFile blob, string fileName, string containerName)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-            BlobClient blobClient = containerClient.GetBlobClient(fileName);
+            var blobClient = containerClient.GetBlobClient(fileName);
             await using(Stream data = blob.OpenReadStream())
             {
                 var response = await blobClient.UploadAsync(data, new BlobHttpHeaders()
                 {
-                    ContentType = blob.ContentType
+                    ContentType = /*blob.ContentType ?? */"application/pdf"
                 });
                 using var rawResponse = response.GetRawResponse();
                 if (rawResponse.IsError)
@@ -65,6 +65,24 @@ namespace Ecommerce.Shared.Infrastructure.Storage
                 }
             }
             return blobClient.Uri.AbsolutePath;
+        }
+        public async Task<BlobStorageDto> DownloadAsync(string fileName, string containerName)
+        {
+            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+            var file = containerClient.GetBlobClient(fileName);
+            if(!(await file.ExistsAsync()))
+            {
+                throw new BlobStorageFileNotFoundException(fileName);
+            }
+            var stream = await file.OpenReadAsync();
+            var content = await file.DownloadContentAsync();
+            var contentType = content.Value.Details.ContentType;
+            return new BlobStorageDto()
+            {
+                FileStream = stream,
+                ContentType = contentType,
+                FileName = fileName
+            };
         }
     }
 }

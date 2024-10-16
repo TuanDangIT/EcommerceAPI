@@ -12,7 +12,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.DTO
         public Guid Id { get; set; }
         public Guid? CustomerId { get; set; }
         public string FullName { get; set; } = string.Empty;
-        public OrderStatus Status { get; set; }
+        public string Status { get; set; } = string.Empty;
         public decimal TotalSum { get; set; }
         public DateTime OrderPlacedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }

@@ -23,10 +23,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         }
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedResult<OfferBrowseDto>>>> BrowseOffers([FromQuery]SieveModel model)
-        {
-            var result = await _offerService.BrowseAsync(model);
-            return PagedResult(result);
-        }
+            => PagedResult(await _offerService.BrowseAsync(model));
         [HttpGet("{offerId:int}")]
         public async Task<ActionResult<ApiResponse<OfferDetailsDto>>> GetOffer([FromRoute] int offerId)
             => OkOrNotFound(await _offerService.GetAsync(offerId), nameof(Offer));

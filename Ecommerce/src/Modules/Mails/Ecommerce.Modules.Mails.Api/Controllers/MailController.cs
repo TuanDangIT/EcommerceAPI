@@ -16,7 +16,7 @@ namespace Ecommerce.Modules.Mails.Api.Controllers
     internal class MailController : ControllerBase
     {
         private readonly IMailService _mailService;
-        private const string NotFoundTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.5";
+        private const string _notFoundTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.5";
 
         public MailController(IMailService mailService)
         {
@@ -45,7 +45,7 @@ namespace Ecommerce.Modules.Mails.Api.Controllers
             }
             return NotFound(new ProblemDetails()
             {
-                Type = NotFoundTypeUrl,
+                Type = _notFoundTypeUrl,
                 Title = $"{entityName}: {mailId} was not found.",
                 Status = (int)HttpStatusCode.NotFound
             });

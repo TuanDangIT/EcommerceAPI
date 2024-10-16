@@ -31,10 +31,10 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
         }
         public async Task<(int Id, string TrackingNumber)> CreateShipmentAsync(Shipment shipment)
         {
-            var client = _factory.CreateClient(_inPost);
+            using var client = _factory.CreateClient(_inPost);
             var id = await PostCreateShipmentRequestAsync(shipment, client);
+            await Task.Delay(6000);
             var trackingNumber = await GetTrackingNumberFromCreatedShipmentAsync(id, client);
-            client.Dispose();
             return (id, trackingNumber);
         }
         public async Task<(Stream FileStream, string MimeType, string FileName)> GetLabelAsync(Shipment shipment)

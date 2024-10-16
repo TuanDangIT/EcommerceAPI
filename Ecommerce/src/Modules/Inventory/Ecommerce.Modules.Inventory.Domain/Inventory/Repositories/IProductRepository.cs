@@ -18,5 +18,6 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Repositories
         Task<IEnumerable<Product>> GetAllThatContainsInArrayAsync(Guid[] productIds);
         Task<Product?> GetAsync(Guid productId);
         Task DeleteProductParametersAndImagesRelatedToProduct(Guid productId);
+        Task UpdateListedFlag(Guid[] productIds, bool isListed);
     }
 }

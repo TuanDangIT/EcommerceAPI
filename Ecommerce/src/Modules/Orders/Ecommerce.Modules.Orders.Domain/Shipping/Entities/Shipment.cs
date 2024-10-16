@@ -12,6 +12,7 @@ namespace Ecommerce.Modules.Orders.Domain.Shipping.Entities
         public int Id { get; set; } 
         public string? TrackingNumber { get; set; }
         public string? LabelId { get; set; } 
+        public DateTime? LabelCreatedAt { get; set; }
         public Receiver Receiver { get; set; } = new();
         public List<Parcel>? Parcels { get; set; } = [];
         public Insurance? Insurance { get; set; }
@@ -33,5 +34,7 @@ namespace Ecommerce.Modules.Orders.Domain.Shipping.Entities
             => TrackingNumber = trackingNumber;
         public void SetLabelId(string labelId)
             => LabelId = labelId;   
+        public void SetLabelCreatedAt(DateTime labelCreatedAt)
+            => LabelCreatedAt = labelCreatedAt;
     }
 }

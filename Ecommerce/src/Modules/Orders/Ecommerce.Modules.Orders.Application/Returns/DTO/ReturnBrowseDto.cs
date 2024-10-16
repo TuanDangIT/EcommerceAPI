@@ -12,7 +12,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.DTO
         public Guid Id { get; set; }
         public Guid OrderId { get; set; }
         public string ReasonForReturn { get; set; } = string.Empty;
-        public ReturnStatus Status { get; set; }
+        public string Status { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }

@@ -29,6 +29,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
                 .Include(o => o.Products)
                 .Include(o => o.Shipment)
                 .ThenInclude(s => s.Parcels)
+                .Include(o => o.Shipment)
+                .ThenInclude(s => s.Receiver)
+                .ThenInclude(r => r.Address)
+                .Include(o => o.Customer)
+                .Include(o => o.Invoice)
                 .SingleOrDefaultAsync(o => o.Id == orderId);
 
         public async Task UpdateAsync()

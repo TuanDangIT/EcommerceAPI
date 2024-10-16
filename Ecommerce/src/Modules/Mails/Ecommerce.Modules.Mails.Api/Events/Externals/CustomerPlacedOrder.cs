@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Mails.Api.Events.Externals
 {
-    internal class CustomerPlacedOrder : IEvent
-    {
-    }
+    //internal class CustomerPlacedOrder : IEvent
+    //{
+    //}
 }

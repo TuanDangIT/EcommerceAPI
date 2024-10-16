@@ -9,5 +9,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.BrowseReturns
 {
-    public sealed record class BrowseReturns : IQuery<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>;
+    public sealed record class BrowseReturns(ReturnCursorDto CursorDto, bool? IsNextPage, int PageSize) : IQuery<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>;
 }

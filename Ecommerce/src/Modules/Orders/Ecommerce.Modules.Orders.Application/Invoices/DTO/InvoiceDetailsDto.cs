@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Shared.Abstractions.BloblStorage
+namespace Ecommerce.Modules.Orders.Application.Invoices.DTO
 {
-    internal class BlobStorageResponse
+    public class InvoiceDetailsDto
     {
     }
 }

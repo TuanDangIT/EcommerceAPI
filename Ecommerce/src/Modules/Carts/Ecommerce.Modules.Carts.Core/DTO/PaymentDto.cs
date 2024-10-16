@@ -11,6 +11,5 @@ namespace Ecommerce.Modules.Carts.Core.DTO
     {
         public Guid Id { get; set; }
         public string PaymentMethod { get; set; } = string.Empty;
-        public bool IsActive { get; set; }
     }
 }

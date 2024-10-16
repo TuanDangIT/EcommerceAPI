@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Application.Shipping.BrowseShippings
+namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
 {
-    internal class BrowseShippings
+    internal class InvoiceCreatedHandler
     {
     }
 }

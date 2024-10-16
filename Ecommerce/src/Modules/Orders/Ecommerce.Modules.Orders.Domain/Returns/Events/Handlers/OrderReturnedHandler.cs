@@ -25,11 +25,7 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Events.Handlers
         }
         public async Task HandleAsync(OrderReturned @event)
         {
-            var order = await _orderRepository.GetOrderAsync(@event.OrderId);
-            if (order is null)
-            {
-                throw new OrderNotFoundException(@event.OrderId);
-            }
+            var order = await _orderRepository.GetOrderAsync(@event.OrderId) ?? throw new OrderNotFoundException(@event.OrderId);
             var @return = await _returnRepository.GetByOrderIdAsync(@event.OrderId);
             if(@return is not null)
             {

@@ -8,25 +8,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.GetLabel
+namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.DownloadLabel
 {
-    internal class GetLabelHandler : ICommandHandler<GetLabel, (Stream FileStream, string MimeType, string FileName)>
+    internal class DownloadLabelHandler : ICommandHandler<DownloadLabel, (Stream FileStream, string MimeType, string FileName)>
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IDeliveryService _deliveryService;
 
-        public GetLabelHandler(IOrderRepository orderRepository, IDeliveryService deliveryService)
+        public DownloadLabelHandler(IOrderRepository orderRepository, IDeliveryService deliveryService)
         {
             _orderRepository = orderRepository;
             _deliveryService = deliveryService;
         }
-        public async Task<(Stream FileStream, string MimeType, string FileName)> Handle(GetLabel request, CancellationToken cancellationToken)
+        public async Task<(Stream FileStream, string MimeType, string FileName)> Handle(DownloadLabel request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetOrderAsync(request.OrderId);
-            if (order is null)
-            {
-                throw new OrderNotFoundException(request.OrderId);
-            }
+            var order = await _orderRepository.GetOrderAsync(request.OrderId) ?? throw new OrderNotFoundException(request.OrderId);
             var file = await _deliveryService.GetLabelAsync(order.Shipment);
             return file;
         }

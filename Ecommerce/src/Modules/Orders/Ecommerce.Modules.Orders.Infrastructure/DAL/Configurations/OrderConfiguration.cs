@@ -46,7 +46,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
             builder.Property(o => o.Status)
                 .IsRequired()
                 .HasConversion<string>();
-            builder.Property(cc => cc.AdditionalInformation)
+            builder.Property(cc => cc.ClientAdditionalInformation)
+                .HasMaxLength(256);
+            builder.Property(cc => cc.CompanyAdditionalInformation)
                 .HasMaxLength(256);
             //builder.Property(o => o.IsCompleted)
             //    .IsRequired();

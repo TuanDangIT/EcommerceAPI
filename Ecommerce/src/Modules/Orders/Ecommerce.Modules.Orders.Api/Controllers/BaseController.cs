@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Shared.Abstractions.Api;
+using Ecommerce.Shared.Infrastructure.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -34,6 +35,10 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
                 Title = $"{entityName} was not found.",
                 Status = (int)HttpStatusCode.NotFound
             });
+        }
+        protected ActionResult<ApiResponse<CursorPagedResult<TData, TCursor>>> CursorPagedResult<TData, TCursor>(CursorPagedResult<TData, TCursor> model)
+        {
+            return Ok(new ApiResponse<CursorPagedResult<TData, TCursor>>(HttpStatusCode.OK, model));
         }
     }
 }

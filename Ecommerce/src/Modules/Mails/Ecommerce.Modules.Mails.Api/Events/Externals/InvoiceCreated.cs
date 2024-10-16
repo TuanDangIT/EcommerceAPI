@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Domain.Shipping.Repositories
+namespace Ecommerce.Modules.Mails.Api.Events.Externals
 {
-    internal class ShipmentRepository
+    internal class InvoiceCreated
     {
     }
 }

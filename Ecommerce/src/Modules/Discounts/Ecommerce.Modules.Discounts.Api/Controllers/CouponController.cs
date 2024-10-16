@@ -24,10 +24,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         }
         [HttpGet("nominal-coupon")]
         public async  Task<ActionResult<ApiResponse<PagedResult<NominalCouponBrowseDto>>>> BrowseNominalCoupons([FromQuery]SieveModel model)
-        {
-            var result = await _couponService.BrowseNominalCouponsAsync(model);
-            return PagedResult(result);
-        }
+            => PagedResult(await _couponService.BrowseNominalCouponsAsync(model));
         [HttpGet("percentage-coupon")]
         public async Task<ActionResult<ApiResponse<PagedResult<PercentageCouponBrowseDto>>>> BrowsePercentageCoupons([FromQuery] SieveModel model)
         {

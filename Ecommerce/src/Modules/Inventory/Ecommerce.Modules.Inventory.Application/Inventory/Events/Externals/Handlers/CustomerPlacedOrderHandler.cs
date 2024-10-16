@@ -67,7 +67,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
                     }
 
                 }
-                await _auctionRepository.DeleteManyAsync(auctionsToDelete.ToArray());
+                await _auctionRepository.DeleteManyAsync([.. auctionsToDelete]);
+                await _productRepository.UpdateListedFlag([.. auctionsToDelete], false);
                 await _productRepository.UpdateAsync();
             }
         }

@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Ecommerce.Modules.Orders.Application.Shipping.DTO
+{
+    public class ShipmentCursorDto
+    {
+        public int? CursorId { get; set; }
+        public DateTime? CursorLabelCreatedAt { get; set; }
+    }
+}

@@ -25,11 +25,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         }
         [HttpGet("coupons/{stripeCouponId}")]
         public async Task<ActionResult<ApiResponse<PagedResult<DiscountBrowseDto>>>> BrowseDiscounts([FromRoute]string stripeCouponId, [FromQuery]SieveModel model)
-        {
-            var result = await _discountService.BrowseDiscountsAsync(stripeCouponId, model);
-            return PagedResult(result);
-            //return Ok(new ApiResponse<PagedResult<DiscountBrowseDto>>(HttpStatusCode.OK, result));
-        }
+            => PagedResult(await _discountService.BrowseDiscountsAsync(stripeCouponId, model));
         [HttpPost("coupons/{stripeCouponId}")]
         public async Task<ActionResult> CreateDiscount([FromRoute] string stripeCouponId, [FromBody] DiscountCreateDto dto)
         {

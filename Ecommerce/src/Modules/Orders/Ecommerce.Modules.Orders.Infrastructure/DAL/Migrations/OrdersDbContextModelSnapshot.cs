@@ -63,6 +63,37 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.ToTable("Complaints", "orders");
                 });
 
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Invoices.Entities.Invoice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("InvoiceNo")
+                        .IsRequired()
+                        .HasMaxLength(24)
+                        .HasColumnType("character varying(24)");
+
+                    b.Property<string>("InvoiceUrlPath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("Invoices", "orders");
+                });
+
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", b =>
                 {
                     b.Property<Guid>("Id")
@@ -109,7 +140,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("AdditionalInformation")
+                    b.Property<string>("ClientAdditionalInformation")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("CompanyAdditionalInformation")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
@@ -134,7 +169,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.Property<decimal>("TotalSum")
                         .HasColumnType("numeric");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -241,6 +276,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("LabelCreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("LabelId")
                         .HasColumnType("text");
 
@@ -294,6 +332,17 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         });
 
                     b.Navigation("Decision");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Invoices.Entities.Invoice", b =>
+                {
+                    b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", "Order")
+                        .WithOne("Invoice")
+                        .HasForeignKey("Ecommerce.Modules.Orders.Domain.Invoices.Entities.Invoice", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Order");
                 });
@@ -449,7 +498,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
                             b1.HasKey("ShipmentId", "Id");
 
-                            b1.ToTable("Parcel", "orders");
+                            b1.ToTable("Parcels", "orders");
 
                             b1.WithOwner()
                                 .HasForeignKey("ShipmentId");
@@ -480,7 +529,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
                                     b2.HasKey("ParcelShipmentId", "ParcelId");
 
-                                    b2.ToTable("Parcel", "orders");
+                                    b2.ToTable("Parcels", "orders");
 
                                     b2.WithOwner()
                                         .HasForeignKey("ParcelShipmentId", "ParcelId");
@@ -504,7 +553,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
                                     b2.HasKey("ParcelShipmentId", "ParcelId");
 
-                                    b2.ToTable("Parcel", "orders");
+                                    b2.ToTable("Parcels", "orders");
 
                                     b2.WithOwner()
                                         .HasForeignKey("ParcelShipmentId", "ParcelId");
@@ -599,6 +648,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                 {
                     b.Navigation("Customer")
                         .IsRequired();
+
+                    b.Navigation("Invoice");
 
                     b.Navigation("Shipment")
                         .IsRequired();
