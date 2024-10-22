@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.Services
 {
-    public interface IEventMapper
+    public interface IInventoryEventMapper
     {
         IMessage Map(IDomainEvent @event);
     }

@@ -39,9 +39,10 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return NoContent();
         }
         [HttpPost("{returnId:guid}/reject")]
-        public async Task<ActionResult> RejectReturn([FromRoute] Guid returnId)
+        public async Task<ActionResult> RejectReturn([FromRoute] Guid returnId, [FromBody] RejectReturn command)
         {
-            await _mediator.Send(new RejectReturn(returnId));
+            command = command with { ReturnId = returnId };
+            await _mediator.Send(command);
             return NoContent();
         }
         [HttpPut("{returnId:guid}/note")]

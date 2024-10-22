@@ -9,8 +9,10 @@ namespace Ecommerce.Modules.Users.Core.DTO
 {
     public class SignUpDto
     {
-        [Required]  
-        public string FullName { get; set; } = string.Empty;
+        [Required]
+        public string FirstName { get; set; } = string.Empty;
+        [Required]
+        public string LastName { get; set; } = string.Empty;
         [EmailAddress]
         [Length(2, 64)]
         [Required]

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Mails.Api.Controllers
 {
+    [Route("api/" + MailsModule.BasePath + "/[controller]")]
     internal class MailController : ControllerBase
     {
         private readonly IMailService _mailService;
@@ -22,8 +23,8 @@ namespace Ecommerce.Modules.Mails.Api.Controllers
         {
             _mailService = mailService;
         }
-        [HttpPost]
-        public async Task<ActionResult> SendMail([FromBody]MailSendDto dto)
+        [HttpPost()]
+        public async Task<ActionResult> SendMail([FromForm]MailSendDto dto)
         {
             await _mailService.SendAsync(dto);
             return NoContent();
@@ -34,21 +35,21 @@ namespace Ecommerce.Modules.Mails.Api.Controllers
             var result = await _mailService.BrowseAsync(dto, isNextPage, pageSize);
             return Ok(new ApiResponse<CursorPagedResult<MailBrowseDto, MailCursorDto>>(HttpStatusCode.OK, result));
         }
-        [HttpGet("{mailId:int}")]
-        public async Task<ActionResult<ApiResponse<MailDetailsDto>>> GetMail([FromRoute]int mailId)
-            => OkOrNotFound(await _mailService.GetAsync(mailId), mailId, "Mail");
-        private ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse>(TResponse? model, int mailId, string entityName)
-        {
-            if (model is not null)
-            {
-                return Ok(new ApiResponse<TResponse>(HttpStatusCode.OK, model));
-            }
-            return NotFound(new ProblemDetails()
-            {
-                Type = _notFoundTypeUrl,
-                Title = $"{entityName}: {mailId} was not found.",
-                Status = (int)HttpStatusCode.NotFound
-            });
-        }
+        //[HttpGet("{mailId:int}")]
+        //public async Task<ActionResult<ApiResponse<MailDetailsDto>>> GetMail([FromRoute]int mailId)
+        //    => OkOrNotFound(await _mailService.GetAsync(mailId), mailId, "Mail");
+        //private ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse>(TResponse? model, int mailId, string entityName)
+        //{
+        //    if (model is not null)
+        //    {
+        //        return Ok(new ApiResponse<TResponse>(HttpStatusCode.OK, model));
+        //    }
+        //    return NotFound(new ProblemDetails()
+        //    {
+        //        Type = _notFoundTypeUrl,
+        //        Title = $"{entityName}: {mailId} was not found.",
+        //        Status = (int)HttpStatusCode.NotFound
+        //    });
+        //}
     }
 }

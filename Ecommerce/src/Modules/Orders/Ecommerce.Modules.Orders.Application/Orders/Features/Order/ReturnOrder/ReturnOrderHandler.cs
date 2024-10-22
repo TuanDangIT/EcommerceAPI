@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.Exceptions;
+using Ecommerce.Modules.Orders.Application.Orders.Services;
 using Ecommerce.Modules.Orders.Domain.Orders.Events;
 using Ecommerce.Modules.Orders.Domain.Orders.Policies;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
@@ -18,15 +19,18 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
         private readonly IOrderRepository _orderRepository;
         private readonly IDomainEventDispatcher _domainEventDispatcher;
         private readonly IOrderReturnPolicy _orderReturnPolicy;
+        private readonly IOrdersEventMapper _ordersEventMapper;
         private readonly TimeProvider _timeProvider;
         private readonly IMessageBroker _messageBroker;
 
-        public ReturnOrderHandler(IOrderRepository orderRepository, IDomainEventDispatcher domainEventDispatcher, IOrderReturnPolicy orderReturnPolicy, TimeProvider timeProvider,
+        public ReturnOrderHandler(IOrderRepository orderRepository, IDomainEventDispatcher domainEventDispatcher, IOrderReturnPolicy orderReturnPolicy, 
+            IOrdersEventMapper ordersEventMapper, TimeProvider timeProvider,
             IMessageBroker messageBroker)
         {
             _orderRepository = orderRepository;
             _domainEventDispatcher = domainEventDispatcher;
             _orderReturnPolicy = orderReturnPolicy;
+            _ordersEventMapper = ordersEventMapper;
             _timeProvider = timeProvider;
             _messageBroker = messageBroker;
         }
@@ -56,7 +60,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
                 throw new OrderCannotReturnException("Cannot return an order after 14 days of placing it.");
             }
             bool isFullReturn = !order.Products.Any();
-            await _domainEventDispatcher.DispatchAsync(new OrderReturned(request.ReasonForReturn, order.Id, returnProducts, isFullReturn, now));
+            var domainEvent = new OrderReturned(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, request.ReasonForReturn, returnProducts, isFullReturn, now);
+            await _domainEventDispatcher.DispatchAsync(domainEvent);
+            var integrationEvent = _ordersEventMapper.Map(domainEvent);
+            await _messageBroker.PublishAsync(integrationEvent);
             order.Return(now);
             await _orderRepository.UpdateAsync();
             //More logic here

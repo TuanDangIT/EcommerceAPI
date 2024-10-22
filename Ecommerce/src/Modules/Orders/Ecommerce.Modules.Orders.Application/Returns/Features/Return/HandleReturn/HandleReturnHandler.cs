@@ -44,7 +44,8 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
             }
             @return.Handle(_timeProvider.GetUtcNow().UtcDateTime);
             await _returnRepository.UpdateAsync();
-            await _messageBroker.PublishAsync(new ReturnHandled(@return.Products.Select(p => new { p.SKU, p.Quantity })));
+            await _messageBroker.PublishAsync(new ReturnHandled(@return.Id, @return.OrderId, @return.Order.Customer.UserId, @return.Order.Customer.FirstName, @return.Order.Customer.Email,
+                @return.Products.Select(p => new { p.SKU, p.Quantity }), @return.CreatedAt));
         }
     }
 }

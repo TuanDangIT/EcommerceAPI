@@ -33,6 +33,14 @@ namespace Ecommerce.Modules.Mails.Api.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("Customers", "mails");
@@ -53,15 +61,15 @@ namespace Ecommerce.Modules.Mails.Api.DAL.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid?>("CustomerId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("From")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PdfUrlPath")
-                        .HasColumnType("text");
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Subject")
                         .IsRequired()
@@ -82,9 +90,7 @@ namespace Ecommerce.Modules.Mails.Api.DAL.Migrations
                 {
                     b.HasOne("Ecommerce.Modules.Mails.Api.Entities.Customer", "Customer")
                         .WithMany("Mails")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
 
                     b.Navigation("Customer");
                 });

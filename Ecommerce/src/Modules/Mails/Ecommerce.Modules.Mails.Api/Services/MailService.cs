@@ -3,10 +3,13 @@ using Ecommerce.Modules.Mails.Api.DAL.Mappings;
 using Ecommerce.Modules.Mails.Api.DTO;
 using Ecommerce.Modules.Mails.Api.Entities;
 using Ecommerce.Modules.Mails.Api.Exceptions;
+using Ecommerce.Shared.Abstractions.BloblStorage;
 using Ecommerce.Shared.Infrastructure.Mails;
 using Ecommerce.Shared.Infrastructure.Pagination;
+using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using System;
@@ -23,12 +26,14 @@ namespace Ecommerce.Modules.Mails.Api.Services
     {
         private readonly IMailsDbContext _dbContext;
         private readonly MailOptions _mailOptions;
+        private readonly IBlobStorageService _blobStorageService;
         private readonly TimeProvider _timeProvider;
 
-        public MailService(IMailsDbContext dbContext, MailOptions mailOptions, TimeProvider timeProvider)
+        public MailService(IMailsDbContext dbContext, MailOptions mailOptions, IBlobStorageService blobStorageService, TimeProvider timeProvider)
         {
             _dbContext = dbContext;
             _mailOptions = mailOptions;
+            _blobStorageService = blobStorageService;
             _timeProvider = timeProvider;
         }
 
@@ -85,26 +90,56 @@ namespace Ecommerce.Modules.Mails.Api.Services
 
         public async Task SendAsync(MailSendDto dto)
         {
-            var customer = await GetCustomerAsync(dto.To);
+            var customer = await GetCustomerAsync(dto.CustomerId);
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse(_mailOptions.Email));
             email.To.Add(MailboxAddress.Parse(dto.To));
             email.Subject = dto.Subject;
-            email.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+            var stream = new MemoryStream();
+            var bodyHtml = new TextPart(MimeKit.Text.TextFormat.Html)
             {
                 Text = dto.Body
             };
+            var multipart = new Multipart("mixed");
+            if (dto.Files is not null && dto.Files.Any())
+            {
+                foreach(var file in dto.Files)
+                {
+                    await file.CopyToAsync(stream);
+                    multipart.Add(new MimePart(file.ContentType)
+                    {
+                        Content = new MimeContent(stream),
+                        ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+                        ContentTransferEncoding = ContentEncoding.Base64,
+                        FileName = file.FileName
+                    });
+                }
+            }
+            multipart.Add(bodyHtml);
+            email.Body = multipart;
             using var smtp = new SmtpClient();
             await smtp.ConnectAsync(_mailOptions.SmtpHost, _mailOptions.SmtpPort, SecureSocketOptions.StartTls);
             await smtp.AuthenticateAsync(_mailOptions.Email, _mailOptions.Password);
             await smtp.SendAsync(email);
             await smtp.DisconnectAsync(true);
-            await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, customer, _timeProvider.GetUtcNow().UtcDateTime));
+            await stream.DisposeAsync();
+            if(customer is not null)
+            {
+                await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, customer, dto.OrderId, _timeProvider.GetUtcNow().UtcDateTime));
+            }
+            else
+            {
+                await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, dto.OrderId, _timeProvider.GetUtcNow().UtcDateTime));
+            }
             await _dbContext.SaveChangesAsync();
         }
-        private async Task<Customer> GetCustomerAsync(string email)
-            => await _dbContext.Customers
+        private async Task<Customer?> GetCustomerAsync(Guid? customerId)
+        {
+            if(customerId is null) return null;
+            var customer = await _dbContext.Customers
                 .AsNoTracking()
-                .SingleOrDefaultAsync(c => c.Email == email) ?? throw new CustomerNotFoundException(email);
+                .SingleOrDefaultAsync(c => c.Id == customerId) ?? throw new CustomerNotFoundException((Guid)customerId);
+            return customer;
+        }
     }
 }

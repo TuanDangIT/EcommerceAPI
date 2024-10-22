@@ -79,10 +79,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .HasMaxLength(24)
                         .HasColumnType("character varying(24)");
 
-                    b.Property<string>("InvoiceUrlPath")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
 
@@ -250,6 +246,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
+
+                    b.Property<string>("RejectReason")
+                        .HasColumnType("text");
 
                     b.Property<string>("Status")
                         .IsRequired()

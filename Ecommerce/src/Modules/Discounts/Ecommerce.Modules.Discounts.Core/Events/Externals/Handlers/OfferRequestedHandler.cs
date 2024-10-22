@@ -21,7 +21,7 @@ namespace Ecommerce.Modules.Discounts.Core.Events.Externals.Handlers
         }
         public async Task HandleAsync(OfferRequested @event)
         {
-            var offer = new Offer(@event.SKU, @event.Price, @event.OldPrice, @event.Reason, @event.CustomerId, _timeProvider.GetUtcNow().UtcDateTime);
+            var offer = new Offer(@event.SKU, @event.ProductName, @event.OfferedPrice, @event.OldPrice, @event.Reason, @event.CustomerId, _timeProvider.GetUtcNow().UtcDateTime);
             await _dbContext.Offers.AddAsync(offer);
             await _dbContext.SaveChangesAsync();
         }

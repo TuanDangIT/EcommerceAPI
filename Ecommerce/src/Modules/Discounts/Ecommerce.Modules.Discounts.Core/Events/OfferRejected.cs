@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Core.Events
 {
-    public sealed record class OfferRejected : IEvent;
+    public sealed record class OfferRejected(int OfferId, Guid CustomerId, string SKU, string ProductName, decimal OfferedPrice, decimal OldPrice) : IEvent;
 }

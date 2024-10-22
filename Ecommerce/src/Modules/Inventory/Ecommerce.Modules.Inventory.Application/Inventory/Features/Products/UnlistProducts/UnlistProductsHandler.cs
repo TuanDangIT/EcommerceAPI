@@ -18,11 +18,11 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Un
     {
         private readonly IProductRepository _productRepository;
         private readonly IDomainEventDispatcher _domainEventDispatcher;
-        private readonly IEventMapper _eventMapper;
+        private readonly IInventoryEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
         public UnlistProductsHandler(IProductRepository productRepository, IDomainEventDispatcher domainEventDispatcher,
-            IEventMapper eventMapper, IMessageBroker messageBroker)
+            IInventoryEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _productRepository = productRepository;
             _domainEventDispatcher = domainEventDispatcher;

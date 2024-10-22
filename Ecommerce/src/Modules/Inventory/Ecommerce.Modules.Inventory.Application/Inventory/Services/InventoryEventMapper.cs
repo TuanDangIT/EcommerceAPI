@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.Services
 {
-    internal class EventMapper : IEventMapper
+    internal class InventoryEventMapper : IInventoryEventMapper
     {
         public IMessage Map(IDomainEvent @event)
             => @event switch

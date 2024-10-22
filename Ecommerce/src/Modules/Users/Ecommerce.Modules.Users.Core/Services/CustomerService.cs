@@ -39,7 +39,8 @@ namespace Ecommerce.Modules.Users.Core.Services
         public async Task UpdateAsync(CustomerUpdateDto dto)
         {
             var customer = await _customerRepository.GetAsync(dto.CustomerId, false) ?? throw new CustomerNotFoundException(dto.CustomerId);
-            customer.FullName = dto.FullName;
+            customer.FirstName = dto.FirstName;
+            customer.LastName = dto.LastName;
             customer.Email = dto.Email;
             customer.Username = dto.Username;
             customer.UpdatedAt = _timeProvider.GetUtcNow().UtcDateTime;

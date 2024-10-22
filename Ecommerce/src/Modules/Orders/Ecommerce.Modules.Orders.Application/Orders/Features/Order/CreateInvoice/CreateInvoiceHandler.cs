@@ -14,6 +14,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Ecommerce.Modules.Orders.Domain.Orders.Policies;
+using Ecommerce.Shared.Infrastructure.Company;
+using Ecommerce.Shared.Abstractions.Messaging;
+using Ecommerce.Modules.Orders.Application.Orders.Services;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateInvoice
 {
@@ -23,16 +26,23 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateInvoi
         private readonly IBlobStorageService _blobStorageService;
         private readonly IOrderInvoiceCreationPolicy _orderInvoiceCreationPolicy;
         private readonly IDomainEventDispatcher _domainEventDispatcher;
+        private readonly IMessageBroker _messageBroker;
+        private readonly IOrdersEventMapper _ordersEventMapper;
+        private readonly CompanyOptions _companyOptions;
         private readonly TimeProvider _timeProvider;
-        private const string _invoiceTemplatePath = "Invoices\\InvoiceTemplates\\InvoiceTemplate.html";
+        private const string _invoiceTemplatePath = "Invoices\\InvoiceTemplates\\Invoice.html";
         private const string _containerName = "invoices";
 
-        public CreateInvoiceHandler(IOrderRepository orderRepository, IBlobStorageService blobStorageService, IOrderInvoiceCreationPolicy orderInvoiceCreationPolicy, IDomainEventDispatcher domainEventDispatcher, TimeProvider timeProvider)
+        public CreateInvoiceHandler(IOrderRepository orderRepository, IBlobStorageService blobStorageService, IOrderInvoiceCreationPolicy orderInvoiceCreationPolicy, 
+            IDomainEventDispatcher domainEventDispatcher, IMessageBroker messageBroker, IOrdersEventMapper ordersEventMapper, CompanyOptions companyOptions, TimeProvider timeProvider)
         {
             _orderRepository = orderRepository;
             _blobStorageService = blobStorageService;
             _orderInvoiceCreationPolicy = orderInvoiceCreationPolicy;
             _domainEventDispatcher = domainEventDispatcher;
+            _messageBroker = messageBroker;
+            _ordersEventMapper = ordersEventMapper;
+            _companyOptions = companyOptions;
             _timeProvider = timeProvider;
         }
         public async Task<string> Handle(CreateInvoice request, CancellationToken cancellationToken)
@@ -51,19 +61,32 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateInvoi
             PdfDocument pdf = converter.ConvertHtmlString(invoiceTemplate);
             var stream = new MemoryStream();
             pdf.Save(stream);
-            var invoiceUrlPath = await _blobStorageService.UploadAsync(new FormFile(stream, 0, stream.Length, "invoice", invoiceNo), invoiceNo, _containerName);
-            await _domainEventDispatcher.DispatchAsync(new InvoiceCreated(invoiceNo, invoiceUrlPath, order.Id));
+            var file = new FormFile(stream, 0, stream.Length, "invoice", invoiceNo)/* { ContentType = "application/pdf" }*/
+            {
+                Headers = new HeaderDictionary()
+            };
+            file.ContentType = "application/pdf";
+            await _blobStorageService.UploadAsync(file, invoiceNo, _containerName);
+            var domainEvent = new InvoiceCreated(order.Id, order.Customer.UserId, invoiceNo, order.Customer.FirstName, order.Customer.Email);
+            await _domainEventDispatcher.DispatchAsync(domainEvent);
+            //var integrationEvent = await _ordersEventMapper.MapAsync(domainEvent);
+            var integrationEvent = _ordersEventMapper.Map(domainEvent);
+            await _messageBroker.PublishAsync(integrationEvent);
             return invoiceNo;
         }
-        private static string FillInvoiceDetails(string invoiceTemplate, string invoiceNo, Domain.Orders.Entities.Order order)
+        private string FillInvoiceDetails(string invoiceTemplate, string invoiceNo, Domain.Orders.Entities.Order order)
         {
             invoiceTemplate = invoiceTemplate.Replace("{invoiceId}", invoiceNo);
-            invoiceTemplate = invoiceTemplate.Replace("{companyName}", "YourShoes");
-            invoiceTemplate = invoiceTemplate.Replace("{companyAddress}", "Przejazd 5/23");
-            invoiceTemplate = invoiceTemplate.Replace("{companyCountry}", "Poland");
-            invoiceTemplate = invoiceTemplate.Replace("{companyPostCode}", "02-543");
+            invoiceTemplate = invoiceTemplate.Replace("{companyName}", _companyOptions.Name);
+            invoiceTemplate = invoiceTemplate.Replace("{companyAddress}", _companyOptions.Address);
+            invoiceTemplate = invoiceTemplate.Replace("{companyCountry}", _companyOptions.Country);
+            invoiceTemplate = invoiceTemplate.Replace("{companyCity}", _companyOptions.City);
+            invoiceTemplate = invoiceTemplate.Replace("{companyPostCode}", _companyOptions.PostCode);
             invoiceTemplate = invoiceTemplate.Replace("{customerAddress}", order.Shipment.Receiver.Address.Street);
             invoiceTemplate = invoiceTemplate.Replace("{customerAddressNumber}", order.Shipment.Receiver.Address.BuildingNumber);
+            invoiceTemplate = invoiceTemplate.Replace("{customerCountry}", "Poland");
+            invoiceTemplate = invoiceTemplate.Replace("{customerPostCode}", order.Shipment.Receiver.Address.PostCode);
+            invoiceTemplate = invoiceTemplate.Replace("{customerCity}", order.Shipment.Receiver.Address.City);
             invoiceTemplate = invoiceTemplate.Replace("{customerEmail}", order.Customer.Email);
             invoiceTemplate = invoiceTemplate.Replace("{customerPhoneNumber}", order.Customer.PhoneNumber);
             invoiceTemplate = invoiceTemplate.Replace("{customerName}", order.Customer.FirstName + " " + order.Customer.LastName);
@@ -77,7 +100,6 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateInvoi
                         <tr>
                             <td>{product.Name}</td>
                             <td>{product.SKU}</td>
-                            <td>{product.Quantity}</td>
                             <td>{product.Price}</td>
                             <td>{product.Quantity}</td>
                         </tr>

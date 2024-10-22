@@ -85,6 +85,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
         {
             var checkoutCart = await GetOrThrowIfNull(checkoutCartId);
             checkoutCart.SetShipment(new Shipment(
+                shipmentDto.Country,
                 shipmentDto.City,
                 shipmentDto.PostalCode,
                 shipmentDto.StreetName,
@@ -113,6 +114,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 customerDto.PhoneNumber
                 ));
             checkoutCart.SetShipment(new Shipment(
+                shipmentDto.Country,
                 shipmentDto.City,
                 shipmentDto.PostalCode,
                 shipmentDto.StreetName,
@@ -188,6 +190,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                     cp.Product.ImagePathUrl
                 }),
                 TotalSum = checkoutCart.TotalSum(),
+                Country =   checkoutCart.Shipment!.Country,
                 City = checkoutCart.Shipment!.City,
                 PostalCode = checkoutCart.Shipment.PostalCode,
                 StreetName = checkoutCart.Shipment.StreetName,

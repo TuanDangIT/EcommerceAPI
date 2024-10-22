@@ -20,6 +20,7 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Entities
         public IEnumerable<ReturnProduct> Products => _products;
         public string ReasonForReturn { get; set; } = string.Empty;
         public string? AdditionalNote { get; set; }
+        public string? RejectReason { get; set; }
         public ReturnStatus Status { get; set; } = ReturnStatus.NotHandled;
         public bool IsFullReturn { get; set; }
         public bool IsCompleted => Status is ReturnStatus.Handled;
@@ -54,8 +55,9 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Entities
             AdditionalNote = note;
             UpdatedAt = updatedAt;
         }
-        public void Reject(DateTime updatedAt)
+        public void Reject(string rejectReason, DateTime updatedAt)
         {
+            RejectReason = rejectReason;    
             Status = ReturnStatus.Rejected;
             UpdatedAt = updatedAt;
         }

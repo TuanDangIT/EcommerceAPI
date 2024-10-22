@@ -13,7 +13,7 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<Offer> builder)
         {
-            builder.Property(o => o.Price)
+            builder.Property(o => o.OfferedPrice)
                 .HasPrecision(11, 2)
                 .IsRequired();
             builder.Property(o => o.Status)

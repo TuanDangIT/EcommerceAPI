@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Core.Events
 {
-    public sealed record class CustomerActivated(Guid CustomerId, string Email) : IEvent;
+    public sealed record class CustomerActivated(Guid CustomerId, string Email, string FirstName, string LastName) : IEvent;
 }

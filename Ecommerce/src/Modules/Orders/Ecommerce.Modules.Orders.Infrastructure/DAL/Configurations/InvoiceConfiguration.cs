@@ -17,8 +17,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
             builder.Property(i => i.InvoiceNo)
                 .HasMaxLength(24)
                 .IsRequired();
-            builder.Property(i => i.InvoiceUrlPath)
-                .IsRequired();
             builder.Property(i => i.CreatedAt)
                 .IsRequired();
             builder.HasOne(i => i.Order)

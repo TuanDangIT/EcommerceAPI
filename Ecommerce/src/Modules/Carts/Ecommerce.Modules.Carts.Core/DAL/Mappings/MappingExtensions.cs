@@ -66,6 +66,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
         public static ShipmentDto AsDto(this Shipment shipment)
             => new()
             {
+                Country = shipment.Country,
                 City = shipment.City,
                 PostalCode = shipment.PostalCode,
                 StreetName = shipment.StreetName,

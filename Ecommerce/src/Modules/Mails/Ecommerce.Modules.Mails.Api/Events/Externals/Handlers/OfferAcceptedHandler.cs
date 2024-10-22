@@ -1,5 +1,11 @@
-﻿using Ecommerce.Modules.Mails.Api.Services;
+﻿using Ecommerce.Modules.Mails.Api.DAL;
+using Ecommerce.Modules.Mails.Api.DTO;
+using Ecommerce.Modules.Mails.Api.Exceptions;
+using Ecommerce.Modules.Mails.Api.Services;
 using Ecommerce.Shared.Abstractions.Events;
+using Ecommerce.Shared.Infrastructure.Company;
+using Ecommerce.Shared.Infrastructure.Stripe;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +17,36 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
     internal class OfferAcceptedHandler : IEventHandler<OfferAccepted>
     {
         private readonly IMailService _mailService;
+        private readonly IMailsDbContext _dbContext;
+        private readonly CompanyOptions _companyOptions;
+        private readonly StripeOptions _stripeOptions;
+        private const string _mailTemplatePath = "MailTemplates\\MailTemplate.html";
 
-        public OfferAcceptedHandler(IMailService mailService)
+        public OfferAcceptedHandler(IMailService mailService, IMailsDbContext dbContext, CompanyOptions companyOptions, StripeOptions stripeOptions)
         {
             _mailService = mailService;
+            _dbContext = dbContext;
+            _companyOptions = companyOptions;
+            _stripeOptions = stripeOptions;
         }
-        public Task HandleAsync(OfferAccepted @event)
+        public async Task HandleAsync(OfferAccepted @event)
         {
-            throw new NotImplementedException();
+            var customer = await _dbContext.Customers
+                .AsNoTracking()
+                .SingleOrDefaultAsync(c => c.Id == @event.CustomerId) ?? throw new CustomerNotFoundException(@event.CustomerId);
+            var bodyHtml = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _mailTemplatePath));
+            bodyHtml = bodyHtml.Replace("{title}", $"Offer accepted for ID: {@event.OfferId}");
+            bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
+            bodyHtml = bodyHtml.Replace("{customerFirstName}", customer.FirstName);
+            bodyHtml = bodyHtml.Replace("{message}", $"I am pleased to confirm that we have received and accepted your offer: {@event.OfferId} regarding {@event.ProductName}, {@event.SKU} for {@event.OfferedPrice} {_stripeOptions.Currency} from {@event.OldPrice} {_stripeOptions.Currency}. " +
+                $"Here is your unique code that you can use in your checkout cart: {@event.Code} that expires at {@event.ExpiresAt}. Should you have any questions or require further assistance, feel free to contact us");
+            await _mailService.SendAsync(new MailSendDto()
+            {
+                To = customer.Email,
+                Subject = $"Offer accepted for ID: {@event.OfferId}",
+                Body = bodyHtml,
+                CustomerId = @event.CustomerId
+            });
         }
     }
 }

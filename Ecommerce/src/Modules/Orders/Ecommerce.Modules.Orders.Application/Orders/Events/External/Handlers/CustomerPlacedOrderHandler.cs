@@ -4,6 +4,7 @@ using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
 using Ecommerce.Shared.Abstractions.Events;
+using Ecommerce.Shared.Abstractions.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +17,13 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
     internal class CustomerPlacedOrderHandler : IEventHandler<CustomerPlacedOrder>
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IMessageBroker _messageBroker;
         private readonly TimeProvider _timeProvider;
 
-        public CustomerPlacedOrderHandler(IOrderRepository orderRepository, TimeProvider timeProvider)
+        public CustomerPlacedOrderHandler(IOrderRepository orderRepository, IMessageBroker messageBroker, TimeProvider timeProvider)
         {
             _orderRepository = orderRepository;
+            _messageBroker = messageBroker;
             _timeProvider = timeProvider;
         }
         public async Task HandleAsync(CustomerPlacedOrder @event)
@@ -48,6 +51,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
                 throw new InvalidPaymentMethodException();
             }
             var additionalInformation = @event.AdditionalInformation;
+            var now = _timeProvider.GetUtcNow().UtcDateTime;
             var order = new Order(
                 newGuid,
                 customer, 
@@ -55,12 +59,13 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
                 @event.TotalSum,
                 shipment,
                 (PaymentMethod)paymentMethod!,
-                _timeProvider.GetUtcNow().UtcDateTime,
+                now,
                 additionalInformation,
                 @event.DiscountCode,
                 @event.StripePaymentIntentId
                 );
             await _orderRepository.CreateOrderAsync(order);
+            await _messageBroker.PublishAsync(new OrderCreated(newGuid, customer.UserId, customer.FirstName, customer.Email, products.Select(p => new { p.Name, p.SKU, p.Price, p.Quantity }), order.TotalSum, now));
         }
     }
 }

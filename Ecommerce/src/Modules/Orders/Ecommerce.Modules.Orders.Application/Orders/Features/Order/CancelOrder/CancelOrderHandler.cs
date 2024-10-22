@@ -44,7 +44,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
             order.Cancel(_timeProvider.GetUtcNow().UtcDateTime);
             await _orderRepository.UpdateAsync();
             var products = order.Products;
-            await _messageBroker.PublishAsync(new OrderCancelled(products.Select(p => new { p.SKU, p.Quantity })));
+            await _messageBroker.PublishAsync(new OrderCancelled(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, products.Select(p => new { p.SKU, p.Quantity }), order.OrderPlacedAt));
         }
     }
 }

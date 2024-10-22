@@ -13,9 +13,9 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Policies
         {
             if(order.Invoice is not null)
             {
-                return Task.FromResult(true);
+                return Task.FromResult(false);
             }
-            return Task.FromResult(false);
+            return Task.FromResult(true);
         }
     }
 }

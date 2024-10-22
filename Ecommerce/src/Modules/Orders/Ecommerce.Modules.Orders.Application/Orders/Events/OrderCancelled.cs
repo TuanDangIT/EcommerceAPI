@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Events
 {
-    public sealed record class OrderCancelled(IEnumerable<object> Products) : IEvent;
+    public sealed record class OrderCancelled(Guid OrderId, Guid? CustomerId, string FirstName, string Email, IEnumerable<object> Products, DateTime PlacedAt) : IEvent;
 }

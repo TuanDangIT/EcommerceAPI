@@ -13,12 +13,14 @@ namespace Ecommerce.Modules.Mails.Api.Entities
         public string To { get; set; } = string.Empty;
         public string Subject { get; set; } = string.Empty;
         public string Body { get; set; } = string.Empty;
-        public string? PdfUrlPath { get; set; }
+        //public string? PdfUrlPath { get; set; }
+        public Guid? OrderId { get; set; }
+        //public IEnumerable<string>? AttachmentFileNames { get; set; } 
         public DateTime CreatedAt { get; set; }
-        public Customer Customer { get; set; } = new();
-        public Guid CustomerId { get; set; }
+        public Customer? Customer { get; set; } 
+        public Guid? CustomerId { get; set; }
         //public IEnumerable<Stream> Streams { get; set; } = [];
-        public Mail(string from, string to, string subject, string body, Customer customer, DateTime createdAt)
+        public Mail(string from, string to, string subject, string body, Customer customer, Guid? orderId/*, IEnumerable<string>? attachmentFileNames*/, DateTime createdAt)
         {
             From = from;
             To = to; 
@@ -26,6 +28,18 @@ namespace Ecommerce.Modules.Mails.Api.Entities
             Body = body;
             Customer = customer;
             CreatedAt = createdAt;
+            //AttachmentFileNames = attachmentFileNames;
+            OrderId = orderId;
+        }
+        public Mail(string from, string to, string subject, string body, Guid? orderId/*, IEnumerable<string>? attachmentFileNames*/, DateTime createdAt)
+        {
+            From = from;
+            To = to;
+            Subject = subject;
+            Body = body;
+            CreatedAt = createdAt;
+            //AttachmentFileNames = attachmentFileNames;
+            OrderId = orderId;
         }
         public Mail()
         {

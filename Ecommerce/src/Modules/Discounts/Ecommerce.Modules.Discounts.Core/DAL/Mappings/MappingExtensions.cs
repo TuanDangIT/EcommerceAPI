@@ -43,7 +43,7 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Mappings
             => new()
             {
                 Id = offer.Id,
-                Price = offer.Price,
+                OfferedPrice = offer.OfferedPrice,
                 OldPrice = offer.OldPrice,
                 Status = offer.Status.ToString(),
                 CreatedAt = offer.CreatedAt,
@@ -53,7 +53,7 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Mappings
             => new()
             {
                 Id = offer.Id,
-                Price = offer.Price,
+                OfferedPrice = offer.OfferedPrice,
                 OldPrice = offer.OldPrice,
                 Difference = offer.Difference,
                 Reason = offer.Reason,

@@ -124,6 +124,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Products = @return.Products.Select(p => p.AsDto()),
                 ReasonForReturn = @return.ReasonForReturn,
                 AdditionalNote = @return.AdditionalNote,
+                RejectReason = @return.RejectReason,
                 Status = @return.Status.ToString(),
                 CreatedAt = @return.CreatedAt,
                 UpdatedAt = @return.UpdatedAt
@@ -134,7 +135,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Id = invoice.Id,
                 CustomerFullName = invoice.Order.Customer.FirstName + " " + invoice.Order.Customer.LastName,
                 InvoiceNo = invoice.InvoiceNo,
-                InvoiceUrlPath = invoice.InvoiceUrlPath,
                 CreatedAt = invoice.CreatedAt
             };
         public static ShipmentBrowseDto AsBrowseDto(this Shipment shipment)

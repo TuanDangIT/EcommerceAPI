@@ -25,7 +25,7 @@ namespace Ecommerce.Modules.Inventory.Application
                 cfg.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
-            services.AddSingleton<IEventMapper, EventMapper>();
+            services.AddSingleton<IInventoryEventMapper, InventoryEventMapper>();
             services.Scan(i => i.FromAssemblies(Assembly.GetExecutingAssembly())
                 .AddClasses(c => c.AssignableTo(typeof(IValidator<>)))
                 .AsImplementedInterfaces()

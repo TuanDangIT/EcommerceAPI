@@ -19,7 +19,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Handlers
         }
         public async Task HandleAsync(CustomerActivated @event)
         {
-            await _dbContext.Customers.AddAsync(new Customer(@event.CustomerId, @event.Email));
+            await _dbContext.Customers.AddAsync(new Customer(@event.CustomerId, @event.Email, @event.FirstName, @event.LastName));
             await _dbContext.SaveChangesAsync();
         }
     }

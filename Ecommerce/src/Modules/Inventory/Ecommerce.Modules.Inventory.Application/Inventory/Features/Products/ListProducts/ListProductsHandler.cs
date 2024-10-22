@@ -18,11 +18,11 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Li
         private readonly IProductRepository _productRepository;
         private readonly IDomainEventDispatcher _domainEventDispatcher;
         private readonly TimeProvider _timeProvider;
-        private readonly IEventMapper _eventMapper;
+        private readonly IInventoryEventMapper _eventMapper;
         private readonly IMessageBroker _messageBroker;
 
         public ListProductsHandler(IProductRepository productRepository, IDomainEventDispatcher domainEventDispatcher,
-            TimeProvider timeProvider, IEventMapper eventMapper, IMessageBroker messageBroker)
+            TimeProvider timeProvider, IInventoryEventMapper eventMapper, IMessageBroker messageBroker)
         {
             _productRepository = productRepository;
             _domainEventDispatcher = domainEventDispatcher;

@@ -7,7 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Mails.Api.Events.Externals
 {
-    internal class OfferRequested : IEvent
-    {
-    }
+    public sealed record class OfferRequested(Guid CustomerId, string SKU, string ProductName, decimal OfferedPrice, decimal OldPrice) : IEvent;
 }

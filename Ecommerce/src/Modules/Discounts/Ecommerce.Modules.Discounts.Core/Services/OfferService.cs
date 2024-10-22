@@ -40,7 +40,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             offer.Accept(_timeProvider.GetUtcNow().UtcDateTime);
             //Event + mail
             await _messageBroker
-                .PublishAsync(new OfferAccepted(offer.SKU, GenerateRandomCode(), offer.Price, offer.CustomerId, _timeProvider.GetUtcNow().UtcDateTime + TimeSpan.FromDays(7)));
+                .PublishAsync(new OfferAccepted(offer.Id, offer.CustomerId, offer.SKU, offer.ProductName, GenerateRandomCode(), offer.OfferedPrice, offer.OldPrice, _timeProvider.GetUtcNow().UtcDateTime + TimeSpan.FromDays(7)));
             await _dbContext.SaveChangesAsync();
         }
         public async Task RejectAsync(int offerId)
@@ -51,6 +51,8 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             offer.Reject(_timeProvider.GetUtcNow().UtcDateTime);
             //Wysłanie maila
             //Ewentualne skasowanie??
+            await _messageBroker
+                .PublishAsync(new OfferRejected(offer.Id, offer.CustomerId, offer.SKU, offer.ProductName, offer.OfferedPrice, offer.OldPrice));
             await _dbContext.SaveChangesAsync();
         }
 

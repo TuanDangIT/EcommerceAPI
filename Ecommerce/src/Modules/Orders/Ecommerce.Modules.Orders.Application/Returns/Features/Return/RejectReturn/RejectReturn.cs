@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.RejectReturn
 {
-    public sealed record class RejectReturn(Guid ReturnId) : ICommand;
+    public sealed record class RejectReturn(Guid ReturnId, string RejectReason) : ICommand;
 }

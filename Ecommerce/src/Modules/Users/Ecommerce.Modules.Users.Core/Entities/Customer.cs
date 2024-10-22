@@ -8,7 +8,7 @@ namespace Ecommerce.Modules.Users.Core.Entities
 {
     public class Customer : User
     {
-        public Customer(Guid id, string fullName, string email, string password, string username, Role role, DateTime createdAt) : base(id, fullName, email, password, username, role, createdAt)
+        public Customer(Guid id, string firstName, string lastName, string email, string password, string username, Role role, DateTime createdAt) : base(id, firstName, lastName, email, password, username, role, createdAt)
         {
         }
         public Customer() 

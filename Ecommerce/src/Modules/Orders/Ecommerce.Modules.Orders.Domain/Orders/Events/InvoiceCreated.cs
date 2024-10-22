@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Events
 {
-    public sealed record class InvoiceCreated(string InvoiceNo, string InvoiceUrlPath, Guid OrderId) : IDomainEvent;
+    public sealed record class InvoiceCreated(Guid OrderId, Guid? CustomerId, string InvoiceNo, string FirstName, string Email) : IDomainEvent;
 }

@@ -14,7 +14,8 @@ namespace Ecommerce.Modules.Users.Core.DAL.Mappings
             => new()
             {
                 Id = customer.Id,
-                FullName = customer.FullName,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
                 Email = customer.Email,
                 CreatedAt = customer.CreatedAt
             };
@@ -22,7 +23,8 @@ namespace Ecommerce.Modules.Users.Core.DAL.Mappings
             => new()
             {
                 Id = customer.Id,
-                FullName = customer.FullName,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
                 Email = customer.Email,
                 Username = customer.Username,
                 Role = customer.Role.Name,
@@ -33,7 +35,8 @@ namespace Ecommerce.Modules.Users.Core.DAL.Mappings
             => new()
             {
                 Id = employee.Id,
-                FullName = employee.FullName, 
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
                 Email = employee.Email,
                 Role = employee.Role.Name,
                 CreatedAt = employee.CreatedAt,
@@ -42,7 +45,8 @@ namespace Ecommerce.Modules.Users.Core.DAL.Mappings
             => new()
             {
                 Id = employee.Id,
-                FullName = employee.FullName,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
                 Email = employee.Email,
                 Role = employee.Role.Name,
                 JobPosition = employee.JobPosition,

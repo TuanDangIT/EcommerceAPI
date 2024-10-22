@@ -92,9 +92,9 @@ namespace Ecommerce.Modules.Users.Core.Services
             var password = _passwordHasher.HashPassword(default!, dto.Password);
             var role = await _roleRepository.GetAsync(_customerRoleName);
             var newGuid = Guid.NewGuid();
-            var customer = new Customer(newGuid, dto.FullName, email, password, dto.Username, role!, _timeProvider.GetUtcNow().UtcDateTime);
+            var customer = new Customer(newGuid, dto.FirstName, dto.LastName, email, password, dto.Username, role!, _timeProvider.GetUtcNow().UtcDateTime);
             await _userRepository.AddAsync(customer);
-            await _messageBroker.PublishAsync(new CustomerActivated(newGuid, email));
+            await _messageBroker.PublishAsync(new CustomerActivated(newGuid, email, customer.FirstName, customer.LastName));
         }
         public async Task<JsonWebToken> RefreshTokenAsync(TokenDto dto)
         {

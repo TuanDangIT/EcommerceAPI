@@ -79,12 +79,16 @@ namespace Ecommerce.Modules.Users.Core.DAL.Migrations
                     b.Property<int>("FailedAttempts")
                         .HasColumnType("integer");
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");

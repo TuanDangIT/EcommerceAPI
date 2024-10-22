@@ -12,7 +12,8 @@ namespace Ecommerce.Modules.Users.Core.Entities
     {
         public Guid Id { get; set; }
         public UserType Type { get; set; }
-        public string FullName { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string Username {  get; set; } = string.Empty;
@@ -24,10 +25,11 @@ namespace Ecommerce.Modules.Users.Core.Entities
         public bool IsActive { get; set; } = true;
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
-        public User(Guid id, string fullName, string email, string password, string username, Role role, DateTime createdAt)
+        public User(Guid id, string firstName, string lastName, string email, string password, string username, Role role, DateTime createdAt)
         {
             Id = id;
-            FullName = fullName;
+            FirstName = firstName;
+            LastName = lastName;
             Email = email;
             Password = password;
             Username = username;

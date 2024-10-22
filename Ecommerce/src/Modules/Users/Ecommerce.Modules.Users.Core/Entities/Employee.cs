@@ -9,8 +9,8 @@ namespace Ecommerce.Modules.Users.Core.Entities
     public class Employee : User
     {
         public string JobPosition { get; set; } = string.Empty;
-        public Employee(Guid id, string fullName, string email, string password, string username, Role role, string jobPosition, DateTime createdAt) 
-            : base(id, fullName, email, password, username, role, createdAt)
+        public Employee(Guid id, string firstName, string lastName, string email, string password, string username, Role role, string jobPosition, DateTime createdAt) 
+            : base(id, firstName, lastName, email, password, username, role, createdAt)
         {
             JobPosition = jobPosition;
         }

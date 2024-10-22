@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,8 @@ namespace Ecommerce.Modules.Mails.Api.DTO
         public string To { get; set; } = string.Empty;
         public string Subject { get; set; } = string.Empty;
         public string Body { get; set; } = string.Empty;
-        public IEnumerable<Stream> Streams { get; set; } = [];
+        public IEnumerable<IFormFile>? Files { get; set; }
+        public Guid? OrderId { get; set; }
+        public Guid? CustomerId { get; set; }
     }
 }

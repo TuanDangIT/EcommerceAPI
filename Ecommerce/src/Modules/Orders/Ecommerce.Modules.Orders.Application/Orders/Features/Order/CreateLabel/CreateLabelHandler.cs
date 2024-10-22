@@ -29,6 +29,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateLabel
             {
                 throw new OrderNotFoundException(request.OrderId);
             }
+            if (order.Shipment.Parcels is null || order.Shipment.Parcels.Count == 0)
+            {
+                throw new OrderParcelNotSetException();
+            }
             var (id, trackingNumber) = await _deliveryService.CreateShipmentAsync(order.Shipment);
             order.SetLabelDetails(trackingNumber, id.ToString(), _timeProvider.GetUtcNow().UtcDateTime);
             await _orderRepository.UpdateAsync();

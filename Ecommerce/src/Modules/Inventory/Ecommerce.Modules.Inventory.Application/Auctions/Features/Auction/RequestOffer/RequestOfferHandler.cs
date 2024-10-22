@@ -31,7 +31,7 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Auction.Requ
             {
                 throw new AuctionOfferPriceHigherOrEqualAuctionPrice(request.Price, auction.Price);
             }
-            await _messageBroker.PublishAsync(new OfferRequested(auction.SKU, request.Price, auction.Price, request.Reason, _contextService.Identity!.Id));
+            await _messageBroker.PublishAsync(new OfferRequested(_contextService.Identity!.Id, auction.SKU, auction.Name, request.Price, auction.Price, request.Reason));
         }
     }
 }

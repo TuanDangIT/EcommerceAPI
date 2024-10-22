@@ -1,0 +1,243 @@
+﻿<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .invoice-wrapper * {
+            font-family: 'Roboto', sans-serif
+        }
+
+
+        .invoice {
+            box-sizing: border-box;
+            display: block;
+            width: 100%;
+            height: 1123px;
+            min-height: 1123px;
+            padding: 35px 25px;
+            background-color: #fff;
+            box-shadow: 0 6px 20px -5px rgba(13, 45, 160, .10);
+            overflow: hidden;
+        }
+
+
+            .invoice h2 {
+                font-size: 14px;
+                font-weight: 600;
+                text-transform: uppercase;
+                margin: 0;
+                padding: 0
+            }
+
+            .invoice h3 {
+                padding: 2px 0;
+                margin: 0
+            }
+
+        #preview_invoice_title {
+            margin: 0;
+            padding: 0;
+            font-size: 36px;
+            font-weight: 600;
+            color: #44454a
+        }
+
+
+        .preview_invoice_company_details {
+            display: flex;
+            flex-direction: column;
+            margin-top: 10px
+        }
+
+        .preview_section_1 {
+            height: 200px
+        }
+
+        .preview_section_2 {
+            display: flex;
+            justify-content: space-between;
+            height: 220px
+        }
+
+            .preview_section_2 div {
+                display: flex;
+                flex-direction: column;
+                width: 300px
+            }
+
+
+                .preview_section_2 div:last-child {
+                    align-items: flex-end
+                }
+
+                    .preview_section_2 div:last-child h3 {
+                        padding-bottom: 10px
+                    }
+
+        .preview_invoice_bill_to_details,
+        .preview_invoice_ship_to_details {
+            visibility: hidden
+        }
+
+
+        .preview_invoice_items table {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            margin-bottom: 20px;
+            border: none
+        }
+
+            .preview_invoice_items table thead th {
+                padding: 5px;
+                text-align: left;
+                font-size: 14px;
+                font-weight: 600;
+                color: #fff
+            }
+
+                .preview_invoice_items table thead th:last-child,
+                .preview_invoice_items table tbody td:last-child {
+                    text-align: right
+                }
+
+            .preview_invoice_items table tbody td {
+                padding: 5px;
+                font-size: 14px;
+                background-color: #f7f8fb
+            }
+
+            .preview_invoice_items table tbody tr:nth-child(2n) td {
+                background-color: #fff
+            }
+
+        .preview_invoice_totals {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-top: 40px
+        }
+
+            .preview_invoice_totals div {
+                display: flex;
+                justify-content: space-between;
+                text-align: right;
+                width: 200px;
+                padding: 3px 0;
+                font-size: 14px;
+                font-weight: 600;
+                color: #73757e;
+            }
+
+                .preview_invoice_totals div h2 {
+                    font-size: 16px;
+                    text-align: right;
+                    width: 100px
+                }
+
+                .preview_invoice_totals div h2,
+                .preview_invoice_totals div h3 {
+                    padding: 0;
+                    margin: 0
+                }
+
+                .preview_invoice_totals div.preview_invoice_tax_details {
+                    display: none
+                }
+
+        #preview_invoice_terms {
+            padding-top: 20px;
+            max-width: 500px
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f7f8fb;
+            width: 100%;
+        }
+
+        .invoice-wrapper {
+            height: auto;
+        }
+
+        .invoice {
+            position: relative;
+            margin: 0 auto;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="invoice">
+        <div class="preview_section_1">
+            <h1 id="preview_invoice_title" style="color: rgb(27, 27, 27); text-align: center;">INVOICE {invoiceId}</h1>
+            <div class="preview_invoice_company_details">
+                <h3 id="preview_invoice_company_name" style="color: rgb(0, 0, 0);">{companyName}</h3>
+                <span id="preview_invoice_company_address" style="color: rgb(119, 119, 119);">{companyAddress}</span>
+                <span id="preview_invoice_company_country" style="color: rgb(119, 119, 119);">{companyCountry}</span>
+                <span id="preview_invoice_company_post_code_and_city" style="color: rgb(119, 119, 119);">{companyPostCode}, {companyCity}</span>
+            </div>
+        </div>
+        <div class="preview_section_2">
+            <div class="preview_invoice_bill_to_details" style="visibility: visible;">
+                <h2 style="color: rgb(119, 119, 119);">Bill To</h2>
+                <h3 id="preview_invoice_bill_to_name" style="color: rgb(0, 0, 0);">{customerName}</h3>
+                <span id="preview_invoice_bill_to_address" style="color: rgb(119, 119, 119);">
+                    {customerAddress}
+                    {customerAddressNumber}
+                </span>
+                <span id="preview_invoice_bill_to_country" style="color: rgb(119, 119, 119);">{customerCountry}</span>
+                <span id="preview_invoice_bill_to_post_code_and_city" style="color: rgb(119, 119, 119);">{customerPostCode}, {customerCity}</span>
+                <span id="preview_invoice_bill_to_email" style="color: rgb(119, 119, 119);">{customerEmail}</span>
+                <span id="preview_invoice_bill_to_phone" style="color: rgb(119, 119, 119);">{customerPhoneNumber}</span>
+            </div>
+            <div class="preview_invoice_ship_to_details" style="visibility: visible;">
+                <h2 style="color: rgb(119, 119, 119);">Ship To</h2>
+                <h3 id="preview_invoice_ship_to_name" style="color: rgb(0, 0, 0);">{customerName}</h3>
+                <span id="preview_invoice_ship_to_address" style="color: rgb(119, 119, 119);">
+                    {customerAddress}
+                    {customerAddressNumber}
+                </span>
+                <span id="preview_invoice_bill_to_country" style="color: rgb(119, 119, 119);">{customerCountry}</span>
+                <span id="preview_invoice_bill_to_post_code_and_city" style="color: rgb(119, 119, 119);">{customerPostCode}, {customerCity}</span>
+                <span id="preview_invoice_ship_to_email" style="color: rgb(119, 119, 119);">{customerEmail}</span>
+                <span id="preview_invoice_ship_to_phone" style="color: rgb(119, 119, 119);">{customerPhoneNumber}</span>
+            </div>
+        </div>
+        <div class="preview_invoice_items">
+            <table>
+                <thead>
+                    <tr style="background-color: rgb(0, 0, 0);">
+                        <th>Item</th>
+                        <th>SKU</th>
+                        <th>Price</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {orderItems}
+                </tbody>
+            </table>
+        </div>
+        <div class="preview_invoice_totals">
+            <div>
+                <h2 id="preview_invoice_total" style="color: rgb(119, 119, 119);">Total</h2>
+                <h3 id="preview_invoice_total_amount" style="color: rgb(0, 0, 0);">{totalPrice}</h3>
+            </div>
+        </div>
+        <p id="preview_invoice_terms">Additional informations:</p>
+        <p id="preview_invoice_terms">{additionalInformation}</p>
+    </div>
+</body>
+
+</html>

@@ -228,7 +228,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .WithMany("CheckoutCarts")
                         .HasForeignKey("PaymentId");
 
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart.Customer#Ecommerce.Modules.Carts.Core.Entities.Customer", "Customer", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.Customer", "Customer", b1 =>
                         {
                             b1.Property<Guid>("CheckoutCartId")
                                 .HasColumnType("uuid");
@@ -264,7 +264,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                                 .HasForeignKey("CheckoutCartId");
                         });
 
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart.Shipment#Ecommerce.Modules.Carts.Core.Entities.Shipment", "Shipment", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.Shipment", "Shipment", b1 =>
                         {
                             b1.Property<Guid>("CheckoutCartId")
                                 .HasColumnType("uuid");
@@ -278,6 +278,11 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                                 .IsRequired()
                                 .HasMaxLength(32)
                                 .HasColumnType("character varying(32)");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasMaxLength(64)
+                                .HasColumnType("character varying(64)");
 
                             b1.Property<string>("PostalCode")
                                 .IsRequired()

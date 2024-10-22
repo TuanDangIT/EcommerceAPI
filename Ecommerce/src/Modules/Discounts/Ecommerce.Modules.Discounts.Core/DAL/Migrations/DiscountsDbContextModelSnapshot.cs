@@ -124,12 +124,16 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
+                    b.Property<decimal>("OfferedPrice")
+                        .HasPrecision(11, 2)
+                        .HasColumnType("numeric(11,2)");
+
                     b.Property<decimal>("OldPrice")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("Price")
-                        .HasPrecision(11, 2)
-                        .HasColumnType("numeric(11,2)");
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Reason")
                         .IsRequired()

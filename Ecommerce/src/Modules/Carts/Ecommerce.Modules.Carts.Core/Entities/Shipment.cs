@@ -9,12 +9,13 @@ namespace Ecommerce.Modules.Carts.Core.Entities
 {
     public class Shipment
     {
+        public string Country { get; set; } = string.Empty;
         public string City { get; private set; } = string.Empty;
         public string PostalCode { get; private set; } = string.Empty;
         public string StreetName { get; private set; } = string.Empty;
         public string StreetNumber { get; private set; } = string.Empty;
         public string AparmentNumber { get; private set; } = string.Empty;   
-        public Shipment(string city, string postalCode, string streetName, string streetNumber, string apartmentNumber)
+        public Shipment(string country, string city, string postalCode, string streetName, string streetNumber, string apartmentNumber)
         {
             if (string.IsNullOrWhiteSpace(city))
             {
@@ -35,7 +36,15 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 throw new ShipmentNullException("Street number");
             }
-
+            if (string.IsNullOrWhiteSpace(country))
+            {
+                throw new ShipmentNullException("Country");
+            }
+            if(country.ToLower() != "poland" || country.ToLower() != "polska")
+            {
+                throw new ShipmentNotSupportedCountryException();
+            }
+            Country = country;
             City = city;
             PostalCode = postalCode;
             StreetName = streetName;

@@ -11,19 +11,21 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
     public class Offer
     {
         public int Id { get; set; } 
-        public decimal Price { get; set; }
+        public decimal OfferedPrice { get; set; }
         public decimal OldPrice { get; set; }
-        public decimal Difference => OldPrice - Price;
+        public decimal Difference => OldPrice - OfferedPrice;
         public string Reason { get; set; } = string.Empty;
         public string SKU { get; set; } = string.Empty;
+        public string ProductName { get; set; } = string.Empty;
         public OfferStatus Status { get; set; } = OfferStatus.Initialized;
         public Guid CustomerId { get; set; } 
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
-        public Offer(string sku, decimal price, decimal oldPrice, string reason, Guid customerId, DateTime createdAt)
+        public Offer(string sku, string productName, decimal offeredPrice, decimal oldPrice, string reason, Guid customerId, DateTime createdAt)
         {
             SKU = sku;
-            Price = price;
+            ProductName = productName;
+            OfferedPrice = offeredPrice;
             OldPrice = oldPrice;
             Reason = reason;
             CustomerId = customerId;

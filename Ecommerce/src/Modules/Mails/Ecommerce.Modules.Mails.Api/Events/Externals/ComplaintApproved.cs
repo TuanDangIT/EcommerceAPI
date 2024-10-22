@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Mails.Api.Events.Externals
 {
-    internal class ComplaintApproved : IEvent
-    {
-    }
+    public sealed record class ComplaintApproved(Guid ComplaintId, Guid OrderId, Guid? CustomerId, string FirstName, string Email, string Title, string Decision,
+        string? AdditionalInformation, decimal? RefundedAmount, DateTime CreatedAt) : IEvent;
 }

@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Infrastructure.Api;
 using Ecommerce.Shared.Infrastructure.Auth;
+using Ecommerce.Shared.Infrastructure.Company;
 using Ecommerce.Shared.Infrastructure.Contexts;
 using Ecommerce.Shared.Infrastructure.DomainEvents;
 using Ecommerce.Shared.Infrastructure.Events;
@@ -46,6 +47,7 @@ namespace Ecommerce.Shared.Infrastructure
             services.AddPostgres();
             services.AddStripe();
             services.AddInpost();
+            services.AddCompanyDetails();
             services.AddMails();
             services.AddAzureBlobStorage();
             services.AddHostedService<AppInitializer>();

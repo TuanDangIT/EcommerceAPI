@@ -10,7 +10,7 @@ namespace Ecommerce.Modules.Discounts.Core.DTO
     public class OfferDetailsDto
     {
         public int Id { get; set; }
-        public decimal Price { get; set; }
+        public decimal OfferedPrice { get; set; }
         public decimal OldPrice { get; set; }
         public decimal Difference { get; set; }
         public string Reason { get; set; } = string.Empty;

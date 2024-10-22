@@ -1,4 +1,5 @@
-﻿using Ecommerce.Shared.Abstractions.Events;
+﻿using Ecommerce.Modules.Mails.Api.Entities.ValueObjects;
+using Ecommerce.Shared.Abstractions.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Mails.Api.Events.Externals
 {
-    internal class ReturnRejected : IEvent
-    {
-    }
+    public sealed record class ReturnRejected(Guid ReturnId, Guid OrderId, Guid? CustomerId, string FirstName, string Email, string RejectReason, IEnumerable<Product> Products, DateTime CreatedAt) : IEvent;
 }

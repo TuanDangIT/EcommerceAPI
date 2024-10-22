@@ -48,7 +48,7 @@ namespace Ecommerce.Modules.Users.Core.Services
             var password = _passwordHasher.HashPassword(default!, dto.Password);
             var role = await _roleRepository.GetAsync(dto.Role);
             var newGuid = Guid.NewGuid();
-            var user = new Employee(newGuid, dto.FullName, email, password, dto.Username, role!, dto.JobPosition, _timeProvider.GetUtcNow().UtcDateTime);
+            var user = new Employee(newGuid, dto.FirstName, dto.LastName, email, password, dto.Username, role!, dto.JobPosition, _timeProvider.GetUtcNow().UtcDateTime);
             await _userRepository.AddAsync(user);
             return newGuid;
         }
@@ -65,7 +65,8 @@ namespace Ecommerce.Modules.Users.Core.Services
         public async Task UpdateAsync(EmployeeUpdateDto dto)
         {
             var employee = await _employeeRepository.GetAsync(dto.EmployeeId, false) ?? throw new EmployeeNotFoundException(dto.EmployeeId);
-            employee.FullName = dto.FullName;
+            employee.FirstName = dto.FirstName;
+            employee.LastName = dto.LastName;
             employee.JobPosition = dto.JobPosition;
             employee.Username = dto.Username;
             employee.Email = dto.Email;

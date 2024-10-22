@@ -15,6 +15,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.DTO
         public IEnumerable<ReturnProductDto> Products { get; set; } = [];
         public string ReasonForReturn { get; set; } = string.Empty;
         public string? AdditionalNote { get; set; }
+        public string? RejectReason { get; set; }
         public string Status { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }

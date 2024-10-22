@@ -10,6 +10,9 @@ namespace Ecommerce.Modules.Carts.Core.DTO
     public class ShipmentDto
     {
         [Required]
+        [Length(2, 64)]
+        public string Country { get; set; } = string.Empty;
+        [Required]
         [Length(2, 32)]
         public string City { get; set; } = string.Empty;
         [Required]

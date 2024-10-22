@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Application.Behaviors;
+using Ecommerce.Modules.Orders.Application.Orders.Services;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,7 @@ namespace Ecommerce.Modules.Orders.Application
                 cfg.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
+            services.AddSingleton<IOrdersEventMapper, OrdersEventMapper>();
             services.Scan(i => i.FromAssemblies(Assembly.GetExecutingAssembly())
                 .AddClasses(c => c.AssignableTo(typeof(IValidator<>)))
                 .AsImplementedInterfaces()
