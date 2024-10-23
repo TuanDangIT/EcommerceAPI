@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Complaint submitted");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for reaching out to us and bringing your concerns to our attention. We have received your complaint related to your order: {@event.OrderId}." +
+            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for reaching out to us and bringing your concerns to our attention. We have received your complaint related to your order: {@event.OrderId}. " +
                 $"We aim to resolve your issue as quickly as possible, and you can expect a response from us within 7 working days.If you have any questions or would like to provide further details, please feel free to contact us.");
             await _mailService.SendAsync(new MailSendDto()
             {

@@ -41,7 +41,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Invoice for order ID: {@event.OrderId}");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for your order! We are pleased to confirm that we have received your order: {@event.OrderId}." +
+            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for your order! We are pleased to confirm that we have received your order: {@event.OrderId}. " +
                 $"Should you have any questions or require further assistance, feel free to contact us");
             var invoice = await _blobStorageService.DownloadAsync(@event.InvoiceNo, _containerName);
             var stream = invoice.FileStream;

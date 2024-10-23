@@ -28,7 +28,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Return rejected for ID: {@event.ReturnId}");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for reaching out to us regarding the return: {@event.ReturnId} that was submitted on {@event.CreatedAt} of your order: {@event.OrderId}." +
+            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for reaching out to us regarding the return: {@event.ReturnId} that was submitted on {@event.CreatedAt} of your order: {@event.OrderId}. " +
                 $"After reviewing your return request, we regret to inform you that we are unable to process the return at this time due to: {@event.RejectReason}." +
                 $"We understand this may be disappointing, and we want to ensure clarity regarding our return policy. For more information feel free to contact us.");
             bodyHtml = bodyHtml.Replace("{items}", GenerateItemsHtml(@event.Products));

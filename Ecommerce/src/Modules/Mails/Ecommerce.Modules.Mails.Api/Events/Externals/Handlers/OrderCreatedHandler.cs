@@ -29,8 +29,8 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Order confirmation for ID: {@event.OrderId}");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for your order! We are pleased to confirm that we have received your order {@event.OrderId}, placed on {@event.PlacedAt}." +
-                $"Should you have any questions or require further assistance, feel free to contact us");
+            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for your order! We are pleased to confirm that we have received your order {@event.OrderId}, placed on {@event.PlacedAt}. " +
+                $"Should you have any questions or require further assistance, feel free to contact us.");
             bodyHtml = bodyHtml.Replace("{totalPrice}", @event.TotalSum.ToString());
             bodyHtml = bodyHtml.Replace("{items}", GenerateItemsHtml(@event.Products));
             await _mailService.SendAsync(new MailSendDto()

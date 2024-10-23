@@ -38,7 +38,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Offer rejected for ID: {@event.OfferId}");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", customer.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for submitting your offer: {@event.OfferId} regarding {@event.ProductName}, {@event.SKU} for {@event.OfferedPrice} {_stripeOptions.Currency} from {@event.OldPrice} {_stripeOptions.Currency}." +
+            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for submitting your offer: {@event.OfferId} regarding {@event.ProductName}, {@event.SKU} for {@event.OfferedPrice} {_stripeOptions.Currency} from {@event.OldPrice} {_stripeOptions.Currency}. " +
                 $"After careful consideration, we regret to inform you that we rejected your offer. Should you have any questions or require further assistance, feel free to contact us");
             await _mailService.SendAsync(new MailSendDto()
             {

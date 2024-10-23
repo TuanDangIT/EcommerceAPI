@@ -135,7 +135,7 @@ namespace Ecommerce.Modules.Mails.Api.Services
         }
         private async Task<Customer?> GetCustomerAsync(Guid? customerId)
         {
-            if(customerId is null) return null;
+            if(customerId is null || customerId == Guid.Empty) return null;
             var customer = await _dbContext.Customers
                 .AsNoTracking()
                 .SingleOrDefaultAsync(c => c.Id == customerId) ?? throw new CustomerNotFoundException((Guid)customerId);

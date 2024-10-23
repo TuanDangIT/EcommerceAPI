@@ -40,7 +40,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 throw new ShipmentNullException("Country");
             }
-            if(country.ToLower() != "poland" || country.ToLower() != "polska")
+            if(country.ToLower() != "poland" && country.ToLower() != "polska")
             {
                 throw new ShipmentNotSupportedCountryException();
             }

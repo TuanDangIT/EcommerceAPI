@@ -39,7 +39,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", customer.FirstName);
             bodyHtml = bodyHtml.Replace("{message}", $"Thank you for submitting your offer regarding {@event.ProductName}, {@event.SKU} for {@event.OfferedPrice} {_stripeOptions.Currency} from {@event.OldPrice} {_stripeOptions.Currency}. " +
-                $"Please be assured that your offer is being given thorough consideration. We will get back to you with our response in the near future." +
+                $"Please be assured that your offer is being given thorough consideration. We will get back to you with our response in the near future. " +
                 $"Should you have any questions or require further assistance, feel free to contact us");
             await _mailService.SendAsync(new MailSendDto()
             {

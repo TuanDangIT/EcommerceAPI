@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Complaint submitted");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for your patience while we reviewed your complaint {@event.ComplaintId} regarding {@event.Title} related to your order {@event.OrderId}." +
+            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for your patience while we reviewed your complaint {@event.ComplaintId} regarding {@event.Title} related to your order {@event.OrderId}. " +
                 $"After a thorough investigation, we are pleased to inform you that your complaint has been approved. \n" +
                 $"{@event.Decision} \n" +
                 $"Refunded amount: {@event.RefundedAmount ?? 0} (optional)" +

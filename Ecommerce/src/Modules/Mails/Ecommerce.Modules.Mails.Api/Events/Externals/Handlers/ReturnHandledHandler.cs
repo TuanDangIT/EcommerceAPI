@@ -28,7 +28,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Return handled for ID: {@event.ReturnId}");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"We are pleased to inform you that your return request: {@event.ReturnId} which was submitted on {@event.CreatedAt} for order: {@event.OrderId} has been successfully reviewed and approved." +
+            bodyHtml = bodyHtml.Replace("{message}", $"We are pleased to inform you that your return request: {@event.ReturnId} which was submitted on {@event.CreatedAt} for order: {@event.OrderId} has been successfully reviewed and approved. " +
                 $"Should you have any questions or require further assistance, feel free to contact us.");
             bodyHtml = bodyHtml.Replace("{items}", GenerateItemsHtml(@event.Products));
             await _mailService.SendAsync(new MailSendDto()
