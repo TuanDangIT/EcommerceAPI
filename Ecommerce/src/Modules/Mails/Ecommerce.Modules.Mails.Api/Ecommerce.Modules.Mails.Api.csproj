@@ -25,12 +25,6 @@
     <None Update="MailTemplates\MailTemplateWithProductTableAndTotalPrice.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="MailTemplates\OrderConfirmation.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="MailTemplates\SendInvoice.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>
