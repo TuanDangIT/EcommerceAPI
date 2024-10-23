@@ -17,6 +17,7 @@ using Ecommerce.Modules.Orders.Domain.Orders.Policies;
 using Ecommerce.Shared.Infrastructure.Company;
 using Ecommerce.Shared.Abstractions.Messaging;
 using Ecommerce.Modules.Orders.Application.Orders.Services;
+using Ecommerce.Shared.Infrastructure.Stripe;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateInvoice
 {
@@ -29,12 +30,15 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateInvoi
         private readonly IMessageBroker _messageBroker;
         private readonly IOrdersEventMapper _ordersEventMapper;
         private readonly CompanyOptions _companyOptions;
+        private readonly StripeOptions _stripeOptions;
         private readonly TimeProvider _timeProvider;
         private const string _invoiceTemplatePath = "Invoices\\InvoiceTemplates\\Invoice.html";
         private const string _containerName = "invoices";
+        private readonly decimal _defaultDeliveryPrice = 15;
 
         public CreateInvoiceHandler(IOrderRepository orderRepository, IBlobStorageService blobStorageService, IOrderInvoiceCreationPolicy orderInvoiceCreationPolicy, 
-            IDomainEventDispatcher domainEventDispatcher, IMessageBroker messageBroker, IOrdersEventMapper ordersEventMapper, CompanyOptions companyOptions, TimeProvider timeProvider)
+            IDomainEventDispatcher domainEventDispatcher, IMessageBroker messageBroker, IOrdersEventMapper ordersEventMapper, CompanyOptions companyOptions, 
+            StripeOptions stripeOptions, TimeProvider timeProvider)
         {
             _orderRepository = orderRepository;
             _blobStorageService = blobStorageService;
@@ -43,6 +47,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateInvoi
             _messageBroker = messageBroker;
             _ordersEventMapper = ordersEventMapper;
             _companyOptions = companyOptions;
+            _stripeOptions = stripeOptions;
             _timeProvider = timeProvider;
         }
         public async Task<string> Handle(CreateInvoice request, CancellationToken cancellationToken)
@@ -91,7 +96,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateInvoi
             invoiceTemplate = invoiceTemplate.Replace("{customerPhoneNumber}", order.Customer.PhoneNumber);
             invoiceTemplate = invoiceTemplate.Replace("{customerName}", order.Customer.FirstName + " " + order.Customer.LastName);
             invoiceTemplate = invoiceTemplate.Replace("{additionalInformation}", order.CompanyAdditionalInformation ?? "");
-            invoiceTemplate = invoiceTemplate.Replace("{totalPrice}", order.TotalSum.ToString());
+            invoiceTemplate = invoiceTemplate.Replace("{totalPrice}", order.TotalSum.ToString() + " " + _stripeOptions.Currency + " + " + _defaultDeliveryPrice + " " + _stripeOptions.Currency);
             StringBuilder productsHtml = new StringBuilder();
             foreach (var product in order.Products)
             {

@@ -4,6 +4,7 @@ using Ecommerce.Modules.Mails.Api.Entities.ValueObjects;
 using Ecommerce.Modules.Mails.Api.Services;
 using Ecommerce.Shared.Abstractions.Events;
 using Ecommerce.Shared.Infrastructure.Company;
+using Ecommerce.Shared.Infrastructure.Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +17,15 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
     {
         private readonly IMailService _mailService;
         private readonly CompanyOptions _companyOptions;
+        private readonly StripeOptions _stripeOptions;
         private const string _mailTemplatePath = "MailTemplates\\MailTemplateWithProductTableAndTotalPrice.html";
+        private readonly decimal _defaultDeliveryPrice = 15;
 
-        public OrderCreatedHandler(IMailService mailService, CompanyOptions companyOptions)
+        public OrderCreatedHandler(IMailService mailService, CompanyOptions companyOptions, StripeOptions stripeOptions)
         {
             _mailService = mailService;
             _companyOptions = companyOptions;
+            _stripeOptions = stripeOptions;
         }
         public async Task HandleAsync(OrderCreated @event)
         {
@@ -31,7 +35,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
             bodyHtml = bodyHtml.Replace("{message}", $"Thank you for your order! We are pleased to confirm that we have received your order {@event.OrderId}, placed on {@event.PlacedAt}. " +
                 $"Should you have any questions or require further assistance, feel free to contact us.");
-            bodyHtml = bodyHtml.Replace("{totalPrice}", @event.TotalSum.ToString());
+            bodyHtml = bodyHtml.Replace("{totalPrice}", @event.TotalSum.ToString() + " " + _stripeOptions.Currency + " + " + _defaultDeliveryPrice + " " + _stripeOptions.Currency);
             bodyHtml = bodyHtml.Replace("{items}", GenerateItemsHtml(@event.Products));
             await _mailService.SendAsync(new MailSendDto()
             {
@@ -51,7 +55,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
                     <tr>
                         <td>{product.Name}</td>
                         <td>{product.SKU}</td>
-                        <td>{product.Price}</td>
+                        <td>{product.Price} {_stripeOptions.Currency}</td>
                         <td>{product.Quantity}</td>
                     </tr>
                     """);

@@ -2,6 +2,7 @@
 using Ecommerce.Modules.Mails.Api.Services;
 using Ecommerce.Shared.Abstractions.Events;
 using Ecommerce.Shared.Infrastructure.Company;
+using Ecommerce.Shared.Infrastructure.Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +15,14 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
     {
         private readonly IMailService _mailService;
         private readonly CompanyOptions _companyOptions;
+        private readonly StripeOptions _stripeOptions;
         private const string _mailTemplatePath = "MailTemplates\\MailTemplate.html";
 
-        public ComplaintApprovedHandler(IMailService mailService, CompanyOptions companyOptions)
+        public ComplaintApprovedHandler(IMailService mailService, CompanyOptions companyOptions, StripeOptions stripeOptions)
         {
             _mailService = mailService;
             _companyOptions = companyOptions;
+            _stripeOptions = stripeOptions;
         }
         public async Task HandleAsync(ComplaintApproved @event)
         {
@@ -30,7 +33,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{message}", $"Thank you for your patience while we reviewed your complaint {@event.ComplaintId} regarding {@event.Title} related to your order {@event.OrderId}. " +
                 $"After a thorough investigation, we are pleased to inform you that your complaint has been approved. \n" +
                 $"{@event.Decision} \n" +
-                $"Refunded amount: {@event.RefundedAmount ?? 0} (optional)" +
+                $"Refunded amount: {@event.RefundedAmount ?? 0} {_stripeOptions.Currency} (optional)" +
                 $"{@event.AdditionalInformation} \n" +
                 $"We sincerely apologize for any inconvenience this matter may have caused and are committed to making things right. Should you have any further questions or concerns, please do not hesitate to reach out to us.");
             await _mailService.SendAsync(new MailSendDto()

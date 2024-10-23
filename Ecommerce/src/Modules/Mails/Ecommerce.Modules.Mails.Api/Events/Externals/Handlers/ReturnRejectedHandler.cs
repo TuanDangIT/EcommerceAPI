@@ -3,6 +3,7 @@ using Ecommerce.Modules.Mails.Api.Entities.ValueObjects;
 using Ecommerce.Modules.Mails.Api.Services;
 using Ecommerce.Shared.Abstractions.Events;
 using Ecommerce.Shared.Infrastructure.Company;
+using Ecommerce.Shared.Infrastructure.Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,14 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
     {
         private readonly IMailService _mailService;
         private readonly CompanyOptions _companyOptions;
+        private readonly StripeOptions _stripeOptions;
         private const string _mailTemplatePath = "MailTemplates\\MailTemplateWithProductTable.html";
 
-        public ReturnRejectedHandler(IMailService mailService, CompanyOptions companyOptions)
+        public ReturnRejectedHandler(IMailService mailService, CompanyOptions companyOptions, StripeOptions stripeOptions)
         {
             _mailService = mailService;
             _companyOptions = companyOptions;
+            _stripeOptions = stripeOptions;
         }
         public async Task HandleAsync(ReturnRejected @event)
         {
@@ -50,7 +53,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
                     <tr>
                         <td>{product.Name}</td>
                         <td>{product.SKU}</td>
-                        <td>{product.Price}</td>
+                        <td>{product.Price} {_stripeOptions.Currency}</td>
                         <td>{product.Quantity}</td>
                     </tr>
                     """);
