@@ -14,7 +14,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
     {
         private readonly IMailService _mailService;
         private readonly CompanyOptions _companyOptions;
-        private const string _mailTemplatePath = "MailTemplates\\MailTemplate.html";
+        private const string _mailTemplatePath = "MailTemplates\\ComplaintSubmitted.html";
 
         public ComplaintSubmittedHandler(IMailService mailService, CompanyOptions companyOptions)
         {
@@ -27,8 +27,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Complaint submitted");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for reaching out to us and bringing your concerns to our attention. We have received your complaint related to your order: {@event.OrderId}. " +
-                $"We aim to resolve your issue as quickly as possible, and you can expect a response from us within 7 working days.If you have any questions or would like to provide further details, please feel free to contact us.");
+            bodyHtml = bodyHtml.Replace("{orderId}", @event.OrderId.ToString());
             await _mailService.SendAsync(new MailSendDto()
             {
                 To = @event.Email,

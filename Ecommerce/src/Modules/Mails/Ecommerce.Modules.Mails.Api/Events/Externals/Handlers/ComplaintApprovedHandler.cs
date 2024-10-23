@@ -16,7 +16,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         private readonly IMailService _mailService;
         private readonly CompanyOptions _companyOptions;
         private readonly StripeOptions _stripeOptions;
-        private const string _mailTemplatePath = "MailTemplates\\MailTemplate.html";
+        private const string _mailTemplatePath = "MailTemplates\\ComplaintApproved.html";
 
         public ComplaintApprovedHandler(IMailService mailService, CompanyOptions companyOptions, StripeOptions stripeOptions)
         {
@@ -30,12 +30,13 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Complaint submitted");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for your patience while we reviewed your complaint {@event.ComplaintId} regarding {@event.Title} related to your order {@event.OrderId}. " +
-                $"After a thorough investigation, we are pleased to inform you that your complaint has been approved. \n" +
-                $"{@event.Decision} \n" +
-                $"Refunded amount: {@event.RefundedAmount ?? 0} {_stripeOptions.Currency} (optional)" +
-                $"{@event.AdditionalInformation} \n" +
-                $"We sincerely apologize for any inconvenience this matter may have caused and are committed to making things right. Should you have any further questions or concerns, please do not hesitate to reach out to us.");
+            bodyHtml = bodyHtml.Replace("{complaintId}", @event.ComplaintId.ToString());
+            bodyHtml = bodyHtml.Replace("{title}", @event.Title);
+            bodyHtml = bodyHtml.Replace("{orderId}", @event.OrderId.ToString());
+            bodyHtml = bodyHtml.Replace("{decision}", @event.Decision);
+            bodyHtml = bodyHtml.Replace("{additionalInformation}", @event.AdditionalInformation ?? "0");
+            bodyHtml = bodyHtml.Replace("{refundedAmount}", @event.RefundedAmount.ToString());
+            bodyHtml = bodyHtml.Replace("{currency}", _stripeOptions.Currency);
             await _mailService.SendAsync(new MailSendDto()
             {
                 To = @event.Email,

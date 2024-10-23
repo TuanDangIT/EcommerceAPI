@@ -22,8 +22,9 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         private readonly CompanyOptions _companyOptions;
         private readonly IMailsDbContext _dbContext;
         private readonly IBlobStorageService _blobStorageService;
-        private const string _mailTemplatePath = "MailTemplates\\MailTemplate.html";
+        private const string _mailTemplatePath = "MailTemplates\\InvoiceCreated.html";
         private const string _containerName = "invoices";
+        private const string _contentType = "application/pdf";
 
         public InvoiceCreatedHandler(IMailService mailService, CompanyOptions companyOptions, IMailsDbContext dbContext, IBlobStorageService blobStorageService)
         {
@@ -41,15 +42,14 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Invoice for order ID: {@event.OrderId}");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for your order! We are pleased to confirm that we have received your order: {@event.OrderId}. " +
-                $"Should you have any questions or require further assistance, feel free to contact us");
+            bodyHtml = bodyHtml.Replace("{orderId}", @event.OrderId.ToString());
             var invoice = await _blobStorageService.DownloadAsync(@event.InvoiceNo, _containerName);
             var stream = invoice.FileStream;
             var file = new FormFile(stream, 0, stream.Length, "invoice", invoice.FileName) 
             { 
                 Headers = new HeaderDictionary()
             };
-            file.ContentType = "application/pdf";
+            file.ContentType = _contentType;
             await _mailService.SendAsync(new MailSendDto()
             {
                 To = @event.Email,

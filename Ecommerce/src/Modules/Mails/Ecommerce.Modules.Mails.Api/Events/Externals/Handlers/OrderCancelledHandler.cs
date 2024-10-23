@@ -14,7 +14,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
     {
         private readonly IMailService _mailService;
         private readonly CompanyOptions _companyOptions;
-        private const string _mailTemplatePath = "MailTemplates\\MailTemplate.html";
+        private const string _mailTemplatePath = "MailTemplates\\OrderCancelled.html";
 
         public OrderCancelledHandler(IMailService mailService, CompanyOptions companyOptions)
         {
@@ -27,8 +27,8 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Order cancelled ID: {@event.OrderId}");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"We have received your request to cancel order {@event.OrderId}, placed on {@event.PlacedAt}" +
-                $", and we confirm that the order has been successfully canceled. Should you have any questions or require further assistance, feel free to contact us");
+            bodyHtml = bodyHtml.Replace("{orderId}", @event.OrderId.ToString());
+            bodyHtml = bodyHtml.Replace("{placedAt}", @event.PlacedAt.ToString("dd/MM/yyyy"));
             await _mailService.SendAsync(new MailSendDto()
             {
                 To = @event.Email,

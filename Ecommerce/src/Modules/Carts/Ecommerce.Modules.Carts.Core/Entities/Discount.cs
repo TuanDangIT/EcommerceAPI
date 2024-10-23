@@ -32,12 +32,13 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             }
             ExpiresAt = expiresAt;
         }
-        public Discount(string code, string sku, decimal value, Guid CustomerId, DateTime expiresAt)
+        public Discount(string code, string sku, decimal value, Guid customerId, DateTime expiresAt)
         {
             Code = code;
             Type = DiscountType.NominalDiscount;
             SKU = sku;
             Value = value;
+            CustomerId = customerId;
             if (expiresAt < TimeProvider.System.GetUtcNow().UtcDateTime)
             {
                 throw new DiscountInvalidExpiresAtDateException(expiresAt!);

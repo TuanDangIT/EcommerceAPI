@@ -12,6 +12,7 @@ namespace Ecommerce.Modules.Mails.Api.Services
     internal interface IMailService
     {
         Task SendAsync(MailSendDto dto);
+        Task SendAsync(MailSendDefaultBodyDto dto);
         Task<CursorPagedResult<MailBrowseDto, MailCursorDto>> BrowseAsync(MailCursorDto cursorDto, bool? IsNextPage, int PageSize);
         Task<MailDetailsDto> GetAsync(int mailId);
     }

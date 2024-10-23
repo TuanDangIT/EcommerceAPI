@@ -17,7 +17,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         private readonly IMailService _mailService;
         private readonly CompanyOptions _companyOptions;
         private readonly StripeOptions _stripeOptions;
-        private const string _mailTemplatePath = "MailTemplates\\MailTemplateWithProductTable.html";
+        private const string _mailTemplatePath = "MailTemplates\\OrderReturned.html";
 
         public OrderReturnedHandler(IMailService mailService, CompanyOptions companyOptions, StripeOptions stripeOptions)
         {
@@ -31,10 +31,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Order returned: {@event.OrderId}");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"We have successfully received the returned items for your order: {@event.OrderId}." +
-                $"We are currently awaiting the return of the item(s) to proceed with the review. Once we receive the returned items, our review process will begin, which may take up to 7 working days. " +
-                $"After the review is complete, we will notify you about the status of your refund or exchange. " +
-                $"If you have any questions or need further assistance, please don't hesitate to contact us.");
+            bodyHtml = bodyHtml.Replace("{orderId}", @event.OrderId.ToString());
             bodyHtml = bodyHtml.Replace("{items}", GenerateItemsHtml(@event.Products));
             await _mailService.SendAsync(new MailSendDto()
             {

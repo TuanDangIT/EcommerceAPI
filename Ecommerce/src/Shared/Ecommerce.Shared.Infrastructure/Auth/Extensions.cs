@@ -49,6 +49,7 @@ namespace Ecommerce.Shared.Infrastructure.Auth
                     }; //tutaj sprawdzamy Jwt token, sprawdzamy z tym z serwera.
 
                 });
+            services.AddAuthorization();
             return services;
         }
         public static WebApplication UseAuth(this WebApplication app)

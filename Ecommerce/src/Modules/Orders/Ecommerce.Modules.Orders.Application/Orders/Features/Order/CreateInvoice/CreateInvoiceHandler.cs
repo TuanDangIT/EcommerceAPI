@@ -96,7 +96,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateInvoi
             invoiceTemplate = invoiceTemplate.Replace("{customerPhoneNumber}", order.Customer.PhoneNumber);
             invoiceTemplate = invoiceTemplate.Replace("{customerName}", order.Customer.FirstName + " " + order.Customer.LastName);
             invoiceTemplate = invoiceTemplate.Replace("{additionalInformation}", order.CompanyAdditionalInformation ?? "");
-            invoiceTemplate = invoiceTemplate.Replace("{totalPrice}", order.TotalSum.ToString() + " " + _stripeOptions.Currency + " + " + _defaultDeliveryPrice + " " + _stripeOptions.Currency);
+            invoiceTemplate = invoiceTemplate.Replace("{totalPrice}", order.TotalSum.ToString() + " " + _stripeOptions.Currency);
+            invoiceTemplate = invoiceTemplate.Replace("{shipPrice}", _defaultDeliveryPrice + " " + _stripeOptions.Currency);
             StringBuilder productsHtml = new StringBuilder();
             foreach (var product in order.Products)
             {

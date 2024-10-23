@@ -143,10 +143,14 @@ namespace Ecommerce.Modules.Carts.Core.Services
             {
                 throw new DiscountNotFoundException(code);
             }
-            if (discount.CustomerId != _contextService.Identity?.Id &&
+            if(discount.CustomerId is not null && _contextService.Identity is null)
+            {
+                throw new IndividualDiscountCannotBeAppliedException("You have to be logged in to use individual discounts.");
+            }
+            if (discount.CustomerId is not null && discount.CustomerId != _contextService.Identity!.Id &&
                 !checkoutCart.Products.Select(p => p.Product.SKU).Contains(discount.SKU))
             {
-                throw new IndividualDiscountCannotBeAppliedException();
+                throw new IndividualDiscountCannotBeAppliedException("Discount cannot be applied because of wrong user or SKU of a product.");
             }
             checkoutCart.AddDiscount(discount);
             await _dbContext.SaveChangesAsync();

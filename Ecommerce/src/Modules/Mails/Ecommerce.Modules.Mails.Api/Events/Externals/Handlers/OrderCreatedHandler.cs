@@ -18,7 +18,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         private readonly IMailService _mailService;
         private readonly CompanyOptions _companyOptions;
         private readonly StripeOptions _stripeOptions;
-        private const string _mailTemplatePath = "MailTemplates\\MailTemplateWithProductTableAndTotalPrice.html";
+        private const string _mailTemplatePath = "MailTemplates\\OrderCreated.html";
         private readonly decimal _defaultDeliveryPrice = 15;
 
         public OrderCreatedHandler(IMailService mailService, CompanyOptions companyOptions, StripeOptions stripeOptions)
@@ -33,10 +33,11 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Order confirmation for ID: {@event.OrderId}");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for your order! We are pleased to confirm that we have received your order {@event.OrderId}, placed on {@event.PlacedAt}. " +
-                $"Should you have any questions or require further assistance, feel free to contact us.");
-            bodyHtml = bodyHtml.Replace("{totalPrice}", @event.TotalSum.ToString() + " " + _stripeOptions.Currency + " + " + _defaultDeliveryPrice + " " + _stripeOptions.Currency);
+            bodyHtml = bodyHtml.Replace("{orderId}", @event.OrderId.ToString());
+            bodyHtml = bodyHtml.Replace("{placedAt}", @event.PlacedAt.ToString("dd/MM/yyyy"));
+            bodyHtml = bodyHtml.Replace("{totalPrice}", @event.TotalSum.ToString() + " " + _stripeOptions.Currency);
             bodyHtml = bodyHtml.Replace("{items}", GenerateItemsHtml(@event.Products));
+            bodyHtml = bodyHtml.Replace("{shipPrice}", _defaultDeliveryPrice + " " + _stripeOptions.Currency);
             await _mailService.SendAsync(new MailSendDto()
             {
                 To = @event.Email,

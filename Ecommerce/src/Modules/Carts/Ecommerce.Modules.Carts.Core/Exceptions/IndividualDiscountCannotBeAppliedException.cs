@@ -9,7 +9,7 @@ namespace Ecommerce.Modules.Carts.Core.Exceptions
 {
     internal class IndividualDiscountCannotBeAppliedException : EcommerceException
     {
-        public IndividualDiscountCannotBeAppliedException() : base($"Discount cannot be applied because of diffrent user or not matching SKU.")
+        public IndividualDiscountCannotBeAppliedException(string message) : base(message)
         {
         }
     }

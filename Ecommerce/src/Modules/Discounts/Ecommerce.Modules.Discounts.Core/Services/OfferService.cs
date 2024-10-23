@@ -39,8 +39,10 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 throw new OfferNotFoundException(offerId);
             offer.Accept(_timeProvider.GetUtcNow().UtcDateTime);
             //Event + mail
+            var code = GenerateRandomCode();
+            offer.SetCode(code, _timeProvider.GetUtcNow().UtcDateTime);
             await _messageBroker
-                .PublishAsync(new OfferAccepted(offer.Id, offer.CustomerId, offer.SKU, offer.ProductName, GenerateRandomCode(), offer.OfferedPrice, offer.OldPrice, _timeProvider.GetUtcNow().UtcDateTime + TimeSpan.FromDays(7)));
+                .PublishAsync(new OfferAccepted(offer.Id, offer.CustomerId, offer.SKU, offer.ProductName, code, offer.OfferedPrice, offer.OldPrice, _timeProvider.GetUtcNow().UtcDateTime + TimeSpan.FromDays(7)));
             await _dbContext.SaveChangesAsync();
         }
         public async Task RejectAsync(int offerId)
@@ -51,8 +53,16 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             offer.Reject(_timeProvider.GetUtcNow().UtcDateTime);
             //Wysłanie maila
             //Ewentualne skasowanie??
-            await _messageBroker
-                .PublishAsync(new OfferRejected(offer.Id, offer.CustomerId, offer.SKU, offer.ProductName, offer.OfferedPrice, offer.OldPrice));
+            if(offer.Code is null)
+            {
+                await _messageBroker
+                    .PublishAsync(new OfferRejected(offer.Id, offer.CustomerId, offer.SKU, offer.ProductName, offer.OfferedPrice, offer.OldPrice));
+            }
+            else
+            {
+                await _messageBroker
+                    .PublishAsync(new OfferRejected(offer.Id, offer.CustomerId, offer.Code, offer.SKU, offer.ProductName, offer.OfferedPrice, offer.OldPrice));
+            }
             await _dbContext.SaveChangesAsync();
         }
 

@@ -14,11 +14,14 @@ using Ecommerce.Shared.Infrastructure.Postgres;
 using Ecommerce.Shared.Infrastructure.Services;
 using Ecommerce.Shared.Infrastructure.Storage;
 using Ecommerce.Shared.Infrastructure.Stripe;
+using Ecommerce.Shared.Infrastructure.Swagger;
+using Ecommerce.Shared.Infrastructure.Versioning;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,18 +69,15 @@ namespace Ecommerce.Shared.Infrastructure
                 //    option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 //});
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen(options =>
-            {
-                options.CustomSchemaIds(type => type.ToString());
-            });
+            services.AddDocumentation();
+            services.AddVersioning();
             return services;
         }
         public static WebApplication UseInfrastructure(this WebApplication app)
         {
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseDocumentation();
             }
             app.UseErrorHandling();
             app.MapGet("api", () =>

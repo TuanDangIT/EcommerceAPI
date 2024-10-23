@@ -35,9 +35,9 @@ namespace Ecommerce.Modules.Users.Api.Controllers
             await _identityService.SignUpAsync(dto);
             return Created();
         }
-        //[HttpGet]
-        //[Authorize]
-        //public async Task<ActionResult<ApiResponse<UserDto?>>> GetAsync()
-        //    => OkOrNotFound<UserDto?>(await _identityService.GetAsync(_contextService.Identity!.Id), "User");
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<ApiResponse<UserDto?>>> GetAsync()
+            => OkOrNotFound<UserDto?>(await _identityService.GetAsync(_contextService.Identity!.Id), "User");
     }
 }

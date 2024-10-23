@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Events.External
 {
-    public sealed record class OfferAccepted(Guid CustomerId, string SKU, string Code, decimal OfferedPrice, DateTime ExpiresAt) : IEvent;
+    public sealed record class OfferAccepted(Guid CustomerId, string SKU, string Code, decimal OfferedPrice, decimal OldPrice, DateTime ExpiresAt) : IEvent;
 }

@@ -1,4 +1,5 @@
-﻿using Ecommerce.Shared.Abstractions.Api;
+﻿using Asp.Versioning;
+using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,8 +11,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Api.Controllers
 {
+    [ApiVersion(1)]
     [ApiController]
-    [Route("api/" + DiscountsModule.BasePath + "/[controller]")]
+    [Route("api/v{v:apiVersion}/" + DiscountsModule.BasePath + "/[controller]")]
     internal abstract class BaseController : ControllerBase
     {
         private const string NotFoundTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.5";

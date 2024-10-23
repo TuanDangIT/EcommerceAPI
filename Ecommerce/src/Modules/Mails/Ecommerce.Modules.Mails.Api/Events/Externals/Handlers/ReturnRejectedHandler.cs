@@ -17,7 +17,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         private readonly IMailService _mailService;
         private readonly CompanyOptions _companyOptions;
         private readonly StripeOptions _stripeOptions;
-        private const string _mailTemplatePath = "MailTemplates\\MailTemplateWithProductTable.html";
+        private const string _mailTemplatePath = "MailTemplates\\ReturnRejected.html";
 
         public ReturnRejectedHandler(IMailService mailService, CompanyOptions companyOptions, StripeOptions stripeOptions)
         {
@@ -31,9 +31,10 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Return rejected for ID: {@event.ReturnId}");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for reaching out to us regarding the return: {@event.ReturnId} that was submitted on {@event.CreatedAt} of your order: {@event.OrderId}. " +
-                $"After reviewing your return request, we regret to inform you that we are unable to process the return at this time due to: {@event.RejectReason}." +
-                $"We understand this may be disappointing, and we want to ensure clarity regarding our return policy. For more information feel free to contact us.");
+            bodyHtml = bodyHtml.Replace("{returnId}", @event.ReturnId.ToString());
+            bodyHtml = bodyHtml.Replace("{orderId}", @event.OrderId.ToString());
+            bodyHtml = bodyHtml.Replace("{createdAt}", @event.CreatedAt.ToString("dd/MM/yyyy"));
+            bodyHtml = bodyHtml.Replace("{rejectReason}", @event.RejectReason);
             bodyHtml = bodyHtml.Replace("{items}", GenerateItemsHtml(@event.Products));
             await _mailService.SendAsync(new MailSendDto()
             {

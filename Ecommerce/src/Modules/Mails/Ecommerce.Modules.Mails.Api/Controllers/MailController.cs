@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Mails.Api.DTO;
+﻿using Asp.Versioning;
+using Ecommerce.Modules.Mails.Api.DTO;
 using Ecommerce.Modules.Mails.Api.Services;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination;
@@ -13,7 +14,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Mails.Api.Controllers
 {
-    [Route("api/" + MailsModule.BasePath + "/[controller]")]
+    [ApiVersion(1)]
+    [ApiController]
+    [Route("api/v{v:apiVersion}/" + MailsModule.BasePath + "/[controller]")]
     internal class MailController : ControllerBase
     {
         private readonly IMailService _mailService;
@@ -24,7 +27,7 @@ namespace Ecommerce.Modules.Mails.Api.Controllers
             _mailService = mailService;
         }
         [HttpPost()]
-        public async Task<ActionResult> SendMail([FromForm]MailSendDto dto)
+        public async Task<ActionResult> SendMail([FromForm]MailSendDefaultBodyDto dto)
         {
             await _mailService.SendAsync(dto);
             return NoContent();

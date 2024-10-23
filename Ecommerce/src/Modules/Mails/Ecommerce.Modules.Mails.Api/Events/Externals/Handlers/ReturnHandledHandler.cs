@@ -17,7 +17,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         private readonly IMailService _mailService;
         private readonly CompanyOptions _companyOptions;
         private readonly StripeOptions _stripeOptions;
-        private const string _mailTemplatePath = "MailTemplates\\MailTemplateWithProductTable.html";
+        private const string _mailTemplatePath = "MailTemplates\\ReturnHandled.html";
 
         public ReturnHandledHandler(IMailService mailService, CompanyOptions companyOptions, StripeOptions stripeOptions)
         {
@@ -31,8 +31,9 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Return handled for ID: {@event.ReturnId}");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"We are pleased to inform you that your return request: {@event.ReturnId} which was submitted on {@event.CreatedAt} for order: {@event.OrderId} has been successfully reviewed and approved. " +
-                $"Should you have any questions or require further assistance, feel free to contact us.");
+            bodyHtml = bodyHtml.Replace("{returnId}", @event.ReturnId.ToString());
+            bodyHtml = bodyHtml.Replace("{orderId}", @event.OrderId.ToString());
+            bodyHtml = bodyHtml.Replace("{createdAt}", @event.CreatedAt.ToString("dd/MM/yyyy"));
             bodyHtml = bodyHtml.Replace("{items}", GenerateItemsHtml(@event.Products));
             await _mailService.SendAsync(new MailSendDto()
             {

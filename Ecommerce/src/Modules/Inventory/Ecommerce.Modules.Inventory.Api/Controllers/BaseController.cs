@@ -1,4 +1,5 @@
-﻿using Ecommerce.Shared.Abstractions.Api;
+﻿using Asp.Versioning;
+using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Abstractions.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +12,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Api.Controllers
 {
+    [ApiVersion(1)]
     [ApiController]
-    [Route("api/" + InventoryModule.BasePath + "/[controller]")]
+    [Route("api/v{v:apiVersion}/" + InventoryModule.BasePath + "/[controller]")]
     internal abstract class BaseController : ControllerBase
     {
         protected readonly IMediator _mediator;

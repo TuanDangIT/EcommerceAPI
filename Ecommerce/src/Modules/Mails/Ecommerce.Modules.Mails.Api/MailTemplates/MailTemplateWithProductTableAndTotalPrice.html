@@ -96,9 +96,9 @@
 
             .preview_invoice_totals div {
                 display: flex;
-                justify-content: space-between;
+                justify-content: flex-end;
                 text-align: right;
-                width: 200px;
+                width: 100%;
                 padding: 3px 0;
                 font-size: 14px;
                 font-weight: 600;
@@ -154,7 +154,7 @@
     <div class="invoice">
         <div class="preview_section_1">
             <h1 id="preview_invoice_title" style="color: rgb(27, 27, 27); text-align: center;">{title}</h1>
-            <h2 style="margin-top: 20px;">Dear {customerFullName}</h2>
+            <h2 style="margin-top: 20px;">Dear {customerFirstName}</h2>
             <p>{message}</p>
         </div>
         <div class="preview_invoice_items">
@@ -173,9 +173,11 @@
             </table>
         </div>
         <div class="preview_invoice_totals">
-            <div>
-                <h2 id="preview_invoice_total" style="color: rgb(119, 119, 119);">Total</h2>
+            <div style="justify-content: flex-end">
+                <h2 id="preview_invoice_total" style="color: rgb(119, 119, 119); margin-right: 5px;">Total</h2>
                 <h3 id="preview_invoice_total_amount" style="color: rgb(0, 0, 0);">{totalPrice}</h3>
+                <br>
+                <h4 id="" style="color: rgb(0, 0, 0);">+ {shipPrice} SHIP</h4>
             </div>
         </div>
         <p>Best regards,</p>

@@ -53,7 +53,7 @@
         }
 
         .preview_section_1 {
-            height: 200px
+            min-height: 200px
         }
 
         * {
@@ -85,7 +85,10 @@
         <div class="preview_section_1">
             <h1 id="preview_invoice_title" style="color: rgb(27, 27, 27); text-align: center;">{title}</h1>
             <h2 style="margin-top: 20px;">Dear {customerFirstName}</h2>
-            <p>{message}</p>
+            <p>
+                We have received your request to cancel order {orderId}, placed on {placedAt}
+                , and we confirm that the order has been successfully canceled. Should you have any questions or require further assistance, feel free to contact us.
+            </p>
         </div>
         <p>Best regards,</p>
         <p>{companyName}.</p>

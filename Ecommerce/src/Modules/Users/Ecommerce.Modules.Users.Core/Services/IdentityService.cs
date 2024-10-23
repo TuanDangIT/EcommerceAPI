@@ -129,18 +129,18 @@ namespace Ecommerce.Modules.Users.Core.Services
         //        UpdatedAt = _timeProvider.GetUtcNow().UtcDateTime
         //    });
         //}
-        //public async Task<UserDto?> GetAsync(Guid id)
-        //{
-        //    var user = await _userRepository.GetByIdAsync(id);
-        //    return user is null ? null : new UserDto()
-        //    {
-        //        Id = user.Id,
-        //        Email = user.Email,
-        //        Role = user.Role.Name,
-        //        CreatedAt = user.CreatedAt,
-        //        UpdatedAt = user.UpdatedAt,
-        //    };
-        //}
+        public async Task<UserDto?> GetAsync(Guid id)
+        {
+            var user = await _userRepository.GetByIdAsync(id);
+            return user is null ? null : new UserDto()
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Role = user.Role.Name,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt,
+            };
+        }
 
         //public async Task<UserDto?> GetAsync(string email)
         //{

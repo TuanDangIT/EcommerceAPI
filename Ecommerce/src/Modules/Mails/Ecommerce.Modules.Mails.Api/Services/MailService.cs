@@ -4,6 +4,7 @@ using Ecommerce.Modules.Mails.Api.DTO;
 using Ecommerce.Modules.Mails.Api.Entities;
 using Ecommerce.Modules.Mails.Api.Exceptions;
 using Ecommerce.Shared.Abstractions.BloblStorage;
+using Ecommerce.Shared.Infrastructure.Company;
 using Ecommerce.Shared.Infrastructure.Mails;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using MailKit.Net.Imap;
@@ -27,13 +28,17 @@ namespace Ecommerce.Modules.Mails.Api.Services
         private readonly IMailsDbContext _dbContext;
         private readonly MailOptions _mailOptions;
         private readonly IBlobStorageService _blobStorageService;
+        private readonly CompanyOptions _companyOptions;
         private readonly TimeProvider _timeProvider;
+        private const string _mailDefaultTemplatePath = "MailTemplates\\Default.html";
 
-        public MailService(IMailsDbContext dbContext, MailOptions mailOptions, IBlobStorageService blobStorageService, TimeProvider timeProvider)
+        public MailService(IMailsDbContext dbContext, MailOptions mailOptions, IBlobStorageService blobStorageService, 
+            CompanyOptions companyOptions, TimeProvider timeProvider)
         {
             _dbContext = dbContext;
             _mailOptions = mailOptions;
             _blobStorageService = blobStorageService;
+            _companyOptions = companyOptions;
             _timeProvider = timeProvider;
         }
 
@@ -133,11 +138,28 @@ namespace Ecommerce.Modules.Mails.Api.Services
             }
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task SendAsync(MailSendDefaultBodyDto dto)
+        {
+            var bodyHtml = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _mailDefaultTemplatePath));
+            bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
+            bodyHtml = bodyHtml.Replace("{customerFirstName}", dto.FirstName ?? "customer");
+            bodyHtml = bodyHtml.Replace("{message}", dto.Message);
+            await SendAsync(new MailSendDto()
+            {
+                To = dto.To,
+                Subject = dto.Subject,
+                Body = bodyHtml,
+                OrderId = dto.OrderId,
+                CustomerId = dto.CustomerId,
+            });
+        }
+
         private async Task<Customer?> GetCustomerAsync(Guid? customerId)
         {
             if(customerId is null || customerId == Guid.Empty) return null;
             var customer = await _dbContext.Customers
-                .AsNoTracking()
+                //.AsNoTracking()
                 .SingleOrDefaultAsync(c => c.Id == customerId) ?? throw new CustomerNotFoundException((Guid)customerId);
             return customer;
         }

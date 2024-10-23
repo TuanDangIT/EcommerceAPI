@@ -7,6 +7,7 @@ using Ecommerce.Modules.Inventory.Domain.Auctions.Entities;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [HttpGet("{auctionId:guid}")]
         public async Task<ActionResult<ApiResponse<AuctionDetailsDto>>> GetAuction([FromRoute] Guid auctionId)
             => OkOrNotFound<AuctionDetailsDto, Auction>(await _mediator.Send(new GetAuction(auctionId)));
+        [Authorize]
         [HttpPost("{auctionId:guid}/offer")]
         public async Task<ActionResult> RequestOffer([FromRoute]Guid auctionId, [FromForm]RequestOffer command)
         {

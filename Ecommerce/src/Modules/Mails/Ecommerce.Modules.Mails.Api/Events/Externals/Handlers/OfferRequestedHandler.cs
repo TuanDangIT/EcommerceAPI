@@ -20,7 +20,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         private readonly IMailsDbContext _dbContext;
         private readonly CompanyOptions _companyOptions;
         private readonly StripeOptions _stripeOptions;
-        private const string _mailTemplatePath = "MailTemplates\\MailTemplate.html";
+        private const string _mailTemplatePath = "MailTemplates\\OfferRequested.html";
 
         public OfferRequestedHandler(IMailService mailService, IMailsDbContext dbContext, CompanyOptions companyOptions, StripeOptions stripeOptions)
         {
@@ -38,9 +38,11 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", "Offer requested");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", customer.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for submitting your offer regarding {@event.ProductName}, {@event.SKU} for {@event.OfferedPrice} {_stripeOptions.Currency} from {@event.OldPrice} {_stripeOptions.Currency}. " +
-                $"Please be assured that your offer is being given thorough consideration. We will get back to you with our response in the near future. " +
-                $"Should you have any questions or require further assistance, feel free to contact us");
+            bodyHtml = bodyHtml.Replace("{currency}", _stripeOptions.Currency);
+            bodyHtml = bodyHtml.Replace("{productName}", @event.ProductName);
+            bodyHtml = bodyHtml.Replace("{SKU}", @event.SKU);
+            bodyHtml = bodyHtml.Replace("{oldPrice}", @event.OldPrice.ToString());
+            bodyHtml = bodyHtml.Replace("{offeredPrice}", @event.OfferedPrice.ToString());
             await _mailService.SendAsync(new MailSendDto()
             {
                 To = customer.Email,

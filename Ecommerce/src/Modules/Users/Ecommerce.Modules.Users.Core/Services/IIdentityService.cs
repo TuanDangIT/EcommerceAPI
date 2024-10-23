@@ -12,7 +12,7 @@ namespace Ecommerce.Modules.Users.Core.Services
     {
         Task<JsonWebToken> SignInAsync(SignInDto dto);
         Task SignUpAsync(SignUpDto dto);
-        //Task<UserDto?> GetAsync(Guid id);
+        Task<UserDto?> GetAsync(Guid id);
         //Task<UserDto?> GetAsync(string email);
         //Task UpdateAsync(UserDto userDto);
         //Task DeleteAsync(Guid id);

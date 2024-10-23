@@ -14,7 +14,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
     {
         private readonly IMailService _mailService;
         private readonly CompanyOptions _companyOptions;
-        private const string _mailTemplatePath = "MailTemplates\\MailTemplate.html";
+        private const string _mailTemplatePath = "MailTemplates\\ComplaintRejected.html";
 
         public ComplaintRejectedHandler(IMailService mailService, CompanyOptions companyOptions)
         {
@@ -27,11 +27,11 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{title}", $"Complaint rejected for ID: {@event.ComplaintId}");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
-            bodyHtml = bodyHtml.Replace("{message}", $"Thank you for your patience while we investigated your complaint: {@event.ComplaintId} regarding {@event.Title} related to your order: {@event.OrderId}. " +
-                $"After careful review, we regret to inform you that we are unable to accept your complaint at this time. \n" +
-                $"{@event.Decision} \n" +
-                $"{@event.AdditionalInformation} \n" +
-                $"We understand this may not be the outcome you were hoping for, and we are here to assist you with any further clarification or questions you may have. Please feel free to contact us.");
+            bodyHtml = bodyHtml.Replace("{complaintId}", @event.ComplaintId.ToString());
+            bodyHtml = bodyHtml.Replace("{title}", @event.Title);
+            bodyHtml = bodyHtml.Replace("{orderId}", @event.OrderId.ToString());
+            bodyHtml = bodyHtml.Replace("{decision}", @event.Decision);
+            bodyHtml = bodyHtml.Replace("{additionalInformation}", @event.AdditionalInformation);
             await _mailService.SendAsync(new MailSendDto()
             {
                 To = @event.Email,

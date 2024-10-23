@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Discounts.Core.Entities.Enums;
+using Ecommerce.Modules.Discounts.Core.Entities.Exceptions;
 using Stripe;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
         public string SKU { get; set; } = string.Empty;
         public string ProductName { get; set; } = string.Empty;
         public OfferStatus Status { get; set; } = OfferStatus.Initialized;
+        public string? Code { get; set; }
         public Guid CustomerId { get; set; } 
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -37,12 +39,21 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
         }
         public void Accept(DateTime updatedAt)
         {
+            if(Status is OfferStatus.Accepted)
+            {
+                throw new OfferCannotAcceptException(Id);
+            }
             Status = OfferStatus.Accepted;
             UpdatedAt = updatedAt;
         }
         public void Reject(DateTime updatedAt)
         {
             Status = OfferStatus.Rejected;
+            UpdatedAt = updatedAt;
+        }
+        public void SetCode(string code, DateTime updatedAt)
+        {
+            Code = code;
             UpdatedAt = updatedAt;
         }
     }

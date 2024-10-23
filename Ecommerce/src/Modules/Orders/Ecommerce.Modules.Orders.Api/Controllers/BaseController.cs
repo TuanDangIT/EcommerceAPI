@@ -1,4 +1,5 @@
-﻿using Ecommerce.Shared.Abstractions.Api;
+﻿using Asp.Versioning;
+using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +12,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Api.Controllers
 {
+    [ApiVersion(1)]
     [ApiController]
-    [Route("api/" + OrdersModule.BasePath + "/[controller]")]
+    [Route("api/v{v:apiVersion}/" + OrdersModule.BasePath + "/[controller]")]
     internal abstract class BaseController : ControllerBase
     {
         protected readonly IMediator _mediator;
