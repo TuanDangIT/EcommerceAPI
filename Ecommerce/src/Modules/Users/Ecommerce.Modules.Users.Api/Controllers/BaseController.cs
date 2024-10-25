@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Api.Controllers
 {
-    //[EnableRateLimiting("1234")]
+    [EnableRateLimiting("fixed-by-ip")]
     [ApiController]
     [Route("api/v{v:apiVersion}/" + UsersModule.BasePath + "/[controller]")]
     internal abstract class BaseController : ControllerBase

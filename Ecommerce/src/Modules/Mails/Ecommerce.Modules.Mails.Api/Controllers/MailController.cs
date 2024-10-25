@@ -4,6 +4,7 @@ using Ecommerce.Modules.Mails.Api.Services;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Routing;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Mails.Api.Controllers
 {
+    [EnableRateLimiting("fixed-by-ip")]
     [ApiVersion(1)]
     [ApiController]
     [Route("api/v{v:apiVersion}/" + MailsModule.BasePath + "/[controller]")]

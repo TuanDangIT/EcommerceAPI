@@ -15,19 +15,23 @@ namespace Ecommerce.Shared.Infrastructure.RateLimiter
         //To powinno być z appsettings?
         private const double _windowSpanInSeconds = 10;
         private const int _permitLimit = 30;
-        private const string _policyName = "fixed-by-ip";
+        private const string _globalPolicyName = "fixed-by-ip";
+        //private const int _queueLimit = 1;
         public static IServiceCollection AddAspRateLimiter(this IServiceCollection services)
         {
             services.AddRateLimiter(options =>
             {
-                options.AddPolicy(_policyName, httpContext =>
+                options.AddPolicy(_globalPolicyName, httpContext =>
                     RateLimitPartition.GetFixedWindowLimiter(
                         partitionKey: httpContext.Connection.RemoteIpAddress?.ToString(),
                         factory: _ => new FixedWindowRateLimiterOptions
                         {
                             PermitLimit = _permitLimit,
                             Window = TimeSpan.FromMinutes(_windowSpanInSeconds),
+                            //QueueLimit = 1,
+                            //QueueProcessingOrder = QueueProcessingOrder.OldestFirst
                         }));
+
             });
             return services;
         }

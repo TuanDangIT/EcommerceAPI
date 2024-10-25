@@ -2,6 +2,7 @@
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Api.Controllers
 {
+    [EnableRateLimiting("fixed-by-ip")]
     [ApiController]
     [Route("api/v{v:apiVersion}/" + DiscountsModule.BasePath + "/[controller]")]
     internal abstract class BaseController : ControllerBase
