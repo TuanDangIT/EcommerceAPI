@@ -3,6 +3,7 @@ using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Abstractions.Exceptions;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Api.Controllers
 {
+    //[EnableRateLimiting("1234")]
     [ApiController]
     [Route("api/v{v:apiVersion}/" + UsersModule.BasePath + "/[controller]")]
     internal abstract class BaseController : ControllerBase

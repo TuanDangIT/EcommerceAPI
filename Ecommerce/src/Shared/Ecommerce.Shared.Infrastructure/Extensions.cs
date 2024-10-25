@@ -11,6 +11,7 @@ using Ecommerce.Shared.Infrastructure.Mails;
 using Ecommerce.Shared.Infrastructure.Messaging;
 using Ecommerce.Shared.Infrastructure.Modules;
 using Ecommerce.Shared.Infrastructure.Postgres;
+using Ecommerce.Shared.Infrastructure.RateLimiter;
 using Ecommerce.Shared.Infrastructure.Services;
 using Ecommerce.Shared.Infrastructure.Storage;
 using Ecommerce.Shared.Infrastructure.Stripe;
@@ -69,8 +70,9 @@ namespace Ecommerce.Shared.Infrastructure
                 //    option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 //});
             services.AddEndpointsApiExplorer();
-            services.AddDocumentation();
             services.AddVersioning();
+            services.AddDocumentation();
+            services.AddAspRateLimiter();
             return services;
         }
         public static WebApplication UseInfrastructure(this WebApplication app)
@@ -86,6 +88,7 @@ namespace Ecommerce.Shared.Infrastructure
             });
             app.UseHttpsRedirection();
             app.UseAuth();
+            app.UseAspRateLimiter();
             app.MapControllers();
             return app;
         }
