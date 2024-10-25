@@ -23,8 +23,8 @@ namespace Ecommerce.Modules.Users.Core.Services
         private readonly IMessageBroker _messageBroker;
         private readonly TimeProvider _timeProvider;
         private readonly IAuthManager _authManager;
-        private const int _maxFailedAccessAttempts = 5;
-        private const int _lockoutTimeSpan = 5;
+        //private const int _maxFailedAccessAttempts = 5;
+        //private const int _lockoutTimeSpan = 5;
         private const string _customerRoleName = "Customer";
 
         public IdentityService(IUserRepository userRepository, IRoleRepository roleRepository, IPasswordHasher<User> passwordHasher, 
@@ -45,18 +45,26 @@ namespace Ecommerce.Modules.Users.Core.Services
             {
                 throw new InvalidCredentialsException();
             }
-            if(user.LockoutEnd is not null && user.LockoutEnd > now)
+            if(user.LockoutEnd is not null && user.IsLockedOut())
             {
                 throw new UserLockedOutException((TimeSpan)(user.LockoutEnd - now));
             }
+            //else
+            //{
+            //    if(user.FailedAttempts > 0)
+            //    {
+            //        user.ResetFailedAttempts();
+            //        await _userRepository.UpdateAsync();
+            //    }
+            //}
             var passwordResult = _passwordHasher.VerifyHashedPassword(user, user.Password, dto.Password);
             if(passwordResult is PasswordVerificationResult.Failed)
             {
-                user.FailedAttempts++;
-                if(user.FailedAttempts > _maxFailedAccessAttempts)
-                {
-                    user.LockoutEnd = now + TimeSpan.FromMinutes(_lockoutTimeSpan);
-                }
+                user.SignInFailed();
+                //if(user.FailedAttempts > _maxFailedAccessAttempts)
+                //{
+                //    user.LockoutEnd = now + TimeSpan.FromMinutes(_lockoutTimeSpan);
+                //}
                 await _userRepository.UpdateAsync();
                 throw new InvalidCredentialsException();
             }
@@ -66,8 +74,11 @@ namespace Ecommerce.Modules.Users.Core.Services
             }
             if(user.LockoutEnd is not null)
             {
-                user.LockoutEnd = null;
-                user.FailedAttempts = 0;
+                user.ResetLockoutEnd();
+            }
+            if(user.FailedAttempts > 0)
+            {
+                user.ResetFailedAttempts();
             }
             var jwt = _authManager.GenerateAccessToken(user.Id.ToString(), user.Username, user.Role.Name);
             var generatedRefreshToken = _authManager.GenerateRefreshToken();

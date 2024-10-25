@@ -23,8 +23,12 @@ namespace Ecommerce.Modules.Users.Core.Entities
         public DateTime? LockoutEnd { get; set; }
         public int FailedAttempts { get; set; } = 0;
         public bool IsActive { get; set; } = true;
+        //public int LockoutCounter { get; set; } = 0;    
+        //public DateTime? LockoutEndAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
+        private const int _maxFailedAccessAttempts = 5;
+        private const int _lockoutTimeSpan = 5;
         public User(Guid id, string firstName, string lastName, string email, string password, string username, Role role, DateTime createdAt)
         {
             Id = id;
@@ -40,5 +44,27 @@ namespace Ecommerce.Modules.Users.Core.Entities
         {
             
         }
+        public bool IsLockedOut()
+        {
+            if (TimeProvider.System.GetUtcNow() > LockoutEnd)
+            {
+                return false;
+            }
+            return true;
+        }
+        public void ResetFailedAttempts()
+            => FailedAttempts = 0;
+        public void ResetLockoutEnd()
+            => LockoutEnd = null;
+        public void SignInFailed()
+        {
+            FailedAttempts++;
+            if (FailedAttempts > _maxFailedAccessAttempts)
+            {
+                LockOut();
+            }
+        }
+        private void LockOut()
+            => LockoutEnd = TimeProvider.System.GetUtcNow().UtcDateTime + TimeSpan.FromMinutes(_lockoutTimeSpan);
     }
 }

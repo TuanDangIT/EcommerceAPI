@@ -9,7 +9,7 @@ namespace Ecommerce.Modules.Users.Core.Exceptions
 {
     internal class UserLockedOutException : EcommerceException
     {
-        public UserLockedOutException(TimeSpan minutesLeft) : base($"Please try again in {minutesLeft.Minutes} minutes.")
+        public UserLockedOutException(TimeSpan timeSpan) : base($"Please try again in {timeSpan.Minutes + 1} minutes.")
         {
         }
     }
