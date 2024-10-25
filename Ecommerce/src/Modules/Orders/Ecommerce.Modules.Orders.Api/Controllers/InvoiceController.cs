@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Application.Invoices.DTO;
+﻿using Asp.Versioning;
+using Ecommerce.Modules.Orders.Application.Invoices.DTO;
 using Ecommerce.Modules.Orders.Application.Invoices.Features.BrowseInvoices;
 using Ecommerce.Modules.Orders.Application.Invoices.Features.CreateInvoice;
 using Ecommerce.Modules.Orders.Application.Invoices.Features.DeleteInvoice;
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Api.Controllers
 {
+    [ApiVersion(1)]
     internal class InvoiceController : BaseController
     {
         public InvoiceController(IMediator mediator) : base(mediator)

@@ -22,6 +22,11 @@ namespace Ecommerce.Shared.Infrastructure.Swagger
                     Title = "EcommerceAPI",
                     Version = "v1",
                 });
+                options.SwaggerDoc("v2", new OpenApiInfo()
+                {
+                    Title = "EcommerceAPI",
+                    Version = "v2",
+                });
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
                     In = ParameterLocation.Header,
@@ -51,6 +56,11 @@ namespace Ecommerce.Shared.Infrastructure.Swagger
         public static WebApplication UseDocumentation(this WebApplication app)
         {
             app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint($"/swagger/v1/swagger.json", "V1");
+                options.SwaggerEndpoint($"/swagger/v2/swagger.json", "V2");
+            });
             app.UseSwaggerUI();
             return app;
         }

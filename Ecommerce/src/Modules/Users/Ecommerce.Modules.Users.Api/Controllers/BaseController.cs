@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Api.Controllers
 {
-    [ApiVersion(1)]
     [ApiController]
     [Route("api/v{v:apiVersion}/" + UsersModule.BasePath + "/[controller]")]
     internal abstract class BaseController : ControllerBase

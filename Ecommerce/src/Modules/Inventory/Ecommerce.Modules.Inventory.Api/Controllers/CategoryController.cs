@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
+﻿using Asp.Versioning;
+using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.BrowseCategories;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.ChangeCategoryName;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.CreateCategory;
@@ -17,18 +18,19 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Api.Controllers
 {
+    [ApiVersion(1)]
     internal class CategoryController : BaseController
     {
         public CategoryController(IMediator mediator) : base(mediator)
         {
         }
-        [HttpPost()]
+        [HttpPost]
         public async Task<ActionResult> CreateCategory([FromBody] CreateCategory command)
         {
             await _mediator.Send(command);
             return Created();
         }
-        [HttpGet()]
+        [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedResult<CategoryBrowseDto>>>> BrowseCategories([FromQuery] BrowseCategories query)
         {
             var result = await _mediator.Send(query);

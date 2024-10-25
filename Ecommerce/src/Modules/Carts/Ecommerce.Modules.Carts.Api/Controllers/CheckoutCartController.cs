@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Carts.Core.DTO;
+﻿using Asp.Versioning;
+using Ecommerce.Modules.Carts.Core.DTO;
 using Ecommerce.Modules.Carts.Core.Entities;
 using Ecommerce.Modules.Carts.Core.Services;
 using Ecommerce.Shared.Abstractions.Api;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Api.Controllers
 {
+    [ApiVersion(1)]
     internal class CheckoutCartController : BaseController
     {
         private readonly ICheckoutCartService _checkoutCartService;

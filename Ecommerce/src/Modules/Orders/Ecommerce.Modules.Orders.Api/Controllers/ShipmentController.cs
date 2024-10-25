@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Application.Shipping.DTO;
+﻿using Asp.Versioning;
+using Ecommerce.Modules.Orders.Application.Shipping.DTO;
 using Ecommerce.Modules.Orders.Application.Shipping.Features.BrowseShippings;
 using Ecommerce.Modules.Orders.Application.Shipping.Features.DownloadLabel;
 using Ecommerce.Shared.Abstractions.Api;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Api.Controllers
 {
+    [ApiVersion(1)]
     internal class ShipmentController : BaseController
     {
         public ShipmentController(IMediator mediator) : base(mediator)

@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
+﻿using Asp.Versioning;
+using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacturers.BrowseManufacturers;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacturers.ChangeManufacturerName;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacturers.CreateManufacturer;
@@ -19,6 +20,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Api.Controllers
 {
+    [ApiVersion(1)]
     internal class ManufacturerController : BaseController
     {
         public ManufacturerController(IMediator mediator) : base(mediator)

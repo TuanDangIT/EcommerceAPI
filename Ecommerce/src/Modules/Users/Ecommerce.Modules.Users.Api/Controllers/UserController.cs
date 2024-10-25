@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Users.Core.DTO;
+﻿using Asp.Versioning;
+using Ecommerce.Modules.Users.Core.DTO;
 using Ecommerce.Modules.Users.Core.Entities;
 using Ecommerce.Modules.Users.Core.Services;
 using Ecommerce.Shared.Abstractions.Api;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Api.Controllers
 {
+    [ApiVersion(1)]
     internal class UserController : BaseController
     {
         private readonly IIdentityService _identityService;

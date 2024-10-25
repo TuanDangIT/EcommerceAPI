@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
+﻿using Asp.Versioning;
+using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.BrowseParameters;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.ChangeParameterName;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.CreateParameter;
@@ -17,6 +18,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Api.Controllers
 {
+    [ApiVersion(1)]
     internal class ParameterController : BaseController
     {
         public ParameterController(IMediator mediator) : base(mediator)

@@ -1,7 +1,5 @@
 using Ecommerce.Bootstrapper;
-using Ecommerce.Shared.Infrastructure;
-
-var builder = WebApplication.CreateBuilder(args);
+using Ecommerce.Shared.Infrastructure;var builder = WebApplication.CreateBuilder(args);
 var assemblies = ModuleLoader.GetAssemblies();
 var modules = ModuleLoader.LoadModules(assemblies);
 builder.Services.AddInfrastructure(assemblies);

@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Application.Returns.DTO;
+﻿using Asp.Versioning;
+using Ecommerce.Modules.Orders.Application.Returns.DTO;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Return.BrowseReturns;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Return.GetReturn;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleReturn;
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Api.Controllers
 {
+    [ApiVersion(1)]
     internal class ReturnController : BaseController
     {
         public ReturnController(IMediator mediator) : base(mediator)

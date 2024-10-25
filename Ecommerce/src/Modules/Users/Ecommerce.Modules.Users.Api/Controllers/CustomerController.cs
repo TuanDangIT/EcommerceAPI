@@ -1,17 +1,23 @@
-﻿using Ecommerce.Modules.Users.Core.DTO;
+﻿using Asp.Versioning;
+using Ecommerce.Modules.Users.Core.DTO;
 using Ecommerce.Modules.Users.Core.Services;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Sieve.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Api.Controllers
 {
+    [ApiVersion(1)]
     internal class CustomerController : BaseController
     {
         private readonly ICustomerService _customerService;

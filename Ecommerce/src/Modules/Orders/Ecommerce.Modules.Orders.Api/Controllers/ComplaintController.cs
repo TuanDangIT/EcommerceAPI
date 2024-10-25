@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Application.Complaints.DTO;
+﻿using Asp.Versioning;
+using Ecommerce.Modules.Orders.Application.Complaints.DTO;
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.ApproveComplaint;
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.BrowseComplaints;
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.EditDecision;
@@ -22,6 +23,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Api.Controllers
 {
+    [ApiVersion(1)]
     internal class ComplaintController : BaseController
     {
         public ComplaintController(IMediator mediator) : base(mediator)

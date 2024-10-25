@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Users.Core.DTO;
+﻿using Asp.Versioning;
+using Ecommerce.Modules.Users.Core.DTO;
 using Ecommerce.Modules.Users.Core.Services;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Api.Controllers
 {
+    [ApiVersion(1)]
     internal class EmployeeController : BaseController
     {
         private readonly IEmployeeService _employeeService;

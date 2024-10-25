@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
+﻿using Asp.Versioning;
+using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.BrowseProducts;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.CreateProduct;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.DeleteProduct;
@@ -23,6 +24,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Api.Controllers
 {
+    [ApiVersion(1)]
     internal class ProductController : BaseController
     {
         public ProductController(IMediator mediator) : base(mediator)
