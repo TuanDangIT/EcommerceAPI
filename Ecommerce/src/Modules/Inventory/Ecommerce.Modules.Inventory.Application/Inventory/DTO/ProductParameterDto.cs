@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.DTO
 {
-    [ModelBinder(BinderType = typeof(SwaggerArrayBinder))]
+    [ModelBinder(BinderType = typeof(ListModelBinder))]
     public class ProductParameterDto
     {
         public Guid ParameterId { get; set; }

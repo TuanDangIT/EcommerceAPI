@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Shared.Infrastructure.ModelBinder
 {
-    public class SwaggerArrayBinder : IModelBinder
+    //For Swagger
+    public class ListModelBinder : IModelBinder
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
