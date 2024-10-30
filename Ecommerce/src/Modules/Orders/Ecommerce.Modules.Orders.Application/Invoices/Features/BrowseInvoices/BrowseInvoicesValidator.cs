@@ -5,14 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrders
+namespace Ecommerce.Modules.Orders.Application.Invoices.Features.BrowseInvoices
 {
-    public class BrowseOrderValidator : AbstractValidator<BrowseOrders>
+    internal class BrowseInvoicesValidator : AbstractValidator<BrowseInvoices>
     {
-        private readonly string[] _availableFilters = ["Id", "TotalSum", "OrderPlacedAt", "DiscountCode", "Payment", "Status", 
-            "Customer.UserId", "Customer.FirstName", "Customer.LastName", "Customer.Email", "Customer.FirstName",
-            "Shipment.TrackingNumber", "Shipment.Service", "Shipment.Id", "Shipment.LabelCreatedAt"];
-        public BrowseOrderValidator()
+        private readonly string[] _availableFilters = ["Id", "InvoiceNo", "CreatedAt", "OrderId", "Order.TotalSum", "Order.Status", "Order.Payment"];
+        public BrowseInvoicesValidator()
         {
             RuleForEach(b => b.Filters)
                 .Custom((keyValuePair, context) =>

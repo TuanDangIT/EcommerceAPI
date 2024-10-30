@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Behaviors
 {
-    public class ValidationPipelineBehavior<TRequest, TResponse>
+    public class InventoryValidationBehavior<TRequest, TResponse>
         : IPipelineBehavior<TRequest, TResponse>
         where TRequest : ICommand
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
-        public ValidationPipelineBehavior(IEnumerable<IValidator<TRequest>> validators)
+        public InventoryValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
         {
             _validators = validators;
         }

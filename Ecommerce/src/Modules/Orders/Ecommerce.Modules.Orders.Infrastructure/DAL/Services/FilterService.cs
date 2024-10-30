@@ -1,5 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
-using Ecommerce.Modules.Orders.Domain.Orders.Exceptions;
+﻿using Ecommerce.Modules.Orders.Domain.Orders.Exceptions;
+using Ecommerce.Modules.Orders.Infrastructure.DAL.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Services
 {
     internal class FilterService : IFilterService
     {
-        public IQueryable<Order> ApplyFilter(IQueryable<Order> query, string propertyPath, string filterValue)
+        public IQueryable<TEntity> ApplyFilter<TEntity>(IQueryable<TEntity> query, string propertyPath, string filterValue)
         {
 
             var properties = propertyPath.Split('.');
@@ -19,11 +19,12 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Services
             {
                 var navigationProperty = properties[0];
                 var subPropertyName = properties[1];
+                return ApplyNestedFilter(query, propertyPath, navigationProperty, subPropertyName, filterValue);
 
             }
             else
             {
-                var property = typeof(Order).GetProperty(propertyPath) ?? throw new OrderWrongFilterException(propertyPath);
+                var property = typeof(TEntity).GetProperty(propertyPath) ?? throw new InvalidFilterException(propertyPath);
                 if (property.PropertyType.IsEnum)
                 {
                     return ApplyEnumFilter(query, property.PropertyType, propertyPath, filterValue);
@@ -40,18 +41,18 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Services
                 }
                 else
                 {
-                    query = query.Where(o => EF.Property<string>(o, propertyPath).Contains(filterValue));
+                    query = query.Where(x => EF.Property<string>(x!, propertyPath).Contains(filterValue));
                 }
             }
             return query;
         }
-        private IQueryable<Order> ApplyEnumFilter(IQueryable<Order> query, Type propertyType, string propertyPath, string filterValue)
+        private IQueryable<TEntity> ApplyEnumFilter<TEntity>(IQueryable<TEntity> query, Type propertyType, string propertyPath, string filterValue)
         {
             var enumValue = Enum.Parse(propertyType, filterValue, ignoreCase: true);
-            query = query.Where(p => EF.Property<object>(p, propertyPath).Equals(enumValue));
+            query = query.Where(x => EF.Property<object>(x!, propertyPath).Equals(enumValue));
             return query;
         }
-        private IQueryable<Order> ApplyDateFilter(IQueryable<Order> query, string propertyPath, string filterValue)
+        private IQueryable<TEntity> ApplyDateFilter<TEntity>(IQueryable<TEntity> query, string propertyPath, string filterValue)
         {
             var dateRange = filterValue.Split("to");
             DateTime? fromDate = null;
@@ -68,26 +69,26 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Services
             }
             if (fromDate is not null && toDate is not null)
             {
-                return query.Where(p => EF.Property<DateTime>(p, propertyPath) >= fromDate.Value &&
-                                        EF.Property<DateTime>(p, propertyPath) <= toDate.Value);
+                return query.Where(x => EF.Property<DateTime>(x!, propertyPath) >= fromDate.Value &&
+                                        EF.Property<DateTime>(x!, propertyPath) <= toDate.Value);
             }
             else if (fromDate is not null)
             {
-                return query.Where(p => EF.Property<DateTime>(p, propertyPath) >= fromDate.Value);
+                return query.Where(x => EF.Property<DateTime>(x!, propertyPath) >= fromDate.Value);
             }
             else if (toDate is not null)
             {
-                return query.Where(p => EF.Property<DateTime>(p, propertyPath) <= toDate.Value);
+                return query.Where(x => EF.Property<DateTime>(x!, propertyPath) <= toDate.Value);
             }
             return query;
         }
-        private IQueryable<Order> ApplyNestedFilter(IQueryable<Order> query, string propertyPath, string navigationProperty, string subPropertyName, string filterValue)
+        private IQueryable<TEntity> ApplyNestedFilter<TEntity>(IQueryable<TEntity> query, string propertyPath, string navigationProperty, string subPropertyName, string filterValue)
         {
-            var navigation = typeof(Order).GetProperty(navigationProperty);
-            var subProperty = navigation?.PropertyType.GetProperty(subPropertyName);
+            var navigation = typeof(TEntity).GetProperty(navigationProperty) ?? throw new InvalidFilterException(propertyPath);
+            var subProperty = navigation.PropertyType.GetProperty(subPropertyName) ?? throw new InvalidFilterException(propertyPath);
             if (navigation == null || subProperty == null)
             {
-                throw new OrderWrongFilterException(propertyPath);
+                throw new InvalidFilterException(propertyPath);
             }
             if (subProperty.PropertyType.IsEnum)
             {
@@ -98,7 +99,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Services
             }
             else
             {
-                query = query.Where(p => EF.Property<string>(EF.Property<object>(p, navigationProperty), subPropertyName)
+                query = query.Where(x => EF.Property<string>(EF.Property<object>(x!, navigationProperty), subPropertyName)
                     .Contains(filterValue));
             }
             return query;

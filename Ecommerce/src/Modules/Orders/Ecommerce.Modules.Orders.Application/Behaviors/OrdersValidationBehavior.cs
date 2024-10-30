@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Behaviors
 {
-    public class ValidationPipelineBehavior<TRequest, TResponse>
+    internal class OrdersValidationBehavior<TRequest, TResponse>
         : IPipelineBehavior<TRequest, TResponse>
-        where TRequest : ICommand
+        where TRequest : IBaseRequest
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
-        public ValidationPipelineBehavior(IEnumerable<IValidator<TRequest>> validators)
+        public OrdersValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
         {
             _validators = validators;
         }

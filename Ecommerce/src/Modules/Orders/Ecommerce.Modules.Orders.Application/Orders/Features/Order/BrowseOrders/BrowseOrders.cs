@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.DTO;
+using Ecommerce.Modules.Orders.Application.Returns.DTO;
 using Ecommerce.Shared.Abstractions.MediatR;
-using Ecommerce.Shared.Infrastructure.ModelBinder;
+using Ecommerce.Shared.Infrastructure.ModelBinders;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -16,9 +17,9 @@ using System.Threading.Tasks;
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrders
 {
     //For Swagger
-    public sealed record class BrowseOrders(OrderCursorDto? CursorDto, bool? IsNextPage, int PageSize/*, [property: ModelBinder(BinderType = typeof(SwaggerDictionaryModelBinder))] Dictionary<string, string>? Filters*/) : IQuery<CursorPagedResult<OrderBrowseDto, OrderCursorDto>> 
+    public sealed record class BrowseOrders(OrderCursorDto? CursorDto, bool? IsNextPage, int PageSize) : IQuery<CursorPagedResult<OrderBrowseDto, OrderCursorDto>> 
     {
         [ModelBinder(BinderType = typeof(DictionaryModelBinder))]
-        public Dictionary<string, string>? Filters { get; private set; }
+        public Dictionary<string, string>? Filters { get; set; }
     };
 }

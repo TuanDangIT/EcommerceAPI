@@ -9,6 +9,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Services
 {
     public interface IFilterService
     {
-        IQueryable<Order> ApplyFilter(IQueryable<Order> query, string propertyPath, string filterValue);
+        IQueryable<TEntity> ApplyFilter<TEntity>(IQueryable<TEntity> query, string propertyPath, string filterValue);
     }
 }

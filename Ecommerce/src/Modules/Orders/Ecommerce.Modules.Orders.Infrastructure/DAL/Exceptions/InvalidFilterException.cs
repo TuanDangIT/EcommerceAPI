@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Domain.Orders.Exceptions
+namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Exceptions
 {
-    public class OrderWrongFilterException(string filter) : EcommerceException($"Given filter: {filter} is wrong.")
+    public class InvalidFilterException(string filter) : EcommerceException($"Given filter: {filter} is wrong.")
     {
     }
 }

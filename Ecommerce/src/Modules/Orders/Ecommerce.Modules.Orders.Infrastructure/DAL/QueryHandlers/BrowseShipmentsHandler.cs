@@ -1,7 +1,9 @@
 ﻿using Ecommerce.Modules.Orders.Application.Complaints.DTO;
 using Ecommerce.Modules.Orders.Application.Shipping.DTO;
 using Ecommerce.Modules.Orders.Application.Shipping.Features.BrowseShippings;
+using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings;
+using Ecommerce.Modules.Orders.Infrastructure.DAL.Services;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using Microsoft.EntityFrameworkCore;
@@ -16,24 +18,36 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
     internal class BrowseShipmentsHandler : IQueryHandler<BrowseShipments, CursorPagedResult<ShipmentBrowseDto, ShipmentCursorDto>>
     {
         private readonly OrdersDbContext _dbContext;
+        private readonly IFilterService _filterService;
 
-        public BrowseShipmentsHandler(OrdersDbContext dbContext)
+        public BrowseShipmentsHandler(OrdersDbContext dbContext, IFilterService filterService)
         {
             _dbContext = dbContext;
+            _filterService = filterService;
         }
         public async Task<CursorPagedResult<ShipmentBrowseDto, ShipmentCursorDto>> Handle(BrowseShipments request, CancellationToken cancellationToken)
         {
-            var shipmentsAsQueryable = _dbContext.Shipments.OrderBy(s => s.LabelCreatedAt).AsQueryable();
+            var shipmentsAsQueryable = _dbContext.Shipments
+                .OrderByDescending(s => s.LabelCreatedAt)
+                .AsQueryable();
+            if (request.Filters is not null && request.Filters.Count != 0)
+            {
+                foreach (var filter in request.Filters)
+                {
+                    shipmentsAsQueryable = _filterService.ApplyFilter(shipmentsAsQueryable, filter.Key, filter.Value);
+                }
+            }
             int takeAmount = request.PageSize + 1;
             if (request.CursorDto is not null)
             {
                 if (request.IsNextPage is true)
                 {
-                    shipmentsAsQueryable = shipmentsAsQueryable.Where(s => s.LabelCreatedAt >= request.CursorDto.CursorLabelCreatedAt && s.Id != request.CursorDto.CursorId);
+                    shipmentsAsQueryable = shipmentsAsQueryable.Where(s => s.LabelCreatedAt <= request.CursorDto.CursorLabelCreatedAt && s.Id != request.CursorDto.CursorId);
                 }
                 else
                 {
-                    shipmentsAsQueryable = shipmentsAsQueryable.Where(s => s.LabelCreatedAt <= request.CursorDto.CursorLabelCreatedAt && s.Id != request.CursorDto.CursorId);
+                    shipmentsAsQueryable = shipmentsAsQueryable.Where(s => s.LabelCreatedAt >= request.CursorDto.CursorLabelCreatedAt && s.Id != request.CursorDto.CursorId);
+                    takeAmount = request.PageSize;
                 }
             }
             shipmentsAsQueryable = shipmentsAsQueryable.Take(takeAmount);
@@ -46,9 +60,13 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 .AsNoTracking()
                 .ToListAsync();
             bool isFirstPage = request.CursorDto is null
-                || (request.CursorDto is not null && shipments.First().Id == _dbContext.Shipments.OrderBy(i => i.Id).AsNoTracking().First().Id);
+                || (request.CursorDto is not null && shipments.First().Id == _dbContext.Shipments.OrderByDescending(i => i.Id).AsNoTracking().First().Id);
             bool hasNextPage = shipments.Count > request.PageSize
                 || (request.CursorDto is not null && request.IsNextPage == false);
+            if (shipments.Count > request.PageSize)
+            {
+                shipments.RemoveAt(shipments.Count - 1);
+            }
             ShipmentCursorDto nextCursor = hasNextPage ?
                 new ShipmentCursorDto()
                 {

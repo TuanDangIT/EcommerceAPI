@@ -36,7 +36,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 .OrderByDescending(o => o.OrderPlacedAt)
                 .ThenBy(o => o.Id)
                 .AsQueryable();
-            //ordersAsQueryable = ordersAsQueryable.OrderBy(o => o.OrderPlacedAt).AsQueryable();
             if (request.Filters is not null && request.Filters.Count != 0)
             {
                 foreach (var filter in request.Filters)

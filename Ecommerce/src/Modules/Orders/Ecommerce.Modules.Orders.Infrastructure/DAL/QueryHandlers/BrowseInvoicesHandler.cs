@@ -3,6 +3,7 @@ using Ecommerce.Modules.Orders.Application.Invoices.Features.BrowseInvoices;
 using Ecommerce.Modules.Orders.Application.Orders.DTO;
 using Ecommerce.Modules.Orders.Domain.Invoices.Repositories;
 using Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings;
+using Ecommerce.Modules.Orders.Infrastructure.DAL.Services;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using Microsoft.EntityFrameworkCore;
@@ -17,24 +18,36 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
     internal class BrowseInvoicesHandler : IQueryHandler<BrowseInvoices, CursorPagedResult<InvoiceBrowseDto, InvoiceCursorDto>>
     {
         private readonly OrdersDbContext _dbContext;
+        private readonly IFilterService _filterService;
 
-        public BrowseInvoicesHandler(OrdersDbContext dbContext)
+        public BrowseInvoicesHandler(OrdersDbContext dbContext, IFilterService filterService)
         {
             _dbContext = dbContext;
+            _filterService = filterService;
         }
         public async Task<CursorPagedResult<InvoiceBrowseDto, InvoiceCursorDto>> Handle(BrowseInvoices request, CancellationToken cancellationToken)
         {
-            var invoicesAsQueryable = _dbContext.Invoices.OrderBy(i => i.CreatedAt).AsQueryable();
+            var invoicesAsQueryable = _dbContext.Invoices
+                .OrderByDescending(i => i.CreatedAt)
+                .AsQueryable();
+            if (request.Filters is not null && request.Filters.Count != 0)
+            {
+                foreach (var filter in request.Filters)
+                {
+                    invoicesAsQueryable = _filterService.ApplyFilter(invoicesAsQueryable, filter.Key, filter.Value);
+                }
+            }
             int takeAmount = request.PageSize + 1;
             if (request.CursorDto is not null)
             {
                 if (request.IsNextPage is true)
                 {
-                    invoicesAsQueryable = invoicesAsQueryable.Where(i => i.CreatedAt >= request.CursorDto.CursorCreatedAt && i.Id != request.CursorDto.CursorId);
+                    invoicesAsQueryable = invoicesAsQueryable.Where(i => i.CreatedAt <= request.CursorDto.CursorCreatedAt && i.Id != request.CursorDto.CursorId);
                 }
                 else
                 {
-                    invoicesAsQueryable = invoicesAsQueryable.Where(i => i.CreatedAt <= request.CursorDto.CursorCreatedAt && i.Id != request.CursorDto.CursorId);
+                    invoicesAsQueryable = invoicesAsQueryable.Where(i => i.CreatedAt >= request.CursorDto.CursorCreatedAt && i.Id != request.CursorDto.CursorId);
+                    takeAmount = request.PageSize;
                 }
             }
             invoicesAsQueryable = invoicesAsQueryable.Take(takeAmount);
@@ -49,9 +62,13 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 .AsNoTracking()
                 .ToListAsync();
             bool isFirstPage = request.CursorDto is null
-                || (request.CursorDto is not null && invoices.First().Id == _dbContext.Invoices.OrderBy(i => i.Id).AsNoTracking().First().Id);
+                || (request.CursorDto is not null && invoices.First().Id == _dbContext.Invoices.OrderByDescending(i => i.Id).AsNoTracking().First().Id);
             bool hasNextPage = invoices.Count > request.PageSize
                 || (request.CursorDto is not null && request.IsNextPage == false);
+            if (invoices.Count > request.PageSize)
+            {
+                invoices.RemoveAt(invoices.Count - 1);
+            }
             InvoiceCursorDto nextCursor = hasNextPage ?
                 new InvoiceCursorDto()
                 {

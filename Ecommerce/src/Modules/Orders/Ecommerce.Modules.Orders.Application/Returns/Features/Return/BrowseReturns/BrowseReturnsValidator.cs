@@ -5,14 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrders
+namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.BrowseReturns
 {
-    public class BrowseOrderValidator : AbstractValidator<BrowseOrders>
+    internal class BrowseReturnsValidator : AbstractValidator<BrowseReturns>
     {
-        private readonly string[] _availableFilters = ["Id", "TotalSum", "OrderPlacedAt", "DiscountCode", "Payment", "Status", 
-            "Customer.UserId", "Customer.FirstName", "Customer.LastName", "Customer.Email", "Customer.FirstName",
-            "Shipment.TrackingNumber", "Shipment.Service", "Shipment.Id", "Shipment.LabelCreatedAt"];
-        public BrowseOrderValidator()
+        private readonly string[] _availableFilters = ["Id", "OrderId", "ReasonForReturn", "AdditionalNote", "IsFullReturn", "CreatedAt",
+            "Order.TotalSum", "Order.Payment", "Order.Status"];
+        public BrowseReturnsValidator()
         {
             RuleForEach(b => b.Filters)
                 .Custom((keyValuePair, context) =>

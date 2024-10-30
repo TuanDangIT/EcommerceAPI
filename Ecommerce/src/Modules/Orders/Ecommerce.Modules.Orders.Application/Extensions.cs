@@ -18,7 +18,7 @@ namespace Ecommerce.Modules.Orders.Application
         {
             services.AddMediatR(cfg =>
             {
-                cfg.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
+                cfg.AddOpenBehavior(typeof(OrdersValidationBehavior<,>));
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
             services.AddSingleton<IOrdersEventMapper, OrdersEventMapper>();

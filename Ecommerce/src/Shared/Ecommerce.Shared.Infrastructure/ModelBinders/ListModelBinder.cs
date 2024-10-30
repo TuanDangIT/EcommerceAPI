@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Shared.Infrastructure.ModelBinder
+namespace Ecommerce.Shared.Infrastructure.ModelBinders
 {
     //For Swagger
     public class ListModelBinder : IModelBinder

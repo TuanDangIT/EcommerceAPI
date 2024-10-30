@@ -1,6 +1,6 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.DTO;
 using Ecommerce.Shared.Abstractions.MediatR;
-using Ecommerce.Shared.Infrastructure.ModelBinder;
+using Ecommerce.Shared.Infrastructure.ModelBinders;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;

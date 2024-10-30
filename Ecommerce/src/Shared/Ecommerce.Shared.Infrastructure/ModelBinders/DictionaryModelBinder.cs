@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Shared.Infrastructure.ModelBinder
+namespace Ecommerce.Shared.Infrastructure.ModelBinders
 {
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using System.Threading.Tasks;
