@@ -16,7 +16,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.DTO
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string? AdditionalNote { get; set; }
-        public DecisionDto? Decision { get; set; } = new();
+        public DecisionApproveOrEditDto? Decision { get; set; } = new();
         public string Status { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }

@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.SetNote
 {
-    public sealed record class SetNote(string Note, Guid ComplaintId) : ICommand;
+    public sealed record class SetNote(Guid ComplaintId, string Note) : ICommand;
 }

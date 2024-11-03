@@ -46,15 +46,15 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return NoContent();
         }
         [HttpPost("{complaintId:guid}/reject")]
-        public async Task<ActionResult> RejectComplaint([FromRoute] Guid complaintId, [FromForm] DecisionDto decision)
+        public async Task<ActionResult> RejectComplaint([FromRoute] Guid complaintId, [FromForm] DecisionRejectDto decision)
         {
-            await _mediator.Send(new RejectComplaint(decision, complaintId));
+            await _mediator.Send(new RejectComplaint(complaintId, decision));
             return NoContent();
         }
         [HttpPut("{complaintId:guid}/note")]
         public async Task<ActionResult> SetNote([FromRoute] Guid complaintId, [FromForm] string note)
         {
-            await _mediator.Send(new SetNote(note, complaintId));
+            await _mediator.Send(new SetNote(complaintId, note));
             return NoContent();
         }
         [HttpPut("{complaintId:guid}/decision")]

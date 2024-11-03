@@ -44,13 +44,15 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
             AdditionalNote = notes;
             UpdatedAt = updatedAt;
         }
-        public void Approve(DateTime updatedAt)
+        public void Approve(Decision decision, DateTime updatedAt)
         {
+            WriteDecision(decision);
             Status = ComplainStatus.Approved;
             UpdatedAt = updatedAt;
         }
-        public void Reject(DateTime updatedAt)
+        public void Reject(Decision decision, DateTime updatedAt)
         {
+            WriteDecision(decision);
             Status = ComplainStatus.Rejected;
             UpdatedAt = updatedAt;
         }

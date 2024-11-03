@@ -47,6 +47,16 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
             RuleFor(c => c.Images)
                 .NotEmpty()
                 .NotNull();
+            RuleForEach(c => c.ProductParameters)
+                .ChildRules(p =>
+                {
+                    p.RuleFor(p => p.ParameterId)
+                        .NotNull()
+                        .NotEmpty();
+                    p.RuleFor(p => p.Value)
+                        .NotNull()
+                        .NotEmpty();
+                });
         }
     }
 }

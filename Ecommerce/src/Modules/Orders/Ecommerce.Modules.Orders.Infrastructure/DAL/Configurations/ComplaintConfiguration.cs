@@ -17,6 +17,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
             {
                 d.Property(d => d.DecisionText)
                     .IsRequired();
+                d.Property(d => d.RefundAmount)
+                    .HasPrecision(11, 2);
             });
             builder.Property(c => c.CreatedAt)
                 .IsRequired();

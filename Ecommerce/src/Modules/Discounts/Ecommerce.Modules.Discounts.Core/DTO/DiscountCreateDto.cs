@@ -10,6 +10,7 @@ namespace Ecommerce.Modules.Discounts.Core.DTO
     public class DiscountCreateDto
     {
         [Required]
+        [Range(2, 36)]
         public string Code { get; set; } = string.Empty;
         public DateTime? EndingDate { get; set; }
     }

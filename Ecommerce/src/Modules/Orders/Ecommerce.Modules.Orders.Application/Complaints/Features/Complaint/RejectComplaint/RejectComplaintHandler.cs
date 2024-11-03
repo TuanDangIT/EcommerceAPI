@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Orders.Application.Complaints.Events;
 using Ecommerce.Modules.Orders.Application.Complaints.Exceptions;
+using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
 using Ecommerce.Modules.Orders.Domain.Complaints.Repositories;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Abstractions.Messaging;
@@ -30,7 +31,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Rej
             {
                 throw new ComplaintNotFoundException(request.ComplaintId);
             }
-            complaint.Reject(_timeProvider.GetUtcNow().UtcDateTime);
+            complaint.Reject(new Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation), _timeProvider.GetUtcNow().UtcDateTime);
             await _complaintRepository.UpdateAsync();
             //More logic here: Mail noty
             await _messageBroker.PublishAsync(new ComplaintRejected(

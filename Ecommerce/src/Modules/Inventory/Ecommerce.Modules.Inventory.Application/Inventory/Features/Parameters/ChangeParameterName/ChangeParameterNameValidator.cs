@@ -11,6 +11,9 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.
     {
         public ChangeParameterNameValidator()
         {
+            RuleFor(c => c.ParameterId)
+                .NotNull()
+                .NotEmpty();
             RuleFor(c => c.Name)
                 .NotEmpty()
                 .NotNull()

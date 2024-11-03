@@ -96,11 +96,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Title = complaint.Title,
                 Description = complaint.Description,
                 AdditionalNote = complaint.AdditionalNote,
-                Decision = new DecisionDto()
+                Decision = new DecisionApproveOrEditDto()
                 {
                     DecisionText = complaint.Decision!.DecisionText,
                     AdditionalInformation = complaint.Decision.AdditionalInformation,
-                    RefundedAmount = complaint.Decision.RefundedAmount
+                    RefundAmount = complaint.Decision.RefundAmount
                 },
                 Status = complaint.Status.ToString(),
                 CreatedAt = complaint.CreatedAt,

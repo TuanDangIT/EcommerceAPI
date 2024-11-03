@@ -11,6 +11,9 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
     {
         public ChangeManufacturerNameValidator()
         {
+            RuleFor(c => c.ManufaturerId)
+                .NotEmpty()
+                .NotNull();
             RuleFor(c => c.Name)
                 .NotEmpty()
                 .NotNull()

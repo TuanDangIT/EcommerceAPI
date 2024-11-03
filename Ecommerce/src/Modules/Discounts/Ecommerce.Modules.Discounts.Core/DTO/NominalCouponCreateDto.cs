@@ -10,6 +10,7 @@ namespace Ecommerce.Modules.Discounts.Core.DTO
     public class NominalCouponCreateDto
     {
         [Required]
+        [Length(2, 36)]
         public string Name { get; set; } = string.Empty;
         [Required]
         [Range(0.01, 999999)]

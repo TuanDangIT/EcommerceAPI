@@ -11,7 +11,9 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
     {
         public CancelOrderValidator()
         {
-
+            RuleFor(c => c.OrderId)
+                .NotEmpty()
+                .NotNull();
         }
     }
 }

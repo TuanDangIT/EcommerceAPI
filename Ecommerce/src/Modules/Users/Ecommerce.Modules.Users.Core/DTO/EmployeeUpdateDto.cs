@@ -12,9 +12,12 @@ namespace Ecommerce.Modules.Users.Core.DTO
         [Required]
         public Guid EmployeeId { get; set; }
         [Required]
+        [Length(2, 64)]
         public string FirstName { get; set; } = string.Empty;
         [Required]
+        [Length(2, 64)]
         public string LastName { get; set; } = string.Empty;
+        [Length(2, 64)]
         [Required]
         public string JobPosition { get; set; } = string.Empty;
         [EmailAddress]

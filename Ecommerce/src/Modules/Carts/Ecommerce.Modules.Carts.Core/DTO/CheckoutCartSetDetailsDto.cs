@@ -10,6 +10,7 @@ namespace Ecommerce.Modules.Carts.Core.DTO
     public class CheckoutCartSetDetailsDto
     {
         public CustomerDto CustomerDto { get; set; } = new();
+        [Required]
         public Guid PaymentId { get; set; } 
         public ShipmentDto ShipmentDto { get; set; } = new();
         [MaxLength(256)]

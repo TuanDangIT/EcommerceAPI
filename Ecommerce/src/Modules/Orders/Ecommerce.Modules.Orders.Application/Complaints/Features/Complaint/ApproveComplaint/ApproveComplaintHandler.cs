@@ -33,21 +33,28 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
             {
                 throw new ComplaintNotFoundException(request.ComplaintId);
             }
-            complaint.WriteDecision(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation, request.Amount));
-            if(request.Amount is null)
+            //complaint.WriteDecision(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation, request.Decision.RefundAmount));
+            if (request.Decision.RefundAmount is not null)
+            {
+                complaint.Approve(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation, (decimal)request.Decision.RefundAmount), _timeProvider.GetUtcNow().UtcDateTime);
+            }
+            else
+            {
+                complaint.Approve(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation), _timeProvider.GetUtcNow().UtcDateTime);
+            }
+            await _complaintRepository.UpdateAsync();
+            if(request.Decision.RefundAmount is null)
             {
                 await _stripeService.Refund(complaint.Order);
             }
             else
             {
-                if(request.Amount <= 0 || request.Amount > complaint.Order.Products.Sum(p => p.Price))
+                if(request.Decision.RefundAmount <= 0 || request.Decision.RefundAmount > complaint.Order.Products.Sum(p => p.Price))
                 {
                     throw new ComplaintInvalidAmountToReturnException();
                 }
-                await _stripeService.Refund(complaint.Order, (decimal)request.Amount);
+                await _stripeService.Refund(complaint.Order, (decimal)request.Decision.RefundAmount);
             }
-            complaint.Approve(_timeProvider.GetUtcNow().UtcDateTime);
-            await _complaintRepository.UpdateAsync();
             await _messageBroker.PublishAsync(new ComplaintApproved(
                 complaint.Id,
                 complaint.OrderId,
@@ -57,7 +64,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
                 complaint.Title,
                 complaint.Decision!.DecisionText,
                 complaint.Decision.AdditionalInformation,
-                request.Amount,
+                request.Decision.RefundAmount,
                 complaint.CreatedAt));
         }
     }

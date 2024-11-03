@@ -11,6 +11,19 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
     {
         public ApproveComplaintValidator()
         {
+            RuleFor(a => a.ComplaintId)
+                .NotNull()
+                .NotEmpty();
+            //.When(a => a.Amount is not null);
+            RuleFor(a => a.Decision)
+                .NotEmpty()
+                .NotNull()
+                .ChildRules(d =>
+                {
+                    d.RuleFor(d => d.RefundAmount)
+                        .PrecisionScale(11, 2, true)
+                        .GreaterThan(0);
+                });
         }
     }
 }

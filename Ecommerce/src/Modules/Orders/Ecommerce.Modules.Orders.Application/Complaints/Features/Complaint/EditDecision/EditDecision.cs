@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.EditDecision
 {
-    public sealed record class EditDecision(DecisionDto Decision, Guid ComplaintId) : ICommand;
+    public sealed record class EditDecision(Guid ComplaintId, DecisionApproveOrEditDto Decision) : ICommand;
 }

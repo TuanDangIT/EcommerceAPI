@@ -11,6 +11,9 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
     {
         public ChangeCategoryNameValidator()
         {
+            RuleFor(c => c.CategoryId)
+                .NotEmpty()
+                .NotNull();
             RuleFor(c => c.Name)
                 .NotEmpty()
                 .NotNull()

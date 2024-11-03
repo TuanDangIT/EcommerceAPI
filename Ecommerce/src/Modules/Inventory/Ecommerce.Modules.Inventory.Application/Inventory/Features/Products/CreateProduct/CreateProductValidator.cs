@@ -49,6 +49,17 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
             RuleFor(c => c.Images)
                 .NotEmpty()
                 .NotNull();
+            RuleForEach(c => c.ProductParameters)
+                .ChildRules(p =>
+                {
+                    p.RuleFor(p => p.ParameterId)
+                        .NotNull()
+                        .NotEmpty();
+                    p.RuleFor(p => p.Value)
+                        .NotNull()
+                        .NotEmpty();
+                });
+                //.When(c => c.ProductParameters is not null);
 
         }
     }

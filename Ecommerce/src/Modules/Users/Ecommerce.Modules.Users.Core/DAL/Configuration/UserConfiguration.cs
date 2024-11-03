@@ -20,7 +20,9 @@ namespace Ecommerce.Modules.Users.Core.DAL.Configuration
                 .IsRequired()
                 .HasMaxLength(64);
             builder.HasIndex(x => x.Email).IsUnique();
-            builder.Property(x => x.Password).IsRequired();
+            builder.Property(x => x.Password)
+                .HasMaxLength(64)
+                .IsRequired();
             builder.Property(x => x.Username)
                 .IsRequired()
                 .HasMaxLength(16);
@@ -40,6 +42,12 @@ namespace Ecommerce.Modules.Users.Core.DAL.Configuration
                 .HasValue<Customer>(UserType.Customer);
             builder.Property(u => u.Type)
                 .HasConversion<string>();
+            builder.Property(u => u.FirstName)
+                .HasMaxLength(64);
+            builder.Property(u => u.LastName)
+                .HasMaxLength(64);
+            builder.Property(u => u.IsActive)
+                .IsRequired();
         }
     }
 }

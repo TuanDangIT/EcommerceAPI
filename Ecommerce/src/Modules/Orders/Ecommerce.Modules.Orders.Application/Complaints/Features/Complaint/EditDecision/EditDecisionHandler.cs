@@ -26,6 +26,10 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Edi
             {
                 throw new ComplaintNotFoundException(request.ComplaintId);
             }
+            if (complaint.Decision is not null && complaint.Decision.RefundAmount is null && request.Decision.RefundAmount is not null)
+            {
+                throw new ComplaintCannotEditRefundAmountException();
+            }
             complaint.EditDecision(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation), _timeProvider.GetUtcNow().UtcDateTime);
             await _complaintRepository.UpdateAsync();
         }

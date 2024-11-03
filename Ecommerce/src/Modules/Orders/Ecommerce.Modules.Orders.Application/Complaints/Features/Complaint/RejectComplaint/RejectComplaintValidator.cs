@@ -11,6 +11,17 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Rej
     {
         public RejectComplaintValidator()
         {
+            RuleFor(r => r.ComplaintId)
+                .NotNull()
+                .NotEmpty();
+            RuleFor(r => r.Decision)
+                .NotEmpty()
+                .NotNull();
+                //.ChildRules(d =>
+                //{
+                //    d.RuleFor(d => d.RefundAmount)
+                //        .Null();
+                //});
         }
     }
 }

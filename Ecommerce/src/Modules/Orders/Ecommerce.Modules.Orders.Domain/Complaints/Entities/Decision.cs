@@ -10,12 +10,12 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
     {
         public string DecisionText { get; set; } = string.Empty;
         public string? AdditionalInformation { get; set; } = string.Empty;
-        public decimal? RefundedAmount { get; set; }
-        public Decision(string decisionText, string? additionalInformation, decimal? refundedAmount)
+        public decimal? RefundAmount { get; set; }
+        public Decision(string decisionText, string? additionalInformation, decimal refundAmount)
         {
             DecisionText = decisionText;
             AdditionalInformation = additionalInformation;
-            RefundedAmount = refundedAmount;
+            RefundAmount = refundAmount;
 
         }
         public Decision(string decisionText, string? additionalInformation)
