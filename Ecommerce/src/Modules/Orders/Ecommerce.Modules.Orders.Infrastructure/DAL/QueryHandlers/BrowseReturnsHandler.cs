@@ -28,6 +28,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
         {
             var returnsAsQueryable = _dbContext.Returns
                 .OrderByDescending(r => r.CreatedAt)
+                .ThenBy(r => r.Id)
                 .AsQueryable();
             if (request.Filters is not null && request.Filters.Count != 0)
             {
@@ -60,7 +61,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 .AsNoTracking()
                 .ToListAsync();
             bool isFirstPage = request.CursorDto is null
-                || (request.CursorDto is not null && returns.First().Id == _dbContext.Returns.OrderByDescending(r => r.Id).AsNoTracking().First().Id);
+                || (request.CursorDto is not null && returns.First().Id == _dbContext.Returns.OrderByDescending(r => r.CreatedAt)
+                    .ThenBy(r => r.Id).AsNoTracking().First().Id);
             bool hasNextPage = returns.Count > request.PageSize
                 || (request.CursorDto is not null && request.IsNextPage == false);
             if (returns.Count > request.PageSize)

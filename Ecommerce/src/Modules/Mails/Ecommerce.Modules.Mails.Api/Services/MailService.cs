@@ -7,6 +7,7 @@ using Ecommerce.Shared.Abstractions.BloblStorage;
 using Ecommerce.Shared.Infrastructure.Company;
 using Ecommerce.Shared.Infrastructure.Mails;
 using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
+using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination.Services;
 using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -29,32 +30,46 @@ namespace Ecommerce.Modules.Mails.Api.Services
         private readonly MailOptions _mailOptions;
         private readonly IBlobStorageService _blobStorageService;
         private readonly CompanyOptions _companyOptions;
+        private readonly IFilterService _filterService;
         private readonly TimeProvider _timeProvider;
         private const string _mailDefaultTemplatePath = "MailTemplates\\Default.html";
 
         public MailService(IMailsDbContext dbContext, MailOptions mailOptions, IBlobStorageService blobStorageService, 
-            CompanyOptions companyOptions, TimeProvider timeProvider)
+            CompanyOptions companyOptions, IFilterService filterService, TimeProvider timeProvider)
         {
             _dbContext = dbContext;
             _mailOptions = mailOptions;
             _blobStorageService = blobStorageService;
             _companyOptions = companyOptions;
+            _filterService = filterService;
             _timeProvider = timeProvider;
         }
 
         public async Task<CursorPagedResult<MailBrowseDto, MailCursorDto>> BrowseAsync(MailCursorDto cursorDto, bool? isNextPage, int pageSize)
         {
-            var mailsAsQueryable = _dbContext.Mails.OrderBy(m => m.Id).AsQueryable();
+            var mailsAsQueryable = _dbContext.Mails
+                .Include(m => m.Customer)
+                .OrderByDescending(m => m.CreatedAt)
+                .ThenBy(m => m.Id)
+                .AsQueryable();
+            if (cursorDto.Filters is not null && cursorDto.Filters.Count != 0)
+            {
+                foreach (var filter in cursorDto.Filters)
+                {
+                    mailsAsQueryable = _filterService.ApplyFilter(mailsAsQueryable, filter.Key, filter.Value);
+                }
+            }
             int takeAmount = pageSize + 1;
             if (cursorDto is not null)
             {
                 if (isNextPage is true)
                 {
-                    mailsAsQueryable = mailsAsQueryable.Where(m => m.CreatedAt >= cursorDto.CursorCreatedAt && m.Id != cursorDto.CursorId);
+                    mailsAsQueryable = mailsAsQueryable.Where(m => m.CreatedAt <= cursorDto.CursorCreatedAt && m.Id != cursorDto.CursorId);
                 }
                 else
                 {
-                    mailsAsQueryable = mailsAsQueryable.Where(m => m.CreatedAt <= cursorDto.CursorCreatedAt && m.Id != cursorDto.CursorId);
+                    mailsAsQueryable = mailsAsQueryable.Where(m => m.CreatedAt >= cursorDto.CursorCreatedAt && m.Id != cursorDto.CursorId);
+                    takeAmount = pageSize;
                 }
             }
             mailsAsQueryable = mailsAsQueryable.Take(takeAmount);
@@ -67,9 +82,14 @@ namespace Ecommerce.Modules.Mails.Api.Services
                 .AsNoTracking()
                 .ToListAsync();
             bool isFirstPage = cursorDto is null
-                || (cursorDto is not null && mails.First().Id == _dbContext.Mails.OrderBy(m => m.Id).AsNoTracking().First().Id);
+                || (cursorDto is not null && mails.First().Id == _dbContext.Mails.OrderByDescending(m => m.CreatedAt)
+                    .ThenBy(m => m.Id).AsNoTracking().First().Id);
             bool hasNextPage = mails.Count > pageSize
                 || (cursorDto is not null && isNextPage == false);
+            if (mails.Count >pageSize)
+            {
+                mails.RemoveAt(mails.Count - 1);
+            }
             MailCursorDto nextCursor = hasNextPage ?
                 new MailCursorDto()
                 {

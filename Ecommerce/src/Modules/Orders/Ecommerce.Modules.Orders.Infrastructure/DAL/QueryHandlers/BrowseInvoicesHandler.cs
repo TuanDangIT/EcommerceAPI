@@ -29,6 +29,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
         {
             var invoicesAsQueryable = _dbContext.Invoices
                 .OrderByDescending(i => i.CreatedAt)
+                .ThenBy(i => i.Id)
                 .AsQueryable();
             if (request.Filters is not null && request.Filters.Count != 0)
             {
@@ -62,7 +63,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 .AsNoTracking()
                 .ToListAsync();
             bool isFirstPage = request.CursorDto is null
-                || (request.CursorDto is not null && invoices.First().Id == _dbContext.Invoices.OrderByDescending(i => i.Id).AsNoTracking().First().Id);
+                || (request.CursorDto is not null && invoices.First().Id == _dbContext.Invoices.OrderByDescending(i => i.CreatedAt)
+                    .ThenBy(i => i.Id).AsNoTracking().First().Id);
             bool hasNextPage = invoices.Count > request.PageSize
                 || (request.CursorDto is not null && request.IsNextPage == false);
             if (invoices.Count > request.PageSize)
