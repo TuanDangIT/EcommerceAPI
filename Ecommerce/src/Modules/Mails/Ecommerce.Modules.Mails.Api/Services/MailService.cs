@@ -28,18 +28,18 @@ namespace Ecommerce.Modules.Mails.Api.Services
     {
         private readonly IMailsDbContext _dbContext;
         private readonly MailOptions _mailOptions;
-        private readonly IBlobStorageService _blobStorageService;
+        //private readonly IBlobStorageService _blobStorageService;
         private readonly CompanyOptions _companyOptions;
         private readonly IFilterService _filterService;
         private readonly TimeProvider _timeProvider;
         private const string _mailDefaultTemplatePath = "MailTemplates\\Default.html";
 
-        public MailService(IMailsDbContext dbContext, MailOptions mailOptions, IBlobStorageService blobStorageService, 
+        public MailService(IMailsDbContext dbContext, MailOptions mailOptions/*, IBlobStorageService blobStorageService*/, 
             CompanyOptions companyOptions, IFilterService filterService, TimeProvider timeProvider)
         {
             _dbContext = dbContext;
             _mailOptions = mailOptions;
-            _blobStorageService = blobStorageService;
+            //_blobStorageService = blobStorageService;
             _companyOptions = companyOptions;
             _filterService = filterService;
             _timeProvider = timeProvider;

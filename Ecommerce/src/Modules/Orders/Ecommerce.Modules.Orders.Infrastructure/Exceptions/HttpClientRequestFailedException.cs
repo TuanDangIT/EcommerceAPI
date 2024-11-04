@@ -9,7 +9,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Exceptions
 {
     internal class HttpClientRequestFailedException : EcommerceException
     {
-        public HttpClientRequestFailedException() : base("A HTTP request that was sent failed.")
+        public HttpClientRequestFailedException(string message) : base($"A HTTP request that was sent failed. Message: {message}")
         {
         }
     }

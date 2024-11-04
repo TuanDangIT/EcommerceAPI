@@ -18,7 +18,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
         private readonly IHttpClientFactory _factory;
         private readonly InPostOptions _inPostOptions;
         private const string _inPost = "inpost";
-        private static readonly JsonSerializerOptions SerializerOptions = new()
+        private static readonly JsonSerializerOptions _serializerOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
             PropertyNameCaseInsensitive = true,
@@ -40,24 +40,29 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
         public async Task<(Stream FileStream, string MimeType, string FileName)> GetLabelAsync(Shipment shipment)
         {
             var client = _factory.CreateClient(_inPost);
-            var response = await client.GetAsync($"v1/shipments/{shipment.LabelId}/label");
-            if (!response.IsSuccessStatusCode)
+            var httpResponse = await client.GetAsync($"v1/shipments/{shipment.LabelId}/label");
+            if (!httpResponse.IsSuccessStatusCode)
             {
-                throw new HttpClientRequestFailedException();
+                var json = await httpResponse.Content.ReadAsStringAsync();
+                using var errorJsonDocument = JsonDocument.Parse(json);
+                var errorMessage = errorJsonDocument.RootElement.GetProperty("error").GetString();
+                throw new HttpClientRequestFailedException(errorMessage!);
             }
-            var stream = await response.Content.ReadAsStreamAsync();
+            var stream = await httpResponse.Content.ReadAsStreamAsync();
             return (stream, "application/pdf", $"{shipment.TrackingNumber}-inpost-label");
         }
         private async Task<int> PostCreateShipmentRequestAsync(Shipment shipment, HttpClient client)
         {
-            var serializedShipment = JsonSerializer.Serialize(shipment, SerializerOptions);
+            var serializedShipment = JsonSerializer.Serialize(shipment, _serializerOptions);
             using var jsonContent = new StringContent(serializedShipment, Encoding.UTF8, "application/json");
             var httpResponse = await client.PostAsync($"v1/organizations/{_inPostOptions.OrganizationId}/shipments", jsonContent);
+            var json = await httpResponse.Content.ReadAsStringAsync();
             if (!httpResponse.IsSuccessStatusCode)
             {
-                throw new HttpClientRequestFailedException();
+                using var errorJsonDocument = JsonDocument.Parse(json);
+                var errorMessage = errorJsonDocument.RootElement.GetProperty("error").GetString();
+                throw new HttpClientRequestFailedException(errorMessage!);
             }
-            var json = await httpResponse.Content.ReadAsStringAsync();
             using var jsonDocument = JsonDocument.Parse(json);
             var id = jsonDocument.RootElement.GetProperty("id").GetInt32();
             return id;
@@ -65,11 +70,13 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
         private async Task<string> GetTrackingNumberFromCreatedShipmentAsync(int id, HttpClient client)
         {
             var httpResponse = await client.GetAsync($"v1/organizations/{_inPostOptions.OrganizationId}/shipments?id={id}");
+            var json = await httpResponse.Content.ReadAsStringAsync();
             if (!httpResponse.IsSuccessStatusCode)
             {
-                throw new HttpClientRequestFailedException();
+                using var errorJsonDocument = JsonDocument.Parse(json);
+                var errorMessage = errorJsonDocument.RootElement.GetProperty("error").GetString();
+                throw new HttpClientRequestFailedException(errorMessage!);
             }
-            var json = await httpResponse.Content.ReadAsStringAsync();
             using var jsonDocument = JsonDocument.Parse(json);
             var trackingNumber = jsonDocument.RootElement.GetProperty("items")[0].GetProperty("tracking_number").GetString();
             return trackingNumber!;
