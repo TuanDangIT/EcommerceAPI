@@ -36,6 +36,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
                 .Include(o => o.Invoice)
                 .SingleOrDefaultAsync(o => o.Id == orderId);
 
+        public async Task<Order?> GetOrderAsync(string trackingNumber)
+            => await _dbContext.Orders
+                .Include(o => o.Shipment)
+                .SingleOrDefaultAsync(o => o.Shipment.TrackingNumber == trackingNumber);
+
         public async Task UpdateAsync()
             => await _dbContext.SaveChangesAsync();
     }

@@ -18,6 +18,10 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
         private readonly IHttpClientFactory _factory;
         private readonly InPostOptions _inPostOptions;
         private const string _inPost = "inpost";
+        private const string _inPostErrorPropertyName = "error";
+        private const string _inPostItemsPropertyName = "items";
+        private const string _inPostTrackingNumberPropertyName = "tracking_number";
+        private const string _pdfMimeType = "application/pdf";
         private static readonly JsonSerializerOptions _serializerOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
@@ -45,11 +49,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
             {
                 var json = await httpResponse.Content.ReadAsStringAsync();
                 using var errorJsonDocument = JsonDocument.Parse(json);
-                var errorMessage = errorJsonDocument.RootElement.GetProperty("error").GetString();
+                var errorMessage = errorJsonDocument.RootElement.GetProperty(_inPostErrorPropertyName).GetString();
                 throw new HttpClientRequestFailedException(errorMessage!);
             }
             var stream = await httpResponse.Content.ReadAsStreamAsync();
-            return (stream, "application/pdf", $"{shipment.TrackingNumber}-inpost-label");
+            return (stream, _pdfMimeType, $"{shipment.TrackingNumber}-inpost-label");
         }
         private async Task<int> PostCreateShipmentRequestAsync(Shipment shipment, HttpClient client)
         {
@@ -60,7 +64,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
             if (!httpResponse.IsSuccessStatusCode)
             {
                 using var errorJsonDocument = JsonDocument.Parse(json);
-                var errorMessage = errorJsonDocument.RootElement.GetProperty("error").GetString();
+                var errorMessage = errorJsonDocument.RootElement.GetProperty(_inPostErrorPropertyName).GetString();
                 throw new HttpClientRequestFailedException(errorMessage!);
             }
             using var jsonDocument = JsonDocument.Parse(json);
@@ -74,11 +78,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
             if (!httpResponse.IsSuccessStatusCode)
             {
                 using var errorJsonDocument = JsonDocument.Parse(json);
-                var errorMessage = errorJsonDocument.RootElement.GetProperty("error").GetString();
+                var errorMessage = errorJsonDocument.RootElement.GetProperty(_inPostErrorPropertyName).GetString();
                 throw new HttpClientRequestFailedException(errorMessage!);
             }
             using var jsonDocument = JsonDocument.Parse(json);
-            var trackingNumber = jsonDocument.RootElement.GetProperty("items")[0].GetProperty("tracking_number").GetString();
+            var trackingNumber = jsonDocument.RootElement.GetProperty(_inPostItemsPropertyName)[0].GetProperty(_inPostTrackingNumberPropertyName).GetString();
             return trackingNumber!;
         }
     }

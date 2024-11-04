@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Ecommerce.Modules.Orders.Application.Delivery;
 using Ecommerce.Modules.Orders.Application.Orders.DTO;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrders;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder;
@@ -6,6 +7,7 @@ using Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateInvoice;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateLabel;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.DownloadLabel;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.GetOrder;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrderDelivered;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.SetParcels;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitComplaint;
@@ -83,6 +85,13 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         {
             var result = await _mediator.Send(new CreateInvoice(orderId));
             return Ok(result);
+        }
+        [HttpPost("/api/webhooks/v{v:apiVersion}/" + OrdersModule.BasePath + "/[controller]/order-delivered")]
+        public async Task<ActionResult> InPostWebhookHandler()
+        {
+            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+            await _mediator.Send(new HandleOrderDelivered(json));
+            return Ok();
         }
     }
 }

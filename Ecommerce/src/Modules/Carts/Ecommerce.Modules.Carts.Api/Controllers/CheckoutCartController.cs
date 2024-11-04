@@ -66,13 +66,13 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             return Ok(new ApiResponse<CheckoutStripeSessionDto>(HttpStatusCode.OK, checkoutUrl));
         }
         [HttpPut("{checkoutCartId:guid}/discount")]
-        public async Task<ActionResult> AddDiscount([FromRoute]Guid checkoutCartId, [FromBody]string code)
+        public async Task<ActionResult> AddDiscount([FromRoute] Guid checkoutCartId, [FromBody] string code)
         {
             await _checkoutCartService.AddDiscountAsync(checkoutCartId, code);
             return NoContent();
         }
-        [HttpPost("webhook")]
-        public async Task<ActionResult> WebhookHandler()
+        [HttpPost/*("webhook/checkout-session-completed")*/("/api/webhooks/v{v:apiVersion}/" + CartsModule.BasePath + "/[controller]/checkout-session-completed")]
+        public async Task<ActionResult> StripeWebhookHandler()
         {
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
             var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _webhookSecret);

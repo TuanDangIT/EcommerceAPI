@@ -11,6 +11,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Repositories
     {
         Task CreateOrderAsync(Order order);
         Task<Order?> GetOrderAsync(Guid orderId);
+        Task<Order?> GetOrderAsync(string trackingNumber);
         Task UpdateAsync();
     }
 }
