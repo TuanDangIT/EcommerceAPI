@@ -6,7 +6,7 @@ using Ecommerce.Modules.Inventory.Application.Auctions.Features.Auction.RequestO
 using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
 using Ecommerce.Modules.Inventory.Domain.Auctions.Entities;
 using Ecommerce.Shared.Abstractions.Api;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -10,7 +10,7 @@ using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Unlist
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.UpdateProduct;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Shared.Abstractions.Api;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;

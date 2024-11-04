@@ -1,6 +1,6 @@
 ﻿using Asp.Versioning;
 using Ecommerce.Shared.Abstractions.Api;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System;

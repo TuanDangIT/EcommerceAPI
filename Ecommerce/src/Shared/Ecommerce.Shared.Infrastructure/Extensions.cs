@@ -10,6 +10,7 @@ using Ecommerce.Shared.Infrastructure.InPost;
 using Ecommerce.Shared.Infrastructure.Mails;
 using Ecommerce.Shared.Infrastructure.Messaging;
 using Ecommerce.Shared.Infrastructure.Modules;
+using Ecommerce.Shared.Infrastructure.Pagination;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Ecommerce.Shared.Infrastructure.RateLimiter;
 using Ecommerce.Shared.Infrastructure.Services;
@@ -49,6 +50,7 @@ namespace Ecommerce.Shared.Infrastructure
             services.AddAuth();
             services.AddContext();
             services.AddPostgres();
+            services.AddPagination();
             services.AddStripe();
             services.AddInpost();
             services.AddCompanyDetails();

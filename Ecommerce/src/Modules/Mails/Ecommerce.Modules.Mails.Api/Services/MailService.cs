@@ -6,7 +6,7 @@ using Ecommerce.Modules.Mails.Api.Exceptions;
 using Ecommerce.Shared.Abstractions.BloblStorage;
 using Ecommerce.Shared.Infrastructure.Company;
 using Ecommerce.Shared.Infrastructure.Mails;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
 using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
 using MailKit.Security;

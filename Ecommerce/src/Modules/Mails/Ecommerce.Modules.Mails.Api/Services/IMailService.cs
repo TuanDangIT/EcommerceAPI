@@ -1,5 +1,5 @@
 ﻿using Ecommerce.Modules.Mails.Api.DTO;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;

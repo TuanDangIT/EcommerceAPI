@@ -6,7 +6,7 @@ using Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.Crea
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.DeleteCategory;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.DeleteSelectedCategories;
 using Ecommerce.Shared.Abstractions.Api;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;

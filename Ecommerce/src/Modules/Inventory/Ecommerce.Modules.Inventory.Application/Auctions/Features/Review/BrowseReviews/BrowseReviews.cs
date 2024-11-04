@@ -1,6 +1,6 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Auctions.DTO;
 using Ecommerce.Shared.Abstractions.MediatR;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Sieve.Models;
 using System;
 using System.Collections.Generic;

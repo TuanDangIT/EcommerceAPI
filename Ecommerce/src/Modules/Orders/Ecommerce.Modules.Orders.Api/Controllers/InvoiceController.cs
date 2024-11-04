@@ -4,7 +4,7 @@ using Ecommerce.Modules.Orders.Application.Invoices.Features.BrowseInvoices;
 using Ecommerce.Modules.Orders.Application.Invoices.Features.DeleteInvoice;
 using Ecommerce.Modules.Orders.Application.Invoices.Features.DownloadInvoice;
 using Ecommerce.Shared.Abstractions.Api;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

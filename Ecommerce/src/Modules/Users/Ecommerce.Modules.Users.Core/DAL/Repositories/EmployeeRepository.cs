@@ -3,6 +3,7 @@ using Ecommerce.Modules.Users.Core.DTO;
 using Ecommerce.Modules.Users.Core.Entities;
 using Ecommerce.Modules.Users.Core.Entities.Enums;
 using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.EntityFrameworkCore;
 using Sieve.Models;
 using Sieve.Services;

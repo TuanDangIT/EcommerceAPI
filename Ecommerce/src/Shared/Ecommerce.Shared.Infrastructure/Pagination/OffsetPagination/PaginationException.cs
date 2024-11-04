@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Shared.Infrastructure.Pagination
+namespace Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination
 {
     public sealed class PaginationException : EcommerceException
     {

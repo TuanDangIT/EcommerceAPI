@@ -7,7 +7,7 @@ using Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.DeleteRev
 using Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.EditReview;
 using Ecommerce.Modules.Inventory.Domain.Auctions.Entities;
 using Ecommerce.Shared.Abstractions.Api;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Sieve.Models;

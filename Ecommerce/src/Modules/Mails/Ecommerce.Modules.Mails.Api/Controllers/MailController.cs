@@ -2,7 +2,8 @@
 using Ecommerce.Modules.Mails.Api.DTO;
 using Ecommerce.Modules.Mails.Api.Services;
 using Ecommerce.Shared.Abstractions.Api;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.ModelBinders;
+using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Routing;
@@ -35,7 +36,7 @@ namespace Ecommerce.Modules.Mails.Api.Controllers
             return NoContent();
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<CursorPagedResult<MailBrowseDto, MailCursorDto>>>> BrowseMails([FromForm]MailCursorDto dto, bool? isNextPage, int pageSize)
+        public async Task<ActionResult<ApiResponse<CursorPagedResult<MailBrowseDto, MailCursorDto>>>> BrowseMails([FromQuery]MailCursorDto dto, bool? isNextPage, int pageSize)
         {
             var result = await _mailService.BrowseAsync(dto, isNextPage, pageSize);
             return Ok(new ApiResponse<CursorPagedResult<MailBrowseDto, MailCursorDto>>(HttpStatusCode.OK, result));

@@ -3,7 +3,7 @@ using Ecommerce.Modules.Users.Core.DAL.Repositories;
 using Ecommerce.Modules.Users.Core.DTO;
 using Ecommerce.Modules.Users.Core.Entities;
 using Ecommerce.Modules.Users.Core.Exceptions;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.AspNetCore.Identity;
 using Sieve.Models;
 using System;

@@ -2,7 +2,7 @@
 using Ecommerce.Modules.Orders.Application.Shipping.DTO;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Infrastructure.ModelBinders;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;

@@ -3,7 +3,7 @@ using Ecommerce.Modules.Orders.Application.Shipping.DTO;
 using Ecommerce.Modules.Orders.Application.Shipping.Features.BrowseShippings;
 using Ecommerce.Modules.Orders.Application.Shipping.Features.DownloadLabel;
 using Ecommerce.Shared.Abstractions.Api;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

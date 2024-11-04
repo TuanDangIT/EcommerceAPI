@@ -2,9 +2,9 @@
 using Ecommerce.Modules.Orders.Application.Returns.DTO;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Return.BrowseReturns;
 using Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings;
-using Ecommerce.Modules.Orders.Infrastructure.DAL.Services;
 using Ecommerce.Shared.Abstractions.MediatR;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
+using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

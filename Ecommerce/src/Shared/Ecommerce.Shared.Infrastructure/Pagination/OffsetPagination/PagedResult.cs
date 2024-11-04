@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Shared.Infrastructure.Pagination
+namespace Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination
 {
     //Generyczne DTO do paginacja dla metody w program.cs
     public sealed record class PagedResult<T>

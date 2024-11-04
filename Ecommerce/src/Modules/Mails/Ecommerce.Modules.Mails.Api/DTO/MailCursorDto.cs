@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ecommerce.Shared.Infrastructure.ModelBinders;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +12,7 @@ namespace Ecommerce.Modules.Mails.Api.DTO
     {
         public int CursorId { get; set; }
         public DateTime CursorCreatedAt { get; set; }
+        [ModelBinder(BinderType = typeof(DictionaryModelBinder))]
+        public Dictionary<string, string>? Filters { get; set; }    
     }
 }

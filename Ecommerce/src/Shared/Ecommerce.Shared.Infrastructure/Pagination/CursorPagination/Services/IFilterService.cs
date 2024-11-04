@@ -1,11 +1,10 @@
-﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Services
+namespace Ecommerce.Shared.Infrastructure.Pagination.CursorPagination.Services
 {
     public interface IFilterService
     {

@@ -8,7 +8,7 @@ using Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacturers.D
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacturers.GetManufacturer;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Shared.Abstractions.Api;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;

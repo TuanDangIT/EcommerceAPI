@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Shared.Infrastructure.Pagination
+namespace Ecommerce.Shared.Infrastructure.Pagination.CursorPagination
 {
     public sealed record class CursorPagedResult<TData, TCursor>
     {

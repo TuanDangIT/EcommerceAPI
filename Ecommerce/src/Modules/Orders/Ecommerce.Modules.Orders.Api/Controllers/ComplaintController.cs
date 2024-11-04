@@ -11,7 +11,7 @@ using Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrders;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.GetOrder;
 using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
 using Ecommerce.Shared.Abstractions.Api;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;

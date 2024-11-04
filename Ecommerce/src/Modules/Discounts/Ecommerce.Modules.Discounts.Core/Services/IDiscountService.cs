@@ -1,6 +1,6 @@
 ﻿using Ecommerce.Modules.Discounts.Core.DTO;
 using Ecommerce.Modules.Discounts.Core.Entities;
-using Ecommerce.Shared.Infrastructure.Pagination;
+using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Sieve.Models;
 using System;
 using System.Collections.Generic;
