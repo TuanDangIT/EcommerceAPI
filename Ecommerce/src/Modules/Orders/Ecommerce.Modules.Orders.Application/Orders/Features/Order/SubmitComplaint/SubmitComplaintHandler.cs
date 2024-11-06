@@ -32,7 +32,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitCompl
         }
         public async Task Handle(SubmitComplaint request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetOrderAsync(request.OrderId);
+            var order = await _orderRepository.GetAsync(request.OrderId);
             if (order is null)
             {
                 throw new OrderNotFoundException(request.OrderId);

@@ -28,18 +28,18 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
         }
         public async Task HandleAsync(CustomerPlacedOrder @event)
         {
-            var products = new List<Product>();
+            //var products = new List<Product>();
             //try serialize whole list
-            foreach (var productObject in @event.Products)
-            {
-                var serializedObject = JsonSerializer.Serialize(productObject);
-                var product = JsonSerializer.Deserialize<Product>(serializedObject);
-                if (product is null)
-                {
-                    throw new ArgumentNullException(nameof(@event));
-                }
-                products.Add(product);
-            }
+            //foreach (var productObject in @event.Products)
+            //{
+            //    var serializedObject = JsonSerializer.Serialize(productObject);
+            //    var product = JsonSerializer.Deserialize<Product>(serializedObject);
+            //    if (product is null)
+            //    {
+            //        throw new ArgumentNullException(nameof(@event));
+            //    }
+            //    products.Add(product);
+            //}
             var newGuid = Guid.NewGuid();
             var customer = new Customer(@event.FirstName, @event.LastName, @event.Email, @event.PhoneNumber, @event.CustomerId);
             //var shipment = new ShipmentDetails(@event.City, @event.PostalCode, @event.StreetName, @event.StreetNumber, @event.ApartmentNumber);
@@ -55,7 +55,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
             var order = new Order(
                 newGuid,
                 customer, 
-                products, 
+                @event.Products, 
                 @event.TotalSum,
                 shipment,
                 (PaymentMethod)paymentMethod!,
@@ -64,8 +64,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
                 @event.DiscountCode,
                 @event.StripePaymentIntentId
                 );
-            await _orderRepository.CreateOrderAsync(order);
-            await _messageBroker.PublishAsync(new OrderCreated(newGuid, customer.UserId, customer.FirstName, customer.Email, products.Select(p => new { p.Name, p.SKU, p.Price, p.Quantity }), order.TotalSum, now));
+            await _orderRepository.CreateAsync(order);
+            await _messageBroker.PublishAsync(new OrderCreated(newGuid, customer.UserId, customer.FirstName, customer.Email, @event.Products.Select(p => new { p.Name, p.SKU, p.Price, p.Quantity }), order.TotalSum, now));
         }
     }
 }

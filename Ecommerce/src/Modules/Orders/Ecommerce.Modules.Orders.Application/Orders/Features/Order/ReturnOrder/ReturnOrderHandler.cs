@@ -36,7 +36,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
         }
         public async Task Handle(ReturnOrder request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetOrderAsync(request.OrderId);
+            var order = await _orderRepository.GetAsync(request.OrderId);
             if (order is null)
             {
                 throw new OrderNotFoundException(request.OrderId);

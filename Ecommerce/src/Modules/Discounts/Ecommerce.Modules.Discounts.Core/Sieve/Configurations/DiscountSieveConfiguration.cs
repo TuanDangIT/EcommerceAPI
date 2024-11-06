@@ -12,6 +12,8 @@ namespace Ecommerce.Modules.Discounts.Core.Sieve.Configurations
     {
         public void Configure(SievePropertyMapper mapper)
         {
+            mapper.Property<Discount>(d => d.Id)
+                .CanFilter();
             mapper.Property<Discount>(d => d.Code)
                 .CanSort()
                 .CanFilter();
@@ -23,6 +25,10 @@ namespace Ecommerce.Modules.Discounts.Core.Sieve.Configurations
                 .CanFilter();
             mapper.Property<Discount>(d => d.Redemptions)
                 .CanSort();
+            mapper.Property<Discount>(d => d.Coupon.Id)
+                .CanFilter();
+            mapper.Property<Discount>(d => d.Coupon.Name)
+                .CanFilter();
         }
     }
 }

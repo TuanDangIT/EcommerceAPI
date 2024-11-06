@@ -52,7 +52,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateInvoi
         }
         public async Task<string> Handle(CreateInvoice request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetOrderAsync(request.OrderId) ?? throw new OrderNotFoundException(request.OrderId);
+            var order = await _orderRepository.GetAsync(request.OrderId) ?? throw new OrderNotFoundException(request.OrderId);
             if(!(await _orderInvoiceCreationPolicy.CanCreateInvoice(order)))
             {
                 throw new OrderInvoiceAlreadyCreatedException(order.Id);

@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Inventory.Domain.Auctions.Repositories;
+﻿using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
+using Ecommerce.Modules.Inventory.Domain.Auctions.Repositories;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
 using Ecommerce.Shared.Abstractions.Events;
@@ -23,52 +24,28 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
         }
         public async Task HandleAsync(OrderCancelled @event)
         {
-            IEnumerable<Product>? productsFromEvent = JsonSerializer.Deserialize<IEnumerable<Product>>(JsonSerializer.Serialize(@event.Products));
-            if (productsFromEvent is null || !productsFromEvent.Any())
+            var products = await _productRepository.GetAllThatContainsInArrayAsync(@event.Products.Select(p => p.Id).ToArray());
+            var auctions = await _auctionRepository.GetAllThatContainsInArrayAsync(@event.Products.Select(p => p.Id).ToArray());
+            if (!products.Any() || products.Count() != @event.Products.Count())
             {
-                return;
+                throw new EventHandlerException("Product array was empty or not equal to event's product array.");
             }
-            productsFromEvent = productsFromEvent?.Where(pfe => pfe.Quantity is not null);
-            if (productsFromEvent is not null)
+            for (int i = 0; i < products.Count(); i++)
             {
-                var products = await _productRepository.GetAllThatContainsInArrayAsync(productsFromEvent.Select(pfe => pfe.Id).ToArray());
-                var auctions = await _auctionRepository.GetAllThatContainsInArrayAsync(productsFromEvent.Select(pfe => pfe.Id).ToArray());
-                foreach (var product in products)
+                var product = products.ElementAt(i);
+                var auction = auctions.SingleOrDefault(a => a.Id == product.Id);
+                var soldProduct = @event.Products.Single(p => p.Id == product.Id);
+                var soldQuantity = soldProduct.Quantity;
+                if (product.HasQuantity && soldQuantity is not null)
                 {
-                    var productFromEvent = productsFromEvent.SingleOrDefault(pfe => pfe.Id == product.Id);
-                    if (productFromEvent is null)
-                    {
-                        continue;
-                    }
-                    if (product.HasQuantity && productFromEvent.Quantity is not null)
-                    {
-                        product.DecreaseQuantity((int)productFromEvent.Quantity);
-                    }
+                    product.IncreaseQuantity((int)soldQuantity);
                 }
-                var auctionsToDelete = new List<Guid>();
-                foreach (var auction in auctions)
+                if(auction is not null && auction.HasQuantity && soldQuantity is not null)
                 {
-                    var productFromEvent = productsFromEvent.SingleOrDefault(pfe => pfe.Id == auction.Id);
-                    if (productFromEvent is null)
-                    {
-                        continue;
-                    }
-                    if (productFromEvent.Quantity != null)
-                    {
-                        if (productFromEvent.Quantity == auction.Quantity)
-                        {
-                            auctionsToDelete.Add(auction.Id);
-                        }
-                        if (auction.HasQuantity && productFromEvent.Quantity is not null)
-                        {
-                            auction.DecreaseQuantity((int)productFromEvent.Quantity);
-                        }
-                    }
-
+                    auction.IncreaseQuantity((int)soldQuantity);
                 }
-                await _auctionRepository.DeleteManyAsync(auctionsToDelete.ToArray());
-                await _productRepository.UpdateAsync();
             }
+            await _productRepository.UpdateAsync();
         }
     }
 }

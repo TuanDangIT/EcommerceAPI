@@ -5,6 +5,7 @@ using Ecommerce.Modules.Discounts.Core.Entities;
 using Ecommerce.Modules.Discounts.Core.Entities.Enums;
 using Ecommerce.Modules.Discounts.Core.Events;
 using Ecommerce.Modules.Discounts.Core.Exceptions;
+using Ecommerce.Modules.Discounts.Core.Sieve;
 using Ecommerce.Shared.Abstractions.Messaging;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.EntityFrameworkCore;
@@ -25,10 +26,10 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         private readonly IMessageBroker _messageBroker;
         private readonly TimeProvider _timeProvider;
 
-        public OfferService(IDiscountDbContext dbContext, ISieveProcessor sieveProcessor, IMessageBroker messageBroker, TimeProvider timeProvider)
+        public OfferService(IDiscountDbContext dbContext, IEnumerable<ISieveProcessor> sieveProcessors, IMessageBroker messageBroker, TimeProvider timeProvider)
         {
             _dbContext = dbContext;
-            _sieveProcessor = sieveProcessor;
+            _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(DiscountsModuleSieveProcessor));
             _messageBroker = messageBroker;
             _timeProvider = timeProvider;
         }

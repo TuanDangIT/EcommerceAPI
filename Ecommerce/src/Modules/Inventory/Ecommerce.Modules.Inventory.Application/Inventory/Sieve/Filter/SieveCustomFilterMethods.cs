@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
+﻿using Ecommerce.Modules.Inventory.Domain.Auctions.Entities;
+using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Sieve.Models;
 using Sieve.Services;
 using System;
@@ -12,42 +13,43 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Filters
 {
     internal class SieveCustomFilterMethods : ISieveCustomFilterMethods
     {
-        public IQueryable<Product> ParameterNameAndValue(IQueryable<Product> source, string op, string[] values)
+        public IQueryable<Product> ProductParameterNameAndValue(IQueryable<Product> source, string op, string[] values)
         {
-            //if (op == "@=")
-            //{
-            //    return source.Where(p => p.Parameters.Any(p => values.Any(v => p.Name.Contains(v))));
-            //}
-            //else if (op == "==")
-            //{
-            //    return source.Where(p => p.Parameters.Any(p => values.Any(v => v == p.Name)));
-            //}
-            //return source;
-            //if (op == "@=")
-            //{
-            //    return source.Where(p => p.Parameters.Any(p => p.Name.Contains(values[0])));
-            //}
-            //else if (op == "==")
-            //{
-            //    return source.Where(p => p.Parameters.Any(p => values[0] == p.Name));
-            //}
-
+            //This filter is for first when values length is equal to 0 then it filters only by name, if 2 then by name and value associated with that parameter name.
             switch ((op, values.Length))
             {
                 case ("==", 1):
-                    return source.Where(p => p.Parameters.Any(p => values.Any(v => v == p.Name)));
+                    return source.Where(p => p.Parameters.Any(p => values.Any(v => v.ToLower() == p.Name.ToLower())));
                 case ("==", 2):
-                    return source.Where(p => p.Parameters.Any(pa => values[0] == pa.Name && p.ProductParameters.Single(pp => pp.ParameterId == pa.Id).Value == values[1]));
+                    return source.Where(p => p.Parameters.Any(pa => values[0].ToLower() == pa.Name.ToLower() && p.ProductParameters.Single(pp => pp.ParameterId == pa.Id).Value.ToLower() == values[1].ToLower()));
                 case ("@=", 1):
-                    return source.Where(p => p.Parameters.Any(p => values.Any(v => p.Name.Contains(v))));
+                    return source.Where(p => p.Parameters.Any(p => values.Any(v => p.Name.ToLower().Contains(v.ToLower()))));
                 case ("@=", 2):
-                    return source.Where(p => p.Parameters.Any(pa => pa.Name.Contains(values[0]) && p.ProductParameters.Single(pp => pp.ParameterId == pa.Id).Value.Contains(values[1])));
+                    return source.Where(p => p.Parameters.Any(pa => pa.Name.ToLower().Contains(values[0].ToLower()) && p.ProductParameters.Single(pp => pp.ParameterId == pa.Id).Value.ToLower().Contains(values[1].ToLower())));
+                default:
+                    break;
             }
             return source;
         }
-        //public IQueryable<Product> ProductParameterValue(IQueryable<Product> source, string op, string[] values)
-        //{
-
-        //}
+        public IQueryable<Auction> AuctionParameterNameAndValue(IQueryable<Auction> source, string op, string[] values)
+        {
+            switch ((op, values.Length))
+            {
+                case ("==", 1):
+                    return source.Where(a => a.Parameters != null && a.Parameters.Any(p => values.Any(v => v.ToLower() == p.Name.ToLower())));
+                case ("==", 2):
+                    return source.Where(a => a.Parameters != null && a.Parameters.Any(p => p.Name.ToLower() == values[0].ToLower() && p.Value.ToLower() == values[1].ToLower()));
+                case ("@=", 1):
+                    return source.Where(a => a.Parameters != null && a.Parameters.Any(p => values.Any(v => p.Name.ToLower().Contains(v.ToLower()))));
+                case ("@=", 2):
+                    return source.Where(a => a.Parameters != null && a.Parameters.Any(p => p.Name.ToLower().Contains(values[0].ToLower()) && p.Value.ToLower().Contains(values[1].ToLower())));
+                default:
+                    break;
+            }
+            //return values.Length == 1
+            //    ? source.Where(a => a.Parameters != null && a.Parameters.Any(p => p.Name.ToLower() == values[0].ToLower()))
+            //    : source.Where(a => a.Parameters != null && a.Parameters.Any(p => p.Name.ToLower() == values[0].ToLower() && p.Value.ToLower() == values[1].ToLower()));
+            return source;
+        }
     }
 }

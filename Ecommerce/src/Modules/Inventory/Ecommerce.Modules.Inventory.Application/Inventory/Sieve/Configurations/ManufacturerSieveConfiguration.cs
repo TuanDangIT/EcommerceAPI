@@ -12,9 +12,12 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Configurations
     {
         public void Configure(SievePropertyMapper mapper)
         {
+            mapper.Property<Manufacturer>(c => c.Id)
+                .CanFilter();
             mapper.Property<Manufacturer>(c => c.Name)
                 .CanFilter();
             mapper.Property<Manufacturer>(c => c.CreatedAt)
+                .CanFilter()
                 .CanSort();
         }
     }

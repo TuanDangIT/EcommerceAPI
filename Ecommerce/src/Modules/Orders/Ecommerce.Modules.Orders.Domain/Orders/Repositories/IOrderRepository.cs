@@ -9,9 +9,9 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Repositories
 {
     public interface IOrderRepository
     {
-        Task CreateOrderAsync(Order order);
-        Task<Order?> GetOrderAsync(Guid orderId);
-        Task<Order?> GetOrderAsync(string trackingNumber);
+        Task CreateAsync(Order order);
+        Task<Order?> GetAsync(Guid orderId);
+        Task<Order?> GetAsync(string trackingNumber);
         Task UpdateAsync();
     }
 }

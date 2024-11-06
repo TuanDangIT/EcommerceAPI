@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Sieve
 {
-    internal class InventoryModuleSieveProcessor : SieveProcessor
+    public class InventoryModuleSieveProcessor : SieveProcessor
     {
         public InventoryModuleSieveProcessor(IOptions<SieveOptions> options, ISieveCustomFilterMethods sieveCustomFilterMethods) : base(options, sieveCustomFilterMethods)
         {

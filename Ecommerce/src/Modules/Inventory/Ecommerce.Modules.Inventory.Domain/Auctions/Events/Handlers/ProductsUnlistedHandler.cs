@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Events.Handlers
             {
                 throw new ProductsCannotBeUnlistedMoreThanOnceException(auctions.Select(a => a.Id).ToArray());
             }
-            await _auctionRepository.DeleteManyAsync(productIds);
+            await _auctionRepository.UnlistManyAsync(productIds);
         }
     }
 }

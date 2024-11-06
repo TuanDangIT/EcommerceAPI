@@ -78,6 +78,14 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             }
             Quantity -= quantity;
         }
+        public void IncreaseQuantity(int quantity)
+        {
+            if (Quantity is null)
+            {
+                throw new ProductInvalidChangeOfQuantityException();
+            }
+            Quantity += quantity;
+        }
         public void ChangeBaseDetails(string sku, string name, decimal price, int vat, string description, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)
         {
             SKU = sku;

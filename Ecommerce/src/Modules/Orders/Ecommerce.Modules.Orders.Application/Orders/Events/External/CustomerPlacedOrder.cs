@@ -1,4 +1,5 @@
-﻿using Ecommerce.Shared.Abstractions.Events;
+﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
+using Ecommerce.Shared.Abstractions.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
-        public IEnumerable<object> Products { get; set; } = Enumerable.Empty<object>();
+        public IEnumerable<Product> Products { get; set; } = Enumerable.Empty<Product>();
         public decimal TotalSum { get; set; }
         public string City { get; set; } = string.Empty;
         public string PostalCode { get; set; } = string.Empty;

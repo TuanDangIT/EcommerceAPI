@@ -8,11 +8,13 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Auctions.Sieve.Configurations
 {
-    internal class SieveConfigurationForReview : ISieveConfiguration
+    internal class ReviewSieveConfiguration : ISieveConfiguration
     {
         public void Configure(SievePropertyMapper mapper)
         {
             mapper.Property<Review>(r => r.Grade)
+                .CanSort();
+            mapper.Property<Review>(r => r.CreatedAt)
                 .CanSort();
         }
     }

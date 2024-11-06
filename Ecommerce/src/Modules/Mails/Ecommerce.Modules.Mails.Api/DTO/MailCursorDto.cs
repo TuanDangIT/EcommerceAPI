@@ -1,4 +1,5 @@
-﻿using Ecommerce.Shared.Infrastructure.ModelBinders;
+﻿using Ecommerce.Modules.Mails.Api.DataAnnotations;
+using Ecommerce.Shared.Infrastructure.ModelBinders;
 using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,6 +15,7 @@ namespace Ecommerce.Modules.Mails.Api.DTO
         //public int CursorId { get; set; }
         public DateTime CursorCreatedAt { get; set; }
         [ModelBinder(BinderType = typeof(DictionaryModelBinder))]
+        [MailCursor]
         public Dictionary<string, string>? Filters { get; set; }    
     }
 }

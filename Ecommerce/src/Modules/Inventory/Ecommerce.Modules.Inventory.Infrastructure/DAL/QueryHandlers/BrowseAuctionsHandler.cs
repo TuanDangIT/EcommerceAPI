@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Auctions.DTO;
 using Ecommerce.Modules.Inventory.Application.Auctions.Features.Auction.BrowseAuctions;
 using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
+using Ecommerce.Modules.Inventory.Application.Sieve;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
@@ -19,10 +20,10 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
         private readonly InventoryDbContext _dbContext;
         private readonly ISieveProcessor _sieveProcessor;
 
-        public BrowseAuctionsHandler(InventoryDbContext dbContext, ISieveProcessor sieveProcessor)
+        public BrowseAuctionsHandler(InventoryDbContext dbContext, IEnumerable<ISieveProcessor> sieveProcessors)
         {
             _dbContext = dbContext;
-            _sieveProcessor = sieveProcessor;
+            _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(InventoryModuleSieveProcessor));
         }
         public async Task<PagedResult<AuctionBrowseDto>> Handle(BrowseAuctions request, CancellationToken cancellationToken)
         {

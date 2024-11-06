@@ -6,6 +6,7 @@ using Ecommerce.Modules.Discounts.Core.Entities.Enums;
 using Ecommerce.Modules.Discounts.Core.Events;
 using Ecommerce.Modules.Discounts.Core.Exceptions;
 using Ecommerce.Modules.Discounts.Core.Services.Externals;
+using Ecommerce.Modules.Discounts.Core.Sieve;
 using Ecommerce.Shared.Abstractions.Messaging;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.EntityFrameworkCore;
@@ -27,12 +28,12 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         private readonly ISieveProcessor _sieveProcessor;
         private readonly TimeProvider _timeProvider;
 
-        public CouponService(IDiscountDbContext dbContext, IStripeService stripeService, IMessageBroker messageBroker, ISieveProcessor sieveProcessor, TimeProvider timeProvider)
+        public CouponService(IDiscountDbContext dbContext, IStripeService stripeService, IMessageBroker messageBroker, IEnumerable<ISieveProcessor> sieveProcessors, TimeProvider timeProvider)
         {
             _dbContext = dbContext;
             _stripeService = stripeService;
             _messageBroker = messageBroker;
-            _sieveProcessor = sieveProcessor;
+            _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(DiscountsModuleSieveProcessor));
             _timeProvider = timeProvider;
         }
         public async Task<PagedResult<NominalCouponBrowseDto>> BrowseNominalCouponsAsync(SieveModel model)

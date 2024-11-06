@@ -22,7 +22,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.DownloadLab
         }
         public async Task<(Stream FileStream, string MimeType, string FileName)> Handle(DownloadLabel request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetOrderAsync(request.OrderId) ?? throw new OrderNotFoundException(request.OrderId);
+            var order = await _orderRepository.GetAsync(request.OrderId) ?? throw new OrderNotFoundException(request.OrderId);
             var file = await _deliveryService.GetLabelAsync(order.Shipment);
             return file;
         }

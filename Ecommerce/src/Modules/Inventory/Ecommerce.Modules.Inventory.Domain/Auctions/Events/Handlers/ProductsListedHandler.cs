@@ -45,7 +45,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Events.Handlers
                     manufacturer: product.Manufacturer.Name
                 ));
             }
-            await _auctionRepository.AddManyAsync(auctions);
+            await _auctionRepository.ListManyAsync(auctions);
         }
     }
 }

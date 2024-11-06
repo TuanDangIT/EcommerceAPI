@@ -22,9 +22,9 @@ namespace Ecommerce.Modules.Carts.Core.Events.External.Handlers
         public async Task HandleAsync(ProductsListed @event)
         {
             var products = new List<Product>();
-            foreach(var productObject in @event.Products)
+            foreach(var product in @event.Products)
             {
-                var product = JsonSerializer.Deserialize<Product>(JsonSerializer.Serialize(productObject));
+                //var product = JsonSerializer.Deserialize<Product>(JsonSerializer.Serialize(productObject));
                 if (product is null)
                 {
                     throw new ArgumentNullException(nameof(@event));

@@ -2,6 +2,7 @@
 using Ecommerce.Modules.Users.Core.DTO;
 using Ecommerce.Modules.Users.Core.Entities;
 using Ecommerce.Modules.Users.Core.Entities.Enums;
+using Ecommerce.Modules.Users.Core.Sieve;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.EntityFrameworkCore;
@@ -20,10 +21,10 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
         private readonly UsersDbContext _dbContext;
         private readonly ISieveProcessor _sieveProcessor;
 
-        public CustomerRepository(UsersDbContext dbContext, ISieveProcessor sieveProcessor)
+        public CustomerRepository(UsersDbContext dbContext, IEnumerable<ISieveProcessor> sieveProcessors)
         {
             _dbContext = dbContext;
-            _sieveProcessor = sieveProcessor;
+            _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(UsersModuleSieveProcessor));
         }
         public async Task<PagedResult<CustomerBrowseDto>> GetAllAsync(SieveModel model)
         {

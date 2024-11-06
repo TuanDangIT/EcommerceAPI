@@ -18,22 +18,13 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task AddAsync(Auction auction)
+        public async Task ListManyAsync(IEnumerable<Auction> auctions)
         {
-            await _dbContext.Auctions.AddAsync(auction);
+            await _dbContext.Auctions.AddRangeAsync(auctions);
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task AddManyAsync(IEnumerable<Auction> auctions)
-        {
-            await _dbContext.Auctions.AddRangeAsync(auctions);  
-            await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task DeleteAsync(Guid auctionId)
-            => await _dbContext.Auctions.Where(a => a.Id == auctionId).ExecuteDeleteAsync();
-
-        public async Task DeleteManyAsync(Guid[] auctionIds) 
+        public async Task UnlistManyAsync(Guid[] auctionIds) 
             => await _dbContext.Auctions.Where(a => auctionIds.Contains(a.Id)).ExecuteDeleteAsync();
 
         public async Task<IEnumerable<Auction>> GetAllThatContainsInArrayAsync(Guid[] auctionIds)
@@ -46,5 +37,6 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
 
         public async Task UpdateAsync()
             => await _dbContext.SaveChangesAsync();
+
     }
 }

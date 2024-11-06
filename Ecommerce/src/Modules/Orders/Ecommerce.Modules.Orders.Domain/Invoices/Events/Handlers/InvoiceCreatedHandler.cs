@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Orders.Domain.Invoices.Events.Handlers
         }
         public async Task HandleAsync(InvoiceCreated @event)
         {
-            var order = await _orderRepository.GetOrderAsync(@event.OrderId) ?? throw new OrderNotFoundException(@event.OrderId);
+            var order = await _orderRepository.GetAsync(@event.OrderId) ?? throw new OrderNotFoundException(@event.OrderId);
             await _invoiceRepository.CreateAsync(new Invoice(@event.InvoiceNo, order, _timeProvider.GetUtcNow().UtcDateTime));
         }
     }

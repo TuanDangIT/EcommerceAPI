@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public Image(Guid id, string imageUrlPath, int order, Product product)
         {
-            if (order <= 8)
+            if (order >= 8)
             {
                 throw new ImageOrderOutOfBoundException();
             }

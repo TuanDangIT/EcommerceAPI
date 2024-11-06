@@ -18,13 +18,13 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task CreateOrderAsync(Order order)
+        public async Task CreateAsync(Order order)
         {
             await _dbContext.AddAsync(order);
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<Order?> GetOrderAsync(Guid orderId)
+        public async Task<Order?> GetAsync(Guid orderId)
             => await _dbContext.Orders
                 .Include(o => o.Products)
                 .Include(o => o.Shipment)
@@ -36,7 +36,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
                 .Include(o => o.Invoice)
                 .SingleOrDefaultAsync(o => o.Id == orderId);
 
-        public async Task<Order?> GetOrderAsync(string trackingNumber)
+        public async Task<Order?> GetAsync(string trackingNumber)
             => await _dbContext.Orders
                 .Include(o => o.Shipment)
                 .SingleOrDefaultAsync(o => o.Shipment.TrackingNumber == trackingNumber);

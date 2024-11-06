@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Auctions.Sieve.Configurations
 {
-    internal class SieveConfigurationForAuction : ISieveConfiguration
+    internal class AuctionSieveConfiguration : ISieveConfiguration
     {
         public void Configure(SievePropertyMapper mapper)
         {
+            mapper.Property<Auction>(p => p.Id)
+                .CanFilter();
             mapper.Property<Auction>(p => p.SKU)
                 .CanFilter();
             mapper.Property<Auction>(p => p.Name)
@@ -30,6 +32,9 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Sieve.Configurations
                 .CanFilter();
             mapper.Property<Auction>(p => p.Category)
                 .CanFilter();
+            mapper.Property<Auction>(p => p.CreatedAt)
+                .CanFilter()
+                .CanSort();
         }
     }
 }

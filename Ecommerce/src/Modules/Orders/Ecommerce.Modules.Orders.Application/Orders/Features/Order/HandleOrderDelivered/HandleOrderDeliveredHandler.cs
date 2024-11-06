@@ -40,7 +40,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrder
             {
                 return;
             }
-            var order = await _orderRepository.GetOrderAsync(trackingNumber) ?? throw new OrderNotFoundException(trackingNumber);
+            var order = await _orderRepository.GetAsync(trackingNumber) ?? throw new OrderNotFoundException(trackingNumber);
             order.ChangeStatus(OrderStatus.Completed, _timeProvider.GetUtcNow().UtcDateTime);
         }
     }

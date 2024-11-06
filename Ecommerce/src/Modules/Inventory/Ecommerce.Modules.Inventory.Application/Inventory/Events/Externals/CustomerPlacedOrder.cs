@@ -1,4 +1,5 @@
-﻿using Ecommerce.Shared.Abstractions.Events;
+﻿using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
+using Ecommerce.Shared.Abstractions.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals
 {
     public sealed record class CustomerPlacedOrder : IEvent
     {
-        public IEnumerable<object> Products { get; set; } = Enumerable.Empty<object>();
+        public IEnumerable<Product> Products { get; set; } = Enumerable.Empty<Product>();
     }
 }

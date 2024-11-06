@@ -12,10 +12,12 @@ namespace Ecommerce.Modules.Discounts.Core.Sieve.Configurations
     {
         public void Configure(SievePropertyMapper mapper)
         {
+            mapper.Property<Coupon>(c => c.Id)
+                .CanFilter();
             mapper.Property<Coupon>(c => c.CreatedAt)
                 .CanFilter()
                 .CanSort();
-            mapper.Property<Coupon>(c => c.Type)
+            mapper.Property<Coupon>(c => c.Type/*.ToString()*/)
                 .CanFilter();
             mapper.Property<Coupon>(c => c.Name)
                 .CanFilter()

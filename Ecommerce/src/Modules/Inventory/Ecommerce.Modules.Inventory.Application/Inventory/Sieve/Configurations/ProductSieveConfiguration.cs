@@ -12,6 +12,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Configurations
     {
         public void Configure(SievePropertyMapper mapper)
         {
+            mapper.Property<Product>(p => p.Id)
+                .CanFilter();
             mapper.Property<Product>(p => p.SKU)
                 .CanFilter();
             mapper.Property<Product>(p => p.EAN)
@@ -19,6 +21,9 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Configurations
             mapper.Property<Product>(p => p.Name)
                 .CanFilter();
             mapper.Property<Product>(p => p.Price)
+                .CanFilter()
+                .CanSort();
+            mapper.Property<Product>(p => p.VAT)
                 .CanFilter()
                 .CanSort();
             mapper.Property<Product>(p => p.Quantity)
@@ -30,14 +35,15 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Configurations
                 .CanFilter();
             mapper.Property<Product>(p => p.AdditionalDescription)
                 .CanFilter();
+            mapper.Property<Product>(p => p.IsListed)
+                .CanFilter();
             mapper.Property<Product>(p => p.Manufacturer.Name)
                 .CanFilter();
             mapper.Property<Product>(p => p.Category.Name)
                 .CanFilter();
-            //mapper.Property<Product>(p => p.Parameters.Select(p => p.Name))
-            //    .CanFilter();
-            //mapper.Property<Product>(p => p.Parameters)
-            //    .CanFilter();
+            mapper.Property<Product>(p => p.CreatedAt)
+                .CanFilter()
+                .CanSort();
         }
     }
 }

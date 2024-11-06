@@ -50,13 +50,21 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
         {
             if(Quantity is null)
             {
-                return;
+                throw new AuctionInvalidChangeOfQuantityException();
             }
             if (Quantity < quantity)
             {
                 throw new AuctionQuantityBelowZeroException();
             }
             Quantity -= quantity;
+        }
+        public void IncreaseQuantity(int quantity)
+        { 
+            if(Quantity is null)
+            {
+                throw new AuctionInvalidChangeOfQuantityException();
+            }
+            Quantity += quantity;
         }
     }
 }

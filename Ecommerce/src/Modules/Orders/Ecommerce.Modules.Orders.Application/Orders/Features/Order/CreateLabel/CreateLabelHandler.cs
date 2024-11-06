@@ -24,7 +24,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateLabel
         }
         public async Task Handle(CreateLabel request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetOrderAsync(request.OrderId);
+            var order = await _orderRepository.GetAsync(request.OrderId);
             if (order is null)
             {
                 throw new OrderNotFoundException(request.OrderId);

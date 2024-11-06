@@ -1,10 +1,12 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
 using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.BrowseProducts;
+using Ecommerce.Modules.Inventory.Application.Sieve;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Sieve.Services;
 using System;
 using System.Collections.Generic;
@@ -19,10 +21,11 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
         private readonly InventoryDbContext _dbContext;
         private readonly ISieveProcessor _sieveProcessor;
 
-        public BrowseProductsHandler(InventoryDbContext dbContext, ISieveProcessor sieveProcessor)
+        public BrowseProductsHandler(InventoryDbContext dbContext/*, ISieveProcessor sieveProcessor*/, IEnumerable<ISieveProcessor> sieveProcessors)
         {
             _dbContext = dbContext;
-            _sieveProcessor = sieveProcessor;
+            //_sieveProcessor = sieveProcessor;
+            _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(InventoryModuleSieveProcessor));
         }
         public async Task<PagedResult<ProductBrowseDto>> Handle(BrowseProducts request, CancellationToken cancellationToken)
         {

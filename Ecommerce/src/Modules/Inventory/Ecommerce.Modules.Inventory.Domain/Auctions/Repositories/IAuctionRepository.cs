@@ -9,12 +9,10 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Repositories
 {
     public interface IAuctionRepository
     {
-        Task AddAsync(Auction auction);
-        Task AddManyAsync(IEnumerable<Auction> auctions);
+        Task ListManyAsync(IEnumerable<Auction> auctions);
         Task<Auction?> GetAsync(Guid auctionId);
         Task<IEnumerable<Auction>> GetAllThatContainsInArrayAsync(Guid[] auctionIds);
-        Task DeleteAsync(Guid auctionId);
-        Task DeleteManyAsync(Guid[] auctionIds);
+        Task UnlistManyAsync(Guid[] auctionIds);
         Task UpdateAsync();
     }
 }
