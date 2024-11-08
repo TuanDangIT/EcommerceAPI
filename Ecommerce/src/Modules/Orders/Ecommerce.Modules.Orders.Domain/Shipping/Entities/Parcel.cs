@@ -9,8 +9,8 @@ namespace Ecommerce.Modules.Orders.Domain.Shipping.Entities
     public class Parcel
     {
         //public int Id { get; set; }
-        public Dimensions Dimensions { get; set; } = new();
-        public Weight Weight { get; set; } = new();
+        public Dimensions Dimensions { get; private set; } = new();
+        public Weight Weight { get; private set; } = new();
         public Parcel(Dimensions dimensions, Weight weight)
         {
             Dimensions = dimensions;

@@ -94,7 +94,7 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -126,6 +126,9 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Migrations
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal>("OfferedPrice")
                         .HasPrecision(11, 2)

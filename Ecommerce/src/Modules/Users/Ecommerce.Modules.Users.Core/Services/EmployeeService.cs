@@ -20,15 +20,13 @@ namespace Ecommerce.Modules.Users.Core.Services
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IRoleRepository _roleRepository;
         private readonly IEmployeeRepository _employeeRepository;
-        private readonly TimeProvider _timeProvider;
 
-        public EmployeeService(IUserRepository userRepository, IPasswordHasher<User> passwordHasher, IRoleRepository roleRepository, IEmployeeRepository employeeRepository, TimeProvider timeProvider)
+        public EmployeeService(IUserRepository userRepository, IPasswordHasher<User> passwordHasher, IRoleRepository roleRepository, IEmployeeRepository employeeRepository)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _roleRepository = roleRepository;
             _employeeRepository = employeeRepository;
-            _timeProvider = timeProvider;
         }
 
         public async Task<PagedResult<EmployeeBrowseDto>> BrowseAsync(SieveModel model)
@@ -48,7 +46,7 @@ namespace Ecommerce.Modules.Users.Core.Services
             var password = _passwordHasher.HashPassword(default!, dto.Password);
             var role = await _roleRepository.GetAsync(dto.Role);
             var newGuid = Guid.NewGuid();
-            var user = new Employee(newGuid, dto.FirstName, dto.LastName, email, password, dto.Username, role!, dto.JobPosition, _timeProvider.GetUtcNow().UtcDateTime);
+            var user = new Employee(newGuid, dto.FirstName, dto.LastName, email, password, dto.Username, role!, dto.JobPosition);
             await _userRepository.AddAsync(user);
             return newGuid;
         }
@@ -78,7 +76,6 @@ namespace Ecommerce.Modules.Users.Core.Services
         {
             var employee = await _employeeRepository.GetAsync(employeeId, false) ?? throw new EmployeeNotFoundException(employeeId);
             employee.IsActive = isActive;
-            employee.UpdatedAt = _timeProvider.GetUtcNow().UtcDateTime;
             await _userRepository.UpdateAsync();
         }
     }

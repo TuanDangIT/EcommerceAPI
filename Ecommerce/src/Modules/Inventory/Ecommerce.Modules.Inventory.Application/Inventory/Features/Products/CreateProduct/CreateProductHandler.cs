@@ -19,18 +19,16 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
         private readonly IBlobStorageService _blobStorageService;
         private readonly IManufacturerRepository _manufacturerRepository;
         private readonly ICategoryRepository _categoryRepository;
-        private readonly TimeProvider _timeProvider;
         private readonly IParameterRepository _parameterRepository;
         private const string _containerName = "images";
 
         public CreateProductHandler(IProductRepository productRepository, IBlobStorageService blobStorageService, IManufacturerRepository manufacturerRepository
-            , ICategoryRepository categoryRepository, TimeProvider timeProvider, IParameterRepository parameterRepository)
+            , ICategoryRepository categoryRepository, IParameterRepository parameterRepository)
         {
             _productRepository = productRepository;
             _blobStorageService = blobStorageService;
             _manufacturerRepository = manufacturerRepository;
             _categoryRepository = categoryRepository;
-            _timeProvider = timeProvider;
             _parameterRepository = parameterRepository;
         }
         public async Task<Guid> Handle(CreateProduct request, CancellationToken cancellationToken)
@@ -58,8 +56,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
                     productParameters.Add(new ProductParameter()
                     {
                         Parameter = parameter,
-                        Value = productParameter.Value,
-                        CreatedAt = _timeProvider.GetUtcNow().UtcDateTime
+                        Value = productParameter.Value
                     });
                 }
             }
@@ -80,8 +77,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
                     productParameters: productParameters,
                     manufacturer: manufacturer,
                     category: category,
-                    images: imageList.ToList(),
-                    createdAt: _timeProvider.GetUtcNow().UtcDateTime
+                    images: imageList.ToList()
                 ));
             return productId;
         }

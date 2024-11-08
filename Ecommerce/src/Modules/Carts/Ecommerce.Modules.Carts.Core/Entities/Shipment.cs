@@ -17,33 +17,6 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public string AparmentNumber { get; private set; } = string.Empty;   
         public Shipment(string country, string city, string postalCode, string streetName, string streetNumber, string apartmentNumber)
         {
-            if (string.IsNullOrWhiteSpace(city))
-            {
-                throw new ShipmentNullException(nameof(City));
-            }
-
-            if (string.IsNullOrWhiteSpace(postalCode))
-            {
-                throw new ShipmentNullException("Postal code");
-            }
-
-            if (string.IsNullOrWhiteSpace(streetName))
-            {
-                throw new ShipmentNullException("Street name");
-            }
-
-            if (string.IsNullOrWhiteSpace(streetNumber))
-            {
-                throw new ShipmentNullException("Street number");
-            }
-            if (string.IsNullOrWhiteSpace(country))
-            {
-                throw new ShipmentNullException("Country");
-            }
-            if(country.ToLower() != "poland" && country.ToLower() != "polska")
-            {
-                throw new ShipmentNotSupportedCountryException();
-            }
             Country = country;
             City = city;
             PostalCode = postalCode;

@@ -13,16 +13,14 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
     internal sealed class CreateManufacturerHandler : ICommandHandler<CreateManufacturer>
     {
         private readonly IManufacturerRepository _manufacturerRepository;
-        private readonly TimeProvider _timeProvider;
 
-        public CreateManufacturerHandler(IManufacturerRepository manufacturerRepository, TimeProvider timeProvider)
+        public CreateManufacturerHandler(IManufacturerRepository manufacturerRepository)
         {
             _manufacturerRepository = manufacturerRepository;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(CreateManufacturer request, CancellationToken cancellationToken)
         {
-            await _manufacturerRepository.AddAsync(new Manufacturer(Guid.NewGuid(), request.Name, _timeProvider.GetUtcNow().UtcDateTime));
+            await _manufacturerRepository.AddAsync(new Manufacturer(Guid.NewGuid(), request.Name));
         }
     }
 }

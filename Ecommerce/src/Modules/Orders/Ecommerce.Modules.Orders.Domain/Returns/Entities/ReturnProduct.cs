@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ecommerce.Shared.Abstractions.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Returns.Entities
 {
-    public class ReturnProduct
+    public class ReturnProduct : BaseEntity<int>
     {
-        public int Id { get; private set; }
         [JsonInclude]
         public string SKU { get; private set; } = string.Empty;
         [JsonInclude]

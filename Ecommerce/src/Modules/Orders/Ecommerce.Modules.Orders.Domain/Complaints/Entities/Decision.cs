@@ -8,9 +8,9 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
 {
     public class Decision
     {
-        public string DecisionText { get; set; } = string.Empty;
-        public string? AdditionalInformation { get; set; } = string.Empty;
-        public decimal? RefundAmount { get; set; }
+        public string DecisionText { get; private set; } = string.Empty;
+        public string? AdditionalInformation { get; private set; } = string.Empty;
+        public decimal? RefundAmount { get; private set; }
         public Decision(string decisionText, string? additionalInformation, decimal refundAmount)
         {
             DecisionText = decisionText;

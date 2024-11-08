@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Carts.Core.Entities.Exceptions;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
@@ -8,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Entities
 {
-    public class Cart
+    public class Cart : BaseEntity
     {
-        public Guid Id { get; private set; }
         public Guid? CustomerId {  get; private set; }
         private List<CartProduct> _products = [];
         public IEnumerable<CartProduct> Products => _products;
@@ -72,10 +72,6 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             }
             _products.Clear();
         }
-        //public void Reset()
-        //{
-        //    _products.Clear();
-        //}
         public CheckoutCart Checkout()
         {
             if (_products.Count == 0)

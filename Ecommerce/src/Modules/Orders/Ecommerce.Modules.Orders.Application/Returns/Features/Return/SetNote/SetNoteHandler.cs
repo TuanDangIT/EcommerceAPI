@@ -14,12 +14,10 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.SetNote
     internal sealed class SetNoteHandler : ICommandHandler<SetNote>
     {
         private readonly IReturnRepository _returnRepository;
-        private readonly TimeProvider _timeProvider;
 
-        public SetNoteHandler(IReturnRepository returnRepository, TimeProvider timeProvider)
+        public SetNoteHandler(IReturnRepository returnRepository)
         {
             _returnRepository = returnRepository;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(SetNote request, CancellationToken cancellationToken)
         {
@@ -28,7 +26,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.SetNote
             {
                 throw new ReturnNotFoundException(request.ReturnId);
             }
-            @return.SetNote(request.Note, _timeProvider.GetUtcNow().UtcDateTime);
+            @return.SetNote(request.Note);
             await _returnRepository.UpdateAsync();
         }
     }

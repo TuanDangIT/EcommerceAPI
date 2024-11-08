@@ -9,8 +9,8 @@ namespace Ecommerce.Modules.Orders.Domain.Shipping.Entities
     public class Weight
     {
         //public int Id { get; set; }
-        public string Amount { get; set; } = string.Empty;
-        public string Unit { get; set; } = "kg";
+        public string Amount { get; private set; } = string.Empty;
+        public string Unit { get; private set; } = "kg";
         public Weight(string amount)
         {
             Amount = amount;

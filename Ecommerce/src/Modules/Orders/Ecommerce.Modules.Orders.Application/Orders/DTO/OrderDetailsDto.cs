@@ -19,7 +19,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.DTO
         public string? ClientAdditionalInformation { get; set; }
         public string? CompanyAdditionalInformation { get; set; }
         public string? DiscountCode { get; set; }
-        public DateTime OrderPlacedAt { get; set; }
+        public DateTime PlacedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }
 }

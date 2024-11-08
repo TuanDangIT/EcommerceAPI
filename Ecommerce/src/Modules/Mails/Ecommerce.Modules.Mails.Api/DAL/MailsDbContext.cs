@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Mails.Api.Entities;
+using Ecommerce.Shared.Abstractions.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using System;
@@ -24,8 +25,19 @@ namespace Ecommerce.Modules.Mails.Api.DAL
             modelBuilder.HasDefaultSchema(Schema);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
-
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var entries = ChangeTracker.Entries<Mail>();
+            foreach (var entry in entries)
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Property(nameof(Mail.CreatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                }
+            }
+            return base.SaveChangesAsync(cancellationToken);
+        }
         public Task<int> SaveChangesAsync()
-            => base.SaveChangesAsync();
+            => SaveChangesAsync(default);
     }
 }

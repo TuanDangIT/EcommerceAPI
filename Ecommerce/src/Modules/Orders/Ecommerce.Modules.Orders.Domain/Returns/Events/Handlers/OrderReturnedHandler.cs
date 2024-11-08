@@ -36,8 +36,7 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Events.Handlers
                     order,
                     @event.Products.Select(p => new ReturnProduct(p.SKU, p.Name, p.Price, p.Quantity, p.ImagePathUrl)),
                     @event.ReasonForReturn,
-                    @event.IsFullReturn,
-                    @event.CreatedAt
+                    @event.IsFullReturn
                 ));
         }
     }

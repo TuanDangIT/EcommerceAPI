@@ -49,22 +49,10 @@ namespace Ecommerce.Modules.Users.Core.Services
             {
                 throw new UserLockedOutException((TimeSpan)(user.LockoutEnd - now));
             }
-            //else
-            //{
-            //    if(user.FailedAttempts > 0)
-            //    {
-            //        user.ResetFailedAttempts();
-            //        await _userRepository.UpdateAsync();
-            //    }
-            //}
             var passwordResult = _passwordHasher.VerifyHashedPassword(user, user.Password, dto.Password);
             if(passwordResult is PasswordVerificationResult.Failed)
             {
                 user.SignInFailed();
-                //if(user.FailedAttempts > _maxFailedAccessAttempts)
-                //{
-                //    user.LockoutEnd = now + TimeSpan.FromMinutes(_lockoutTimeSpan);
-                //}
                 await _userRepository.UpdateAsync();
                 throw new InvalidCredentialsException();
             }
@@ -103,7 +91,7 @@ namespace Ecommerce.Modules.Users.Core.Services
             var password = _passwordHasher.HashPassword(default!, dto.Password);
             var role = await _roleRepository.GetAsync(_customerRoleName);
             var newGuid = Guid.NewGuid();
-            var customer = new Customer(newGuid, dto.FirstName, dto.LastName, email, password, dto.Username, role!, _timeProvider.GetUtcNow().UtcDateTime);
+            var customer = new Customer(newGuid, dto.FirstName, dto.LastName, email, password, dto.Username, role!);
             await _userRepository.AddAsync(customer);
             await _messageBroker.PublishAsync(new CustomerActivated(newGuid, email, customer.FirstName, customer.LastName));
         }

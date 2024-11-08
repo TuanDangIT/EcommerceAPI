@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Inventory.Domain.Auctions.Exceptions;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
 {
-    public class Auction
+    public class Auction : AggregateRoot, IAuditable
     {
-        public Guid Id { get; private set; }
         public string SKU { get; private set; } = string.Empty;
         public string Name { get; private set; } = string.Empty;
         public decimal Price { get; private set; }
@@ -24,7 +24,8 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
         private readonly List<Review> _review = [];
         public IEnumerable<Review> Reviews => _review;
         public DateTime CreatedAt { get; private set; }
-        public Auction(Guid id, string sku, string name, decimal price, string description, List<string> imagePathUrls, string category, DateTime createdAt, 
+        public DateTime? UpdatedAt { get; private set; }
+        public Auction(Guid id, string sku, string name, decimal price, string description, List<string> imagePathUrls, string category, 
             int? quantity = null, string? additionalDescription = null, List<AuctionParameter>? parameters = null, string? manufacturer = null)
         {
             Id = id;
@@ -34,7 +35,6 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
             Description = description;
             ImagePathUrls = imagePathUrls;
             Category = category;
-            CreatedAt = createdAt;
             Quantity = quantity;
             AdditionalDescription = additionalDescription;
             Parameters = parameters;
@@ -42,7 +42,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
         }
         public Auction()
         {
-            
+
         }
         public void AddReview(Review review)
             => _review.Add(review);
@@ -57,6 +57,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
                 throw new AuctionQuantityBelowZeroException();
             }
             Quantity -= quantity;
+            IncrementVersion();
         }
         public void IncreaseQuantity(int quantity)
         { 
@@ -65,6 +66,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
                 throw new AuctionInvalidChangeOfQuantityException();
             }
             Quantity += quantity;
+            IncrementVersion();
         }
     }
 }

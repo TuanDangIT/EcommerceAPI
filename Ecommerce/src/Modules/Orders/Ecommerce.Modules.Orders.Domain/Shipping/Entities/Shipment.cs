@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,18 +8,17 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Shipping.Entities
 {
-    public class Shipment
+    public class Shipment : AggregateRoot<int>
     {
-        public int Id { get; set; } 
-        public string? TrackingNumber { get; set; }
-        public string? LabelId { get; set; } 
-        public DateTime? LabelCreatedAt { get; set; }
-        public Receiver Receiver { get; set; } = new();
-        public List<Parcel>? Parcels { get; set; } = [];
-        public Insurance? Insurance { get; set; }
-        public string Service { get; set; } = "inpost_courier_standard";
-        public Order Order { get; set; } = new();
-        public Guid OrderId { get; set; }
+        public string? TrackingNumber { get; private set; }
+        public string? LabelId { get; private set; } 
+        public DateTime? LabelCreatedAt { get; private set; }
+        public Receiver Receiver { get; private set; } = new();
+        public List<Parcel>? Parcels { get; private set; } = [];
+        public Insurance? Insurance { get; private set; }
+        public string Service { get; private set; } = "inpost_courier_standard";
+        public Order Order { get; private set; } = new();
+        public Guid OrderId { get; private set; }
         public Shipment()
         {
             
@@ -29,12 +29,28 @@ namespace Ecommerce.Modules.Orders.Domain.Shipping.Entities
             Insurance = new Insurance(totalSum.ToString("0.00"));
         }
         public void SetParcels(IEnumerable<Parcel> parcels)
-            => Parcels = parcels.ToList();
-        public void SetTrackingNumber(string trackingNumber)    
-            => TrackingNumber = trackingNumber;
+        {
+            Parcels = parcels.ToList();
+            IncrementVersion();
+        }
+        public void SetTrackingNumber(string trackingNumber)
+        {
+            TrackingNumber = trackingNumber;
+            IncrementVersion();
+        }
         public void SetLabelId(string labelId)
-            => LabelId = labelId;   
+        {
+            LabelId = labelId;
+            IncrementVersion();
+        }
         public void SetLabelCreatedAt(DateTime labelCreatedAt)
-            => LabelCreatedAt = labelCreatedAt;
+        {
+            LabelCreatedAt = labelCreatedAt;
+            IncrementVersion();
+        }
+        public void EditShipment()
+        {
+
+        }
     }
 }

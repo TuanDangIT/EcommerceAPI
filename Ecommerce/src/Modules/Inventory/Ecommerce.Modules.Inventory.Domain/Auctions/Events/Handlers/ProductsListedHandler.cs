@@ -38,7 +38,6 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Events.Handlers
                     description: product.Description,
                     imagePathUrls: product.Images.Select(i => i.ImageUrlPath).ToList(),
                     category: product.Category.Name,
-                    createdAt: @event.ListedAt,
                     quantity: product.Quantity,
                     additionalDescription: product.AdditionalDescription,
                     parameters: product.ProductParameters?.Select(pp => new AuctionParameter(pp.Parameter.Name, pp.Value)).ToList(),

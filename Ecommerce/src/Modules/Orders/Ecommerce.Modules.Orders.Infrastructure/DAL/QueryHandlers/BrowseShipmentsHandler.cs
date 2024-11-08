@@ -30,6 +30,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
             var shipmentsAsQueryable = _dbContext.Shipments
                 .OrderByDescending(s => s.LabelCreatedAt)
                 .ThenBy(s => s.Id)
+                .Where(s => s.TrackingNumber != null)
                 .AsQueryable();
             if (request.Filters is not null && request.Filters.Count != 0)
             {

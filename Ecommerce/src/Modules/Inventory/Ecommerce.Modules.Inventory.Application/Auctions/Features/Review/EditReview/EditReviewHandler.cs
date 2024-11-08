@@ -13,13 +13,11 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.EditR
     {
         private readonly IAuctionRepository _auctionRepository;
         private readonly IReviewRepository _reviewRepository;
-        private readonly TimeProvider _timeProvider;
 
-        public EditReviewHandler(IAuctionRepository auctionRepository, IReviewRepository reviewRepository, TimeProvider timeProvider)
+        public EditReviewHandler(IAuctionRepository auctionRepository, IReviewRepository reviewRepository)
         {
             _auctionRepository = auctionRepository;
             _reviewRepository = reviewRepository;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(EditReview request, CancellationToken cancellationToken)
         {
@@ -33,7 +31,7 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.EditR
             {
                 throw new ReviewNotFoundException(request.ReviewId);
             }
-            review.EditReview(request.Text, request.Grade, _timeProvider.GetUtcNow().UtcDateTime);
+            review.Edit(request.Text, request.Grade);
             await _reviewRepository.UpdateAsync();
         }
     }

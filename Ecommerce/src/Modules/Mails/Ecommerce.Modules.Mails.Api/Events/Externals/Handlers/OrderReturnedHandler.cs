@@ -1,5 +1,4 @@
 ﻿using Ecommerce.Modules.Mails.Api.DTO;
-using Ecommerce.Modules.Mails.Api.Entities.ValueObjects;
 using Ecommerce.Modules.Mails.Api.Services;
 using Ecommerce.Shared.Abstractions.Events;
 using Ecommerce.Shared.Infrastructure.Company;
@@ -42,7 +41,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
                 CustomerId = @event.CustomerId
             });
         }
-        private string GenerateItemsHtml(IEnumerable<Product> Products)
+        private string GenerateItemsHtml(IEnumerable<ProductDto> Products)
         {
             StringBuilder productsHtml = new StringBuilder();
             foreach (var product in Products)

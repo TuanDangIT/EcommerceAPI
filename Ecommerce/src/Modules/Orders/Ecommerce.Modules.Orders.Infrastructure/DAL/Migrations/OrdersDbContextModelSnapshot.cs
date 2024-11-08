@@ -54,6 +54,10 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
@@ -81,6 +85,13 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -144,11 +155,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("DiscountCode")
                         .HasColumnType("text");
-
-                    b.Property<DateTime>("OrderPlacedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Payment")
                         .IsRequired()
@@ -168,9 +179,13 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("Id", "OrderPlacedAt");
+                    b.HasIndex("Id", "CreatedAt");
 
                     b.ToTable("Orders", "orders");
                 });
@@ -257,6 +272,10 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId")
@@ -290,6 +309,10 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
                     b.Property<string>("TrackingNumber")
                         .HasColumnType("text");
+
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -342,6 +365,38 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .WithOne("Invoice")
                         .HasForeignKey("Ecommerce.Modules.Orders.Domain.Invoices.Entities.Invoice", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Ecommerce.Modules.Orders.Domain.Invoices.Entities.InvoiceCustomer", "Customer", b1 =>
+                        {
+                            b1.Property<int>("InvoiceId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("Email")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("FirstName")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("LastName")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("PhoneNumber")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("InvoiceId");
+
+                            b1.ToTable("Invoices", "orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvoiceId");
+                        });
+
+                    b.Navigation("Customer")
                         .IsRequired();
 
                     b.Navigation("Order");

@@ -18,7 +18,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Policies
         public Task<bool> CanCancel(Order order)
         {
             bool canDelete;
-            var timeSpanAfterPlacingOrder = _timeProvider.GetUtcNow().UtcDateTime - order.OrderPlacedAt;
+            var timeSpanAfterPlacingOrder = _timeProvider.GetUtcNow().UtcDateTime - order.CreatedAt;
             if(timeSpanAfterPlacingOrder.TotalMinutes > _maxMinutesToBeAbleToCancel)
             {
                 canDelete = false;

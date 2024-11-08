@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Inventory.Domain.Inventory.Exceptions;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
 {
-    public class Image
+    public class Image : BaseEntity
     {
-        public Guid Id { get; private set; }
         public string ImageUrlPath { get; private set; } = string.Empty;
         public int Order { get; private set; }
         public Product Product { get; private set; } = new();

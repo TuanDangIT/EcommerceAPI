@@ -16,14 +16,12 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.AddRe
         private readonly IAuctionRepository _auctionRepository;
         private readonly IReviewRepository _reviewRepository;
         private readonly IContextService _contextService;
-        private readonly TimeProvider _timeProvider;
 
-        public AddReviewHandler(IAuctionRepository auctionRepository, IReviewRepository reviewRepository, IContextService contextService, TimeProvider timeProvider)
+        public AddReviewHandler(IAuctionRepository auctionRepository, IReviewRepository reviewRepository, IContextService contextService)
         {
             _auctionRepository = auctionRepository;
             _reviewRepository = reviewRepository;
             _contextService = contextService;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(AddReview request, CancellationToken cancellationToken)
         {
@@ -40,8 +38,7 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.AddRe
                 Guid.NewGuid(),
                 username,
                 request.Text,
-                request.Grade,
-                _timeProvider.GetUtcNow().UtcDateTime));
+                request.Grade));
             await _reviewRepository.UpdateAsync();
         }
     }

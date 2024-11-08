@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Orders.Exceptions;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 {
-    public class Product //OrderItem could be a better name.
+    public class Product : BaseEntity<int>       //OrderItem could be a better name.
     {
-        public int Id { get; private set; }
         [JsonInclude]
         public string SKU { get; private set; } = string.Empty;
         [JsonInclude]

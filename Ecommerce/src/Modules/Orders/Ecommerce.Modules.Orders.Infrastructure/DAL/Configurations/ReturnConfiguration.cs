@@ -42,6 +42,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                 .HasForeignKey<Return>(r => r.OrderId);
             builder
                 .HasIndex(r => new { r.Id, r.CreatedAt });
+            builder.Property(o => o.Version)
+                .IsConcurrencyToken();
         }
     }
 }

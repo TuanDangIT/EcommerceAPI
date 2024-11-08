@@ -12,6 +12,6 @@ namespace Ecommerce.Modules.Orders.Application.Orders.DTO
         public CustomerDto Customer { get; set; } = new();
         public decimal TotalSum { get; set; }
         public IEnumerable<ProductDto> Products { get; set; } = [];
-        public DateTime OrderPlacedAt { get; set; }
+        public DateTime PlacedAt { get; set; }
     }
 }

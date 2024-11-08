@@ -16,6 +16,8 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
             builder.Property(p => p.Name)
                 .HasMaxLength(32)
                 .IsRequired();
+            builder.Property(p => p.Version)
+                .IsConcurrencyToken();
         }
     }
 }

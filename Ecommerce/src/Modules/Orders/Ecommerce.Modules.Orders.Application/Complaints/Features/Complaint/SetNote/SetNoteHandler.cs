@@ -15,12 +15,10 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Set
     internal sealed class SetNoteHandler : ICommandHandler<SetNote>
     {
         private readonly IComplaintRepository _complaintRepository;
-        private readonly TimeProvider _timeProvider;
 
-        public SetNoteHandler(IComplaintRepository complaintRepository, TimeProvider timeProvider)
+        public SetNoteHandler(IComplaintRepository complaintRepository)
         {
             _complaintRepository = complaintRepository;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(SetNote request, CancellationToken cancellationToken)
         {
@@ -29,7 +27,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Set
             {
                 throw new ComplaintNotFoundException(request.ComplaintId);
             }
-            complaint.SetNote(request.Note, _timeProvider.GetUtcNow().UtcDateTime);
+            complaint.SetNote(request.Note);
             await _complaintRepository.UpdateAsync();
         }
     }

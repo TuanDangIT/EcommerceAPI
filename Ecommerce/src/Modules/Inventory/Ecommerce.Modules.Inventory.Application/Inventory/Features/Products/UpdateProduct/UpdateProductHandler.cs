@@ -66,7 +66,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
                     {
                         Parameter = parameter,
                         Value = productParameter.Value,
-                        CreatedAt = _timeProvider.GetUtcNow().UtcDateTime
                     });
                 }
             }
@@ -87,7 +86,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
             await UploadImagesToBlobStorageAsync(request.Images, product);
             await _productRepository.DeleteProductParametersAndImagesRelatedToProduct(request.Id);
             product.ChangeProductParameters(productParameters);
-            product.SetUpdateAt(_timeProvider.GetUtcNow().UtcDateTime);
             await _productRepository.UpdateAsync();
         }
         private async Task UploadImagesToBlobStorageAsync(List<IFormFile> images, Product product)

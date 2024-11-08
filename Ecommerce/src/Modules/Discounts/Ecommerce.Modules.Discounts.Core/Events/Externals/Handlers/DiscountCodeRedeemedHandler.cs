@@ -28,7 +28,7 @@ namespace Ecommerce.Modules.Discounts.Core.Events.Externals.Handlers
             {
                 throw new DiscountNotFoundException(@event.Code);
             }
-            discount.Redeem(_timeProvider.GetUtcNow().UtcDateTime);
+            discount.Redeem();
             await _dbContext.SaveChangesAsync();
         }
     }

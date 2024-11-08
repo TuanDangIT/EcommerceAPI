@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Inventory.Domain.Inventory.Exceptions;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
 {
-    public class Parameter
+    public class Parameter : AggregateRoot, IAuditable
     {
-        public Guid Id { get; private set; }
         public string Name { get; private set; } = string.Empty;
         private readonly List<Product> _products = [];
         public IEnumerable<Product>? Products => _products;
@@ -17,22 +17,21 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public IEnumerable<ProductParameter>? ProductParameters => _productParameters;
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        public Parameter(Guid id, string name, DateTime createdAt)
+        public Parameter(Guid id, string name)
         {
             IsNameValid(name);
             Id = id;
             Name = name;
-            CreatedAt = createdAt;
         }
         public Parameter()
         {
 
         }
-        public void ChangeName(string name, DateTime updatedAt)
+        public void ChangeName(string name)
         {
             IsNameValid(name);
             Name = name;
-            UpdatedAt = updatedAt;
+            IncrementVersion();
         }
         private static void IsNameValid(string name)
         {

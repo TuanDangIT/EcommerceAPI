@@ -16,18 +16,17 @@ namespace Ecommerce.Modules.Orders.Domain.Invoices.Events.Handlers
     {
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IOrderRepository _orderRepository;
-        private readonly TimeProvider _timeProvider;
 
-        public InvoiceCreatedHandler(IInvoiceRepository invoiceRepository, IOrderRepository orderRepository, TimeProvider timeProvider)
+        public InvoiceCreatedHandler(IInvoiceRepository invoiceRepository, IOrderRepository orderRepository)
         {
             _invoiceRepository = invoiceRepository;
             _orderRepository = orderRepository;
-            _timeProvider = timeProvider;
         }
         public async Task HandleAsync(InvoiceCreated @event)
         {
             var order = await _orderRepository.GetAsync(@event.OrderId) ?? throw new OrderNotFoundException(@event.OrderId);
-            await _invoiceRepository.CreateAsync(new Invoice(@event.InvoiceNo, order, _timeProvider.GetUtcNow().UtcDateTime));
+            var customer = new InvoiceCustomer(@event.Customer.FirstName, @event.Customer.LastName, @event.Customer.Email, @event.Customer.PhoneNumber);
+            await _invoiceRepository.CreateAsync(new Invoice(@event.InvoiceNo, order, customer));
         }
     }
 }

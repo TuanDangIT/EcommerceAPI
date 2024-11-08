@@ -3,6 +3,7 @@ using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 
 using Ecommerce.Modules.Orders.Domain.Returns.Entities.Enums;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,55 +12,52 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Returns.Entities
 {
-    public class Return
+    public class Return : AggregateRoot, IAuditable
     {
-        public Guid Id { get; set; }
-        public Order Order { get; set; } = new();
-        public Guid OrderId { get; set; }
+        public Order Order { get; private set; } = new();
+        public Guid OrderId { get; private set; }
         private readonly List<ReturnProduct> _products = [];
         public IEnumerable<ReturnProduct> Products => _products;
-        public string ReasonForReturn { get; set; } = string.Empty;
-        public string? AdditionalNote { get; set; }
-        public string? RejectReason { get; set; }
-        public ReturnStatus Status { get; set; } = ReturnStatus.NotHandled;
-        public bool IsFullReturn { get; set; }
+        public string ReasonForReturn { get; private set; } = string.Empty;
+        public string? AdditionalNote { get; private set; }
+        public string? RejectReason { get; private set; }
+        public ReturnStatus Status { get; private set; } = ReturnStatus.NotHandled;
+        public bool IsFullReturn { get; private set; }
         public bool IsCompleted => Status is ReturnStatus.Handled;
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
         public Return(Guid id, Order order, IEnumerable<ReturnProduct> products, string reasonForReturn, 
-            bool isFullReturn, DateTime createdAt)
+            bool isFullReturn)
         {
             Id = id;
             Order = order;
             _products = products.ToList();
             ReasonForReturn = reasonForReturn;
             IsFullReturn = isFullReturn;
-            CreatedAt = createdAt;
         }
         private Return()
         {
             
         }
-        public void ChangeStatus(ReturnStatus status, DateTime updatedAt)
+        public void ChangeStatus(ReturnStatus status)
         {
             Status = status;
-            UpdatedAt = updatedAt;
         }
-        public void Handle(DateTime updatedAt)
+        public void Handle()
         {
-            Status = ReturnStatus.Handled; 
-            UpdatedAt = updatedAt;
+            ChangeStatus(ReturnStatus.Handled);
+            IncrementVersion();
         }
-        public void SetNote(string note, DateTime updatedAt)
+        public void SetNote(string note)
         {
             AdditionalNote = note;
-            UpdatedAt = updatedAt;
+            IncrementVersion();
         }
-        public void Reject(string rejectReason, DateTime updatedAt)
+        public void Reject(string rejectReason)
         {
             RejectReason = rejectReason;    
-            Status = ReturnStatus.Rejected;
-            UpdatedAt = updatedAt;
+            ChangeStatus(ReturnStatus.Rejected);
+            IncrementVersion();
         }
     }
 }

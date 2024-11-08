@@ -1,6 +1,5 @@
 ﻿using Ecommerce.Modules.Mails.Api.DAL;
 using Ecommerce.Modules.Mails.Api.DTO;
-using Ecommerce.Modules.Mails.Api.Entities.ValueObjects;
 using Ecommerce.Modules.Mails.Api.Services;
 using Ecommerce.Shared.Abstractions.BloblStorage;
 using Ecommerce.Shared.Abstractions.Events;

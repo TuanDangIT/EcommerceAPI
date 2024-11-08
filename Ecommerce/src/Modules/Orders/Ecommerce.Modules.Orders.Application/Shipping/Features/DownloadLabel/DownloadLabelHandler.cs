@@ -24,6 +24,10 @@ namespace Ecommerce.Modules.Orders.Application.Shipping.Features.DownloadLabel
         public async Task<(Stream FileStream, string MimeType, string FileName)> Handle(DownloadLabel request, CancellationToken cancellationToken)
         {
             var shipment = await _shipmentRepository.GetAsync(request.ShipmentId) ?? throw new ShipmentNotFoundException(request.ShipmentId);
+            if (shipment.TrackingNumber is null)
+            {
+                throw new LabelNotCreatedException(shipment.Id);
+            }
             var file = await _deliveryService.GetLabelAsync(shipment);
             return file;
         }

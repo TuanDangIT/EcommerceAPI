@@ -29,17 +29,14 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         private readonly IStripeService _stripeService;
         private readonly ISieveProcessor _sieveProcessor;
         private readonly IMessageBroker _messageBroker;
-        private readonly TimeProvider _timeProvider;
 
-        public DiscountService(IDiscountDbContext dbContext, IStripeService stripeService, IEnumerable<ISieveProcessor> sieveProcessors, IMessageBroker messageBroker, TimeProvider timeProvider)
+        public DiscountService(IDiscountDbContext dbContext, IStripeService stripeService, IEnumerable<ISieveProcessor> sieveProcessors, IMessageBroker messageBroker)
         {
             _dbContext = dbContext;
             _stripeService = stripeService;
             _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(DiscountsModuleSieveProcessor));
             _messageBroker = messageBroker;
-            _timeProvider = timeProvider;
         }
-
 
         public async Task<PagedResult<DiscountBrowseDto>> BrowseDiscountsAsync(string stripeCouponId, SieveModel model)
         {
@@ -81,8 +78,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 throw new DiscountCodeAlreadyInUseException(dto.Code);
             }
             var stripePromotionCodeId = await _stripeService.CreateDiscountAsync(stripeCouponId, dto);
-            var now = _timeProvider.GetUtcNow().UtcDateTime;
-            coupon.AddDiscount(new Discount(dto.Code, stripePromotionCodeId, dto.EndingDate, now), now);
+            coupon.AddDiscount(new Discount(dto.Code, stripePromotionCodeId, dto.EndingDate));
             await _dbContext.SaveChangesAsync();
         }
 
@@ -94,7 +90,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 throw new DiscountAlreadyActivated(code);
             }
             await _stripeService.ActivateDiscountAsync(discount.StripePromotionCodeId);
-            discount.Activate(_timeProvider.GetUtcNow().UtcDateTime);
+            discount.Activate();
             await _dbContext.SaveChangesAsync();
             var coupon = discount.Coupon;
             switch (coupon)
@@ -118,7 +114,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 throw new DiscountAlreadyDeactivated(code); 
             }
             await _stripeService.DeactivateDiscountAsync(discount.StripePromotionCodeId);
-            discount.Deactive(_timeProvider.GetUtcNow().UtcDateTime);
+            discount.Deactive();
             await _dbContext.SaveChangesAsync();
             await _messageBroker.PublishAsync(new DiscountDeactivated(discount.Code));
         }

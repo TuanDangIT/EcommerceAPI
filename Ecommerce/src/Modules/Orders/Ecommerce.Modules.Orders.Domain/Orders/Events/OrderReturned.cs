@@ -9,5 +9,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Events
 {
-    public sealed record class OrderReturned(Guid OrderId, Guid? CustomerId, string FirstName, string Email, string ReasonForReturn, IEnumerable<Product> Products, bool IsFullReturn, DateTime CreatedAt) : IDomainEvent;
+    public sealed record class OrderReturned(Guid OrderId, Guid? CustomerId, string FirstName, string Email, string ReasonForReturn, IEnumerable<Product> Products, bool IsFullReturn) : IDomainEvent;
 }

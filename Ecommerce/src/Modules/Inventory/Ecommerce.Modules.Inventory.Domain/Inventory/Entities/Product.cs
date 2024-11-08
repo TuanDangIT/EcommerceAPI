@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Inventory.Domain.Inventory.Exceptions;
+using Ecommerce.Shared.Abstractions.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System;
 using System.Collections.Generic;
@@ -9,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
 {
-    public class Product
+    public class Product : AggregateRoot, IAuditable
     {
-        [JsonInclude]
-        public Guid Id { get; private set; }
+        //[JsonInclude]
+        //public Guid Id { get; private set; }
         [JsonInclude]
         public string SKU { get; private set; } = string.Empty;
         public string? EAN { get; private set; }
@@ -44,7 +45,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public DateTime? UpdatedAt { get; private set; }
         public Product(Guid id, string sku, string name, decimal price, int vat, string description
             , List<ProductParameter> productParameters, Manufacturer manufacturer, Category category
-            , List<Image> images, DateTime createdAt, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)
+            , List<Image> images, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)
         {
             Id = id;
             SKU = sku;
@@ -60,7 +61,6 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             Manufacturer = manufacturer;
             Category = category;
             _images = images;
-            CreatedAt = createdAt;
         }
         public Product()
         {
@@ -77,6 +77,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
                 throw new ProductQuantityBelowZeroException();
             }
             Quantity -= quantity;
+            IncrementVersion();
         }
         public void IncreaseQuantity(int quantity)
         {
@@ -85,6 +86,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
                 throw new ProductInvalidChangeOfQuantityException();
             }
             Quantity += quantity;
+            IncrementVersion();
         }
         public void ChangeBaseDetails(string sku, string name, decimal price, int vat, string description, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)
         {
@@ -97,21 +99,28 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             Location = location;
             Description = description;
             AdditionalDescription = additionalDescription;
+            IncrementVersion();
         }
         public void ChangeManufacturer(Manufacturer manufacturer)
-            => Manufacturer = manufacturer;
+        {
+            Manufacturer = manufacturer;
+            IncrementVersion();
+        }
         public void ChangeCategory(Category category)
-            => Category = category;
+        {
+            Category = category;
+            IncrementVersion();
+        }
         public void ChangeImages(List<Image> images)
-            => _images = images;
+        {
+            _images = images;
+            IncrementVersion();
+        }
         public void ChangeProductParameters(List<ProductParameter> parameters)
-            => _productParameters = parameters;
-        public void SetUpdateAt(DateTime updateAt)
-            => UpdatedAt = updateAt;
-        public void List()
-            => IsListed = true;
-        public void Unlist()
-            => IsListed = false;
+        {
+            _productParameters = parameters;
+            IncrementVersion();
+        }
         private static void IsSkuValid(string sku)
         {
             if (sku.Length >= 8 && sku.Length <= 16) 

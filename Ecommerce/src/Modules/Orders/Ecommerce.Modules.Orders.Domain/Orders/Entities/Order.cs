@@ -4,6 +4,7 @@ using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Orders.Exceptions;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,31 +13,30 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 {
-    public class Order
+    public class Order : AggregateRoot, IAuditable
     {
-        public Guid Id { get; set; }
-        public Customer Customer { get; set; } = new();
+        public Customer Customer { get; private set; } = new();
         //public Guid CustomerId { get; set; }
         private readonly List<Product> _products = [];
         public IEnumerable<Product> Products => _products;
-        public decimal TotalSum { get; set; }
+        public decimal TotalSum { get; private set; }
         //public ShipmentDetails ShipmentDetails { get; set; } = new();
-        public PaymentMethod Payment { get; set; }
-        public OrderStatus Status { get; set; } = OrderStatus.Placed;
+        public PaymentMethod Payment { get; private set; }
+        public OrderStatus Status { get; private set; } = OrderStatus.Placed;
         public bool IsCompleted => Status is OrderStatus.Cancelled || Status is OrderStatus.Completed || Status is OrderStatus.Returned;
-        public string? ClientAdditionalInformation { get; set; }
-        public string? CompanyAdditionalInformation { get; set; }
-        public string? DiscountCode { get; set; }
-        public string StripePaymentIntentId { get; set; } = string.Empty;
-        public Shipment Shipment { get; set; } = default!;
-        public DateTime OrderPlacedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-        public Invoice? Invoice { get; set; } 
+        public string? ClientAdditionalInformation { get; private set; }
+        public string? CompanyAdditionalInformation { get; private set; }
+        public string? DiscountCode { get; private set; }
+        public string StripePaymentIntentId { get; private set; } = string.Empty;
+        public Shipment Shipment { get; private set; } = default!;
+        public DateTime CreatedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
+        public Invoice? Invoice { get; private set; } 
         //private readonly List<Complaint> _complaints = [];
         //public IEnumerable<Complaint> Complaints => _complaints;
         //public Return? ReturnOrder { get; set; }
         public Order(Guid id, Customer customer, IEnumerable<Product> products, decimal totalSum, /*ShipmentDetails shipmentDetails,*/Shipment shipment,
-            PaymentMethod paymentMethod, DateTime orderPlacedAt, string? clientAdditionalInformation, string? discountCode, string stripePaymentIntentId)
+            PaymentMethod paymentMethod, DateTime createdAt, string? clientAdditionalInformation, string? discountCode, string stripePaymentIntentId)
         {
             Id = id;
             Customer = customer;
@@ -44,7 +44,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             Shipment = shipment;
             //ShipmentDetails = shipmentDetails;
             Payment = paymentMethod;
-            OrderPlacedAt = orderPlacedAt;
+            CreatedAt = createdAt;
             ClientAdditionalInformation = clientAdditionalInformation;
             DiscountCode = discountCode;
             StripePaymentIntentId = stripePaymentIntentId;
@@ -54,40 +54,40 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         {
             
         }
-        public void ChangeStatus(OrderStatus status, DateTime updatedAt)
+        public void ChangeStatus(OrderStatus status)
         {
             Status = status;
-            UpdatedAt = updatedAt;
+            IncrementVersion();
         }
         //public void EditShipment(ShipmentDetails shipmentDetails, DateTime updatedAt)
         //{
         //    ShipmentDetails = shipmentDetails;
         //    UpdatedAt = updatedAt;
         //}
-        public void Cancel(DateTime updatedAt)
+        public void Cancel()
         {
-            Status = OrderStatus.Cancelled;
-            UpdatedAt = updatedAt;
+            ChangeStatus(OrderStatus.Cancelled);
+            IncrementVersion();
         }
-        public void Ship(DateTime updatedAt)
+        public void Ship()
         {
-            Status = OrderStatus.Shipped;
-            UpdatedAt = updatedAt;
+            ChangeStatus(OrderStatus.Shipped);
+            IncrementVersion();
         }
-        public void Pack(DateTime updatedAt)
+        public void Pack()
         {
-            Status = OrderStatus.ParcelPacked;
-            UpdatedAt = updatedAt;
+            ChangeStatus(OrderStatus.ParcelPacked);
+            IncrementVersion();
         }
-        public void Return(DateTime updatedAt)
+        public void Return()
         {
-            Status = OrderStatus.Returned;
-            UpdatedAt = updatedAt;
+            ChangeStatus(OrderStatus.Returned);
+            IncrementVersion();
         }
-        public void Complete(DateTime updatedAt)
+        public void Complete()
         {
-            Status = OrderStatus.Completed;
-            UpdatedAt = updatedAt;
+            ChangeStatus(OrderStatus.Completed);
+            IncrementVersion();
         }
         public void DecreaseProductQuantity(string sku, int quantity)
         {
@@ -104,22 +104,24 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             {
                 product.DecreaseQuantity(quantity); 
             }
+            IncrementVersion();
         }
-        public void SetParcels(IEnumerable<Parcel> parcels, DateTime updatedAt)
+        public void SetParcels(IEnumerable<Parcel> parcels)
         {
-            UpdatedAt = updatedAt;
             Shipment.SetParcels(parcels);
+            IncrementVersion();
         }
-        public void SetLabelDetails(string trackingNumber, string labelId, DateTime updatedAt)
+        public void SetLabelDetails(string trackingNumber, string labelId, DateTime labelCreatedAt)
         {
-            UpdatedAt = updatedAt;
             Shipment.SetLabelId(labelId);
-            Shipment.SetTrackingNumber(trackingNumber); 
+            Shipment.SetTrackingNumber(trackingNumber);
+            Shipment.SetLabelCreatedAt(labelCreatedAt);
+            IncrementVersion();
         }
-        public void SetCompanyAdditionalInformation(string companyAdditionalInformation, DateTime updatedAt)
+        public void SetCompanyAdditionalInformation(string companyAdditionalInformation)
         {
-            UpdatedAt = updatedAt;
             CompanyAdditionalInformation = companyAdditionalInformation;
+            IncrementVersion();
         }
         
     }

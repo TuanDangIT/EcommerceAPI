@@ -31,18 +31,16 @@ namespace Ecommerce.Modules.Mails.Api.Services
         //private readonly IBlobStorageService _blobStorageService;
         private readonly CompanyOptions _companyOptions;
         private readonly IFilterService _filterService;
-        private readonly TimeProvider _timeProvider;
         private const string _mailDefaultTemplatePath = "MailTemplates\\Default.html";
 
         public MailService(IMailsDbContext dbContext, MailOptions mailOptions/*, IBlobStorageService blobStorageService*/, 
-            CompanyOptions companyOptions, IFilterService filterService, TimeProvider timeProvider)
+            CompanyOptions companyOptions, IFilterService filterService)
         {
             _dbContext = dbContext;
             _mailOptions = mailOptions;
             //_blobStorageService = blobStorageService;
             _companyOptions = companyOptions;
             _filterService = filterService;
-            _timeProvider = timeProvider;
         }
 
         public async Task<CursorPagedResult<MailBrowseDto, MailCursorDto>> BrowseAsync(MailCursorDto cursorDto, bool? isNextPage, int pageSize)
@@ -150,11 +148,11 @@ namespace Ecommerce.Modules.Mails.Api.Services
             await stream.DisposeAsync();
             if(customer is not null)
             {
-                await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, customer, dto.OrderId, _timeProvider.GetUtcNow().UtcDateTime));
+                await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, customer, dto.OrderId));
             }
             else
             {
-                await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, dto.OrderId, _timeProvider.GetUtcNow().UtcDateTime));
+                await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, dto.OrderId));
             }
             await _dbContext.SaveChangesAsync();
         }

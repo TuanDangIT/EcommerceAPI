@@ -12,12 +12,10 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
     internal sealed class ChangeManufacturerNameHandler : ICommandHandler<ChangeManufacturerName>
     {
         private readonly IManufacturerRepository _manufacturerRepository;
-        private readonly TimeProvider _timeProvider;
 
-        public ChangeManufacturerNameHandler(IManufacturerRepository manufacturerRepository, TimeProvider timeProvider)
+        public ChangeManufacturerNameHandler(IManufacturerRepository manufacturerRepository)
         {
             _manufacturerRepository = manufacturerRepository;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(ChangeManufacturerName request, CancellationToken cancellationToken)
         {
@@ -26,7 +24,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
             {
                 throw new ManufacturerNotFoundException(request.ManufaturerId);
             }
-            manufacturer.ChangeName(request.Name, _timeProvider.GetUtcNow().UtcDateTime);
+            manufacturer.ChangeName(request.Name);
             await _manufacturerRepository.UpdateAsync();
         }
     }

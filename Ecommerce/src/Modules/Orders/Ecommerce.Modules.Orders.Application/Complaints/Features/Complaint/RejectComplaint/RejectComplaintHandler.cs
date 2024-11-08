@@ -16,13 +16,11 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Rej
     {
         private readonly IComplaintRepository _complaintRepository;
         private readonly IMessageBroker _messageBroker;
-        private readonly TimeProvider _timeProvider;
 
-        public RejectComplaintHandler(IComplaintRepository complaintRepository, IMessageBroker messageBroker, TimeProvider timeProvider)
+        public RejectComplaintHandler(IComplaintRepository complaintRepository, IMessageBroker messageBroker)
         {
             _complaintRepository = complaintRepository;
             _messageBroker = messageBroker;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(RejectComplaint request, CancellationToken cancellationToken)
         {
@@ -31,7 +29,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Rej
             {
                 throw new ComplaintNotFoundException(request.ComplaintId);
             }
-            complaint.Reject(new Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation), _timeProvider.GetUtcNow().UtcDateTime);
+            complaint.Reject(new Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation));
             await _complaintRepository.UpdateAsync();
             //More logic here: Mail noty
             await _messageBroker.PublishAsync(new ComplaintRejected(

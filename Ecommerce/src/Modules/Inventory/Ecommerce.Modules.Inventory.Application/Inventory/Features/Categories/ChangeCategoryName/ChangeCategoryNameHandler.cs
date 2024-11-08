@@ -12,12 +12,10 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
     internal sealed class ChangeCategoryNameHandler : ICommandHandler<ChangeCategoryName>
     {
         private readonly ICategoryRepository _categoryRepository;
-        private readonly TimeProvider _timeProvider;
 
-        public ChangeCategoryNameHandler(ICategoryRepository categoryRepository, TimeProvider timeProvider)
+        public ChangeCategoryNameHandler(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(ChangeCategoryName request, CancellationToken cancellationToken)
         {
@@ -26,7 +24,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
             {
                 throw new CategoryNotFoundException(request.CategoryId);
             }
-            category.ChangeName(request.Name, _timeProvider.GetUtcNow().UtcDateTime);
+            category.ChangeName(request.Name);
             await _categoryRepository.UpdateAsync();
         }
     }

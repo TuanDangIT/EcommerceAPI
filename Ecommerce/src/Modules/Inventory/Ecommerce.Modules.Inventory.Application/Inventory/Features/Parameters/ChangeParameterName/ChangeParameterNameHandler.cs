@@ -12,12 +12,10 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.
     internal sealed class ChangeParameterNameHandler : ICommandHandler<ChangeParameterName>
     {
         private readonly IParameterRepository _parameterRepository;
-        private readonly TimeProvider _timeProvider;
 
-        public ChangeParameterNameHandler(IParameterRepository parameterRepository, TimeProvider timeProvider)
+        public ChangeParameterNameHandler(IParameterRepository parameterRepository)
         {
             _parameterRepository = parameterRepository;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(ChangeParameterName request, CancellationToken cancellationToken)
         {
@@ -26,7 +24,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.
             {
                 throw new ParameterNotFoundException(request.ParameterId);
             }
-            parameter.ChangeName(request.Name, _timeProvider.GetUtcNow().UtcDateTime);
+            parameter.ChangeName(request.Name);
             await _parameterRepository.UpdateAsync();
         }
     }

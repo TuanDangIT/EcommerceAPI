@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,22 +8,28 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Invoices.Entities
 {
-    public class Invoice
+    public class Invoice : AggregateRoot<int>, IAuditable
     {
-        public int Id { get; set; }
-        public string InvoiceNo { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; }
-        public Order Order { get; set; } = new();
-        public Guid OrderId { get; set; }
-        public Invoice(string invoiceNo, Order order, DateTime createdAt)
+        public string InvoiceNo { get; private set; } = string.Empty;
+        public DateTime CreatedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
+        public InvoiceCustomer Customer { get; private set; } = new();
+        public Order Order { get; private set; } = new();
+        public Guid OrderId { get; private set; }
+        public Invoice(string invoiceNo, Order order, InvoiceCustomer customer)
         {
             InvoiceNo = invoiceNo;
             Order = order;
-            CreatedAt = createdAt;
+            Customer = customer;
         }
         public Invoice()
         {
             
+        }
+        public void EditCustomer(InvoiceCustomer customer)
+        {
+            Customer = customer;
+            IncrementVersion();
         }
     }
 }

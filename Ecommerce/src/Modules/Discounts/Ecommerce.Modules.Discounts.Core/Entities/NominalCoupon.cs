@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ecommerce.Modules.Discounts.Core.Entities.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,14 +9,12 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
 {
     public class NominalCoupon : Coupon
     {
-        public decimal NominalValue { get; set; }
-        public NominalCoupon(string name, decimal nominalValue, DateTime createdAt) : base(name, createdAt)
+        public decimal NominalValue { get; private set; }
+        public NominalCoupon() : base()
         {
-            NominalValue = nominalValue; 
+
         }
-        public NominalCoupon(string code, decimal nominalValue, DateTime createdAt, string stripeCouponId) : base(code, createdAt, stripeCouponId)
-        {
-            NominalValue = nominalValue;
-        }
+        public NominalCoupon(string code, decimal nominalValue, string stripeCouponId) : base(code, stripeCouponId)
+            => NominalValue = nominalValue > 0 ? nominalValue : throw new CouponNominalValueBelowOrEqualZeroException();
     }
 }

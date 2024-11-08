@@ -20,6 +20,8 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
             builder.Property(p => p.Description).IsRequired();
             builder.Property(p => p.Category).IsRequired();
             builder.OwnsMany(p => p.Parameters);
+            builder.Property(p => p.Version)
+                .IsConcurrencyToken();
         }
     }
 }

@@ -52,12 +52,14 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                 .HasMaxLength(256);
             //builder.Property(o => o.IsCompleted)
             //    .IsRequired();
-            builder.Property(o => o.OrderPlacedAt)
+            builder.Property(o => o.CreatedAt)
                 .IsRequired();
-            builder.HasIndex(o => new { o.Id, o.OrderPlacedAt });
+            builder.HasIndex(o => new { o.Id, o.CreatedAt });
             builder.HasOne(o => o.Shipment)
                 .WithOne(s => s.Order)
                 .HasForeignKey<Shipment>(s => s.OrderId);
+            builder.Property(o => o.Version)
+                .IsConcurrencyToken();
         }
     }
 }

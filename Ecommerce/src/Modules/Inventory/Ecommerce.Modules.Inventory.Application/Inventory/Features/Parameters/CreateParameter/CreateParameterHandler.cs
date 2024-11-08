@@ -13,16 +13,14 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.
     internal sealed class CreateParameterHandler : ICommandHandler<CreateParameter>
     {
         private readonly IParameterRepository _parameterRepository;
-        private readonly TimeProvider _timeProvider;
 
-        public CreateParameterHandler(IParameterRepository parameterRepository, TimeProvider timeProvider)
+        public CreateParameterHandler(IParameterRepository parameterRepository)
         {
             _parameterRepository = parameterRepository;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(CreateParameter request, CancellationToken cancellationToken)
         {
-            await _parameterRepository.AddAsync(new Parameter(Guid.NewGuid(), request.Name, _timeProvider.GetUtcNow().UtcDateTime));
+            await _parameterRepository.AddAsync(new Parameter(Guid.NewGuid(), request.Name));
         }
     }
 }

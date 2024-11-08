@@ -13,16 +13,14 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
     internal sealed class CreateCategoryHandler : ICommandHandler<CreateCategory>
     {
         private readonly ICategoryRepository _categoryRepository;
-        private readonly TimeProvider _timeProvider;
 
-        public CreateCategoryHandler(ICategoryRepository categoryRepository, TimeProvider timeProvider)
+        public CreateCategoryHandler(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(CreateCategory request, CancellationToken cancellationToken)
         {
-            await _categoryRepository.AddAsync(new Category(Guid.NewGuid(), request.Name, _timeProvider.GetUtcNow().UtcDateTime));
+            await _categoryRepository.AddAsync(new Category(Guid.NewGuid(), request.Name));
         }
     }
 }

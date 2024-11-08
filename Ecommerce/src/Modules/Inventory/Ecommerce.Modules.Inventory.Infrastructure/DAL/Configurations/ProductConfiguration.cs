@@ -50,6 +50,8 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
             builder.HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId);
+            builder.Property(p => p.Version)
+                .IsConcurrencyToken();
         }
     }
 }

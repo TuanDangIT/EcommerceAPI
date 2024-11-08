@@ -21,7 +21,6 @@ namespace Ecommerce.Modules.Users.Core.DAL.Configuration
                 .HasMaxLength(64);
             builder.HasIndex(x => x.Email).IsUnique();
             builder.Property(x => x.Password)
-                .HasMaxLength(64)
                 .IsRequired();
             builder.Property(x => x.Username)
                 .IsRequired()

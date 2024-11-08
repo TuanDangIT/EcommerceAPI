@@ -68,6 +68,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
             });
             builder.Property(s => s.Service)
                 .IsRequired();
+            builder.Property(o => o.Version)
+                .IsConcurrencyToken();
         }
     }
 }

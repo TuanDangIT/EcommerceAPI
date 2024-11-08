@@ -17,14 +17,12 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
         private readonly IComplaintRepository _complaintRepository;
         private readonly IStripeService _stripeService;
         private readonly IMessageBroker _messageBroker;
-        private readonly TimeProvider _timeProvider;
 
-        public ApproveComplaintHandler(IComplaintRepository complaintRepository, IStripeService stripeService, IMessageBroker messageBroker, TimeProvider timeProvider)
+        public ApproveComplaintHandler(IComplaintRepository complaintRepository, IStripeService stripeService, IMessageBroker messageBroker)
         {
             _complaintRepository = complaintRepository;
             _stripeService = stripeService;
             _messageBroker = messageBroker;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(ApproveComplaint request, CancellationToken cancellationToken)
         {
@@ -36,11 +34,11 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
             //complaint.WriteDecision(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation, request.Decision.RefundAmount));
             if (request.Decision.RefundAmount is not null)
             {
-                complaint.Approve(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation, (decimal)request.Decision.RefundAmount), _timeProvider.GetUtcNow().UtcDateTime);
+                complaint.Approve(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation, (decimal)request.Decision.RefundAmount));
             }
             else
             {
-                complaint.Approve(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation), _timeProvider.GetUtcNow().UtcDateTime);
+                complaint.Approve(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation));
             }
             await _complaintRepository.UpdateAsync();
             if(request.Decision.RefundAmount is null)

@@ -32,5 +32,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
             => await _dbContext.Invoices
                 .Include(i => i.Order)
                 .SingleOrDefaultAsync(i => i.Id == invoiceId);
+
+        public async Task UpdateAsync()
+            => await _dbContext.SaveChangesAsync();
     }
 }

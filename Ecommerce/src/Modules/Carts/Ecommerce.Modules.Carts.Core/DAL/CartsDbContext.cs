@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Carts.Core.Entities;
+using Ecommerce.Shared.Abstractions.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,6 @@ namespace Ecommerce.Modules.Carts.Core.DAL
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             modelBuilder.HasDefaultSchema(Schema);
         }
-
         public Task<int> SaveChangesAsync()
         {
             return base.SaveChangesAsync();

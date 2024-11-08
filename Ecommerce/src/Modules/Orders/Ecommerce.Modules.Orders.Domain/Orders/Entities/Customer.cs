@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 {
-    public class Customer
+    //This could be merged with order as one table. It could improve reading performance
+    public class Customer : BaseEntity
     {
-        public Guid Id { get; set; }
-        public Guid? UserId { get; set; }
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string PhoneNumber { get; set; } = string.Empty;
-        public Order Order { get; set; } = default!;
-        public Guid OrderId { get; set; }
+        public Guid? UserId { get; private set; }
+        public string FirstName { get; private set; } = string.Empty;
+        public string LastName { get; private set; } = string.Empty;
+        public string Email { get; private set; } = string.Empty;
+        public string PhoneNumber { get; private set; } = string.Empty;
+        public Order Order { get; private set; } = default!;
+        public Guid OrderId { get; private set; }
         public Customer(string firstName, string lastName, string email, string phoneNumber, Guid? userId = null)
         {
             FirstName = firstName;

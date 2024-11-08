@@ -19,15 +19,13 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
         private readonly IStripeService _stripeService;
         private readonly IMessageBroker _messageBroker;
         private readonly IOrderCancellationPolicy _orderCancellationPolicy;
-        private readonly TimeProvider _timeProvider;
 
-        public CancelOrderHandler(IOrderRepository orderRepository, IStripeService stripeService, IMessageBroker messageBroker, IOrderCancellationPolicy orderCancellationPolicy, TimeProvider timeProvider)
+        public CancelOrderHandler(IOrderRepository orderRepository, IStripeService stripeService, IMessageBroker messageBroker, IOrderCancellationPolicy orderCancellationPolicy)
         {
             _orderRepository = orderRepository;
             _stripeService = stripeService;
             _messageBroker = messageBroker;
             _orderCancellationPolicy = orderCancellationPolicy;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(CancelOrder request, CancellationToken cancellationToken)
         {
@@ -41,10 +39,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
                 throw new OrderCannotCancelException();
             }
             await _stripeService.Refund(order);
-            order.Cancel(_timeProvider.GetUtcNow().UtcDateTime);
+            order.Cancel();
             await _orderRepository.UpdateAsync();
             var products = order.Products;
-            await _messageBroker.PublishAsync(new OrderCancelled(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, products.Select(p => new { p.SKU, p.Quantity }), order.OrderPlacedAt));
+            await _messageBroker.PublishAsync(new OrderCancelled(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, products.Select(p => new { p.SKU, p.Quantity }), order.CreatedAt));
         }
     }
 }

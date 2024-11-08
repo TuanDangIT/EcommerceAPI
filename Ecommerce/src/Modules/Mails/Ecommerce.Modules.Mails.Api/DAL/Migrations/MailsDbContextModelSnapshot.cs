@@ -73,7 +73,8 @@ namespace Ecommerce.Modules.Mails.Api.DAL.Migrations
 
                     b.Property<string>("Subject")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("To")
                         .IsRequired()

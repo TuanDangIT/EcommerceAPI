@@ -23,7 +23,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Services
         public IMessage Map(IDomainEvent @event)
             => @event switch
             {
-                Domain.Orders.Events.InvoiceCreated e => new Events.InvoiceCreated(e.OrderId, e.CustomerId, e.FirstName, e.Email, e.InvoiceNo),
+                Domain.Orders.Events.InvoiceCreated e => new Events.InvoiceCreated(e.OrderId, e.CustomerId, e.Customer.FirstName, e.Customer.Email, e.InvoiceNo),
                 Domain.Orders.Events.OrderReturned e => new OrderReturned(e.OrderId, e.CustomerId, e.FirstName, e.Email, e.Products.Select(p => new { p.SKU, p.Name, p.Price, p.Quantity })),
                 Domain.Orders.Events.ComplaintSubmitted e => new ComplaintSubmitted(e.OrderId, e.CustomerId, e.FirstName, e.Email, e.Title, e.CreatedAt),
                 _ => throw new ArgumentException(nameof(@event)),

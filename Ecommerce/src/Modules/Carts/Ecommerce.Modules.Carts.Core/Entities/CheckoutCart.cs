@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Carts.Core.Entities.Enums;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Entities
 {
-    public class CheckoutCart
+    public class CheckoutCart : BaseEntity
     {
-        public Guid Id { get; private set; }
         public Customer Customer { get; private set; } = new();
         public Payment? Payment { get; private set; }
         public Guid? PaymentId { get; private set; }

@@ -12,5 +12,6 @@ namespace Ecommerce.Modules.Orders.Domain.Invoices.Repositories
         Task CreateAsync(Invoice invoice);
         Task<Invoice?> GetAsync(int invoiceId);
         Task DeleteAsync(int invoiceId);
+        Task UpdateAsync();
     }
 }

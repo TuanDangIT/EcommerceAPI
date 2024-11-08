@@ -12,12 +12,10 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Edi
     internal sealed class EditDecisionHandler : ICommandHandler<EditDecision>
     {
         private readonly IComplaintRepository _complaintRepository;
-        private readonly TimeProvider _timeProvider;
 
-        public EditDecisionHandler(IComplaintRepository complaintRepository, TimeProvider timeProvider)
+        public EditDecisionHandler(IComplaintRepository complaintRepository)
         {
             _complaintRepository = complaintRepository;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(EditDecision request, CancellationToken cancellationToken)
         {
@@ -30,7 +28,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Edi
             {
                 throw new ComplaintCannotEditRefundAmountException();
             }
-            complaint.EditDecision(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation), _timeProvider.GetUtcNow().UtcDateTime);
+            complaint.EditDecision(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation));
             await _complaintRepository.UpdateAsync();
         }
     }

@@ -20,24 +20,22 @@ namespace Ecommerce.Modules.Mails.Api.Entities
         public Customer? Customer { get; set; } 
         public Guid? CustomerId { get; set; }
         //public IEnumerable<Stream> Streams { get; set; } = [];
-        public Mail(string from, string to, string subject, string body, Customer customer, Guid? orderId/*, IEnumerable<string>? attachmentFileNames*/, DateTime createdAt)
+        public Mail(string from, string to, string subject, string body, Customer customer, Guid? orderId/*, IEnumerable<string>? attachmentFileNames*/)
         {
             From = from;
             To = to; 
             Subject = subject; 
             Body = body;
             Customer = customer;
-            CreatedAt = createdAt;
             //AttachmentFileNames = attachmentFileNames;
             OrderId = orderId;
         }
-        public Mail(string from, string to, string subject, string body, Guid? orderId/*, IEnumerable<string>? attachmentFileNames*/, DateTime createdAt)
+        public Mail(string from, string to, string subject, string body, Guid? orderId/*, IEnumerable<string>? attachmentFileNames*/)
         {
             From = from;
             To = to;
             Subject = subject;
             Body = body;
-            CreatedAt = createdAt;
             //AttachmentFileNames = attachmentFileNames;
             OrderId = orderId;
         }

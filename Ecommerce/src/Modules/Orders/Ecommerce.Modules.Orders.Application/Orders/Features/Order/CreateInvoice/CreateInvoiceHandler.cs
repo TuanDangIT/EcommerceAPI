@@ -72,7 +72,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateInvoi
             };
             file.ContentType = "application/pdf";
             await _blobStorageService.UploadAsync(file, invoiceNo, _containerName);
-            var domainEvent = new InvoiceCreated(order.Id, order.Customer.UserId, invoiceNo, order.Customer.FirstName, order.Customer.Email);
+            var domainEvent = new InvoiceCreated(order.Id, order.Customer.UserId, invoiceNo, order.Customer);
             await _domainEventDispatcher.DispatchAsync(domainEvent);
             //var integrationEvent = await _ordersEventMapper.MapAsync(domainEvent);
             var integrationEvent = _ordersEventMapper.Map(domainEvent);

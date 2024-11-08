@@ -28,7 +28,7 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Events.Handlers
             {
                 throw new OrderNotFoundException(@event.OrderId);
             }
-            await _complaintRepository.CreateAsync(new Entities.Complaint(Guid.NewGuid(), order!, @event.Title, @event.Description, @event.CreatedAt));
+            await _complaintRepository.CreateAsync(new Entities.Complaint(Guid.NewGuid(), order!, @event.Title, @event.Description));
         }
     }
 }

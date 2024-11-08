@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Discounts.Core.Entities.Enums;
 using Ecommerce.Modules.Discounts.Core.Entities.Exceptions;
+using Ecommerce.Shared.Abstractions.Entities;
 using Stripe;
 using System;
 using System.Collections.Generic;
@@ -9,21 +10,21 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Core.Entities
 {
-    public class Offer
+    public class Offer : BaseEntity<int>, IAuditable
     {
-        public int Id { get; set; } 
-        public decimal OfferedPrice { get; set; }
-        public decimal OldPrice { get; set; }
+        public decimal OfferedPrice { get; private set; }
+        public decimal OldPrice { get; private set; }
         public decimal Difference => OldPrice - OfferedPrice;
-        public string Reason { get; set; } = string.Empty;
-        public string SKU { get; set; } = string.Empty;
-        public string ProductName { get; set; } = string.Empty;
-        public OfferStatus Status { get; set; } = OfferStatus.Initialized;
-        public string? Code { get; set; }
-        public Guid CustomerId { get; set; } 
-        public DateTime? UpdatedAt { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public Offer(string sku, string productName, decimal offeredPrice, decimal oldPrice, string reason, Guid customerId, DateTime createdAt)
+        public string Reason { get; private set; } = string.Empty;
+        public string SKU { get; private set; } = string.Empty;
+        public string ProductName { get; private set; } = string.Empty;
+        public OfferStatus Status { get; private set; } = OfferStatus.Initialized;
+        public DateTime? ExpiresAt { get; private set; } 
+        public string? Code { get; private set; }
+        public Guid CustomerId { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
+        public Offer(string sku, string productName, decimal offeredPrice, decimal oldPrice, string reason, Guid customerId)
         {
             SKU = sku;
             ProductName = productName;
@@ -31,30 +32,31 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
             OldPrice = oldPrice;
             Reason = reason;
             CustomerId = customerId;
-            CreatedAt = createdAt;
         }
         public Offer()
         {
             
         }
-        public void Accept(DateTime updatedAt)
+        public void Accept(DateTime expiresAt)
         {
             if(Status is OfferStatus.Accepted)
             {
                 throw new OfferCannotAcceptException(Id);
             }
             Status = OfferStatus.Accepted;
-            UpdatedAt = updatedAt;
+            SetExpiresTime(expiresAt);
         }
-        public void Reject(DateTime updatedAt)
+        public void Reject()
+            => Status = OfferStatus.Rejected;
+        public void SetCode(string code)
+            => Code = code;
+        public void SetExpiresTime(DateTime expiresAt)
         {
-            Status = OfferStatus.Rejected;
-            UpdatedAt = updatedAt;
-        }
-        public void SetCode(string code, DateTime updatedAt)
-        {
-            Code = code;
-            UpdatedAt = updatedAt;
+            if(expiresAt < TimeProvider.System.GetUtcNow().UtcDateTime)
+            {
+                throw new OfferInvalidExpiresAtException(expiresAt);
+            }
+            ExpiresAt = expiresAt;
         }
     }
 }

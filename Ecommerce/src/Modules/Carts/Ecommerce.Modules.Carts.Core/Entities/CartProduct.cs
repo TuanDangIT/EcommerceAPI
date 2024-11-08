@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Carts.Core.Entities.Exceptions;
+using Ecommerce.Shared.Abstractions.Entities;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Entities
 {
-    public class CartProduct
+    public class CartProduct : BaseEntity
     {
-        public Guid Id { get; private set; }
         public Product Product { get; private set; } = new();
         public Guid ProductId { get; private set; }
         public Cart Cart { get; private set; } = new();

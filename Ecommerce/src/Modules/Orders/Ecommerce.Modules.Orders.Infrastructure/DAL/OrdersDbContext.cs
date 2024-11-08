@@ -3,6 +3,7 @@ using Ecommerce.Modules.Orders.Domain.Invoices.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
+using Ecommerce.Shared.Abstractions.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,22 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL
         {
             modelBuilder.HasDefaultSchema(Schema);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        }
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var entries = ChangeTracker.Entries<IAuditable>();
+            foreach (var entry in entries)
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Property(nameof(IAuditable.CreatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                }
+                if (entry.State == EntityState.Modified)
+                {
+                    entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                }
+            }
+            return base.SaveChangesAsync(true, cancellationToken);
         }
     }
 }

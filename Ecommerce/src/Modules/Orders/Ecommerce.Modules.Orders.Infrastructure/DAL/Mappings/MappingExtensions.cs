@@ -21,7 +21,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 FullName = order.Customer.FirstName + " " + order.Customer.LastName,
                 Status = order.Status.ToString(),
                 TotalSum = order.TotalSum,
-                OrderPlacedAt = order.OrderPlacedAt,
+                PlacedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
             };
         public static OrderDetailsDto AsDetailsDto(this Order order)
@@ -37,7 +37,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 ClientAdditionalInformation = order.ClientAdditionalInformation,
                 CompanyAdditionalInformation = order.CompanyAdditionalInformation,
                 DiscountCode = order.DiscountCode,
-                OrderPlacedAt = order.OrderPlacedAt,
+                PlacedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt
             };
         public static ProductDto AsDto(this Product product)
@@ -74,7 +74,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Customer = order.Customer.AsDto(),
                 TotalSum = order.TotalSum,
                 Products = order.Products.Select(p => p.AsDto()),
-                OrderPlacedAt = order.OrderPlacedAt
+                PlacedAt = order.CreatedAt
             };
         public static ComplaintBrowseDto AsBrowseDto(this Complaint complaint)
             => new()

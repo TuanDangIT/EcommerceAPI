@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ecommerce.Modules.Discounts.Core.Entities.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,14 +9,12 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
 {
     public class PercentageCoupon : Coupon
     {
-        public decimal Percent { get; set; }
-        public PercentageCoupon(string name, decimal percent, DateTime createdAt) : base(name, createdAt)
+        public decimal Percent { get; private set; }
+        public PercentageCoupon() : base()
         {
-            Percent = percent;
+
         }
-        public PercentageCoupon(string code, decimal percent, DateTime createdAt, string stripeCouponId) : base(code, createdAt, stripeCouponId)
-        {
-            Percent = percent;
-        }
+        public PercentageCoupon(string code, decimal percent, string stripeCouponId) : base(code, stripeCouponId)
+            => Percent = percent > 0 && percent <= 100 ? percent : throw new CouponPercentageValueOutOfBoundException();
     }
 }

@@ -16,13 +16,11 @@ namespace Ecommerce.Modules.Users.Core.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly ICustomerRepository _customerRepository;
-        private readonly TimeProvider _timeProvider;
 
-        public CustomerService(IUserRepository userRepository, ICustomerRepository customerRepository, TimeProvider timeProvider)
+        public CustomerService(IUserRepository userRepository, ICustomerRepository customerRepository)
         {
             _userRepository = userRepository;
             _customerRepository = customerRepository;
-            _timeProvider = timeProvider;
         }
         public async Task<PagedResult<CustomerBrowseDto>> BrowseAsync(SieveModel model)
             => await _customerRepository.GetAllAsync(model);
@@ -43,14 +41,12 @@ namespace Ecommerce.Modules.Users.Core.Services
             customer.LastName = dto.LastName;
             customer.Email = dto.Email;
             customer.Username = dto.Username;
-            customer.UpdatedAt = _timeProvider.GetUtcNow().UtcDateTime;
             await _userRepository.UpdateAsync();
         }
         public async Task SetActiveAsync(Guid customerId, bool isActive)
         {
             var customer = await _customerRepository.GetAsync(customerId, false) ?? throw new CustomerNotFoundException(customerId);
             customer.IsActive = isActive;
-            customer.UpdatedAt = _timeProvider.GetUtcNow().UtcDateTime;
             await _userRepository.UpdateAsync();
         }
     }

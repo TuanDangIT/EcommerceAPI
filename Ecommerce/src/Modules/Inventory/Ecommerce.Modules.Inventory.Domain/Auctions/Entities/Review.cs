@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ecommerce.Shared.Abstractions.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,33 +7,26 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
 {
-    public class Review
+    public class Review : BaseEntity<Guid>, IAuditable
     {
-        public Guid Id { get; private set; }
-        public string Username { get; private set; } = string.Empty;
-        public string Text { get; private set; } = string.Empty;
+        public string Username { get; private set; } 
+        public string Text { get; private set; } 
         public int Grade { get; private set; }
-        public Auction Auction { get; private set; } = new();
+        public Auction Auction { get; private set; } = default!;
         public Guid AuctionId { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        public void EditReview(string text, int grade, DateTime updatedAt)
+        public void Edit(string text, int grade)
         {
             Text = text;
             Grade = grade;
-            UpdatedAt = updatedAt;
         }
-        public Review(Guid id, string username, string text, int grade, DateTime createdAt)
+        public Review(Guid id, string username, string text, int grade)
         {
             Id = id;
             Username = username;
             Text = text;
             Grade = grade;
-            CreatedAt = createdAt;
-        }
-        public Review()
-        {
-
         }
     }
 }

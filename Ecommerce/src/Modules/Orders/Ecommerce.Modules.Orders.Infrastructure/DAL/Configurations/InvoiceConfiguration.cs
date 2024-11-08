@@ -22,6 +22,19 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
             builder.HasOne(i => i.Order)
                 .WithOne(o => o.Invoice)
                 .HasForeignKey<Invoice>(i => i.OrderId);
+            builder.OwnsOne(i => i.Customer, c =>
+            {
+                c.Property(c => c.FirstName)
+                    .IsRequired();
+                c.Property(c => c.LastName)
+                    .IsRequired();
+                c.Property(c => c.Email)
+                    .IsRequired();
+                c.Property(c => c.PhoneNumber)
+                    .IsRequired();
+            });
+            builder.Property(i => i.Version)
+                .IsConcurrencyToken();
         }
     }
 }

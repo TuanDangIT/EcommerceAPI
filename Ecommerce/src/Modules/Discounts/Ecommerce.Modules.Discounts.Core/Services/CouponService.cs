@@ -26,15 +26,13 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         private readonly IStripeService _stripeService;
         private readonly IMessageBroker _messageBroker;
         private readonly ISieveProcessor _sieveProcessor;
-        private readonly TimeProvider _timeProvider;
 
-        public CouponService(IDiscountDbContext dbContext, IStripeService stripeService, IMessageBroker messageBroker, IEnumerable<ISieveProcessor> sieveProcessors, TimeProvider timeProvider)
+        public CouponService(IDiscountDbContext dbContext, IStripeService stripeService, IMessageBroker messageBroker, IEnumerable<ISieveProcessor> sieveProcessors)
         {
             _dbContext = dbContext;
             _stripeService = stripeService;
             _messageBroker = messageBroker;
             _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(DiscountsModuleSieveProcessor));
-            _timeProvider = timeProvider;
         }
         public async Task<PagedResult<NominalCouponBrowseDto>> BrowseNominalCouponsAsync(SieveModel model)
         {
@@ -85,14 +83,14 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         public async Task CreateAsync(NominalCouponCreateDto dto)
         {
             var stripeCouponId = await _stripeService.CreateCouponAsync(dto);
-            await _dbContext.Coupons.AddAsync(new NominalCoupon(dto.Name, dto.NominalValue, _timeProvider.GetUtcNow().UtcDateTime, stripeCouponId));
+            await _dbContext.Coupons.AddAsync(new NominalCoupon(dto.Name, dto.NominalValue, stripeCouponId));
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task CreateAsync(PercentageCouponCreateDto dto)
         {
             var stripeCouponId = await _stripeService.CreateCouponAsync(dto);
-            await _dbContext.Coupons.AddAsync(new PercentageCoupon(dto.Name, dto.Percent, _timeProvider.GetUtcNow().UtcDateTime, stripeCouponId));
+            await _dbContext.Coupons.AddAsync(new PercentageCoupon(dto.Name, dto.Percent, stripeCouponId));
             await _dbContext.SaveChangesAsync();
         }
 
@@ -124,7 +122,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             {
                 throw new CouponNotFoundException(stripeCouponId);
             }
-            coupon.ChangeName(dto.Name, _timeProvider.GetUtcNow().UtcDateTime);
+            coupon.ChangeName(dto.Name);
             await _stripeService.UpdateCouponName(stripeCouponId, dto.Name);
             await _dbContext.SaveChangesAsync();
         }

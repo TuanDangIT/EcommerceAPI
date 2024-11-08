@@ -13,12 +13,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.SetParcels
     internal class SetParcelsHandler : ICommandHandler<SetParcels>
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly TimeProvider _timeProvider;
 
-        public SetParcelsHandler(IOrderRepository orderRepository, TimeProvider timeProvider)
+        public SetParcelsHandler(IOrderRepository orderRepository)
         {
             _orderRepository = orderRepository;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(SetParcels request, CancellationToken cancellationToken)
         {
@@ -33,7 +31,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.SetParcels
                 var weight = new Weight(p.Weight);
                 var parcel = new Parcel(dimensions, weight);
                 return parcel;
-            }), _timeProvider.GetUtcNow().UtcDateTime);
+            }));
             await _orderRepository.UpdateAsync();
         }
     }

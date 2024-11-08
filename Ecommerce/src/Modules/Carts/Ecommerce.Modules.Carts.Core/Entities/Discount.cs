@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Carts.Core.Entities.Enums;
 using Ecommerce.Modules.Carts.Core.Entities.Exceptions;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Entities
 {
-    public class Discount
+    public class Discount : BaseEntity<int>
     {
-        public int Id { get; private set; }
         public string Code { get; private set; } = string.Empty;
         public DiscountType Type { get; private set; }
         public string? SKU { get; private set; }

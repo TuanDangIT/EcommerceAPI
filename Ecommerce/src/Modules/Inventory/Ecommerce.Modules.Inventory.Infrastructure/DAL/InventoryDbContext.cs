@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Modules.Inventory.Domain.Auctions.Entities;
+using Ecommerce.Shared.Abstractions.Entities;
 
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL
 {
@@ -28,6 +29,22 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL
         {
             modelBuilder.HasDefaultSchema(Schema);
             modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+        }
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var entries = ChangeTracker.Entries<IAuditable>();
+            foreach (var entry in entries)
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Property(nameof(IAuditable.CreatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                }
+                if (entry.State == EntityState.Modified)
+                {
+                    entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                }
+            }
+            return base.SaveChangesAsync(true, cancellationToken);
         }
     }
 }

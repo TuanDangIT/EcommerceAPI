@@ -18,14 +18,12 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
         private readonly IReturnRepository _returnRepository;
         private readonly IStripeService _stripeService;
         private readonly IMessageBroker _messageBroker;
-        private readonly TimeProvider _timeProvider;
 
-        public HandleReturnHandler(IReturnRepository returnRepository, IStripeService stripeService, IMessageBroker messageBroker, TimeProvider timeProvider)
+        public HandleReturnHandler(IReturnRepository returnRepository, IStripeService stripeService, IMessageBroker messageBroker)
         {
             _returnRepository = returnRepository;
             _stripeService = stripeService;
             _messageBroker = messageBroker;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(HandleReturn request, CancellationToken cancellationToken)
         {
@@ -42,7 +40,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
             {
                 await _stripeService.Refund(@return.Order, @return.Products.Sum(p => p.Price*p.Quantity));
             }
-            @return.Handle(_timeProvider.GetUtcNow().UtcDateTime);
+            @return.Handle();
             await _returnRepository.UpdateAsync();
             await _messageBroker.PublishAsync(new ReturnHandled(@return.Id, @return.OrderId, @return.Order.Customer.UserId, @return.Order.Customer.FirstName, @return.Order.Customer.Email,
                 @return.Products.Select(p => new { p.SKU, p.Quantity }), @return.CreatedAt));

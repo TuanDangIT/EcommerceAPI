@@ -38,12 +38,12 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             var offer = await _dbContext.Offers
                 .SingleOrDefaultAsync(o => o.Id == offerId) ??
                 throw new OfferNotFoundException(offerId);
-            offer.Accept(_timeProvider.GetUtcNow().UtcDateTime);
-            //Event + mail
+            var expiresAt = _timeProvider.GetUtcNow().UtcDateTime + TimeSpan.FromDays(7);
+            offer.Accept(expiresAt);
             var code = GenerateRandomCode();
-            offer.SetCode(code, _timeProvider.GetUtcNow().UtcDateTime);
+            offer.SetCode(code);
             await _messageBroker
-                .PublishAsync(new OfferAccepted(offer.Id, offer.CustomerId, offer.SKU, offer.ProductName, code, offer.OfferedPrice, offer.OldPrice, _timeProvider.GetUtcNow().UtcDateTime + TimeSpan.FromDays(7)));
+                .PublishAsync(new OfferAccepted(offer.Id, offer.CustomerId, offer.SKU, offer.ProductName, code, offer.OfferedPrice, offer.OldPrice, expiresAt));
             await _dbContext.SaveChangesAsync();
         }
         public async Task RejectAsync(int offerId)
@@ -51,7 +51,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             var offer = await _dbContext.Offers
                 .SingleOrDefaultAsync(o => o.Id == offerId) ??
                 throw new OfferNotFoundException(offerId);
-            offer.Reject(_timeProvider.GetUtcNow().UtcDateTime);
+            offer.Reject();
             //Wysłanie maila
             //Ewentualne skasowanie??
             if(offer.Code is null)

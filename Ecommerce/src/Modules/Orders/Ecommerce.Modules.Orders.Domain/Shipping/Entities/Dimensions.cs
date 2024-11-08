@@ -9,10 +9,10 @@ namespace Ecommerce.Modules.Orders.Domain.Shipping.Entities
     public class Dimensions
     {
         //public int Id { get; set; }
-        public string Length { get; set; } = string.Empty;
-        public string Width { get; set; } = string.Empty;
-        public string Height { get; set; } = string.Empty;
-        public string Unit { get; set; } = "mm";
+        public string Length { get; private set; } = string.Empty;
+        public string Width { get; private set; } = string.Empty;
+        public string Height { get; private set; } = string.Empty;
+        public string Unit { get; private set; } = "mm";
         public Dimensions(string length, string width, string height)
         {
             Length = length;

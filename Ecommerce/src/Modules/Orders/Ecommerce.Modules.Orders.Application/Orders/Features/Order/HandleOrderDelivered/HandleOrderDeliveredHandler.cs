@@ -15,16 +15,14 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrder
     internal class HandleOrderDeliveredHandler : ICommandHandler<HandleOrderDelivered>
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly TimeProvider _timeProvider;
         private const string _inPostPayloadPropertyName = "payload";
         private const string _inPostTrackingNumberPropertyName = "tracking_number";
         private const string _inPostStatusPropertyName = "status";
         private const string _inPostDeliveredStatus = "delivered";
 
-        public HandleOrderDeliveredHandler(IOrderRepository orderRepository, TimeProvider timeProvider)
+        public HandleOrderDeliveredHandler(IOrderRepository orderRepository)
         {
             _orderRepository = orderRepository;
-            _timeProvider = timeProvider;
         }
         public async Task Handle(HandleOrderDelivered request, CancellationToken cancellationToken)
         {
@@ -41,7 +39,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrder
                 return;
             }
             var order = await _orderRepository.GetAsync(trackingNumber) ?? throw new OrderNotFoundException(trackingNumber);
-            order.ChangeStatus(OrderStatus.Completed, _timeProvider.GetUtcNow().UtcDateTime);
+            order.Complete();
         }
     }
 }
