@@ -1,8 +1,8 @@
-﻿using Ecommerce.Modules.Orders.Application.Orders.Exceptions;
-using Ecommerce.Modules.Orders.Domain.Orders.Entities;
-using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
+﻿using Ecommerce.Modules.Orders.Application.Orders.Events;
+using Ecommerce.Modules.Orders.Application.Orders.Exceptions;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Ecommerce.Shared.Abstractions.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,26 +10,28 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrderDelivered
+namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrderShipped
 {
-    internal class HandleOrderDeliveredHandler : ICommandHandler<HandleOrderDelivered>
+    internal class HandlerOrderShippedHandler : ICommandHandler<HandlerOrderShipped>
     {
-        private readonly IOrderRepository _orderRepository;
         private const string _inPostPayloadPropertyName = "payload";
         private const string _inPostTrackingNumberPropertyName = "tracking_number";
         private const string _inPostStatusPropertyName = "status";
-        private const string _inPostDeliveredStatus = "delivered";
+        private const string _inPostDeliveredStatus = "collected_from_sender";
+        private readonly IOrderRepository _orderRepository;
+        private readonly IMessageBroker _messageBroker;
 
-        public HandleOrderDeliveredHandler(IOrderRepository orderRepository)
+        public HandlerOrderShippedHandler(IOrderRepository orderRepository, IMessageBroker messageBroker)
         {
             _orderRepository = orderRepository;
+            _messageBroker = messageBroker;
         }
-        public async Task Handle(HandleOrderDelivered request, CancellationToken cancellationToken)
+        public async Task Handle(HandlerOrderShipped request, CancellationToken cancellationToken)
         {
             using var jsonDocument = JsonDocument.Parse(request.Json);
             var payload = jsonDocument.RootElement.GetProperty(_inPostPayloadPropertyName);
             var shipmentStatus = payload.GetProperty(_inPostStatusPropertyName).GetString();
-            if(shipmentStatus is null || shipmentStatus != _inPostDeliveredStatus)
+            if (shipmentStatus is null || shipmentStatus != _inPostDeliveredStatus)
             {
                 return;
             }
@@ -39,8 +41,9 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrder
                 return;
             }
             var order = await _orderRepository.GetAsync(trackingNumber) ?? throw new OrderNotFoundException(trackingNumber);
-            order.Complete();
+            order.Ship();
             await _orderRepository.UpdateAsync();
+            await _messageBroker.PublishAsync(new OrderShipped(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, order.CreatedAt));
         }
     }
 }

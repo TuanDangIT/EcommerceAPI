@@ -35,6 +35,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CreateLabel
             }
             var (id, trackingNumber) = await _deliveryService.CreateShipmentAsync(order.Shipment);
             order.SetLabelDetails(trackingNumber, id.ToString(), _timeProvider.GetUtcNow().UtcDateTime);
+            order.Pack();
             await _orderRepository.UpdateAsync();
         }
     }

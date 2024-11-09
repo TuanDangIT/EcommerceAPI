@@ -55,6 +55,9 @@
     <None Update="MailTemplates\OrderReturned.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="MailTemplates\OrderShipped.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="MailTemplates\ReturnHandled.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
