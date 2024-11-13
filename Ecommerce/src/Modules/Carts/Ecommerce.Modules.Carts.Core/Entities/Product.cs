@@ -40,7 +40,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void DecreaseQuantity(int quantity)
         {
-            if(Quantity is null)
+            if(!HasQuantity)
             {
                 throw new ProductInvalidChangeInQuantityException();
             }
@@ -52,7 +52,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void IncreaseQuantity(int quantity)
         {
-            if (Quantity is null)
+            if (!HasQuantity)
             {
                 throw new ProductInvalidChangeInQuantityException();
             }

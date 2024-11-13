@@ -53,7 +53,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
                 var soldQuantity = soldProduct.Quantity;
                 if (product.HasQuantity && auction.HasQuantity && soldQuantity is not null)
                 {
-                    product.DecreaseQuantity((int)soldQuantity!);
+                    product.Purchase((int)soldQuantity!);
                     auction.DecreaseQuantity((int)soldQuantity);
                     if (soldQuantity == auction.Quantity)
                     {
@@ -68,7 +68,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
             if(auctionsToDelete.Count > 0)
             {
                 await _auctionRepository.UnlistManyAsync([.. auctionsToDelete]);
-                await _productRepository.UpdateListedFlag([.. auctionsToDelete], false);
+                await _productRepository.UpdateListedFlagAsync([.. auctionsToDelete], false);
             }
             await _productRepository.UpdateAsync();
 

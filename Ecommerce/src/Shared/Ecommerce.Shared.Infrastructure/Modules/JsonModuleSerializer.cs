@@ -13,7 +13,8 @@ namespace Ecommerce.Shared.Infrastructure.Modules
         private static readonly JsonSerializerOptions SerializerOptions = new()
         {
             PropertyNameCaseInsensitive = true,
-            ReferenceHandler = ReferenceHandler.IgnoreCycles
+            ReferenceHandler = ReferenceHandler.IgnoreCycles,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         };
 
         public byte[] Serialize<T>(T value)

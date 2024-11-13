@@ -12,8 +12,8 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
 {
     public class Product : AggregateRoot, IAuditable
     {
-        //[JsonInclude]
-        //public Guid Id { get; private set; }
+        [JsonInclude]
+        public new Guid Id { get; private set; }
         [JsonInclude]
         public string SKU { get; private set; } = string.Empty;
         public string? EAN { get; private set; }
@@ -27,6 +27,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         [JsonInclude]
         public int? Quantity { get; private set; }
         public bool HasQuantity => Quantity != null;
+        public int? Reserved { get; private set; } = 0;
         public string? Location { get; private set; }
         public string Description { get; private set; } = string.Empty;
         public string? AdditionalDescription { get; private set; }
@@ -66,9 +67,15 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         {
 
         }
+        public void Purchase(int quantity)
+        {
+            //DecreaseQuantity(quantity);
+            Reserved -= quantity;
+            IncrementVersion();
+        }
         public void DecreaseQuantity(int quantity)
         {
-            if (Quantity is null)
+            if (!HasQuantity)
             {
                 throw new ProductInvalidChangeOfQuantityException();
             }
@@ -81,12 +88,22 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public void IncreaseQuantity(int quantity)
         {
-            if (Quantity is null)
+            if (!HasQuantity)
             {
                 throw new ProductInvalidChangeOfQuantityException();
             }
             Quantity += quantity;
             IncrementVersion();
+        }
+        public void Reserve(int quantity)
+        {
+            DecreaseQuantity(quantity);
+            Reserved += quantity;
+        }
+        public void Unreserve(int quantity)
+        {
+            IncreaseQuantity(quantity);
+            Reserved -= quantity;
         }
         public void ChangeBaseDetails(string sku, string name, decimal price, int vat, string description, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)
         {

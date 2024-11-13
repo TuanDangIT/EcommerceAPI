@@ -1,6 +1,8 @@
 ﻿using Ecommerce.Modules.Carts.Core.Entities;
 using Ecommerce.Shared.Abstractions.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +20,8 @@ namespace Ecommerce.Modules.Carts.Core.DAL
         public DbSet<Product> Products { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Discount> Discounts { get; set; }
+        DatabaseFacade ICartsDbContext.Database { get => base.Database; }
+
         public const string Schema = "carts";
         public CartsDbContext(DbContextOptions<CartsDbContext> options) : base(options)
         {
@@ -32,5 +36,9 @@ namespace Ecommerce.Modules.Carts.Core.DAL
         {
             return base.SaveChangesAsync();
         }
+        //public Task<IDbContextTransaction> BeginTransactionAsync()
+        //{
+        //    return base.Database.BeginTransactionAsync();
+        //}
     }
 }

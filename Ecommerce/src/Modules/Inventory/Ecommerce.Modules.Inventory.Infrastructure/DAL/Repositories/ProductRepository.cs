@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,9 +54,12 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
                 .ThenInclude(p => p.Parameter)
                 .Where(p => productIds.Contains(p.Id))
                 .ToListAsync();
-        public async Task UpdateListedFlag(Guid[] productIds, bool isListed)
+        public async Task UpdateListedFlagAsync(Guid[] productIds, bool isListed)
             => await _dbContext.Products
                 .Where(p => productIds.Contains(p.Id))
                 .ExecuteUpdateAsync(p => p.SetProperty(p => p.IsListed, isListed));
+
+        public Task<IDbContextTransaction> BeginTransactionAsync()
+            => _dbContext.Database.BeginTransactionAsync();
     }
 }

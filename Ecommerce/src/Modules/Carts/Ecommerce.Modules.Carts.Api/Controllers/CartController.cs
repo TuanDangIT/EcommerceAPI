@@ -55,7 +55,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [HttpDelete("{cartId:guid}/clear")]
         public async Task<ActionResult> ClearCart([FromRoute] Guid cartId)
         {
-            await _cartService.ClearCartAsync(cartId);
+            await _cartService.ClearAsync(cartId);
             return NoContent();
         }
         [HttpPost("{cartId:guid}/checkout")]

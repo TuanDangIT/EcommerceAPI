@@ -1,5 +1,7 @@
 ﻿using Ecommerce.Modules.Carts.Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +18,8 @@ namespace Ecommerce.Modules.Carts.Core.DAL
         DbSet<Product> Products { get; set; }
         DbSet<Payment> Payments { get; set; }
         DbSet<Discount> Discounts { get; set; }
+        DatabaseFacade Database { get; }
         Task<int> SaveChangesAsync();
+        //Task<IDbContextTransaction> BeginTransactionAsync();
     }
 }

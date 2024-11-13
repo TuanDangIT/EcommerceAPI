@@ -25,7 +25,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
         private readonly IContextService _contextService;
 
         public CheckoutCartService(ICartsDbContext dbContext, IStripeService stripeService, 
-            ICartService cartService, IMessageBroker messageBroker, IContextService contextService)
+            IMessageBroker messageBroker, IContextService contextService)
         {
             _dbContext = dbContext;
             _stripeService = stripeService;

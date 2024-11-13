@@ -1,6 +1,8 @@
 ﻿using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +20,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Repositories
         Task<IEnumerable<Product>> GetAllThatContainsInArrayAsync(Guid[] productIds);
         Task<Product?> GetAsync(Guid productId);
         Task DeleteProductParametersAndImagesRelatedToProduct(Guid productId);
-        Task UpdateListedFlag(Guid[] productIds, bool isListed);
+        Task UpdateListedFlagAsync(Guid[] productIds, bool isListed);
+        Task<IDbContextTransaction> BeginTransactionAsync();
     }
 }
