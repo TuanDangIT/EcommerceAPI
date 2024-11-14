@@ -35,6 +35,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
                 .MaximumLength(64);
             RuleFor(c => c.Quantity)
                 .GreaterThanOrEqualTo(0);
+            RuleFor(c => c.Reserved)
+                .GreaterThanOrEqualTo(0);
             RuleFor(c => c.Description)
                 .NotEmpty()
                 .NotNull();

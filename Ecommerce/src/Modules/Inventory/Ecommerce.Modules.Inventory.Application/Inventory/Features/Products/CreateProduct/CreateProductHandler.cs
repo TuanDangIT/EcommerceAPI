@@ -77,7 +77,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
                     productParameters: productParameters,
                     manufacturer: manufacturer,
                     category: category,
-                    images: imageList.ToList()
+                    images: imageList.ToList(),
+                    reserved: request.Quantity is null ? null : 0
                 ));
             return productId;
         }

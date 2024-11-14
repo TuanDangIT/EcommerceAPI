@@ -52,8 +52,6 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
                 .HasForeignKey(p => p.CategoryId);
             builder.Property(p => p.Version)
                 .IsConcurrencyToken();
-            builder.Property(p => p.Reserved)
-                .IsRequired();
         }
     }
 }

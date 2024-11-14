@@ -1,6 +1,8 @@
 ﻿using Asp.Versioning;
 using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.BrowseProducts;
+using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.ChangeProductQuantity;
+using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.ChangeProductReservedQuantity;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.CreateProduct;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.DeleteProduct;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.DeleteSelectedProducts;
@@ -19,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -73,6 +76,18 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public async Task<ActionResult> UnlistProduct([FromBody] Guid[] ids)
         {
             await _mediator.Send(new UnlistProducts(ids));
+            return NoContent();
+        }
+        [HttpPut("{productId:guid}/quantity")]
+        public async Task<ActionResult> ChangeProductQuantity([FromRoute]Guid productId, [FromBody]int quantity)
+        {
+            await _mediator.Send(new ChangeProductQuantity(productId, quantity));
+            return NoContent();
+        }
+        [HttpPut("{productId:guid}/reserved")]
+        public async Task<ActionResult> ChangeProductReservedQuantity([FromRoute] Guid productId, [FromBody] int reserved)
+        {
+            await _mediator.Send(new ChangeProductReservedQuantity(productId, reserved));
             return NoContent();
         }
     }

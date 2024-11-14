@@ -79,6 +79,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
                 Name = product.Name,
                 Price = product.Price,
                 Quantity = product.Quantity,
+                Reserved = product.Reserved,
                 VAT = product.VAT,
                 Location = product.Location,
                 Description = product.Description,
@@ -97,6 +98,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
                 Name = product.Name,
                 Price = product.Price,
                 Quantity = product.Quantity,
+                Reserved = product.Reserved
             };
         public static AuctionBrowseDto AsBrowseDto(this Auction auction)
             => new AuctionBrowseDto()

@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         [JsonInclude]
         public int? Quantity { get; private set; }
         public bool HasQuantity => Quantity != null;
-        public int? Reserved { get; private set; } = 0;
+        public int? Reserved { get; private set; }
         public string? Location { get; private set; }
         public string Description { get; private set; } = string.Empty;
         public string? AdditionalDescription { get; private set; }
@@ -46,7 +46,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public DateTime? UpdatedAt { get; private set; }
         public Product(Guid id, string sku, string name, decimal price, int vat, string description
             , List<ProductParameter> productParameters, Manufacturer manufacturer, Category category
-            , List<Image> images, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)
+            , List<Image> images, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null, int? reserved = null)
         {
             Id = id;
             SKU = sku;
@@ -75,11 +75,8 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public void DecreaseQuantity(int quantity)
         {
-            if (!HasQuantity)
-            {
-                throw new ProductInvalidChangeOfQuantityException();
-            }
-            if(Quantity < quantity)
+            CheckIfProductHasQuantityOrThrow();
+            if (Quantity < quantity)
             {
                 throw new ProductQuantityBelowZeroException();
             }
@@ -88,28 +85,19 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public void IncreaseQuantity(int quantity)
         {
-            if (!HasQuantity)
-            {
-                throw new ProductInvalidChangeOfQuantityException();
-            }
+            CheckIfProductHasQuantityOrThrow();
             Quantity += quantity;
             IncrementVersion();
         }
         public void Reserve(int quantity)
         {
-            if (!HasQuantity)
-            {
-                throw new ProductInvalidChangeOfQuantityException();
-            }
+            CheckIfProductHasQuantityOrThrow();
             DecreaseQuantity(quantity);
             Reserved += quantity;
         }
         public void Unreserve(int quantity)
         {
-            if (!HasQuantity)
-            {
-                throw new ProductInvalidChangeOfQuantityException();
-            }
+            CheckIfProductHasQuantityOrThrow();
             if (Reserved < quantity)
             {
                 throw new ProductReservedBelowZeroException();
@@ -117,7 +105,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             IncreaseQuantity(quantity);
             Reserved -= quantity;
         }
-        public void ChangeBaseDetails(string sku, string name, decimal price, int vat, string description, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null)
+        public void ChangeBaseDetails(string sku, string name, decimal price, int vat, string description, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null, int? reserved = null)
         {
             SKU = sku;
             EAN = ean;
@@ -128,6 +116,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             Location = location;
             Description = description;
             AdditionalDescription = additionalDescription;
+            Reserved = reserved;
             IncrementVersion();
         }
         public void ChangeManufacturer(Manufacturer manufacturer)
@@ -149,6 +138,25 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         {
             _productParameters = parameters;
             IncrementVersion();
+        }
+        public void ChangeProductQuantity(int quantity)
+        {
+            CheckIfProductHasQuantityOrThrow();
+            Quantity = quantity;
+            IncrementVersion();
+        }
+        public void ChangeProductReservedQuantity(int reserved)
+        {
+            CheckIfProductHasQuantityOrThrow();
+            Reserved = reserved;
+            IncrementVersion();
+        }
+        private void CheckIfProductHasQuantityOrThrow()
+        {
+            if (!HasQuantity)
+            {
+                throw new ProductInvalidChangeOfQuantityException();
+            }
         }
         private static void IsSkuValid(string sku)
         {

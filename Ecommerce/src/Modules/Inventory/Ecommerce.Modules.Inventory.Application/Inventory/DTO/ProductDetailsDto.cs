@@ -15,6 +15,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.DTO
         public decimal Price { get; set; }
         public int VAT { get; set; }
         public int? Quantity { get; set; }
+        public int? Reserved { get; set; }
         public string? Location { get; set; }
         public string Description { get; set; } = string.Empty;
         public string? AdditionalDescription { get; set; }

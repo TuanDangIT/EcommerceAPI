@@ -19,19 +19,17 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
         private readonly IBlobStorageService _blobStorageService;
         private readonly IManufacturerRepository _manufacturerRepository;
         private readonly ICategoryRepository _categoryRepository;
-        private readonly TimeProvider _timeProvider;
         private readonly IParameterRepository _parameterRepository;
         private readonly IImageRepository _imageRepository;
         private const string _containerName = "images";
 
         public UpdateProductHandler(IProductRepository productRepository, IBlobStorageService blobStorageService, IManufacturerRepository manufacturerRepository
-            , ICategoryRepository categoryRepository, TimeProvider timeProvider, IParameterRepository parameterRepository, IImageRepository imageRepository)
+            , ICategoryRepository categoryRepository, IParameterRepository parameterRepository, IImageRepository imageRepository)
         {
             _productRepository = productRepository;
             _blobStorageService = blobStorageService;
             _manufacturerRepository = manufacturerRepository;
             _categoryRepository = categoryRepository;
-            _timeProvider = timeProvider;
             _parameterRepository = parameterRepository;
             _imageRepository = imageRepository;
         }
@@ -79,7 +77,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
                     quantity: request.Quantity,
                     location: request.Location,
                     description: request.Description,
-                    additionalDescription: request.AdditionalDescription
+                    additionalDescription: request.AdditionalDescription,
+                    reserved: request.Reserved
                 );
             product.ChangeManufacturer(manufacturer);
             product.ChangeCategory(category);

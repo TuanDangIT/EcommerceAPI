@@ -11,6 +11,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.DTO
         public string SKU { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public int? Quantity { get; set; }
+        public int? Reserved { get; set; }
         public decimal Price { get; set; }
     }
 }
