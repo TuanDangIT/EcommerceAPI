@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
+﻿using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
+using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
 using Ecommerce.Shared.Abstractions.Events;
 using System;
 using System.Collections.Generic;

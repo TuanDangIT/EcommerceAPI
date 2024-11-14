@@ -97,11 +97,23 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public void Reserve(int quantity)
         {
+            if (!HasQuantity)
+            {
+                throw new ProductInvalidChangeOfQuantityException();
+            }
             DecreaseQuantity(quantity);
             Reserved += quantity;
         }
         public void Unreserve(int quantity)
         {
+            if (!HasQuantity)
+            {
+                throw new ProductInvalidChangeOfQuantityException();
+            }
+            if (Reserved < quantity)
+            {
+                throw new ProductReservedBelowZeroException();
+            }
             IncreaseQuantity(quantity);
             Reserved -= quantity;
         }

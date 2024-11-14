@@ -75,8 +75,9 @@ namespace Ecommerce.Modules.Carts.Core.Services
         public async Task ClearAsync(Guid cartId)
         {
             var cart = await GetByCartOrThrowIfNull(cartId);
-            await _messageBroker.PublishAsync(new CartCleared(cart.Products.Select(cp => new { cp.Product.Id, cp.Quantity })));
-            //cart.Clear();
+            IEnumerable<object> products = cart.Products.Select(cp => new { cp.Product.Id, cp.Quantity }).ToList();
+            await _messageBroker.PublishAsync(new CartCleared(products));
+            cart.Clear();
             await _dbContext.SaveChangesAsync();
         }
 
