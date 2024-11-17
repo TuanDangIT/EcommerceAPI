@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Invoices\InvoiceTemplates\Invoice.html">
+    <None Update="Orders\InvoiceTemplates\Invoice.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -1,8 +1,8 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.Exceptions;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
+using Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
-using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
 using Ecommerce.Shared.Abstractions.Events;
 using Ecommerce.Shared.Abstractions.Messaging;
 using System;
@@ -28,25 +28,13 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
         }
         public async Task HandleAsync(CustomerPlacedOrder @event)
         {
-            //var products = new List<Product>();
-            //try serialize whole list
-            //foreach (var productObject in @event.Products)
-            //{
-            //    var serializedObject = JsonSerializer.Serialize(productObject);
-            //    var product = JsonSerializer.Deserialize<Product>(serializedObject);
-            //    if (product is null)
-            //    {
-            //        throw new ArgumentNullException(nameof(@event));
-            //    }
-            //    products.Add(product);
-            //}
             var newGuid = Guid.NewGuid();
-            var customer = new Customer(@event.FirstName, @event.LastName, @event.Email, @event.PhoneNumber, @event.CustomerId);
-            //var shipment = new ShipmentDetails(@event.City, @event.PostalCode, @event.StreetName, @event.StreetNumber, @event.ApartmentNumber);
             var address = new Address(@event.StreetName, @event.StreetNumber + "/" + @event.ApartmentNumber, @event.City, @event.PostalCode);
-            var receiver = new Receiver(@event.FirstName, @event.LastName, @event.Email, @event.PhoneNumber, address);
-            var shipment = new Shipment(receiver, @event.TotalSum);
-            if(!Enum.TryParse(typeof(PaymentMethod), @event.PaymentMethod, out var paymentMethod))
+            var customer = new Customer(@event.FirstName, @event.LastName, @event.Email, @event.PhoneNumber, address, @event.CustomerId);
+            //var shipment = new ShipmentDetails(@event.City, @event.PostalCode, @event.StreetName, @event.StreetNumber, @event.ApartmentNumber);
+            //var receiver = new Receiver(@event.FirstName, @event.LastName, @event.Email, @event.PhoneNumber, address);
+            //var shipment = new Shipment(receiver, @event.TotalSum);
+            if (!Enum.TryParse(typeof(PaymentMethod), @event.PaymentMethod, out var paymentMethod))
             {
                 throw new InvalidPaymentMethodException();
             }
@@ -57,7 +45,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
                 customer, 
                 @event.Products, 
                 @event.TotalSum,
-                shipment,
+                //shipment,
                 (PaymentMethod)paymentMethod!,
                 now,
                 additionalInformation,

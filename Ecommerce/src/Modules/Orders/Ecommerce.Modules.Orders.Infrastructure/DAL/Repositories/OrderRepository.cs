@@ -1,6 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
-using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -27,9 +26,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
         public async Task<Order?> GetAsync(Guid orderId)
             => await _dbContext.Orders
                 .Include(o => o.Products)
-                .Include(o => o.Shipment)
+                .Include(o => o.Shipments)
                 .ThenInclude(s => s.Parcels)
-                .Include(o => o.Shipment)
+                .Include(o => o.Shipments)
                 .ThenInclude(s => s.Receiver)
                 .ThenInclude(r => r.Address)
                 .Include(o => o.Customer)
@@ -38,8 +37,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
 
         public async Task<Order?> GetAsync(string trackingNumber)
             => await _dbContext.Orders
-                .Include(o => o.Shipment)
-                .SingleOrDefaultAsync(o => o.Shipment.TrackingNumber == trackingNumber);
+                .Include(o => o.Shipments)
+                .SingleOrDefaultAsync(o => o.Shipments.Select(s => s.TrackingNumber).Contains(trackingNumber));
 
         public async Task UpdateAsync()
             => await _dbContext.SaveChangesAsync();

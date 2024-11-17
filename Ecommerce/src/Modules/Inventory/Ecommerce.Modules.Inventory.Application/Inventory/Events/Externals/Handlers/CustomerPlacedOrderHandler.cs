@@ -27,22 +27,9 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
         {
             var products = await _productRepository.GetAllThatContainsInArrayAsync(@event.Products.Select(p => p.Id).ToArray());
             var auctions = await _auctionRepository.GetAllThatContainsInArrayAsync(@event.Products.Select(p => p.Id).ToArray());
-            //foreach (var product in products)
-            //{
-            //    var productFromEvent = @event.Products.SingleOrDefault(p => p.Id == product.Id);
-            //    if (productFromEvent is null)
-            //    {
-            //        //exception must be thrown here
-            //        continue;
-            //    }
-            //    if (product.HasQuantity && productFromEvent.Quantity is not null)
-            //    {
-            //        product.DecreaseQuantity((int)productFromEvent.Quantity);
-            //    }
-            //}
             if(products.Count() == 0 || auctions.Count() == 0 || products.Count() != @event.Products.Count() || auctions.Count() != @event.Products.Count())
             {
-                throw new Exception();
+                throw new ArgumentException();
             }
             var auctionsToDelete = new List<Guid>();
             for(int i=0; i < products.Count(); i++)
@@ -71,56 +58,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
                 await _productRepository.UpdateListedFlagAsync([.. auctionsToDelete], false);
             }
             await _productRepository.UpdateAsync();
-
-
-
-
-            //IEnumerable<Product>? productsFromEvent = JsonSerializer.Deserialize<IEnumerable<Product>>(JsonSerializer.Serialize(@event.Products));
-            //if(@event.Products is null || !@event.Products.Any())
-            //{
-            //    return;
-            //}
-            //if(productsFromEvent is not null && productsFromEvent.Count() > 0)
-            //{
-            //    var products = await _productRepository.GetAllThatContainsInArrayAsync(productsFromEvent.Select(pfe => pfe.Id).ToArray());
-            //    var auctions = await _auctionRepository.GetAllThatContainsInArrayAsync(productsFromEvent.Select(pfe => pfe.Id).ToArray());
-            //    foreach (var product in products)
-            //    {
-            //        var productFromEvent = productsFromEvent.SingleOrDefault(pfe => pfe.Id == product.Id);
-            //        if(productFromEvent is null)
-            //        {
-            //            continue;
-            //        }
-            //        if(product.HasQuantity && productFromEvent.Quantity is not null)
-            //        {
-            //            product.DecreaseQuantity((int)productFromEvent.Quantity);
-            //        }
-            //    }
-            //    var auctionsToDelete = new List<Guid>();
-            //    foreach(var auction in auctions)
-            //    {
-            //        var productFromEvent = productsFromEvent.SingleOrDefault(pfe => pfe.Id == auction.Id);
-            //        if(productFromEvent is null)
-            //        {
-            //            continue;
-            //        }
-            //        if (productFromEvent.Quantity != null)
-            //        {
-            //            if(productFromEvent.Quantity == auction.Quantity)
-            //            {
-            //                auctionsToDelete.Add(auction.Id);
-            //            }
-            //            if(auction.HasQuantity && productFromEvent.Quantity is not null)
-            //            {
-            //                auction.DecreaseQuantity((int)productFromEvent.Quantity);
-            //            }
-            //        }
-
-            //    }
-            //    await _auctionRepository.UnlistManyAsync([.. auctionsToDelete]);
-            //    await _productRepository.UpdateListedFlag([.. auctionsToDelete], false);
-            //    await _productRepository.UpdateAsync();
-            //}
         }
     }
 }

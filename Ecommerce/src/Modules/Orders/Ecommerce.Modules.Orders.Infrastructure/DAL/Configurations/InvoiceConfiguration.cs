@@ -1,5 +1,4 @@
-﻿using Ecommerce.Modules.Orders.Domain.Invoices.Entities;
-using Ecommerce.Modules.Orders.Domain.Orders.Entities;
+﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -22,17 +21,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
             builder.HasOne(i => i.Order)
                 .WithOne(o => o.Invoice)
                 .HasForeignKey<Invoice>(i => i.OrderId);
-            builder.OwnsOne(i => i.Customer, c =>
-            {
-                c.Property(c => c.FirstName)
-                    .IsRequired();
-                c.Property(c => c.LastName)
-                    .IsRequired();
-                c.Property(c => c.Email)
-                    .IsRequired();
-                c.Property(c => c.PhoneNumber)
-                    .IsRequired();
-            });
             builder.Property(i => i.Version)
                 .IsConcurrencyToken();
         }

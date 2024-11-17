@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
+using Ecommerce.Shared.Abstractions.MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.UpdateProduct
 {
-    public sealed record class UpdateProduct : Shared.Abstractions.MediatR.ICommand
+    public sealed record class UpdateProduct : ICommand
     {
         public Guid Id { get; set; }
         public string SKU { get; set; } = string.Empty;

@@ -1,4 +1,4 @@
-﻿using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
+﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;

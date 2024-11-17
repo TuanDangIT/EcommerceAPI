@@ -1,7 +1,7 @@
-﻿using Ecommerce.Modules.Inventory.Application.Behaviors;
-using Ecommerce.Modules.Inventory.Application.Inventory.Services;
+﻿using Ecommerce.Modules.Inventory.Application.Inventory.Services;
 using Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Filters;
-using Ecommerce.Modules.Inventory.Application.Sieve;
+using Ecommerce.Modules.Inventory.Application.Shared.Behaviors;
+using Ecommerce.Modules.Inventory.Application.Shared.Sieve;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

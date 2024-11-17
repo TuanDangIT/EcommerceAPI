@@ -1,4 +1,4 @@
-﻿using Ecommerce.Modules.Orders.Application.Stripe;
+﻿using Ecommerce.Modules.Orders.Application.Shared.Stripe;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Shared.Infrastructure.Stripe;
 using Stripe;

@@ -1,5 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Application.Behaviors;
-using Ecommerce.Modules.Orders.Application.Orders.Services;
+﻿using Ecommerce.Modules.Orders.Application.Orders.Services;
+using Ecommerce.Modules.Orders.Application.Shared.Behaviors;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;

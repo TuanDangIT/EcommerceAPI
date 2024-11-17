@@ -1,6 +1,6 @@
 ﻿using Ecommerce.Modules.Orders.Application.Complaints.DTO;
-using Ecommerce.Modules.Orders.Application.Shipping.DTO;
-using Ecommerce.Modules.Orders.Application.Shipping.Features.BrowseShippings;
+using Ecommerce.Modules.Orders.Application.Orders.DTO;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.BrowseShipments;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings;
 using Ecommerce.Shared.Abstractions.MediatR;

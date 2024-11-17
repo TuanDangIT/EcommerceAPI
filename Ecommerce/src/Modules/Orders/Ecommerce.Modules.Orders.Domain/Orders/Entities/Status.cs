@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 {
-    public class Status
+    public class Status : BaseEntity<int>
     {
-        public int Id { get; private set; }
+        //public int Id { get; private set; }
         public OrderStatus OrderStatus {  get; private set; }
         public Status(int id, OrderStatus orderStatus)
         {

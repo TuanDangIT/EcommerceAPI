@@ -1,5 +1,4 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
-using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -55,9 +54,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
             builder.Property(o => o.CreatedAt)
                 .IsRequired();
             builder.HasIndex(o => new { o.Id, o.CreatedAt });
-            builder.HasOne(o => o.Shipment)
+            builder.HasMany(o => o.Shipments)
                 .WithOne(s => s.Order)
-                .HasForeignKey<Shipment>(s => s.OrderId);
+                .HasForeignKey(s => s.OrderId);
             builder.Property(o => o.Version)
                 .IsConcurrencyToken();
         }

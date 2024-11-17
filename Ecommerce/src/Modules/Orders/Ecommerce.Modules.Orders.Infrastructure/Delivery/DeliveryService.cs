@@ -1,5 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Application.Delivery;
-using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
+﻿using Ecommerce.Modules.Orders.Application.Orders.Services;
+using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Infrastructure.Exceptions;
 using Ecommerce.Shared.Infrastructure.InPost;
 using Microsoft.AspNetCore.Http;

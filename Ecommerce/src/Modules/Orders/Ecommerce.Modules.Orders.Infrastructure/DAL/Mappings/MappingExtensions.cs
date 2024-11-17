@@ -1,13 +1,9 @@
 ﻿using Ecommerce.Modules.Orders.Application.Complaints.DTO;
-using Ecommerce.Modules.Orders.Application.Invoices.DTO;
 using Ecommerce.Modules.Orders.Application.Orders.DTO;
 using Ecommerce.Modules.Orders.Application.Returns.DTO;
-using Ecommerce.Modules.Orders.Application.Shipping.DTO;
 using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
-using Ecommerce.Modules.Orders.Domain.Invoices.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities;
-using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
 
 namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
 {

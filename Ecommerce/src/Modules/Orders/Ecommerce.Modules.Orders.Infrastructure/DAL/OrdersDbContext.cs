@@ -1,8 +1,6 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
-using Ecommerce.Modules.Orders.Domain.Invoices.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities;
-using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
 using Ecommerce.Shared.Abstractions.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;

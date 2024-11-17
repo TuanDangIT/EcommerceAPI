@@ -31,7 +31,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
         {
             var ordersAsQueryable = _dbContext.Orders
                 .Include(o => o.Customer)
-                .Include(o => o.Shipment)
+                .Include(o => o.Shipments)
                 .Include(o => o.Invoice)
                 .OrderByDescending(o => o.CreatedAt)
                 .ThenBy(o => o.Id)

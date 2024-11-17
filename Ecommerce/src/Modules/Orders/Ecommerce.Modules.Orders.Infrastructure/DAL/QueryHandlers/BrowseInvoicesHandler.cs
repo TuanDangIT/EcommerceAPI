@@ -1,7 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Application.Invoices.DTO;
-using Ecommerce.Modules.Orders.Application.Invoices.Features.BrowseInvoices;
-using Ecommerce.Modules.Orders.Application.Orders.DTO;
-using Ecommerce.Modules.Orders.Domain.Invoices.Repositories;
+﻿using Ecommerce.Modules.Orders.Application.Orders.DTO;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.BrowseInvoices;
 using Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;

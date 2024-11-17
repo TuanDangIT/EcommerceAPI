@@ -25,6 +25,19 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
             builder.Property(c => c.PhoneNumber)
                 .IsRequired()
                 .HasMaxLength(16);
+            builder.OwnsOne(c => c.Address, a =>
+            {
+                a.Property(a => a.Street)
+                    .IsRequired();
+                a.Property(a => a.BuildingNumber)
+                    .IsRequired();
+                a.Property(a => a.City)
+                    .IsRequired();
+                a.Property(a => a.PostCode)
+                    .IsRequired();
+                a.Property(a => a.CountryCode)
+                    .IsRequired();
+            });
         }
     }
 }

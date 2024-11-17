@@ -1,5 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Domain.Shipping.Entities;
-using Ecommerce.Modules.Orders.Domain.Shipping.Repositories;
+﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities;
+using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

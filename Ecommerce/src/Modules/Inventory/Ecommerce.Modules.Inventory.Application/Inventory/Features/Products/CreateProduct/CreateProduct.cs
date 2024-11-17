@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
+using Ecommerce.Shared.Abstractions.MediatR;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Windows.Input;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.CreateProduct
 {
-    public sealed record class CreateProduct : Shared.Abstractions.MediatR.ICommand<Guid>
+    public sealed record class CreateProduct : ICommand<Guid>
     {
         public string SKU { get; set; } = string.Empty;
         public string? EAN { get; set; }
