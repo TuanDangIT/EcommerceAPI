@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Customer = order.Customer.AsDto(),
                 TotalSum = order.TotalSum,
                 Products = order.Products.Select(p => p.AsDto()),
-                //Shipment = order.ShipmentDetails.AsDto(),
+                Shipment = order.Shipments.Select(s => s.AsDetailsDto()),
                 Payment = order.Payment.ToString(),
                 Status = order.Status.ToString(),
                 ClientAdditionalInformation = order.ClientAdditionalInformation,
@@ -138,10 +138,17 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
             {
                 Id = shipment.Id,
                 OrderId = shipment.OrderId,
-                LabelId = shipment.LabelId!,
                 CreatedAt = (DateTime)shipment.LabelCreatedAt!,
                 ShippingService = shipment.Service,
                 TrackingNumber = shipment.TrackingNumber!
+            };
+        public static ShipmentDetailsDto AsDetailsDto(this Shipment shipping)
+            => new()
+            {
+                Id = shipping.Id,
+                TrackingNumber = shipping.TrackingNumber!,
+                ShippingService = shipping.Service,
+                CreatedAt = (DateTime)shipping.LabelCreatedAt!
             };
     }
 }

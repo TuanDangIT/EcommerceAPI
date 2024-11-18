@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.Exceptions;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
+using Ecommerce.Shared.Abstractions.BloblStorage;
 using Ecommerce.Shared.Abstractions.MediatR;
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,14 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.DeleteInv
     {
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IOrderRepository _orderRepository;
+        private readonly IBlobStorageService _blobStorageService;
+        public readonly string _containerName = "invoices";
 
-        public DeleteInvoiceHandler(IInvoiceRepository invoiceRepository, IOrderRepository orderRepository)
+        public DeleteInvoiceHandler(IInvoiceRepository invoiceRepository, IOrderRepository orderRepository, IBlobStorageService blobStorageService)
         {
             _invoiceRepository = invoiceRepository;
             _orderRepository = orderRepository;
+            _blobStorageService = blobStorageService;
         }
         public async Task Handle(DeleteInvoice request, CancellationToken cancellationToken)
         {
@@ -31,6 +35,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.DeleteInv
             {
                 throw new OrderInvoiceNotFoundException(request.OrderId);
             }
+            await _blobStorageService.DeleteAsync(invoice.InvoiceNo, _containerName);
             await _invoiceRepository.DeleteAsync(invoice.Id);
         }
     }

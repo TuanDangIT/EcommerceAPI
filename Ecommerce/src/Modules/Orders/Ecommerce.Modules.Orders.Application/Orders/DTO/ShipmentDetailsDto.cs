@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.DTO
 {
-    internal class ShipmentDetailsDto
+    public class ShipmentDetailsDto
     {
+        public int Id { get; set; }
+        public string TrackingNumber { get; set; } = string.Empty;
+        public string ShippingService { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
     }
 }

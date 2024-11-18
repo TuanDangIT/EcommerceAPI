@@ -23,6 +23,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
         {
             var order = await _dbContext.Orders
                 .Include(o => o.Products)
+                .Include(o => o.Shipments)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(o => o.Id == request.OrderId);
             return order?.AsDetailsDto();

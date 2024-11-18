@@ -23,11 +23,6 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         {
 
         }
-        public Shipment(Receiver receiver, decimal totalSum)
-        {
-            Receiver = receiver;
-            Insurance = new Insurance(totalSum.ToString("0.00"));
-        }
         public Shipment(Receiver receiver, IEnumerable<Parcel> parcels, decimal totalSum)
         {
             Receiver = receiver;

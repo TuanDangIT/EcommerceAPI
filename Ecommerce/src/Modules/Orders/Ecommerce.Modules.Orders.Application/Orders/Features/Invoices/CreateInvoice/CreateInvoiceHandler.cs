@@ -32,7 +32,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
         private readonly StripeOptions _stripeOptions;
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly TimeProvider _timeProvider;
-        private const string _invoiceTemplatePath = "Invoices\\InvoiceTemplates\\Invoice.html";
+        private const string _invoiceTemplatePath = "Orders\\InvoiceTemplates\\Invoice.html";
         private const string _containerName = "invoices";
         private readonly decimal _defaultDeliveryPrice = 15;
         private readonly string _contentType = "application/pdf";
@@ -67,10 +67,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
             pdf.Save(stream);
             var file = new FormFile(stream, 0, stream.Length, "invoice", invoiceNo)
             {
-                ContentType = _contentType,
+                //ContentType = _contentType,
                 Headers = new HeaderDictionary()
             };
-            //file.ContentType = _contentType;
+            file.ContentType = _contentType;
             await _blobStorageService.UploadAsync(file, invoiceNo, _containerName);
             await _invoiceRepository.CreateAsync(new Domain.Orders.Entities.Invoice(invoiceNo, order));
             await _messageBroker.PublishAsync(new InvoiceCreated(order.Id, order.Customer.Id, order.Customer.FirstName, order.Customer.Email, invoiceNo));
