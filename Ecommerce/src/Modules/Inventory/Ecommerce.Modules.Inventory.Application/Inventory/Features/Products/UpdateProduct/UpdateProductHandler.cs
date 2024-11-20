@@ -40,6 +40,10 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
             {
                 throw new ProductNotFoundException(request.Id);
             }
+            if (product.IsListed)
+            {
+                throw new CannotUpdateListedProductException(request.Id);
+            }
             var manufacturer = await _manufacturerRepository.GetAsync(request.ManufacturerId);
             if (manufacturer is null)
             {
@@ -84,7 +88,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
             product.ChangeCategory(category);
             await UploadImagesToBlobStorageAsync(request.Images, product);
             await _productRepository.DeleteProductParametersAndImagesRelatedToProduct(request.Id);
-            product.ChangeProductParameters(productParameters);
+            product.ChangeParameters(productParameters);
             await _productRepository.UpdateAsync();
         }
         private async Task UploadImagesToBlobStorageAsync(List<IFormFile> images, Product product)

@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.BrowseProducts;
+using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.ChangeProductPrice;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.ChangeProductQuantity;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.ChangeProductReservedQuantity;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.CreateProduct;
@@ -82,6 +83,12 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public async Task<ActionResult> ChangeProductQuantity([FromRoute]Guid productId, [FromBody]int quantity)
         {
             await _mediator.Send(new ChangeProductQuantity(productId, quantity));
+            return NoContent();
+        }
+        [HttpPut("{productId:guid}/price")]
+        public async Task<ActionResult> ChangeProductPrice([FromRoute] Guid productId, [FromBody] decimal price)
+        {
+            await _mediator.Send(new ChangeProductPrice(productId, price));
             return NoContent();
         }
         [HttpPut("{productId:guid}/reserved")]

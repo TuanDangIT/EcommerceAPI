@@ -2,6 +2,7 @@ using Ecommerce.Bootstrapper;
 using Ecommerce.Shared.Infrastructure;var builder = WebApplication.CreateBuilder(args);
 var assemblies = ModuleLoader.GetAssemblies();
 var modules = ModuleLoader.LoadModules(assemblies);
+builder.Host.ConfigureHost();
 builder.Services.AddInfrastructure(assemblies);
 foreach (var module in modules)
 {

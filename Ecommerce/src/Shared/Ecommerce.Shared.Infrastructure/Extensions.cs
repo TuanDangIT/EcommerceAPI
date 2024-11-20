@@ -13,6 +13,7 @@ using Ecommerce.Shared.Infrastructure.Modules;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Ecommerce.Shared.Infrastructure.RateLimiter;
+using Ecommerce.Shared.Infrastructure.Serilog;
 using Ecommerce.Shared.Infrastructure.Services;
 using Ecommerce.Shared.Infrastructure.Storage;
 using Ecommerce.Shared.Infrastructure.Stripe;
@@ -24,6 +25,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +40,11 @@ namespace Ecommerce.Shared.Infrastructure
 {
     internal static class Extensions
     {
+        public static ConfigureHostBuilder ConfigureHost(this ConfigureHostBuilder host)
+        {
+            host.ConfigureSerilog();
+            return host;
+        }
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IList<Assembly> assemblies)
         {
             services.AddErrorHandling();
@@ -88,6 +95,7 @@ namespace Ecommerce.Shared.Infrastructure
             {
                 return Results.Ok("Ecommerce API is working!");
             });
+            app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseAuth();
             app.UseAspRateLimiter();

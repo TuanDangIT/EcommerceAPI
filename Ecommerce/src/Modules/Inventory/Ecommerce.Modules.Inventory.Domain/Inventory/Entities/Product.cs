@@ -75,7 +75,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public void DecreaseQuantity(int quantity)
         {
-            CheckIfProductHasQuantityOrThrow();
+            CheckIfHasQuantityOrThrow();
             if (Quantity < quantity)
             {
                 throw new ProductQuantityBelowZeroException();
@@ -85,19 +85,19 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public void IncreaseQuantity(int quantity)
         {
-            CheckIfProductHasQuantityOrThrow();
+            CheckIfHasQuantityOrThrow();
             Quantity += quantity;
             IncrementVersion();
         }
         public void Reserve(int quantity)
         {
-            CheckIfProductHasQuantityOrThrow();
+            CheckIfHasQuantityOrThrow();
             DecreaseQuantity(quantity);
             Reserved += quantity;
         }
         public void Unreserve(int quantity)
         {
-            CheckIfProductHasQuantityOrThrow();
+            CheckIfHasQuantityOrThrow();
             if (Reserved < quantity)
             {
                 throw new ProductReservedBelowZeroException();
@@ -134,24 +134,29 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             _images = images;
             IncrementVersion();
         }
-        public void ChangeProductParameters(List<ProductParameter> parameters)
+        public void ChangeParameters(List<ProductParameter> parameters)
         {
             _productParameters = parameters;
             IncrementVersion();
         }
-        public void ChangeProductQuantity(int quantity)
+        public void ChangePrice(decimal price)
         {
-            CheckIfProductHasQuantityOrThrow();
+            Price = price;
+            IncrementVersion();
+        }
+        public void ChangeQuantity(int quantity)
+        {
+            CheckIfHasQuantityOrThrow();
             Quantity = quantity;
             IncrementVersion();
         }
-        public void ChangeProductReservedQuantity(int reserved)
+        public void ChangeReservedQuantity(int reserved)
         {
-            CheckIfProductHasQuantityOrThrow();
+            CheckIfHasQuantityOrThrow();
             Reserved = reserved;
             IncrementVersion();
         }
-        private void CheckIfProductHasQuantityOrThrow()
+        private void CheckIfHasQuantityOrThrow()
         {
             if (!HasQuantity)
             {
