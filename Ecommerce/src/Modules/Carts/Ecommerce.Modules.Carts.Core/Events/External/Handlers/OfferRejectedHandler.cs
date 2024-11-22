@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Modules.Carts.Core.DAL;
 using Ecommerce.Shared.Abstractions.Events;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;

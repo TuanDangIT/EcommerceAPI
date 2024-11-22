@@ -9,12 +9,11 @@ namespace Ecommerce.Modules.Carts.Core.Exceptions
 {
     internal class CheckoutCartNotFoundException : EcommerceException
     {
-        public Guid Id { get; set; }
-        public CheckoutCartNotFoundException(Guid id) : base($"Checkout cart: {id} was not found.")
+        public CheckoutCartNotFoundException(Guid checkoutCartId) : base($"Checkout cart: {checkoutCartId} was not found.")
         {
-            Id = id;
+
         }
-        public CheckoutCartNotFoundException() : base("Checkout cart was not found.")
+        public CheckoutCartNotFoundException(string sessionId) : base($"Checkout cart with session id: {sessionId} was not found")
         {
             
         }

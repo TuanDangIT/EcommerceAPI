@@ -3,6 +3,7 @@ using Ecommerce.Modules.Carts.Core.Entities.Enums;
 using Ecommerce.Modules.Carts.Core.Exceptions;
 using Ecommerce.Shared.Abstractions.Events;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,14 +15,14 @@ namespace Ecommerce.Modules.Carts.Core.Events.External.Handlers
     internal class DiscountActivatedHandler : IEventHandler<DiscountActivated>
     {
         private readonly ICartsDbContext _dbContext;
-        private readonly TimeProvider _timeProvider;
+        private readonly ILogger<DiscountActivatedHandler> _logger;
         private const string _nominalCouponType = "NominalCoupon";
         private const string _percentageCouponType = "PercentageCoupon";
 
-        public DiscountActivatedHandler(ICartsDbContext dbContext, TimeProvider timeProvider)
+        public DiscountActivatedHandler(ICartsDbContext dbContext, ILogger<DiscountActivatedHandler> logger)
         {
             _dbContext = dbContext;
-            _timeProvider = timeProvider;
+            _logger = logger;
         }
         public async Task HandleAsync(DiscountActivated @event)
         {
@@ -29,6 +30,7 @@ namespace Ecommerce.Modules.Carts.Core.Events.External.Handlers
                 .SingleOrDefaultAsync(d => d.Code == @event.Code);
             if(discount is not null)
             {
+                _logger.LogError("Discount: {code} was already activated.", @event.Code);
                 throw new DiscountCodeAlreadyInUseException(@event.Code);
             }
             switch (@event.Type)

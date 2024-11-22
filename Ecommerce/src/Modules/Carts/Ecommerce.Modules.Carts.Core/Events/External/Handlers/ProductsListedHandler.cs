@@ -24,7 +24,6 @@ namespace Ecommerce.Modules.Carts.Core.Events.External.Handlers
             var products = new List<Product>();
             foreach(var product in @event.Products)
             {
-                //var product = JsonSerializer.Deserialize<Product>(JsonSerializer.Serialize(productObject));
                 if (product is null)
                 {
                     throw new ArgumentNullException(nameof(@event));

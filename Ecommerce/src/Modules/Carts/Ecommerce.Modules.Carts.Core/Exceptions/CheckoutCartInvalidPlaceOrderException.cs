@@ -9,7 +9,7 @@ namespace Ecommerce.Modules.Carts.Core.Exceptions
 {
     internal class CheckoutCartInvalidPlaceOrderException : EcommerceException
     {
-        public CheckoutCartInvalidPlaceOrderException() : base("Please fill in your shipment and payment method.")
+        public CheckoutCartInvalidPlaceOrderException() : base("Please fill in your shipment or payment method.")
         {
         }
     }

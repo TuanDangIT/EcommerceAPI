@@ -36,9 +36,5 @@ namespace Ecommerce.Modules.Carts.Core.DAL
         {
             return base.SaveChangesAsync();
         }
-        //public Task<IDbContextTransaction> BeginTransactionAsync()
-        //{
-        //    return base.Database.BeginTransactionAsync();
-        //}
     }
 }

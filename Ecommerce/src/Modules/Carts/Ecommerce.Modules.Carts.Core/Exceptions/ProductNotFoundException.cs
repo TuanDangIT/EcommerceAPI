@@ -7,12 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Exceptions
 {
-    internal class ProductNotFoundException : EcommerceException
+    internal class ProductNotFoundException(Guid productId) : EcommerceException($"Product: {productId} was not found.")
     {
-        public Guid Id { get; set; }
-        public ProductNotFoundException(Guid id) : base($"Product: {id} was not found.")
-        {
-            Id = id;
-        }
     }
 }
