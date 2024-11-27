@@ -1,11 +1,14 @@
 ﻿using Ecommerce.Modules.Discounts.Core.DTO;
+using Ecommerce.Modules.Discounts.Core.Entities;
 using Ecommerce.Shared.Infrastructure.Stripe;
 using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static Azure.Core.HttpHeader;
 
 namespace Ecommerce.Modules.Discounts.Core.Services.Externals
 {
@@ -35,6 +38,10 @@ namespace Ecommerce.Modules.Discounts.Core.Services.Externals
             };
             var couponService = new Stripe.CouponService();
             var coupon = await couponService.CreateAsync(options, _requestOptions);
+            if(coupon.StripeResponse.StatusCode != HttpStatusCode.OK)
+            {
+                throw new StripeException("Failed to process Stripe request.");
+            }
             return coupon.Id;
         }
 
@@ -48,12 +55,20 @@ namespace Ecommerce.Modules.Discounts.Core.Services.Externals
             };
             var couponService = new Stripe.CouponService();
             var coupon = await couponService.CreateAsync(options, _requestOptions);
+            if (coupon.StripeResponse.StatusCode != HttpStatusCode.OK)
+            {
+                throw new StripeException("Failed to process Stripe request.");
+            }
             return coupon.Id;
         }
         public async Task DeleteCouponAsync(string stripeCouponId)
         {
             var couponService = new Stripe.CouponService();
-            await couponService.DeleteAsync(stripeCouponId, requestOptions: _requestOptions);
+            var coupon = await couponService.DeleteAsync(stripeCouponId, requestOptions: _requestOptions);
+            if (coupon.StripeResponse.StatusCode != HttpStatusCode.OK)
+            {
+                throw new StripeException("Failed to process Stripe request.");
+            }
         }
         public async Task UpdateCouponName(string stripeCouponId, string name)
         {
@@ -62,7 +77,11 @@ namespace Ecommerce.Modules.Discounts.Core.Services.Externals
                 Name = name,
             };
             var couponService = new Stripe.CouponService();
-            await couponService.UpdateAsync(stripeCouponId, options, _requestOptions);
+            var coupon = await couponService.UpdateAsync(stripeCouponId, options, _requestOptions);
+            if (coupon.StripeResponse.StatusCode != HttpStatusCode.OK)
+            {
+                throw new StripeException("Failed to process Stripe request.");
+            }
         }
         public async Task<string> CreateDiscountAsync(string stripeCouponId, DiscountCreateDto dto)
         {
@@ -75,6 +94,10 @@ namespace Ecommerce.Modules.Discounts.Core.Services.Externals
             };
             var promotionCodeService = new PromotionCodeService();
             var promotionCode = await promotionCodeService.CreateAsync(options, _requestOptions);
+            if (promotionCode.StripeResponse.StatusCode != HttpStatusCode.OK)
+            {
+                throw new StripeException("Failed to process Stripe request.");
+            }
             return promotionCode.Id;
         }
         public async Task ActivateDiscountAsync(string stripePromotionCodeId)
@@ -89,7 +112,11 @@ namespace Ecommerce.Modules.Discounts.Core.Services.Externals
                 Active = isActive
             };
             var promotionCodeService = new PromotionCodeService();
-            await promotionCodeService.UpdateAsync(stripePromotionCodeId, options, _requestOptions);
+            var promotionCode = await promotionCodeService.UpdateAsync(stripePromotionCodeId, options, _requestOptions);
+            if (promotionCode.StripeResponse.StatusCode != HttpStatusCode.OK)
+            {
+                throw new StripeException("Failed to process Stripe request.");
+            }
         }
     }
 }

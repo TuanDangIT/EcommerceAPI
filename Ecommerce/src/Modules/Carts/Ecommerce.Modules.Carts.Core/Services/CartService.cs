@@ -42,18 +42,17 @@ namespace Ecommerce.Modules.Carts.Core.Services
                     .SingleOrDefaultAsync();
                 if (product is null)
                 {
-                    _logger.LogError("Product: {productId} was not found.", productId);
                     throw new ProductNotFoundException(productId);
                 }
                 cart.AddProduct(product, quantity);
                 await _dbContext.SaveChangesAsync();
                 await transaction.CommitAsync();
+                _logger.LogInformation("Product: {product} was added to cart: {cart}.", product, cart);
                 await _messageBroker.PublishAsync(new ProductReserved(productId, quantity));
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
-                _logger.LogError("An exception occured during the transaction: {message}", e.Message);
                 throw;
             }
         }
@@ -69,6 +68,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
             checkoutCart = cart.Checkout();
             await _dbContext.CheckoutCarts.AddAsync(checkoutCart);
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Cart: {cart} was checked out.", cart);
         }
 
         public async Task ClearAsync(Guid cartId)
@@ -78,6 +78,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
             await _messageBroker.PublishAsync(new CartCleared(products));
             cart.Clear();
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Cart: {cart} was cleared.", cart);
         }
 
         public async Task<Guid> CreateAsync()
@@ -96,6 +97,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 await _dbContext.Carts.AddAsync(new Cart(newGuid, userId));
             }
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Cart was created.");
             return newGuid;
         }
 
@@ -126,12 +128,12 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 cart.RemoveProduct(product, quantity);
                 await _dbContext.SaveChangesAsync();
                 await transaction.CommitAsync();
+                _logger.LogInformation("Product: {product} was removed from cart: {cart}", product, cart);
                 await _messageBroker.PublishAsync(new ProductUnreserved(productId, quantity));
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
-                _logger.LogError("An exception occured during the transaction: {message}", e.Message);
                 throw;
             }
         }
@@ -141,6 +143,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
             var product = await GetCartProductOrThrowIfNull(cartId, productId);
             cart.SetProductQuantity(product, quantity);
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Set product quantity: {quantity} for product: {product} in cart: {cart}", quantity, product, cart);
         }
         private async Task<Cart> GetByCartOrThrowIfNull(Guid cartId)
         {
@@ -150,7 +153,6 @@ namespace Ecommerce.Modules.Carts.Core.Services
                .SingleOrDefaultAsync(c => c.Id == cartId);
             if (cart is null)
             {
-                _logger.LogError("Cart: {cartId} was not found.", cartId);
                 throw new CartNotFoundException(cartId);
             }
             return cart;
@@ -163,7 +165,6 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 .SingleOrDefaultAsync(cp => cp.Product.Id == productId && cp.Cart.Id == cartId);
             if (cartProduct is null)
             {
-                _logger.LogError("Product: {productId} was not found", productId);
                 throw new ProductNotFoundException(productId);
             }
             return cartProduct.Product;

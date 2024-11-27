@@ -5,6 +5,7 @@ using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,7 +32,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Stripe
                 //Currency = _stripeOptions.Currency
             };
             var refundService = new RefundService();
-            await refundService.CreateAsync(refundOptions, _requestOptions);
+            var refund = await refundService.CreateAsync(refundOptions, _requestOptions);
+            if(refund.StripeResponse.StatusCode != HttpStatusCode.OK)
+            {
+                throw new StripeException("Failed to process Stripe request.");
+            }
         }
         public async Task Refund(Domain.Orders.Entities.Order order, decimal amount)
         {
@@ -43,7 +48,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Stripe
                 //Currency = _stripeOptions.Currency.ToLower()
             };
             var refundService = new RefundService();
-            await refundService.CreateAsync(refundOptions, _requestOptions);
+            var refund = await refundService.CreateAsync(refundOptions, _requestOptions);
+            if (refund.StripeResponse.StatusCode != HttpStatusCode.OK)
+            {
+                throw new StripeException("Failed to process Stripe request.");
+            }
         }
     }
 }

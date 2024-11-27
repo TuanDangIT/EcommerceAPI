@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Ecommerce.Modules.Inventory.Application.Auctions.DTO;
+using Ecommerce.Modules.Inventory.Application.Auctions.Exceptions;
 using Ecommerce.Modules.Inventory.Application.Auctions.Features.Auction.BrowseAuctions;
 using Ecommerce.Modules.Inventory.Application.Auctions.Features.Auction.GetAuction;
 using Ecommerce.Modules.Inventory.Application.Auctions.Features.Auction.RequestOffer;

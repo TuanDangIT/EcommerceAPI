@@ -30,7 +30,6 @@ namespace Ecommerce.Modules.Carts.Core.Events.External.Handlers
                 .SingleOrDefaultAsync(d => d.Code == @event.Code);
             if(discount is not null)
             {
-                _logger.LogError("Discount: {code} was already activated.", @event.Code);
                 throw new DiscountCodeAlreadyInUseException(@event.Code);
             }
             switch (@event.Type)

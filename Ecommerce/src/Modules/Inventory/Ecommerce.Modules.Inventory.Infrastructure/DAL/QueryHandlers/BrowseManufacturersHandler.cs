@@ -27,6 +27,10 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
         }
         public async Task<PagedResult<ManufacturerBrowseDto>> Handle(BrowseManufacturers request, CancellationToken cancellationToken)
         {
+            if (request.PageSize is null || request.Page is null)
+            {
+                throw new PaginationException();
+            }
             var manufacturers = _dbContext.Manufacturers
                 .AsNoTracking()
                 .AsQueryable();
@@ -37,10 +41,6 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
             var totalCount = await _sieveProcessor
                 .Apply(request, manufacturers, applyPagination: false, applySorting: false)
                 .CountAsync();
-            if (request.PageSize is null || request.Page is null)
-            {
-                throw new PaginationException();
-            }
             var pagedResult = new PagedResult<ManufacturerBrowseDto>(dtos, totalCount, request.PageSize.Value, request.Page.Value);
             return pagedResult;
         }

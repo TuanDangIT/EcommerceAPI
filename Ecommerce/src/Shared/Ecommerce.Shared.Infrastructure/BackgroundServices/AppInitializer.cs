@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Shared.Infrastructure.Services
+namespace Ecommerce.Shared.Infrastructure.BackgroundServices
 {
     public class AppInitializer : IHostedService
     {
@@ -23,6 +23,7 @@ namespace Ecommerce.Shared.Infrastructure.Services
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Starting EcommerceAPI...");
             var dbContextTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(x => x.GetTypes())
                 .Where(x => typeof(DbContext).IsAssignableFrom(x) && !x.IsInterface && x != typeof(DbContext));
@@ -39,6 +40,10 @@ namespace Ecommerce.Shared.Infrastructure.Services
             }
         }
 
-        public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Stopping EcommerceAPI...");
+            return Task.CompletedTask;
+        }
     }
 }

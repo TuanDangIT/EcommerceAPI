@@ -13,9 +13,7 @@ namespace Ecommerce.Shared.Infrastructure.Messaging.Dispatchers
 
         public AsyncMessageDispatcher(IMessageChannel messageChannel)
             => _messageChannel = messageChannel;
-
         public async Task PublishAsync<TMessage>(TMessage message) where TMessage : class, IMessage
             => await _messageChannel.Writer.WriteAsync(message);
-
     }
 }

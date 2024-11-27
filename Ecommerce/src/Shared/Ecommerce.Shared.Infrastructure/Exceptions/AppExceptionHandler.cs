@@ -28,16 +28,17 @@ namespace Ecommerce.Shared.Infrastructure.Exceptions
         }
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
-            _logger.LogError(exception, $"Exception occured at {_timeProvider.GetUtcNow().UtcDateTime
-                }: {exception.Message}");
+            if(_contextService.Identity is null)
+            {
+                _logger.LogError(exception, "Exception occured at {now}. Exception details: {exception}", _timeProvider.GetUtcNow().UtcDateTime, exception);
+            }
+            else
+            {
+                _logger.LogError(exception, "Exception occured at {now} for user: {username}:{userId}. Exception details: {exception}", _timeProvider.GetUtcNow().UtcDateTime, _contextService.Identity.Username, _contextService.Identity.Id, exception);
+            }
             var response = _exceptionToResponseMapper.Map(exception);
-            Console.WriteLine(httpContext.TraceIdentifier);
             if(response is ValidationProblemDetails validationProblemDetails)
             {
-                response.Extensions = new Dictionary<string, object?>()
-                {
-                    { "traceId", httpContext.TraceIdentifier }
-                };
                 httpContext.Response.StatusCode = validationProblemDetails.Status ?? throw new ArgumentNullException();
                 await httpContext.Response.WriteAsJsonAsync(validationProblemDetails, cancellationToken);
                 return true;

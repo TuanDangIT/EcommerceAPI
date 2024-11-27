@@ -27,6 +27,10 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
         }
         public async Task<PagedResult<ReviewDto>> Handle(BrowseReviews request, CancellationToken cancellationToken)
         {
+            if (request.PageSize is null || request.Page is null)
+            {
+                throw new PaginationException();
+            }
             var reviews = _dbContext.Reviews
                .Where(r => r.AuctionId == request.AuctionId)
                .AsNoTracking()
@@ -38,10 +42,6 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
             var totalCount = await _sieveProcessor
                 .Apply(request, reviews, applyPagination: false)
                 .CountAsync();
-            if (request.PageSize is null || request.Page is null)
-            {
-                throw new PaginationException();
-            }
             var pagedResult = new PagedResult<ReviewDto>(dtos, totalCount, request.PageSize.Value, request.Page.Value);
             return pagedResult;
         }

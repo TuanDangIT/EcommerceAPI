@@ -3,11 +3,13 @@ using Ecommerce.Modules.Carts.Core.DTO;
 using Ecommerce.Modules.Carts.Core.Entities;
 using Ecommerce.Modules.Carts.Core.Exceptions;
 using Ecommerce.Shared.Infrastructure.Stripe;
+using Microsoft.Extensions.Logging;
 using Stripe;
 using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,12 +18,14 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
     internal class StripeService : IStripeService
     {
         private readonly StripeOptions _stripeOptions;
+        private readonly ILogger<StripeService> _logger;
         private readonly RequestOptions _requestOptions;
         private readonly decimal _defaultDeliveryPrice = 15;
 
-        public StripeService(StripeOptions stripeOptions)
+        public StripeService(StripeOptions stripeOptions, ILogger<StripeService> logger)
         {
             _stripeOptions = stripeOptions;
+            _logger = logger;
             _requestOptions = new RequestOptions()
             {
                 ApiKey = _stripeOptions.ApiKey
@@ -86,19 +90,6 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                         }
                     }
                 }
-                //InvoiceCreation = new SessionInvoiceCreationOptions()
-                //{
-                //    Enabled = true,
-                //    InvoiceData = new SessionInvoiceCreationInvoiceDataOptions()
-                //    {
-                //        Description = "some description",
-                //        Issuer = new SessionInvoiceCreationInvoiceDataIssuerOptions()
-                //        {
-                //            Type = "self"
-                //        }
-                        
-                //    }
-                //}
             };
             if (checkoutCart.Discount is not null && checkoutCart.Discount.StripePromotionCodeId is not null)
             {
@@ -112,6 +103,11 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
             }
             var sessionService = new SessionService();
             var session = await sessionService.CreateAsync(sessionOptions, _requestOptions);
+            if(session.StripeResponse.StatusCode != HttpStatusCode.OK)
+            {
+                throw new StripeException("Failed to process Stripe request.");
+            }
+            _logger.LogInformation("Session created: {session}", session);
             return session.AsDto();
         }
     }

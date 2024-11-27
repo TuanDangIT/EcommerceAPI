@@ -1,6 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.Services;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
-using Ecommerce.Modules.Orders.Infrastructure.Exceptions;
 using Ecommerce.Shared.Infrastructure.InPost;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -50,7 +49,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
                 var json = await httpResponse.Content.ReadAsStringAsync();
                 using var errorJsonDocument = JsonDocument.Parse(json);
                 var errorMessage = errorJsonDocument.RootElement.GetProperty(_inPostErrorPropertyName).GetString();
-                throw new HttpClientRequestFailedException(errorMessage!);
+                throw new HttpRequestException($"HTTP request failed: {errorMessage!}");
             }
             var stream = await httpResponse.Content.ReadAsStreamAsync();
             return (stream, _pdfMimeType, $"{shipment.TrackingNumber}-inpost-label");
@@ -65,7 +64,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
             {
                 using var errorJsonDocument = JsonDocument.Parse(json);
                 var errorMessage = errorJsonDocument.RootElement.GetProperty(_inPostErrorPropertyName).GetString();
-                throw new HttpClientRequestFailedException(errorMessage!);
+                throw new HttpRequestException($"HTTP request failed: {errorMessage!}");
             }
             using var jsonDocument = JsonDocument.Parse(json);
             var id = jsonDocument.RootElement.GetProperty("id").GetInt32();
@@ -79,7 +78,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
             {
                 using var errorJsonDocument = JsonDocument.Parse(json);
                 var errorMessage = errorJsonDocument.RootElement.GetProperty(_inPostErrorPropertyName).GetString();
-                throw new HttpClientRequestFailedException(errorMessage!);
+                throw new HttpRequestException($"HTTP request failed: {errorMessage!}");
             }
             using var jsonDocument = JsonDocument.Parse(json);
             var trackingNumber = jsonDocument.RootElement.GetProperty(_inPostItemsPropertyName)[0].GetProperty(_inPostTrackingNumberPropertyName).GetString();

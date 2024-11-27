@@ -53,12 +53,12 @@ namespace Ecommerce.Modules.Carts.Core.Services
             var checkoutCart = await GetOrThrowIfNull(checkoutCartId);
             if(checkoutCart.Shipment is null || checkoutCart.Payment is null)
             {
-                _logger.LogError("Cannot place order because of empty {shipment} or {paymentMethod}.", "shipment", "payment method");
                 throw new CheckoutCartInvalidPlaceOrderException();
             }
             var dto = await _stripeService.CheckoutAsync(checkoutCart);
             checkoutCart.SetStripeSessionId(dto.SessionId);
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Order was placed for checkout cart: {checkoutCart}.", checkoutCart);
             return dto;
         }
         public async Task SetCustomer(Guid checkoutCartId, CustomerDto customerDto)
@@ -71,6 +71,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 customerDto.PhoneNumber
                 ));
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Set customer: {customer} for checkout cart: {checkoutCart}.", customerDto, checkoutCart);
         }
         public async Task SetPaymentAsync(Guid checkoutCartId, Guid paymentId)
         {
@@ -79,11 +80,11 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 .SingleOrDefaultAsync(p => p.Id == paymentId);
             if(payment is null)
             {
-                _logger.LogError("Payment: {paymentId} was not found.", paymentId);
                 throw new PaymentNotFoundException(paymentId);
             }
             checkoutCart.SetPayment(payment);
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Set payment: {payment} for checkout cart: {checkoutCart}.", payment, checkoutCart);
         }
 
         public async Task SetShipmentAsync(Guid checkoutCartId, ShipmentDto shipmentDto)
@@ -98,12 +99,14 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 shipmentDto.AparmentNumber
                 ));
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Set shipment: {shipment} for checkout cart: {checkoutCart}.", shipmentDto, checkoutCart);
         }
         public async Task SetAdditionalInformation(Guid checkoutCartId, string additionalInformation)
         {
             var checkoutCart = await GetOrThrowIfNull(checkoutCartId);
             checkoutCart.SetAdditionalInformation(additionalInformation);
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Set additional information: {additionalInformation} for checkout cart: {checkoutCart}.", additionalInformation, checkoutCart);
         }
         public async Task SetCheckoutCartDetailsAsync(Guid checkoutCartId, CheckoutCartSetDetailsDto checkoutCartSetDetailsDto)
         {
@@ -130,7 +133,6 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 .SingleOrDefaultAsync(p => p.Id == paymentId);
             if (payment is null)
             {
-                _logger.LogError("Payment: {paymentId} was not found.", paymentId);
                 throw new PaymentNotFoundException(paymentId);
             }
             checkoutCart.SetPayment(payment);
@@ -139,6 +141,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 checkoutCart.SetAdditionalInformation(additionalInformation);
             }
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Set needed details {checkoutCartDetails} for checkout cart: {checkoutCart}.", checkoutCartSetDetailsDto, checkoutCart);
         }
         public async Task AddDiscountAsync(Guid checkoutCartId, string code)
         {
@@ -147,29 +150,25 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 .SingleOrDefaultAsync(d => d.Code == code);
             if(discount is null)
             {
-                _logger.LogError("Discount: {code} was not found.", code);
                 throw new DiscountNotFoundException(code);
             }
             if(discount.CustomerId is not null && _contextService.Identity is null)
             {
-                _logger.LogError("Cannot use individual discount without registering");
-                throw new IndividualDiscountCannotBeAppliedException("You have to be logged in to use individual discounts.");
+                throw new IndividualDiscountCannotBeAppliedException("Cannot use individual discount without registering");
             }
             if (discount.CustomerId is not null && discount.CustomerId != _contextService.Identity!.Id &&
                 !checkoutCart.Products.Select(p => p.Product.SKU).Contains(discount.SKU))
             {
-                _logger.LogError("Discount cannot be applied because of wrong user or SKU of a product.");
                 throw new IndividualDiscountCannotBeAppliedException("Discount cannot be applied because of wrong user or SKU of a product.");
             }
             checkoutCart.AddDiscount(discount);
             await _dbContext.SaveChangesAsync();
-            //await _messageBroker.PublishAsync(new DiscountCodeRedeemed(code));
+            _logger.LogInformation("Discount: {discount} redeemed for checkout cart: {checkoutCart}.", discount, checkoutCart);
         }
         public async Task HandleCheckoutSessionCompletedAsync(Session? session)
         {
             if(session is null)
             {
-                _logger.LogError("Stripe session reference was null.");
                 throw new NullReferenceException();
             }
             var sessionId = session.Id;
@@ -181,13 +180,13 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 .SingleOrDefaultAsync(cc => cc.StripeSessionId == sessionId);
             if(checkoutCart is null)
             {
-                _logger.LogError("Checkout cart with session id: {sessionId} was not found.", sessionId);
                 throw new CheckoutCartNotFoundException(sessionId);
             }
             checkoutCart.SetStripePaymentIntentId(session.PaymentIntentId);
             checkoutCart.SetPaid();
             await _dbContext.SaveChangesAsync();
             //await _cartService.ResetCartAsync(checkoutCart.Id);
+            _logger.LogInformation("Handling session checkout completed for {checkoutCart}.", checkoutCart);
             await _messageBroker.PublishAsync(new CustomerPlacedOrder()
             {
                 CustomerId = checkoutCart.Customer.CustomerId,
@@ -235,7 +234,6 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 .SingleOrDefaultAsync(cc => cc.Id == checkoutCartId);
             if (checkoutCart is null)
             {
-                _logger.LogError("Checkout cart: {checkoutCartId} was not found.", checkoutCartId);
                 throw new CheckoutCartNotFoundException(checkoutCartId);
             }
             return checkoutCart;

@@ -34,6 +34,10 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
 
         public async Task<PagedResult<EmployeeBrowseDto>> GetAllAsync(SieveModel model)
         {
+            if (model.PageSize is null || model.Page is null)
+            {
+                throw new PaginationException();
+            }
             var coupons = _dbContext.Users
                 .AsNoTracking()
                 .AsQueryable();
@@ -47,10 +51,6 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
                 .Apply(model, coupons, applyPagination: false, applySorting: false)
                 .Where(u => u.Type == UserType.Employee)
                 .CountAsync();
-            if (model.PageSize is null || model.Page is null)
-            {
-                throw new PaginationException();
-            }
             var pagedResult = new PagedResult<EmployeeBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
             return pagedResult;
         }

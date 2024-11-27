@@ -17,21 +17,23 @@ namespace Ecommerce.Shared.Infrastructure.Serilog
         {
             host.UseSerilog((context, configuration) =>
             {
-                configuration
-                    .WriteTo
-                    .Console();
-                if (context.HostingEnvironment.IsDevelopment())
-                {
-                    configuration
-                        .MinimumLevel
-                        .Information();
-                }
-                else
-                {
-                    configuration
-                        .MinimumLevel
-                        .Error();
-                }
+                configuration.ReadFrom
+                    .Configuration(context.Configuration);
+                //if (context.HostingEnvironment.IsDevelopment())
+                //{
+                //    configuration
+                //        .MinimumLevel
+                //        .Information();
+                //}
+                //else
+                //{
+                //    configuration
+                //        .MinimumLevel
+                //        .Error();
+                //}
+                //configuration
+                //    .WriteTo
+                //    .Console();
             });
             return host;
         }

@@ -19,7 +19,6 @@ namespace Ecommerce.Shared.Infrastructure.Events
         {
             using var scope = _serviceProvider.CreateScope();
             var handlers = scope.ServiceProvider.GetServices<IEventHandler<TEvent>>();
-            Console.WriteLine("Dispatcher used !!!!!!!!!!!!!!!!!");
             var tasks = handlers.Select(x => x.HandleAsync(@event));
             await Task.WhenAll(tasks);
         }

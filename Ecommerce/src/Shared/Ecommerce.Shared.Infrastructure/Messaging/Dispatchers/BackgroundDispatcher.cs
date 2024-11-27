@@ -37,7 +37,6 @@ namespace Ecommerce.Shared.Infrastructure.Messaging.Dispatchers
                     _logger.LogError(exception, exception.Message);
                 }
             }
-            Console.WriteLine("123");
             _logger.LogInformation("Finished running the background dispatcher.");
         }
     }

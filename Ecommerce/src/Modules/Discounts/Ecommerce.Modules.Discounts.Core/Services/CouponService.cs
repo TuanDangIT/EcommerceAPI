@@ -7,9 +7,11 @@ using Ecommerce.Modules.Discounts.Core.Events;
 using Ecommerce.Modules.Discounts.Core.Exceptions;
 using Ecommerce.Modules.Discounts.Core.Services.Externals;
 using Ecommerce.Modules.Discounts.Core.Sieve;
+using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.Messaging;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Sieve.Models;
 using Sieve.Services;
 using System;
@@ -25,17 +27,26 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         private readonly IDiscountDbContext _dbContext;
         private readonly IStripeService _stripeService;
         private readonly IMessageBroker _messageBroker;
+        private readonly ILogger<CouponService> _logger;
+        private readonly IContextService _contextService;
         private readonly ISieveProcessor _sieveProcessor;
 
-        public CouponService(IDiscountDbContext dbContext, IStripeService stripeService, IMessageBroker messageBroker, IEnumerable<ISieveProcessor> sieveProcessors)
+        public CouponService(IDiscountDbContext dbContext, IStripeService stripeService, IMessageBroker messageBroker, IEnumerable<ISieveProcessor> sieveProcessors,
+            ILogger<CouponService> logger, IContextService contextService)
         {
             _dbContext = dbContext;
             _stripeService = stripeService;
             _messageBroker = messageBroker;
+            _logger = logger;
+            _contextService = contextService;
             _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(DiscountsModuleSieveProcessor));
         }
         public async Task<PagedResult<NominalCouponBrowseDto>> BrowseNominalCouponsAsync(SieveModel model)
         {
+            if (model.PageSize is null || model.Page is null)
+            {
+                throw new PaginationException();
+            }
             var coupons = _dbContext.Coupons
                 .AsNoTracking()
                 .AsQueryable();
@@ -49,16 +60,16 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 .Apply(model, coupons, applyPagination: false, applySorting: false)
                 .Where(c => c.Type == CouponType.NominalCoupon)
                 .CountAsync();
-            if (model.PageSize is null || model.Page is null)
-            {
-                throw new PaginationException();
-            }
             var pagedResult = new PagedResult<NominalCouponBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
             return pagedResult;
         }
 
         public async Task<PagedResult<PercentageCouponBrowseDto>> BrowsePercentageCouponsAsync(SieveModel model)
         {
+            if (model.PageSize is null || model.Page is null)
+            {
+                throw new PaginationException();
+            }
             var coupons = _dbContext.Coupons
                 .AsNoTracking()
                 .AsQueryable();
@@ -72,10 +83,6 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 .Apply(model, coupons, applyPagination: false, applySorting: false)
                 .Where(c => c.Type == CouponType.NominalCoupon)
                 .CountAsync();
-            if (model.PageSize is null || model.Page is null)
-            {
-                throw new PaginationException();
-            }
             var pagedResult = new PagedResult<PercentageCouponBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
             return pagedResult;
         }
@@ -85,6 +92,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             var stripeCouponId = await _stripeService.CreateCouponAsync(dto);
             await _dbContext.Coupons.AddAsync(new NominalCoupon(dto.Name, dto.NominalValue, stripeCouponId));
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Nominal coupon: {coupon} was created by {username}:{userId}.", dto, _contextService.Identity!.Username, _contextService.Identity!.Id);
         }
 
         public async Task CreateAsync(PercentageCouponCreateDto dto)
@@ -92,6 +100,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             var stripeCouponId = await _stripeService.CreateCouponAsync(dto);
             await _dbContext.Coupons.AddAsync(new PercentageCoupon(dto.Name, dto.Percent, stripeCouponId));
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Percentage coupon: {coupon} was created by {username}:{userId}.", dto, _contextService.Identity!.Username, _contextService.Identity!.Id);
         }
 
         public async Task DeleteAsync(string stripeCouponId)
@@ -113,6 +122,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             await _stripeService.DeleteCouponAsync(stripeCouponId);
             _dbContext.Coupons.Remove(coupon);
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Coupon: {coupon} was deleted by {username}:{userId}.", coupon, _contextService.Identity!.Username, _contextService.Identity!.Id);
         }
 
         public async Task UpdateNameAsync(string stripeCouponId, CouponUpdateNameDto dto)
@@ -125,6 +135,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             coupon.ChangeName(dto.Name);
             await _stripeService.UpdateCouponName(stripeCouponId, dto.Name);
             await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Coupon: {coupon} was updated with new details: {updatingDetails} by {username}:{userId}.", coupon, dto, _contextService.Identity!.Username, _contextService.Identity!.Id);
         }
     }
 }

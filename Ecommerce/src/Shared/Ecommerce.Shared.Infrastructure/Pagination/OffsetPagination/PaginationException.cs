@@ -9,7 +9,7 @@ namespace Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination
 {
     public sealed class PaginationException : EcommerceException
     {
-        public PaginationException() : base("Pagination went wrong.")
+        public PaginationException() : base("Pagination went wrong. Please attach page size and page number.")
         {
         }
     }

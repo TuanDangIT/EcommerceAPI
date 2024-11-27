@@ -1,4 +1,5 @@
-﻿using Azure.Storage.Blobs;
+﻿using Azure;
+using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
 using Ecommerce.Shared.Abstractions.BloblStorage;
@@ -28,7 +29,7 @@ namespace Ecommerce.Shared.Infrastructure.Storage
             using var response = await blobClient.DeleteAsync();
             if (response.IsError)
             {
-                throw new BlobStorageFileNotDeletedException(fileName);
+                throw new RequestFailedException($"Request failed. File: {fileName} was not deleted from blob storage.");
             }
         }
         public async Task DeleteManyAsync(IEnumerable<string> fileNames, string containerName)
@@ -44,7 +45,7 @@ namespace Ecommerce.Shared.Infrastructure.Storage
             var responses = await blobBatchClient.DeleteBlobsAsync(imageUris);
             if (responses.Any(r => r.IsError == true))
             {
-                throw new BlobStorageFilesNotAllDeletedException(fileNames);
+                throw new RequestFailedException($"One or more files were not deleted from blob storage. Response message: {string.Join(", ", responses.Select(r => Encoding.UTF8.GetString(r.Content)))}");
             }
         }
         public async Task<string> UploadAsync(IFormFile blob, string fileName, string containerName)
@@ -60,7 +61,7 @@ namespace Ecommerce.Shared.Infrastructure.Storage
                 using var rawResponse = response.GetRawResponse();
                 if (rawResponse.IsError)
                 {
-                    throw new BlobStorageFileNotUploadedException(fileName);
+                    throw new RequestFailedException($"Request failed. File: {fileName} was not uploaded to blob storage.");
                 }
             }
             return blobClient.Uri.AbsolutePath;
@@ -71,7 +72,7 @@ namespace Ecommerce.Shared.Infrastructure.Storage
             var file = containerClient.GetBlobClient(fileName);
             if(!(await file.ExistsAsync()))
             {
-                throw new BlobStorageFileNotFoundException(fileName);
+                throw new RequestFailedException($"Request failed. File: {fileName} was not found.");
             }
             var stream = await file.OpenReadAsync();
             var content = await file.DownloadContentAsync();

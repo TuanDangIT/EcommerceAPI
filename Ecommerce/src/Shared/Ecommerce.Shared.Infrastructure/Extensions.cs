@@ -14,7 +14,7 @@ using Ecommerce.Shared.Infrastructure.Pagination;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Ecommerce.Shared.Infrastructure.RateLimiter;
 using Ecommerce.Shared.Infrastructure.Serilog;
-using Ecommerce.Shared.Infrastructure.Services;
+using Ecommerce.Shared.Infrastructure.BackgroundServices;
 using Ecommerce.Shared.Infrastructure.Storage;
 using Ecommerce.Shared.Infrastructure.Stripe;
 using Ecommerce.Shared.Infrastructure.Swagger;
@@ -74,10 +74,10 @@ namespace Ecommerce.Shared.Infrastructure
                     Console.WriteLine("--------------");
                     manager.FeatureProviders.Add(new InternalControllerFeatureProvider());
                 });
-                //.AddJsonOptions(option =>
-                //{
-                //    option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                //});
+            //.AddJsonOptions(option =>
+            //{
+            //    option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            //});
             services.AddEndpointsApiExplorer();
             services.AddVersioning();
             services.AddDocumentation();
@@ -95,7 +95,6 @@ namespace Ecommerce.Shared.Infrastructure
             {
                 return Results.Ok("Ecommerce API is working!");
             });
-            app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseAuth();
             app.UseAspRateLimiter();

@@ -23,25 +23,27 @@ namespace Ecommerce.Shared.Infrastructure.Exceptions
         public ProblemDetails Map(Exception exception)
             => exception switch
             {
-                ValidationException ex => new ValidationProblemDetails()
+                ValidationException e => new ValidationProblemDetails()
                 {
                     Type = BadRequestTypeUrl,
-                    Title = ex.Message,
+                    Title = "An validation exception occured.",
                     Status = (int)HttpStatusCode.BadRequest,
-                    Errors = ex.Errors,
+                    Errors = e.Errors,
+                    Detail = e.Message
                 },
-                EcommerceException ex => new ProblemDetails()
+                EcommerceException e => new ProblemDetails()
                 {
                     Type = BadRequestTypeUrl,
-                    Title = ex.Message,
+                    Title = "An exception occured.",
                     Status = (int)HttpStatusCode.BadRequest,
+                    Detail = e.Message,
                 },
-                _ => new ProblemDetails()
+                Exception e => new ProblemDetails()
                 {
                     Type = ServerErrorTypeUrl,
                     Title = "There was a server error",
                     Status = (int)HttpStatusCode.InternalServerError,
-
+                    Detail = e.Message
                 }
             };
     }
