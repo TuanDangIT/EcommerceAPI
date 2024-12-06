@@ -10,7 +10,7 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
     public class NominalCoupon : Coupon
     {
         public decimal NominalValue { get; private set; }
-        public NominalCoupon() : base()
+        private NominalCoupon() : base()
         {
 
         }

@@ -19,13 +19,13 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
             _dbContext = dbContext;
             _timeProvider = timeProvider;
         }
-        public async Task AddAsync(User user)
+        public async Task AddAsync(User user, CancellationToken cancellationToken = default)
         {
-            await _dbContext.Users.AddAsync(user);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.Users.AddAsync(user, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<RefreshToken> AddRefreshTokenAsync(User user, string generatedRefreshToken)
+        public async Task<RefreshToken> AddRefreshTokenAsync(User user, string generatedRefreshToken, CancellationToken cancellationToken = default)
         {
             var userId = user.Id;
             var expiryTime = _timeProvider.GetUtcNow().AddDays(2).UtcDateTime;
@@ -36,32 +36,33 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
                 RefreshTokenExpiryTime = expiryTime
             };
             user.RefreshToken = refreshToken;
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
             return refreshToken;
         }
-        //public async Task DeleteAsync(Guid userId)
-        //    => await _dbContext.Users.Where(u => u.Id == userId).ExecuteDeleteAsync();
 
-        public async Task DeleteAsync(Guid userId)
+        public async Task DeleteAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            var user = await _dbContext.Users
+                .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
             if (user is null)
             {
                 throw new UserNotFoundException(userId);
             }
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
-        public Task<User?> GetByIdAsync(Guid userId)
+
+        public Task<User?> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default)
             => _dbContext.Users
             .Include(u => u.Role)
-            .SingleOrDefaultAsync(x => x.Id == userId);
+            .SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
 
-        public Task<User?> GetByEmailAsync(string email) => _dbContext.Users.SingleOrDefaultAsync(x => x.Email == email);
+        public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default) 
+            => _dbContext.Users.SingleOrDefaultAsync(x => x.Email == email, cancellationToken);
 
-        public Task<User?> GetByUsernameAsync(string username) => _dbContext.Users.SingleOrDefaultAsync(x => x.Username == username);
+        public Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default) 
+            => _dbContext.Users.SingleOrDefaultAsync(x => x.Username == username, cancellationToken);
 
-        public async Task UpdateAsync()
-            => await _dbContext.SaveChangesAsync();
-        //public Task<List<User>> GetAllAsync() => _dbContext.Users.ToListAsync();
+        public async Task UpdateAsync(CancellationToken cancellationToken = default)
+            => await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

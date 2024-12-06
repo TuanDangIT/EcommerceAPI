@@ -1,7 +1,9 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
+using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,14 +15,22 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
     internal sealed class CreateCategoryHandler : ICommandHandler<CreateCategory>
     {
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ILogger<CreateCategoryHandler> _logger;
+        private readonly IContextService _contextService;
 
-        public CreateCategoryHandler(ICategoryRepository categoryRepository)
+        public CreateCategoryHandler(ICategoryRepository categoryRepository, ILogger<CreateCategoryHandler> logger,
+            IContextService contextService)
         {
             _categoryRepository = categoryRepository;
+            _logger = logger;
+            _contextService = contextService;
         }
         public async Task Handle(CreateCategory request, CancellationToken cancellationToken)
         {
-            await _categoryRepository.AddAsync(new Category(Guid.NewGuid(), request.Name));
+            var category = new Category(Guid.NewGuid(), request.Name);
+            await _categoryRepository.AddAsync(category);
+            _logger.LogInformation("Category: {category} was created by {user}.", 
+                category, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

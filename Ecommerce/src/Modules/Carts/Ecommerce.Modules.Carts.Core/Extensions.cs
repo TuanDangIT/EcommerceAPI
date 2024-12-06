@@ -22,7 +22,7 @@ namespace Ecommerce.Modules.Carts.Core
             {
                 return sp.GetRequiredService<CartsDbContext>();
             });
-            services.AddSingleton<IStripeService, StripeService>();
+            services.AddSingleton<IPaymentProcessorService, PaymentProcessorService>();
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<ICheckoutCartService, CheckoutCartService>();
             services.AddScoped<IPaymentService, PaymentService>();

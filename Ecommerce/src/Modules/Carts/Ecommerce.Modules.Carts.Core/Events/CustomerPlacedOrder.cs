@@ -22,8 +22,8 @@ namespace Ecommerce.Modules.Carts.Core.Events
         public string PostalCode { get; set; } = string.Empty;
         public string StreetName { get; set; } = string.Empty;
         public string StreetNumber { get; set; } = string.Empty;
-        public string ApartmentNumber { get; set; } = string.Empty;
-        public string PaymentMethod {  get; set; } = string.Empty;
+        public string? ApartmentNumber { get; set; }
+        public string PaymentMethod { get; set; } = string.Empty;
         public string? AdditionalInformation {  get; set; } 
         public string? DiscountCode { get; set; } 
         public string StripePaymentIntentId { get; set; } = string.Empty;

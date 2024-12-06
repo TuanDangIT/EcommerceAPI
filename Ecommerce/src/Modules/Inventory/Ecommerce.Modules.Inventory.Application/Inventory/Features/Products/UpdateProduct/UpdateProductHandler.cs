@@ -3,8 +3,10 @@ using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
 using Ecommerce.Shared.Abstractions.BloblStorage;
+using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +23,13 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
         private readonly ICategoryRepository _categoryRepository;
         private readonly IParameterRepository _parameterRepository;
         private readonly IImageRepository _imageRepository;
+        private readonly ILogger<UpdateProductHandler> _logger;
+        private readonly IContextService _contextService;
         private const string _containerName = "images";
 
-        public UpdateProductHandler(IProductRepository productRepository, IBlobStorageService blobStorageService, IManufacturerRepository manufacturerRepository
-            , ICategoryRepository categoryRepository, IParameterRepository parameterRepository, IImageRepository imageRepository)
+        public UpdateProductHandler(IProductRepository productRepository, IBlobStorageService blobStorageService, IManufacturerRepository manufacturerRepository,
+            ICategoryRepository categoryRepository, IParameterRepository parameterRepository, IImageRepository imageRepository, ILogger<UpdateProductHandler> logger,
+            IContextService contextService)
         {
             _productRepository = productRepository;
             _blobStorageService = blobStorageService;
@@ -32,6 +37,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
             _categoryRepository = categoryRepository;
             _parameterRepository = parameterRepository;
             _imageRepository = imageRepository;
+            _logger = logger;
+            _contextService = contextService;
         }
         public async Task Handle(UpdateProduct request, CancellationToken cancellationToken)
         {
@@ -90,6 +97,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
             await _productRepository.DeleteProductParametersAndImagesRelatedToProduct(request.Id);
             product.ChangeParameters(productParameters);
             await _productRepository.UpdateAsync();
+            _logger.LogInformation("Product: {product} was updated with new details {request} by {user}.",
+                product, request, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
         private async Task UploadImagesToBlobStorageAsync(List<IFormFile> images, Product product)
         {

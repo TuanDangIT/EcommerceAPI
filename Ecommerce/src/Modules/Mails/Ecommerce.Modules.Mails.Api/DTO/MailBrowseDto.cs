@@ -12,6 +12,7 @@ namespace Ecommerce.Modules.Mails.Api.DTO
         public string From { get; set; } = string.Empty;
         public string To { get; set; } = string.Empty;
         public string Subject { get; set; } = string.Empty;
+        public IEnumerable<string>? AttachmentFileNames { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }

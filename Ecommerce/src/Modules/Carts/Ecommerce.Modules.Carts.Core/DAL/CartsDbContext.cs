@@ -22,7 +22,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL
         public DbSet<Discount> Discounts { get; set; }
         DatabaseFacade ICartsDbContext.Database { get => base.Database; }
 
-        public const string Schema = "carts";
+        private const string _schema = "carts";
         public CartsDbContext(DbContextOptions<CartsDbContext> options) : base(options)
         {
             
@@ -30,11 +30,23 @@ namespace Ecommerce.Modules.Carts.Core.DAL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-            modelBuilder.HasDefaultSchema(Schema);
+            modelBuilder.HasDefaultSchema(_schema);
         }
-        public Task<int> SaveChangesAsync()
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return base.SaveChangesAsync();
+            var entries = ChangeTracker.Entries<IAuditable>();
+            foreach (var entry in entries)
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Property(nameof(IAuditable.CreatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                }
+                if (entry.State == EntityState.Modified)
+                {
+                    entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                }
+            }
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }

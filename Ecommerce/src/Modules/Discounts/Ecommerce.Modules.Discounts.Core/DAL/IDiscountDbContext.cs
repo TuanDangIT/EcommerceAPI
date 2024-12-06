@@ -13,6 +13,6 @@ namespace Ecommerce.Modules.Discounts.Core.DAL
         DbSet<Offer> Offers { get; set; }
         DbSet<Discount> Discounts { get; set; }
         DbSet<Coupon> Coupons { get; set; }
-        Task<int> SaveChangesAsync();
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

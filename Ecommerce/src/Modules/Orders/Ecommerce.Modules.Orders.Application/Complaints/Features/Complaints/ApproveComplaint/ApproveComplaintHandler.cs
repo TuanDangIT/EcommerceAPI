@@ -2,8 +2,10 @@
 using Ecommerce.Modules.Orders.Application.Complaints.Exceptions;
 using Ecommerce.Modules.Orders.Application.Shared.Stripe;
 using Ecommerce.Modules.Orders.Domain.Complaints.Repositories;
+using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Abstractions.Messaging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +19,17 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
         private readonly IComplaintRepository _complaintRepository;
         private readonly IStripeService _stripeService;
         private readonly IMessageBroker _messageBroker;
+        private readonly ILogger<ApproveComplaintHandler> _logger;
+        private readonly IContextService _contextService;
 
-        public ApproveComplaintHandler(IComplaintRepository complaintRepository, IStripeService stripeService, IMessageBroker messageBroker)
+        public ApproveComplaintHandler(IComplaintRepository complaintRepository, IStripeService stripeService, IMessageBroker messageBroker,
+            ILogger<ApproveComplaintHandler> logger, IContextService contextService)
         {
             _complaintRepository = complaintRepository;
             _stripeService = stripeService;
             _messageBroker = messageBroker;
+            _logger = logger;
+            _contextService = contextService;
         }
         public async Task Handle(ApproveComplaint request, CancellationToken cancellationToken)
         {
@@ -53,6 +60,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
                 }
                 await _stripeService.Refund(complaint.Order, (decimal)request.Decision.RefundAmount);
             }
+            _logger.LogInformation("Complaint: {complaint} was approved by {username}:{userId}.", complaint, _contextService.Identity!.Username, _contextService.Identity!.Id);
             await _messageBroker.PublishAsync(new ComplaintApproved(
                 complaint.Id,
                 complaint.OrderId,

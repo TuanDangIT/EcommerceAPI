@@ -17,6 +17,7 @@ namespace Ecommerce.Modules.Mails.Api.DAL.Mappings
                 From = mail.From,
                 To = mail.To,
                 Subject = mail.Subject,
+                AttachmentFileNames = mail.AttachmentFileNames,
                 CreatedAt = mail.CreatedAt
             };
         public static MailDetailsDto AsDetailsDto(this Mail mail)
@@ -27,11 +28,8 @@ namespace Ecommerce.Modules.Mails.Api.DAL.Mappings
                 To = mail.To,
                 Subject = mail.Subject,
                 Body = mail.Body,
+                AttachmentFileNames = mail.AttachmentFileNames,
+                CreatedAt = mail.CreatedAt
             };
-        //public static CustomerDto AsDto(this Customer customer)
-        //    => new()
-        //    {
-        //        Email = customer.Email,
-        //    };
     }
 }

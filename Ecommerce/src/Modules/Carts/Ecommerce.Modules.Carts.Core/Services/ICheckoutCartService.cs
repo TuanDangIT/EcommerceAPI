@@ -11,14 +11,14 @@ namespace Ecommerce.Modules.Carts.Core.Services
 {
     public interface ICheckoutCartService
     {
-        Task<CheckoutCartDto?> GetAsync(Guid checkoutCartId);
-        Task SetCustomer(Guid checkoutCartId, CustomerDto customerDto);
-        Task SetPaymentAsync(Guid checkoutCartId, Guid paymentId);
-        Task SetShipmentAsync(Guid checkoutCartId, ShipmentDto shipmentDto);
-        Task SetAdditionalInformation(Guid checkoutCartId, string additionalInformation);
-        Task<CheckoutStripeSessionDto> PlaceOrderAsync(Guid checkoutCartId);
-        Task AddDiscountAsync(Guid checkoutCartId, string code);
-        Task SetCheckoutCartDetailsAsync(Guid checkoutCartId, CheckoutCartSetDetailsDto checkoutCartSetDetailsDto);
-        Task HandleCheckoutSessionCompletedAsync(Session? session);
+        Task<CheckoutCartDto?> GetAsync(Guid checkoutCartId, CancellationToken cancellationToken = default);
+        Task SetCustomerAsync(Guid checkoutCartId, CustomerDto customerDto, CancellationToken cancellationToken = default);
+        Task SetPaymentAsync(Guid checkoutCartId, Guid paymentId, CancellationToken cancellationToken = default);
+        Task SetShipmentAsync(Guid checkoutCartId, ShipmentDto shipmentDto, CancellationToken cancellationToken = default);
+        Task SetAdditionalInformationAsync(Guid checkoutCartId, string additionalInformation, CancellationToken cancellationToken = default);
+        Task<CheckoutStripeSessionDto> PlaceOrderAsync(Guid checkoutCartId, CancellationToken cancellationToken = default);
+        Task AddDiscountAsync(Guid checkoutCartId, string code, CancellationToken cancellationToken = default);
+        Task SetCheckoutCartDetailsAsync(Guid checkoutCartId, CheckoutCartSetDetailsDto checkoutCartSetDetailsDto, CancellationToken cancellationToken = default);
+        Task HandleCheckoutSessionCompletedAsync(string? json, string? stripeSignatureHeader);
     }
 }

@@ -33,7 +33,7 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
             Reason = reason;
             CustomerId = customerId;
         }
-        public Offer()
+        private Offer()
         {
             
         }

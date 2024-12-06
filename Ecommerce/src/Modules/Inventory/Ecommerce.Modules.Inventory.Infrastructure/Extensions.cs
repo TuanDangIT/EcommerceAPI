@@ -4,6 +4,7 @@ using Ecommerce.Modules.Inventory.Infrastructure.DAL;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Microsoft.Extensions.DependencyInjection;
+using Sieve.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;

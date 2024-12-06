@@ -11,11 +11,11 @@ namespace Ecommerce.Modules.Discounts.Core.Services
 {
     public interface ICouponService
     {
-        Task CreateAsync(NominalCouponCreateDto dto);
-        Task CreateAsync(PercentageCouponCreateDto dto);
-        Task UpdateNameAsync(string stripeCouponId, CouponUpdateNameDto dto);
-        Task DeleteAsync(string stripeCouponId);
-        Task<PagedResult<NominalCouponBrowseDto>> BrowseNominalCouponsAsync(SieveModel model);
-        Task<PagedResult<PercentageCouponBrowseDto>> BrowsePercentageCouponsAsync(SieveModel model);
+        Task CreateAsync(NominalCouponCreateDto dto, CancellationToken cancellationToken = default);
+        Task CreateAsync(PercentageCouponCreateDto dto, CancellationToken cancellationToken = default);
+        Task UpdateNameAsync(string stripeCouponId, CouponUpdateNameDto dto, CancellationToken cancellationToken = default);
+        Task DeleteAsync(string stripeCouponId, CancellationToken cancellationToken = default);
+        Task<PagedResult<NominalCouponBrowseDto>> BrowseNominalCouponsAsync(SieveModel model, CancellationToken cancellationToken = default);
+        Task<PagedResult<PercentageCouponBrowseDto>> BrowsePercentageCouponsAsync(SieveModel model, CancellationToken cancellationToken = default);
     }
 }

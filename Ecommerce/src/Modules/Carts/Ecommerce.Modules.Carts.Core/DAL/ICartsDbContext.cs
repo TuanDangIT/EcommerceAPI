@@ -19,7 +19,6 @@ namespace Ecommerce.Modules.Carts.Core.DAL
         DbSet<Payment> Payments { get; set; }
         DbSet<Discount> Discounts { get; set; }
         DatabaseFacade Database { get; }
-        Task<int> SaveChangesAsync();
-        //Task<IDbContextTransaction> BeginTransactionAsync();
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

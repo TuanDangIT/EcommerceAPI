@@ -12,9 +12,9 @@ namespace Ecommerce.Modules.Carts.Core.Entities
 {
     public class CartProduct : BaseEntity
     {
-        public Product Product { get; private set; } = new();
+        public Product Product { get; private set; } = default!;
         public Guid ProductId { get; private set; }
-        public Cart Cart { get; private set; } = new();
+        public Cart Cart { get; private set; } = default!;
         public Guid CartId { get; private set; }
         public CheckoutCart? CheckoutCart { get; private set; }
         public Guid? CheckoutCartId { get; private set; }
@@ -28,7 +28,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
                 product.DecreaseQuantity(quantity);
             }
         }
-        public CartProduct()
+        private CartProduct()
         {
             
         }

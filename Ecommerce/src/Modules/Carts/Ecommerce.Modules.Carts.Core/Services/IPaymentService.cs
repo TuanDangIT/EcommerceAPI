@@ -9,8 +9,8 @@ namespace Ecommerce.Modules.Carts.Core.Services
 {
     public interface IPaymentService
     {
-        Task<IEnumerable<PaymentDto>> BrowseAsync();
-        //Task<IEnumerable<AvailablePaymentDto>> BrowseAvailableAsync();
-        //Task SetActivePaymentMethod(bool isActive, Guid paymentId);
+        Task<IEnumerable<PaymentDto>> BrowseAsync(CancellationToken cancellationToken = default);
+        Task SetActiveAsync(Guid paymentId, bool isActive, CancellationToken cancellationToken = default);
+        Task<IEnumerable<PaymentDto>> BrowseAvailableAsync(CancellationToken cancellationToken = default);
     }
 }

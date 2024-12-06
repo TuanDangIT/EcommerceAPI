@@ -1,7 +1,9 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.Exceptions;
 using Ecommerce.Modules.Orders.Application.Orders.Services;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
+using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +16,16 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.Download
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IDeliveryService _deliveryService;
+        private readonly ILogger<DownloadLabelHandler> _logger;
+        private readonly IContextService _contextService;
 
-        public DownloadLabelHandler(IOrderRepository orderRepository, IDeliveryService deliveryService)
+        public DownloadLabelHandler(IOrderRepository orderRepository, IDeliveryService deliveryService, ILogger<DownloadLabelHandler> logger,
+            IContextService contextService)
         {
             _orderRepository = orderRepository;
             _deliveryService = deliveryService;
+            _logger = logger;
+            _contextService = contextService;
         }
         public async Task<(Stream FileStream, string MimeType, string FileName)> Handle(DownloadLabel request, CancellationToken cancellationToken)
         {
@@ -33,6 +40,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.Download
                 throw new LabelNotCreatedException(request.ShipmentId);
             }
             var file = await _deliveryService.GetLabelAsync(shipment);
+            _logger.LogInformation("Label: {trackingNumber} was downloaded for order: {order} by {username}:{userId}.", shipment.TrackingNumber, 
+                order, _contextService.Identity!.Username, _contextService.Identity!.Id);
             return file;
         }
     }

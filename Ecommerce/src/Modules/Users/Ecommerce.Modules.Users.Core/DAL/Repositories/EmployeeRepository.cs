@@ -26,13 +26,13 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
             _dbContext = dbContext;
             _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(UsersModuleSieveProcessor));
         }
-        public async Task AddAsync(Employee employee)
+        public async Task AddAsync(Employee employee, CancellationToken cancellationToken = default)
         {
-            await _dbContext.Users.AddAsync(employee);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.Users.AddAsync(employee, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<PagedResult<EmployeeBrowseDto>> GetAllAsync(SieveModel model)
+        public async Task<PagedResult<EmployeeBrowseDto>> GetAllAsync(SieveModel model, CancellationToken cancellationToken = default)
         {
             if (model.PageSize is null || model.Page is null)
             {
@@ -46,16 +46,16 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
                 .Where(u => u.Type == UserType.Employee)
                 .Cast<Employee>()
                 .Select(c => c.AsBrowseDto())
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             var totalCount = await _sieveProcessor
                 .Apply(model, coupons, applyPagination: false, applySorting: false)
                 .Where(u => u.Type == UserType.Employee)
-                .CountAsync();
+                .CountAsync(cancellationToken);
             var pagedResult = new PagedResult<EmployeeBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
             return pagedResult;
         }
 
-        public async Task<Employee?> GetAsync(Guid employeeId, bool asNoTracking)
+        public async Task<Employee?> GetAsync(Guid employeeId, bool asNoTracking, CancellationToken cancellationToken = default)
         {
             var query = _dbContext.Users
                 .Where(u => u.Type == UserType.Employee)
@@ -66,7 +66,7 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
                 query.AsNoTracking();
             }
             return await query
-                .SingleOrDefaultAsync(u => u.Id == employeeId);
+                .SingleOrDefaultAsync(u => u.Id == employeeId, cancellationToken);
         }
     }
 }

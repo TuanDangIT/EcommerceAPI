@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
         {
             var products = await _productRepository.GetAllThatContainsInArrayAsync(@event.Products.Select(p => p.Id).ToArray());
             var auctions = await _auctionRepository.GetAllThatContainsInArrayAsync(@event.Products.Select(p => p.Id).ToArray());
-            if(products.Count() == 0 || auctions.Count() == 0 || products.Count() != @event.Products.Count() || auctions.Count() != @event.Products.Count())
+            if(!products.Any() || !auctions.Any() || products.Count() != @event.Products.Count() || auctions.Count() != @event.Products.Count())
             {
                 throw new ArgumentException();
             }

@@ -11,11 +11,11 @@ namespace Ecommerce.Modules.Users.Core.Services
 {
     internal interface IEmployeeService
     {
-        Task<Guid> CreateAsync(EmployeeCreateDto dto);
-        Task DeleteAsync(Guid employeeId);
-        Task<PagedResult<EmployeeBrowseDto>> BrowseAsync(SieveModel model);
-        Task<EmployeeDetailsDto> GetAsync(Guid employeeId);
-        Task UpdateAsync(EmployeeUpdateDto dto);
-        Task SetActiveAsync(Guid employeeId, bool isActive);
+        Task<Guid> CreateAsync(EmployeeCreateDto dto, CancellationToken cancellationToken = default);
+        Task DeleteAsync(Guid employeeId, CancellationToken cancellationToken = default);
+        Task<PagedResult<EmployeeBrowseDto>> BrowseAsync(SieveModel model, CancellationToken cancellationToken = default);
+        Task<EmployeeDetailsDto> GetAsync(Guid employeeId, CancellationToken cancellationToken = default);
+        Task UpdateAsync(EmployeeUpdateDto dto, CancellationToken cancellationToken = default);
+        Task SetActiveAsync(Guid employeeId, bool isActive, CancellationToken cancellationToken = default);
     }
 }

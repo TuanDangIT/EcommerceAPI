@@ -54,6 +54,9 @@ namespace Ecommerce.Modules.Mails.Api.DAL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AttachmentFileNames")
+                        .HasColumnType("text");
+
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("text");

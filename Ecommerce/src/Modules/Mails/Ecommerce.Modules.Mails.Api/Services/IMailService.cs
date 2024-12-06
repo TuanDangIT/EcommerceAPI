@@ -13,7 +13,8 @@ namespace Ecommerce.Modules.Mails.Api.Services
     {
         Task SendAsync(MailSendDto dto);
         Task SendAsync(MailSendDefaultBodyDto dto);
-        Task<CursorPagedResult<MailBrowseDto, MailCursorDto>> BrowseAsync(MailCursorDto cursorDto, bool? IsNextPage, int PageSize);
-        Task<MailDetailsDto> GetAsync(int mailId);
+        Task<CursorPagedResult<MailBrowseDto, MailCursorDto>> BrowseAsync(MailCursorDto cursorDto, bool? IsNextPage, int PageSize, 
+            CancellationToken cancellationToken = default);
+        Task<MailDetailsDto> GetAsync(int mailId, CancellationToken cancellation = default);
     }
 }

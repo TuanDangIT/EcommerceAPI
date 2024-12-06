@@ -21,6 +21,7 @@ namespace Ecommerce.Modules.Users.Core
 {
     internal static class Extensions
     {
+        private const string _sieveSectionName = "Sieve";
         public static IServiceCollection AddCore(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
@@ -33,20 +34,7 @@ namespace Ecommerce.Modules.Users.Core
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddPostgres<UsersDbContext>();
-            //services.AddIdentityCore<UsersDbContext>(options =>
-            //{
-            //    //email
-            //    options.SignIn.RequireConfirmedAccount = false;
-            //    options.SignIn.RequireConfirmedEmail = true;
-            //    //options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
-            //    //lockout
-            //    options.Lockout.MaxFailedAccessAttempts = 5;
-            //    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            //})
-            //    .AddRoles<Role>()
-            //    .AddEntityFrameworkStores<UsersDbContext>()
-            //    .AddDefaultTokenProviders();
-            services.Configure<SieveOptions>(configuration.GetSection("Sieve"));
+            services.Configure<SieveOptions>(configuration.GetSection(_sieveSectionName));
             services.AddScoped<ISieveProcessor, UsersModuleSieveProcessor>();
             return services;
         }

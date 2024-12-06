@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacturers.DeleteManufacturer
 {
-    public sealed record class DeleteManufacturer(Guid ManufacturerID) : ICommand;
+    public sealed record class DeleteManufacturer(Guid ManufacturerId) : ICommand;
 }

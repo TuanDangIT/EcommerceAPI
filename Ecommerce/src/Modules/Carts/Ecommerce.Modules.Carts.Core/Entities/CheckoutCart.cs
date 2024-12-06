@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Carts.Core.Entities.Enums;
+using Ecommerce.Modules.Carts.Core.Entities.ValueObjects;
 using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Entities
 {
-    public class CheckoutCart : BaseEntity
+    public class CheckoutCart : BaseEntity, IAuditable
     {
         public Customer Customer { get; private set; } = new();
         public Payment? Payment { get; private set; }
@@ -22,13 +23,15 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public IEnumerable<CartProduct> Products => _products;
         public Discount? Discount { get; private set; }
         public int? DiscountId { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
         public CheckoutCart(Cart cart)
         {
             Id = cart.Id;
             Customer.SetCustomerId(cart.CustomerId ?? Guid.Empty);
             _products = cart.Products.ToList();
         }
-        public CheckoutCart()
+        private CheckoutCart()
         {
             
         }

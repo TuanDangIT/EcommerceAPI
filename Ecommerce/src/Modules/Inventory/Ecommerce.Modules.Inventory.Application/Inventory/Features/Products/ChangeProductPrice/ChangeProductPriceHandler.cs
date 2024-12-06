@@ -1,6 +1,8 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
+using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +14,15 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Ch
     internal class ChangeProductPriceHandler : ICommandHandler<ChangeProductPrice>
     {
         private readonly IProductRepository _productRepository;
+        private readonly ILogger<ChangeProductPriceHandler> _logger;
+        private readonly IContextService _contextService;
 
-        public ChangeProductPriceHandler(IProductRepository productRepository)
+        public ChangeProductPriceHandler(IProductRepository productRepository, ILogger<ChangeProductPriceHandler> logger,
+            IContextService contextService)
         {
             _productRepository = productRepository;
+            _logger = logger;
+            _contextService = contextService;
         }
         public async Task Handle(ChangeProductPrice request, CancellationToken cancellationToken)
         {
@@ -26,6 +33,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Ch
             }
             product.ChangePrice(request.Price);
             await _productRepository.UpdateAsync();
+            _logger.LogInformation("Product's: {product} price was changed from {oldPrice} to {newPrice} by {user}.",
+                product, product.Price, request.Price, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

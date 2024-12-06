@@ -24,21 +24,21 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
             _offerService = offerService;
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<PagedResult<OfferBrowseDto>>>> BrowseOffers([FromQuery]SieveModel model)
-            => PagedResult(await _offerService.BrowseAsync(model));
+        public async Task<ActionResult<ApiResponse<PagedResult<OfferBrowseDto>>>> BrowseOffers([FromQuery]SieveModel model, CancellationToken cancellationToken)
+            => PagedResult(await _offerService.BrowseAsync(model, cancellationToken));
         [HttpGet("{offerId:int}")]
-        public async Task<ActionResult<ApiResponse<OfferDetailsDto>>> GetOffer([FromRoute] int offerId)
-            => OkOrNotFound(await _offerService.GetAsync(offerId), nameof(Offer));
+        public async Task<ActionResult<ApiResponse<OfferDetailsDto>>> GetOffer([FromRoute] int offerId, CancellationToken cancellationToken = default)
+            => OkOrNotFound(await _offerService.GetAsync(offerId, cancellationToken), nameof(Offer));
         [HttpPut("{offerId:int}/accept")]
-        public async Task<ActionResult> AcceptOffer([FromRoute]int offerId)
+        public async Task<ActionResult> AcceptOffer([FromRoute]int offerId, CancellationToken cancellationToken = default)
         {
-            await _offerService.AcceptAsync(offerId);
+            await _offerService.AcceptAsync(offerId, cancellationToken);
             return NoContent();
         }
         [HttpPut("{offerId:int}/reject")]
-        public async Task<ActionResult> RejectOffer([FromRoute]int offerId)
+        public async Task<ActionResult> RejectOffer([FromRoute]int offerId, CancellationToken cancellationToken = default)
         {
-            await _offerService.RejectAsync(offerId);
+            await _offerService.RejectAsync(offerId, cancellationToken);
             return NoContent();
         }
     }

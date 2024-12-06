@@ -13,8 +13,8 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<CartProduct> builder)
         {
-            //builder.Property(cp => cp.Quantity)
-            //    .IsRequired();
+            builder.Property(cp => cp.Quantity)
+                .IsRequired();
             builder.Property(cp => cp.ProductId)
                 .IsRequired();
             builder.Property(cp => cp.CartId)

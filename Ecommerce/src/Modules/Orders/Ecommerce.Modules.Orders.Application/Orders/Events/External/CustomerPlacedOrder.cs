@@ -21,7 +21,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External
         public string PostalCode { get; set; } = string.Empty;
         public string StreetName { get; set; } = string.Empty;
         public string StreetNumber { get; set; } = string.Empty;
-        public string ApartmentNumber { get; set; } = string.Empty;
+        public string? ApartmentNumber { get; set; }
         public string PaymentMethod { get; set; } = string.Empty;
         public string? AdditionalInformation { get; set; }
         public string? DiscountCode { get; set; }

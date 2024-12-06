@@ -11,8 +11,6 @@ namespace Ecommerce.Modules.Carts.Core.Entities
 {
     public class Product : BaseEntity
     {
-        //[JsonInclude]
-        //public Guid Id { get; private set; }
         [JsonInclude]
         public string SKU { get; private set; } = string.Empty;
         [JsonInclude]
@@ -34,7 +32,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             Quantity = quantity;
             ImagePathUrl = imagePathUrl;
         }
-        public Product()
+        private Product()
         {
             
         }

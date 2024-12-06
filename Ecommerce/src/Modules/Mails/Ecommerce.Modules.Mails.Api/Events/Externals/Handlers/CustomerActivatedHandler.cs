@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Mails.Api.DAL;
 using Ecommerce.Modules.Mails.Api.Entities;
+using Ecommerce.Modules.Mails.Api.Events.Externals;
 using Ecommerce.Shared.Abstractions.Events;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Mails.Api.Events.Handlers
+namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
 {
     internal class CustomerActivatedHandler : IEventHandler<CustomerActivated>
     {

@@ -29,33 +29,32 @@ namespace Ecommerce.Modules.Mails.Api.Controllers
         {
             _mailService = mailService;
         }
-        [HttpPost()]
+        [HttpPost]
         public async Task<ActionResult> SendMail([FromForm]MailSendDefaultBodyDto dto)
         {
             await _mailService.SendAsync(dto);
             return NoContent();
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<CursorPagedResult<MailBrowseDto, MailCursorDto>>>> BrowseMails([FromQuery]MailCursorDto dto, bool? isNextPage, int pageSize)
+        public async Task<ActionResult<ApiResponse<CursorPagedResult<MailBrowseDto, MailCursorDto>>>> BrowseMails([FromQuery]MailCursorDto dto, bool? isNextPage, int pageSize, 
+            CancellationToken cancellationToken = default)
+            => Ok(new ApiResponse<CursorPagedResult<MailBrowseDto, MailCursorDto>>(HttpStatusCode.OK, 
+                await _mailService.BrowseAsync(dto, isNextPage, pageSize, cancellationToken)));
+        [HttpGet("{mailId:int}")]
+        public async Task<ActionResult<ApiResponse<MailDetailsDto>>> GetMail([FromRoute] int mailId)
+            => OkOrNotFound(await _mailService.GetAsync(mailId), mailId, "Mail");
+        private ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse>(TResponse? model, int mailId, string entityName)
         {
-            var result = await _mailService.BrowseAsync(dto, isNextPage, pageSize);
-            return Ok(new ApiResponse<CursorPagedResult<MailBrowseDto, MailCursorDto>>(HttpStatusCode.OK, result));
+            if (model is not null)
+            {
+                return Ok(new ApiResponse<TResponse>(HttpStatusCode.OK, model));
+            }
+            return NotFound(new ProblemDetails()
+            {
+                Type = _notFoundTypeUrl,
+                Title = $"{entityName}: {mailId} was not found.",
+                Status = (int)HttpStatusCode.NotFound
+            });
         }
-        //[HttpGet("{mailId:int}")]
-        //public async Task<ActionResult<ApiResponse<MailDetailsDto>>> GetMail([FromRoute]int mailId)
-        //    => OkOrNotFound(await _mailService.GetAsync(mailId), mailId, "Mail");
-        //private ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse>(TResponse? model, int mailId, string entityName)
-        //{
-        //    if (model is not null)
-        //    {
-        //        return Ok(new ApiResponse<TResponse>(HttpStatusCode.OK, model));
-        //    }
-        //    return NotFound(new ProblemDetails()
-        //    {
-        //        Type = _notFoundTypeUrl,
-        //        Title = $"{entityName}: {mailId} was not found.",
-        //        Status = (int)HttpStatusCode.NotFound
-        //    });
-        //}
     }
 }

@@ -11,10 +11,10 @@ namespace Ecommerce.Modules.Users.Core.Services
 {
     public interface ICustomerService
     {
-        Task DeleteAsync(Guid customerId);
-        Task<PagedResult<CustomerBrowseDto>> BrowseAsync(SieveModel model);
-        Task<CustomerDetailsDto> GetAsync(Guid customerId);
-        Task UpdateAsync(CustomerUpdateDto dto);
-        Task SetActiveAsync(Guid customerId, bool isActive);
+        Task DeleteAsync(Guid customerId, CancellationToken cancellationToken = default);
+        Task<PagedResult<CustomerBrowseDto>> BrowseAsync(SieveModel model, CancellationToken cancellationToken = default);
+        Task<CustomerDetailsDto> GetAsync(Guid customerId, CancellationToken cancellationToken = default);
+        Task UpdateAsync(CustomerUpdateDto dto, CancellationToken cancellationToken = default);
+        Task SetActiveAsync(Guid customerId, bool isActive, CancellationToken cancellationToken = default);
     }
 }

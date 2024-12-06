@@ -17,7 +17,7 @@ namespace Ecommerce.Modules.Users.Core.Entities
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string Username {  get; set; } = string.Empty;
-        public Role Role { get; set; } = new();
+        public Role Role { get; set; } = default!;
         public int RoleId { get; set; }
         public RefreshToken? RefreshToken { get; set; }
         public DateTime? LockoutEnd { get; set; }

@@ -15,14 +15,14 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Services.Externals
 {
-    internal class StripeService : IStripeService
+    internal class PaymentProcessorService : IPaymentProcessorService
     {
         private readonly StripeOptions _stripeOptions;
-        private readonly ILogger<StripeService> _logger;
+        private readonly ILogger<PaymentProcessorService> _logger;
         private readonly RequestOptions _requestOptions;
         private readonly decimal _defaultDeliveryPrice = 15;
 
-        public StripeService(StripeOptions stripeOptions, ILogger<StripeService> logger)
+        public PaymentProcessorService(StripeOptions stripeOptions, ILogger<PaymentProcessorService> logger)
         {
             _stripeOptions = stripeOptions;
             _logger = logger;
@@ -31,7 +31,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                 ApiKey = _stripeOptions.ApiKey
             };
         }
-        public async Task<CheckoutStripeSessionDto> CheckoutAsync(CheckoutCart checkoutCart)
+        public async Task<CheckoutStripeSessionDto> CheckoutAsync(CheckoutCart checkoutCart, CancellationToken cancellationToken = default)
         {
             var lineItems = new List<SessionLineItemOptions>();
             foreach (var product in checkoutCart.Products)
@@ -46,14 +46,12 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                 {
                     PriceData = new SessionLineItemPriceDataOptions()
                     {
-                        //UnitAmount = (long)Math.Truncate(product.Product.Price),
                         UnitAmountDecimal = productPrice * 100,
                         Currency = _stripeOptions.Currency,
                         ProductData = new SessionLineItemPriceDataProductDataOptions()
                         {
                             Name = product.Product.Name,
-                            //Images = new List<string>() { product.Product.ImagePathUrl }
-                            Images = new List<string>() { _stripeOptions.BlobStorageUrl + product.Product.ImagePathUrl },
+                            Images = [_stripeOptions.BlobStorageUrl + product.Product.ImagePathUrl],
                             Metadata = new Dictionary<string, string>()
                             {
                                 { "SKU", product.Product.SKU }
@@ -74,8 +72,8 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                 ],
                 LineItems = lineItems,
                 Mode = _stripeOptions.Mode,
-                ShippingOptions = new List<SessionShippingOptionOptions>()
-                {
+                ShippingOptions =
+                [
                     new SessionShippingOptionOptions()
                     {
                         ShippingRateData = new SessionShippingOptionShippingRateDataOptions()
@@ -89,7 +87,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                             Type = "fixed_amount"
                         }
                     }
-                }
+                ]
             };
             if (checkoutCart.Discount is not null && checkoutCart.Discount.StripePromotionCodeId is not null)
             {
@@ -102,10 +100,10 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                 ];
             }
             var sessionService = new SessionService();
-            var session = await sessionService.CreateAsync(sessionOptions, _requestOptions);
+            var session = await sessionService.CreateAsync(sessionOptions, _requestOptions, cancellationToken);
             if(session.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
-                throw new StripeException("Failed to process Stripe request.");
+                throw new StripeFailedRequestException();
             }
             _logger.LogInformation("Session created: {session}", session);
             return session.AsDto();

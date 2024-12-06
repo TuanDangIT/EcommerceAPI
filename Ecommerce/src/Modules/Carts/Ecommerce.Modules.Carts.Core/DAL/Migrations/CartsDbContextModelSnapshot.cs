@@ -29,8 +29,14 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid?>("CustomerId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -76,6 +82,9 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int?>("DiscountId")
                         .HasColumnType("integer");
 
@@ -90,6 +99,9 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 
                     b.Property<string>("StripeSessionId")
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -146,6 +158,9 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
                         .HasColumnType("text");
@@ -158,6 +173,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         new
                         {
                             Id = new Guid("db7346d0-b93e-402a-8025-75b393434c26"),
+                            IsActive = true,
                             PaymentMethod = "card"
                         });
                 });
@@ -228,49 +244,12 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .WithMany("CheckoutCarts")
                         .HasForeignKey("PaymentId");
 
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.Customer", "Customer", b1 =>
-                        {
-                            b1.Property<Guid>("CheckoutCartId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid?>("CustomerId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Email")
-                                .IsRequired()
-                                .HasMaxLength(64)
-                                .HasColumnType("character varying(64)");
-
-                            b1.Property<string>("FirstName")
-                                .IsRequired()
-                                .HasMaxLength(48)
-                                .HasColumnType("character varying(48)");
-
-                            b1.Property<string>("LastName")
-                                .IsRequired()
-                                .HasMaxLength(48)
-                                .HasColumnType("character varying(48)");
-
-                            b1.Property<string>("PhoneNumber")
-                                .IsRequired()
-                                .HasMaxLength(16)
-                                .HasColumnType("character varying(16)");
-
-                            b1.HasKey("CheckoutCartId");
-
-                            b1.ToTable("CheckoutCarts", "carts");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CheckoutCartId");
-                        });
-
                     b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.Shipment", "Shipment", b1 =>
                         {
                             b1.Property<Guid>("CheckoutCartId")
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("AparmentNumber")
-                                .IsRequired()
                                 .HasMaxLength(8)
                                 .HasColumnType("character varying(8)");
 
@@ -298,6 +277,42 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                                 .IsRequired()
                                 .HasMaxLength(8)
                                 .HasColumnType("character varying(8)");
+
+                            b1.HasKey("CheckoutCartId");
+
+                            b1.ToTable("CheckoutCarts", "carts");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CheckoutCartId");
+                        });
+
+                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.ValueObjects.Customer", "Customer", b1 =>
+                        {
+                            b1.Property<Guid>("CheckoutCartId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<Guid?>("CustomerId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Email")
+                                .IsRequired()
+                                .HasMaxLength(64)
+                                .HasColumnType("character varying(64)");
+
+                            b1.Property<string>("FirstName")
+                                .IsRequired()
+                                .HasMaxLength(48)
+                                .HasColumnType("character varying(48)");
+
+                            b1.Property<string>("LastName")
+                                .IsRequired()
+                                .HasMaxLength(48)
+                                .HasColumnType("character varying(48)");
+
+                            b1.Property<string>("PhoneNumber")
+                                .IsRequired()
+                                .HasMaxLength(16)
+                                .HasColumnType("character varying(16)");
 
                             b1.HasKey("CheckoutCartId");
 

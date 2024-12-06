@@ -19,6 +19,7 @@ using Sieve.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using static Sieve.Extensions.MethodInfoExtended;
@@ -28,34 +29,33 @@ namespace Ecommerce.Modules.Discounts.Core.Services
     internal class DiscountService : IDiscountService
     {
         private readonly IDiscountDbContext _dbContext;
-        private readonly IStripeService _stripeService;
+        private readonly IPaymentProcessorService _paymentProcessorService;
         private readonly ISieveProcessor _sieveProcessor;
         private readonly IMessageBroker _messageBroker;
         private readonly ILogger<DiscountService> _logger;
         private readonly IContextService _contextService;
 
-        public DiscountService(IDiscountDbContext dbContext, IStripeService stripeService, IEnumerable<ISieveProcessor> sieveProcessors, IMessageBroker messageBroker,
+        public DiscountService(IDiscountDbContext dbContext, IPaymentProcessorService paymentProcessorService, IEnumerable<ISieveProcessor> sieveProcessors, IMessageBroker messageBroker,
             ILogger<DiscountService> logger, IContextService contextService)
         {
             _dbContext = dbContext;
-            _stripeService = stripeService;
+            _paymentProcessorService = paymentProcessorService;
             _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(DiscountsModuleSieveProcessor));
             _messageBroker = messageBroker;
             _logger = logger;
             _contextService = contextService;
         }
 
-        public async Task<PagedResult<DiscountBrowseDto>> BrowseDiscountsAsync(string stripeCouponId, SieveModel model)
+        public async Task<PagedResult<DiscountBrowseDto>> BrowseDiscountsAsync(string stripeCouponId, SieveModel model, CancellationToken cancellationToken = default)
         {
             if (model.PageSize is null || model.Page is null)
             {
                 throw new PaginationException();
             }
-            var coupon = await _dbContext.Coupons.SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId);
-            if (coupon is null)
-            {
+            var coupon = await _dbContext.Coupons
+                .Select(c => new { c.Id, c.StripeCouponId })
+                .SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId) ?? 
                 throw new CouponNotFoundException(stripeCouponId);
-            }
             var discounts = _dbContext.Discounts
                 .AsNoTracking()
                 .AsQueryable();
@@ -63,44 +63,45 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 .Apply(model, discounts)
                 .Where(d => d.CouponId == coupon.Id)
                 .Select(d => d.AsBrowseDto())
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             var totalCount = await _sieveProcessor
                 .Apply(model, discounts, applyPagination: false, applySorting: false)
                 .Where(d => d.CouponId == coupon.Id)
-                .CountAsync();
+                .CountAsync(cancellationToken);
             var pagedResult = new PagedResult<DiscountBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
             return pagedResult;
         }
 
-        public async Task CreateAsync(string stripeCouponId, DiscountCreateDto dto)
+        public async Task CreateAsync(string stripeCouponId, DiscountCreateDto dto, CancellationToken cancellationToken = default)
         {
-            var discount = await _dbContext.Discounts.SingleOrDefaultAsync(d => d.Code == dto.Code);
+            var discount = await _dbContext.Discounts
+                .Select(d => d.Code)
+                .SingleOrDefaultAsync(code => code == dto.Code, cancellationToken);
             if (discount is not null)
             {
                 throw new DiscountCodeAlreadyInUseException(dto.Code);
             }
-            var coupon = await _dbContext.Coupons.SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId);
-            if(coupon is null)
-            {
+            var coupon = await _dbContext.Coupons.SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId, cancellationToken) ?? 
                 throw new CouponNotFoundException(stripeCouponId);
-            }
-            var stripePromotionCodeId = await _stripeService.CreateDiscountAsync(stripeCouponId, dto);
+            var stripePromotionCodeId = await _paymentProcessorService.CreateDiscountAsync(stripeCouponId, dto, cancellationToken);
             coupon.AddDiscount(new Discount(dto.Code, stripePromotionCodeId, dto.EndingDate));
             await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Discount: {discount} was created for coupon: {coupon} by {username}:{userId}.", dto, coupon, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            _logger.LogInformation("Discount with given details: {@discount} was created for coupon: {@coupon} by {@user}.", dto, coupon, 
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
 
-        public async Task ActivateAsync(string code)
+        public async Task ActivateAsync(string code, CancellationToken cancellationToken = default)
         {
-            var discount = await GetDiscountOrThrowIfNull(code);
+            var discount = await GetDiscountOrThrowIfNullAsync(code, cancellationToken, d => d.Coupon);
             if(discount.IsActive is true)
             {
                 throw new DiscountAlreadyActivated(code);
             }
-            await _stripeService.ActivateDiscountAsync(discount.StripePromotionCodeId);
+            await _paymentProcessorService.ActivateDiscountAsync(discount.StripePromotionCodeId, cancellationToken);
             discount.Activate();
             await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Discount: {discount} was activated by {username}:{userId}.", discount, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            _logger.LogInformation("Discount: {@discount} was activated by {@user}.", discount, 
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             var coupon = discount.Coupon;
             switch (coupon)
             {
@@ -115,28 +116,35 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             }
         }
 
-        public async Task DeactivateAsync(string code)
+        public async Task DeactivateAsync(string code, CancellationToken cancellationToken = default)
         {
-            var discount = await GetDiscountOrThrowIfNull(code);
+            var discount = await GetDiscountOrThrowIfNullAsync(code, cancellationToken);
             if(discount.IsActive is false)
             {
                 throw new DiscountAlreadyDeactivated(code); 
             }
-            await _stripeService.DeactivateDiscountAsync(discount.StripePromotionCodeId);
+            await _paymentProcessorService.DeactivateDiscountAsync(discount.StripePromotionCodeId, cancellationToken);
             discount.Deactive();
             await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Discount: {discount} was deactivated by {username}:{userId}.", discount, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            _logger.LogInformation("Discount: {@discount} was deactivated by {@user}.", discount,
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new DiscountDeactivated(discount.Code));
         }
-        private async Task<Discount> GetDiscountOrThrowIfNull(string code)
+        private async Task<Discount> GetDiscountOrThrowIfNullAsync(string code, CancellationToken cancellationToken = default,
+            params Expression<Func<Discount, object?>>[] includes)
         {
-            var discount = await _dbContext.Discounts
-                .Include(d => d.Coupon)
-                .SingleOrDefaultAsync(d => d.Code == code);
-            if (discount is null)
+            var discounts = _dbContext.Discounts
+                .AsQueryable();
+            if (includes is not null)
             {
-                throw new DiscountNotFoundException(code);
+                foreach (var include in includes)
+                {
+                    discounts = discounts.Include(include);
+                }
             }
+            var discount = await _dbContext.Discounts
+                .SingleOrDefaultAsync(d => d.Code == code, cancellationToken) ?? 
+                throw new DiscountNotFoundException(code);
             return discount;
         }
     }

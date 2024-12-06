@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Carts.Core.Entities
+namespace Ecommerce.Modules.Carts.Core.Entities.ValueObjects
 {
     public class Shipment
     {
@@ -14,8 +14,8 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public string PostalCode { get; private set; } = string.Empty;
         public string StreetName { get; private set; } = string.Empty;
         public string StreetNumber { get; private set; } = string.Empty;
-        public string AparmentNumber { get; private set; } = string.Empty;   
-        public Shipment(string country, string city, string postalCode, string streetName, string streetNumber, string apartmentNumber)
+        public string? AparmentNumber { get; private set; }
+        public Shipment(string country, string city, string postalCode, string streetName, string streetNumber, string? apartmentNumber)
         {
             Country = country;
             City = city;
@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public Shipment()
         {
-            
+
         }
     }
 }

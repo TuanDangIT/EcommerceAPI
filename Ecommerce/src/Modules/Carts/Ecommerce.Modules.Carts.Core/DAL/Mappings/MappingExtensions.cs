@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Carts.Core.DTO;
 using Ecommerce.Modules.Carts.Core.Entities;
+using Ecommerce.Modules.Carts.Core.Entities.ValueObjects;
 using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
@@ -44,19 +45,6 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
                 ImagePathUrl = product.Product.ImagePathUrl,
                 Quantity = product.Quantity
             };
-        public static PaymentDto AsDto(this Payment payment)
-            => new()
-            {
-                Id = payment.Id,
-                PaymentMethod = payment.PaymentMethod.ToString(),
-                //IsActive = payment.IsActive
-            };
-        //public static AvailablePaymentDto AsAvailableDto(this Payment payment)
-        //    => new()
-        //    {
-        //        Id = payment.Id,
-        //        PaymentMethod = payment.PaymentMethod.ToString(),
-        //    };
         public static CheckoutStripeSessionDto AsDto(this Session session)
             => new()
             {
@@ -89,6 +77,12 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
                 Type = discount.Type.ToString(),
                 Value = discount.Value,
                 ExpiresAt = discount.ExpiresAt
+            };
+        public static PaymentDto AsDto(this Payment payment)
+            => new()
+            {
+                PaymentMethod = payment.PaymentMethod.ToString(),
+                IsActived = payment.IsActive
             };
     }
 }

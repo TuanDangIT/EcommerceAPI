@@ -3,8 +3,10 @@ using Ecommerce.Modules.Orders.Application.Orders.Exceptions;
 using Ecommerce.Modules.Orders.Application.Shared.Stripe;
 using Ecommerce.Modules.Orders.Domain.Orders.Policies;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
+using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Abstractions.Messaging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,13 +21,18 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
         private readonly IStripeService _stripeService;
         private readonly IMessageBroker _messageBroker;
         private readonly IOrderCancellationPolicy _orderCancellationPolicy;
+        private readonly ILogger<CancelOrderHandler> _logger;
+        private readonly IContextService _contextService;
 
-        public CancelOrderHandler(IOrderRepository orderRepository, IStripeService stripeService, IMessageBroker messageBroker, IOrderCancellationPolicy orderCancellationPolicy)
+        public CancelOrderHandler(IOrderRepository orderRepository, IStripeService stripeService, IMessageBroker messageBroker, IOrderCancellationPolicy orderCancellationPolicy,
+            ILogger<CancelOrderHandler> logger, IContextService contextService)
         {
             _orderRepository = orderRepository;
             _stripeService = stripeService;
             _messageBroker = messageBroker;
             _orderCancellationPolicy = orderCancellationPolicy;
+            _logger = logger;
+            _contextService = contextService;
         }
         public async Task Handle(CancelOrder request, CancellationToken cancellationToken)
         {
@@ -42,6 +49,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
             order.Cancel();
             await _orderRepository.UpdateAsync();
             var products = order.Products;
+            _logger.LogInformation("Order: {order} was cancelled.", order);
             await _messageBroker.PublishAsync(new OrderCancelled(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, products.Select(p => new { p.SKU, p.Quantity }), order.CreatedAt));
         }
     }

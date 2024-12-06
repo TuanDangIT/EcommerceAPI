@@ -12,7 +12,6 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
     public class Discount : BaseEntity<int>, IAuditable
     {
         public string Code { get; private set; } = string.Empty;
-        //public DiscountType Type { get; set; }
         public bool IsActive { get; private set; } = false;
         public int Redemptions { get; private set; } = 0;
         public string StripePromotionCodeId { get; private set; } = string.Empty;
@@ -35,7 +34,7 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
         {
             Code = code;
         }
-        public Discount()
+        private Discount()
         {
             
         }

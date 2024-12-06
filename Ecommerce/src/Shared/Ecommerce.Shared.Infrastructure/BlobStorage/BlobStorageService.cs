@@ -56,7 +56,7 @@ namespace Ecommerce.Shared.Infrastructure.Storage
             {
                 var response = await blobClient.UploadAsync(data, new BlobHttpHeaders()
                 {
-                    ContentType = blob.ContentType /*"application/pdf"*/
+                    ContentType = blob.ContentType
                 });
                 using var rawResponse = response.GetRawResponse();
                 if (rawResponse.IsError)

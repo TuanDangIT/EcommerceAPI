@@ -1,8 +1,10 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.Events;
 using Ecommerce.Modules.Orders.Application.Orders.Exceptions;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
+using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Abstractions.Messaging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +22,14 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrder
         private const string _inPostDeliveredStatus = "collected_from_sender";
         private readonly IOrderRepository _orderRepository;
         private readonly IMessageBroker _messageBroker;
+        private readonly ILogger<HandlerOrderShippedHandler> _logger;
 
-        public HandlerOrderShippedHandler(IOrderRepository orderRepository, IMessageBroker messageBroker)
+        public HandlerOrderShippedHandler(IOrderRepository orderRepository, IMessageBroker messageBroker,
+            ILogger<HandlerOrderShippedHandler> logger)
         {
             _orderRepository = orderRepository;
             _messageBroker = messageBroker;
+            _logger = logger;
         }
         public async Task Handle(HandlerOrderShipped request, CancellationToken cancellationToken)
         {
@@ -44,6 +49,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrder
             order.Ship();
             await _orderRepository.UpdateAsync();
             await _messageBroker.PublishAsync(new OrderShipped(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, order.CreatedAt));
+            _logger.LogInformation("Order's: {order} was changed to shipped by InPost webhook.", order);
         }
     }
 }

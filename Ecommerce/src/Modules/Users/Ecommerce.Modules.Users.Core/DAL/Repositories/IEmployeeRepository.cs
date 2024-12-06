@@ -12,8 +12,8 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
 {
     public interface IEmployeeRepository
     {
-        Task<PagedResult<EmployeeBrowseDto>> GetAllAsync(SieveModel model);
-        Task<Employee?> GetAsync(Guid employeeId, bool asNoTracking);
-        Task AddAsync(Employee employee);
+        Task<PagedResult<EmployeeBrowseDto>> GetAllAsync(SieveModel model, CancellationToken cancellationToken = default);
+        Task<Employee?> GetAsync(Guid employeeId, bool asNoTracking, CancellationToken cancellationToken = default);
+        Task AddAsync(Employee employee, CancellationToken cancellationToken = default);
     }
 }

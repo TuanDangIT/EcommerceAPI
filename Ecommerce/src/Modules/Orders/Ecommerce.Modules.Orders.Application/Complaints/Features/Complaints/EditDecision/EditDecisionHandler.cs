@@ -1,6 +1,8 @@
 ﻿using Ecommerce.Modules.Orders.Application.Complaints.Exceptions;
 using Ecommerce.Modules.Orders.Domain.Complaints.Repositories;
+using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +14,14 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Edi
     internal sealed class EditDecisionHandler : ICommandHandler<EditDecision>
     {
         private readonly IComplaintRepository _complaintRepository;
+        private readonly ILogger<EditDecisionHandler> _logger;
+        private readonly IContextService _contextService;
 
-        public EditDecisionHandler(IComplaintRepository complaintRepository)
+        public EditDecisionHandler(IComplaintRepository complaintRepository, ILogger<EditDecisionHandler> logger, IContextService contextService)
         {
             _complaintRepository = complaintRepository;
+            _logger = logger;
+            _contextService = contextService;
         }
         public async Task Handle(EditDecision request, CancellationToken cancellationToken)
         {
@@ -30,6 +36,8 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Edi
             }
             complaint.EditDecision(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation));
             await _complaintRepository.UpdateAsync();
+            _logger.LogInformation("Decision: {decision} was edited for complaint: {complaint} with new details: {updatingDetails} by {username}:{userId}.", 
+                complaint.Decision, complaint, request.Decision, _contextService.Identity!.Username, _contextService.Identity!.Id);
         }
     }
 }

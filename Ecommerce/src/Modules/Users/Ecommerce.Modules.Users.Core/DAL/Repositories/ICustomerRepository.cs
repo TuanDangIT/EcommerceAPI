@@ -12,7 +12,7 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
 {
     public interface ICustomerRepository
     {
-        Task<PagedResult<CustomerBrowseDto>> GetAllAsync(SieveModel model);
-        Task<Customer?> GetAsync(Guid customerId, bool asNoTracking);
+        Task<PagedResult<CustomerBrowseDto>> GetAllAsync(SieveModel model, CancellationToken cancellationToken = default);
+        Task<Customer?> GetAsync(Guid customerId, bool asNoTracking, CancellationToken cancellationToken = default);
     }
 }

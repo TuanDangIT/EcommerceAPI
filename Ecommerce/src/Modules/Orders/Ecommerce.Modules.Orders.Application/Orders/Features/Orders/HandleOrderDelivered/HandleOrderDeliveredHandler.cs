@@ -2,7 +2,9 @@
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
+using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,14 +17,16 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrder
     internal class HandleOrderDeliveredHandler : ICommandHandler<HandleOrderDelivered>
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly ILogger<HandleOrderDeliveredHandler> _logger;
         private const string _inPostPayloadPropertyName = "payload";
         private const string _inPostTrackingNumberPropertyName = "tracking_number";
         private const string _inPostStatusPropertyName = "status";
         private const string _inPostDeliveredStatus = "delivered";
 
-        public HandleOrderDeliveredHandler(IOrderRepository orderRepository)
+        public HandleOrderDeliveredHandler(IOrderRepository orderRepository, ILogger<HandleOrderDeliveredHandler> logger)
         {
             _orderRepository = orderRepository;
+            _logger = logger;
         }
         public async Task Handle(HandleOrderDelivered request, CancellationToken cancellationToken)
         {
@@ -41,6 +45,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrder
             var order = await _orderRepository.GetAsync(trackingNumber) ?? throw new OrderNotFoundException(trackingNumber);
             order.Complete();
             await _orderRepository.UpdateAsync();
+            _logger.LogInformation("Order's: {order} was changed to completed by InPost webhook.", order);
         }
     }
 }

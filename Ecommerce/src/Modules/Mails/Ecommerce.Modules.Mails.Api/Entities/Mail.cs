@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ecommerce.Shared.Abstractions.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,40 +7,37 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Mails.Api.Entities
 {
-    internal class Mail
+    internal class Mail : BaseEntity<int>
     {
-        public int Id { get; set; }
-        public string From { get; set; } = string.Empty;
-        public string To { get; set; } = string.Empty;
-        public string Subject { get; set; } = string.Empty;
-        public string Body { get; set; } = string.Empty;
-        //public string? PdfUrlPath { get; set; }
-        public Guid? OrderId { get; set; }
-        //public IEnumerable<string>? AttachmentFileNames { get; set; } 
-        public DateTime CreatedAt { get; set; }
-        public Customer? Customer { get; set; } 
-        public Guid? CustomerId { get; set; }
-        //public IEnumerable<Stream> Streams { get; set; } = [];
-        public Mail(string from, string to, string subject, string body, Customer customer, Guid? orderId/*, IEnumerable<string>? attachmentFileNames*/)
+        public string From { get; private set; } = string.Empty;
+        public string To { get; private set; } = string.Empty;
+        public string Subject { get; private set; } = string.Empty;
+        public string Body { get; private set; } = string.Empty;
+        public Guid? OrderId { get; private set; }
+        public IEnumerable<string>? AttachmentFileNames { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public Customer? Customer { get; private set; } 
+        public Guid? CustomerId { get; private set; }
+        public Mail(string from, string to, string subject, string body, Customer customer, Guid? orderId, IEnumerable<string>? attachmentFileNames)
         {
             From = from;
             To = to; 
             Subject = subject; 
             Body = body;
             Customer = customer;
-            //AttachmentFileNames = attachmentFileNames;
+            AttachmentFileNames = attachmentFileNames;
             OrderId = orderId;
         }
-        public Mail(string from, string to, string subject, string body, Guid? orderId/*, IEnumerable<string>? attachmentFileNames*/)
+        public Mail(string from, string to, string subject, string body, Guid? orderId, IEnumerable<string>? attachmentFileNames)
         {
             From = from;
             To = to;
             Subject = subject;
             Body = body;
-            //AttachmentFileNames = attachmentFileNames;
+            AttachmentFileNames = attachmentFileNames;
             OrderId = orderId;
         }
-        public Mail()
+        private Mail()
         {
             
         }

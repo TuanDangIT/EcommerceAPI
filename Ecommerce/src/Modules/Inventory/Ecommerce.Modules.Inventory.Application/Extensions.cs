@@ -18,6 +18,7 @@ namespace Ecommerce.Modules.Inventory.Application
 {
     public static class Extensions
     {
+        private const string _sieveSectionName = "Sieve";
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddMediatR(cfg =>
@@ -30,7 +31,7 @@ namespace Ecommerce.Modules.Inventory.Application
                 .AddClasses(c => c.AssignableTo(typeof(IValidator<>)))
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
-            services.Configure<SieveOptions>(configuration.GetSection("Sieve"));
+            services.Configure<SieveOptions>(configuration.GetSection(_sieveSectionName));
             services.AddScoped<ISieveProcessor, InventoryModuleSieveProcessor>();
             services.AddScoped<ISieveCustomFilterMethods, SieveCustomFilterMethods>();
             return services;

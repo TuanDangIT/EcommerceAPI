@@ -21,14 +21,14 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL
         public DbSet<Shipment> Shipments { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
-        public const string Schema = "orders";
+        private const string _schema = "orders";
         public OrdersDbContext(DbContextOptions<OrdersDbContext> options) : base(options)
         {
             
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema(Schema);
+            modelBuilder.HasDefaultSchema(_schema);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

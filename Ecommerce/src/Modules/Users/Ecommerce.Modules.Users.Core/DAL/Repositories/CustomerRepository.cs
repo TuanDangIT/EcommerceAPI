@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
             _dbContext = dbContext;
             _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(UsersModuleSieveProcessor));
         }
-        public async Task<PagedResult<CustomerBrowseDto>> GetAllAsync(SieveModel model)
+        public async Task<PagedResult<CustomerBrowseDto>> GetAllAsync(SieveModel model, CancellationToken cancellationToken = default)
         {
             if (model.PageSize is null || model.Page is null)
             {
@@ -40,16 +40,16 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
                 .Where(u => u.Type == UserType.Customer)
                 .Cast<Customer>()
                 .Select(c => c.AsBrowseDto())
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             var totalCount = await _sieveProcessor
                 .Apply(model, coupons, applyPagination: false, applySorting: false)
                 .Where(u => u.Type == UserType.Customer)
-                .CountAsync();
+                .CountAsync(cancellationToken);
             var pagedResult = new PagedResult<CustomerBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
             return pagedResult;
         }
 
-        public async Task<Customer?> GetAsync(Guid customerId, bool asNoTracking)
+        public async Task<Customer?> GetAsync(Guid customerId, bool asNoTracking, CancellationToken cancellationToken = default)
         {
             var query = _dbContext.Users
                 .Where(u => u.Type == UserType.Customer)
@@ -60,7 +60,7 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
                 query.AsNoTracking();
             }
             return await query
-                .SingleOrDefaultAsync(u => u.Id == customerId);
+                .SingleOrDefaultAsync(u => u.Id == customerId, cancellationToken);
         }
     }
 }

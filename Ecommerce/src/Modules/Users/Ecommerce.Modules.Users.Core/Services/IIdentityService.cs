@@ -11,11 +11,8 @@ namespace Ecommerce.Modules.Users.Core.Services
     public interface IIdentityService
     {
         Task<JsonWebToken> SignInAsync(SignInDto dto);
-        Task SignUpAsync(SignUpDto dto);
-        Task<UserDto?> GetAsync(Guid id);
-        //Task<UserDto?> GetAsync(string email);
-        //Task UpdateAsync(UserDto userDto);
-        //Task DeleteAsync(Guid id);
-        Task<JsonWebToken> RefreshTokenAsync(TokenDto dto);
+        Task SignUpAsync(SignUpDto dto, CancellationToken cancellationToken = default);
+        Task<UserDto?> GetAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<JsonWebToken> RefreshTokenAsync(TokenDto dto, CancellationToken cancellationToken = default);
     }
 }

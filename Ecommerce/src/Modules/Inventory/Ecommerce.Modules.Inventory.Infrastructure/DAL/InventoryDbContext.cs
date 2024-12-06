@@ -20,14 +20,14 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL
         public DbSet<Category> Categories { get; set; }
         public DbSet<Auction> Auctions { get; set; }
         public DbSet<Review> Reviews { get; set; }
-        public const string Schema = "inventory";
+        private const string _schema = "inventory";
         public InventoryDbContext(DbContextOptions<InventoryDbContext> options) : base(options)
         {
             
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema(Schema);
+            modelBuilder.HasDefaultSchema(_schema);
             modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Ecommerce.Modules.Users.Core.DTO;
+using Ecommerce.Modules.Users.Core.Entities;
 using Ecommerce.Modules.Users.Core.Services;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
@@ -22,7 +23,6 @@ namespace Ecommerce.Modules.Users.Api.Controllers
     internal class CustomerController : BaseController
     {
         private readonly ICustomerService _customerService;
-        private const string CustomerEntityName = "Customer";
 
         public CustomerController(ICustomerService customerService)
         {
@@ -33,7 +33,7 @@ namespace Ecommerce.Modules.Users.Api.Controllers
             => PagedResult(await _customerService.BrowseAsync(model));
         [HttpGet("{customerId:guid}")]
         public async Task<ActionResult<ApiResponse<CustomerDetailsDto>>> GetCustomer([FromRoute] Guid customerId)
-            => OkOrNotFound(await _customerService.GetAsync(customerId), CustomerEntityName);
+            => OkOrNotFound(await _customerService.GetAsync(customerId), nameof(Customer));
         [HttpDelete("{customerId:guid}")]
         public async Task<ActionResult> DeleteCustomer([FromRoute] Guid customerId)
         {

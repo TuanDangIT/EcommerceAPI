@@ -45,7 +45,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             }
             ExpiresAt = expiresAt;
         }
-        public Discount()
+        private Discount()
         {
             
         }

@@ -19,6 +19,8 @@ using Ecommerce.Shared.Abstractions.Messaging;
 using Ecommerce.Modules.Orders.Application.Orders.Services;
 using Ecommerce.Shared.Infrastructure.Stripe;
 using Ecommerce.Modules.Orders.Application.Orders.Events;
+using Microsoft.Extensions.Logging;
+using Ecommerce.Shared.Abstractions.Contexts;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInvoice
 {
@@ -32,13 +34,16 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
         private readonly StripeOptions _stripeOptions;
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly TimeProvider _timeProvider;
+        private readonly ILogger<CreateInvoiceHandler> _logger;
+        private readonly IContextService _contextService;
         private const string _invoiceTemplatePath = "Orders\\InvoiceTemplates\\Invoice.html";
         private const string _containerName = "invoices";
         private readonly decimal _defaultDeliveryPrice = 15;
         private readonly string _contentType = "application/pdf";
 
         public CreateInvoiceHandler(IOrderRepository orderRepository, IBlobStorageService blobStorageService, IOrderInvoiceCreationPolicy orderInvoiceCreationPolicy,
-            IMessageBroker messageBroker, CompanyOptions companyOptions, StripeOptions stripeOptions, IInvoiceRepository invoiceRepository, TimeProvider timeProvider)
+            IMessageBroker messageBroker, CompanyOptions companyOptions, StripeOptions stripeOptions, IInvoiceRepository invoiceRepository, TimeProvider timeProvider,
+            ILogger<CreateInvoiceHandler> logger, IContextService contextService)
         {
             _orderRepository = orderRepository;
             _blobStorageService = blobStorageService;
@@ -48,6 +53,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
             _stripeOptions = stripeOptions;
             _invoiceRepository = invoiceRepository;
             _timeProvider = timeProvider;
+            _logger = logger;
+            _contextService = contextService;
         }
         public async Task<string> Handle(CreateInvoice request, CancellationToken cancellationToken)
         {
@@ -73,6 +80,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
             file.ContentType = _contentType;
             await _blobStorageService.UploadAsync(file, invoiceNo, _containerName);
             await _invoiceRepository.CreateAsync(new Domain.Orders.Entities.Invoice(invoiceNo, order));
+            _logger.LogInformation("Invoice: {invoiceNo} was created for order: {order} by {username}:{userId}.", invoiceNo, order, _contextService.Identity!.Username, _contextService.Identity!.Id);
             await _messageBroker.PublishAsync(new InvoiceCreated(order.Id, order.Customer.Id, order.Customer.FirstName, order.Customer.Email, invoiceNo));
             return invoiceNo;
         }

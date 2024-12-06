@@ -25,23 +25,23 @@ namespace Ecommerce.Modules.Discounts.Core.Services
     internal class CouponService : ICouponService
     {
         private readonly IDiscountDbContext _dbContext;
-        private readonly IStripeService _stripeService;
+        private readonly IPaymentProcessorService _paymentProcessorService;
         private readonly IMessageBroker _messageBroker;
         private readonly ILogger<CouponService> _logger;
         private readonly IContextService _contextService;
         private readonly ISieveProcessor _sieveProcessor;
 
-        public CouponService(IDiscountDbContext dbContext, IStripeService stripeService, IMessageBroker messageBroker, IEnumerable<ISieveProcessor> sieveProcessors,
+        public CouponService(IDiscountDbContext dbContext, IPaymentProcessorService paymentProcessorService, IMessageBroker messageBroker, IEnumerable<ISieveProcessor> sieveProcessors,
             ILogger<CouponService> logger, IContextService contextService)
         {
             _dbContext = dbContext;
-            _stripeService = stripeService;
+            _paymentProcessorService = paymentProcessorService;
             _messageBroker = messageBroker;
             _logger = logger;
             _contextService = contextService;
             _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(DiscountsModuleSieveProcessor));
         }
-        public async Task<PagedResult<NominalCouponBrowseDto>> BrowseNominalCouponsAsync(SieveModel model)
+        public async Task<PagedResult<NominalCouponBrowseDto>> BrowseNominalCouponsAsync(SieveModel model, CancellationToken cancellationToken = default)
         {
             if (model.PageSize is null || model.Page is null)
             {
@@ -52,19 +52,18 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 .AsQueryable();
             var dtos = await _sieveProcessor
                 .Apply(model, coupons)
-                .Where(c => c.Type == CouponType.NominalCoupon)
-                .Cast<NominalCoupon>()
+                .OfType<NominalCoupon>()
                 .Select(nd => nd.AsNominalBrowseDto())
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             var totalCount = await _sieveProcessor
                 .Apply(model, coupons, applyPagination: false, applySorting: false)
-                .Where(c => c.Type == CouponType.NominalCoupon)
-                .CountAsync();
+                .OfType<NominalCoupon>()
+                .CountAsync(cancellationToken);
             var pagedResult = new PagedResult<NominalCouponBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
             return pagedResult;
         }
 
-        public async Task<PagedResult<PercentageCouponBrowseDto>> BrowsePercentageCouponsAsync(SieveModel model)
+        public async Task<PagedResult<PercentageCouponBrowseDto>> BrowsePercentageCouponsAsync(SieveModel model, CancellationToken cancellationToken = default)
         {
             if (model.PageSize is null || model.Page is null)
             {
@@ -75,43 +74,42 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 .AsQueryable();
             var dtos = await _sieveProcessor
                 .Apply(model, coupons)
-                .Where(c => c.Type == CouponType.PercentageCoupon)
-                .Cast<PercentageCoupon>()
+                .OfType<PercentageCoupon>()
                 .Select(nd => nd.AsPercentageBrowseDto())
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             var totalCount = await _sieveProcessor
                 .Apply(model, coupons, applyPagination: false, applySorting: false)
-                .Where(c => c.Type == CouponType.NominalCoupon)
-                .CountAsync();
+                .OfType<PercentageCoupon>()
+                .CountAsync(cancellationToken);
             var pagedResult = new PagedResult<PercentageCouponBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
             return pagedResult;
         }
 
-        public async Task CreateAsync(NominalCouponCreateDto dto)
+        public async Task CreateAsync(NominalCouponCreateDto dto, CancellationToken cancellationToken = default)
         {
-            var stripeCouponId = await _stripeService.CreateCouponAsync(dto);
+            var stripeCouponId = await _paymentProcessorService.CreateCouponAsync(dto, cancellationToken);
             await _dbContext.Coupons.AddAsync(new NominalCoupon(dto.Name, dto.NominalValue, stripeCouponId));
             await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Nominal coupon: {coupon} was created by {username}:{userId}.", dto, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            _logger.LogInformation("Nominal coupon with given details: {@coupon} was created by {@user}.", dto, 
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
 
-        public async Task CreateAsync(PercentageCouponCreateDto dto)
+        public async Task CreateAsync(PercentageCouponCreateDto dto, CancellationToken cancellationToken = default)
         {
-            var stripeCouponId = await _stripeService.CreateCouponAsync(dto);
+            var stripeCouponId = await _paymentProcessorService.CreateCouponAsync(dto, cancellationToken);
             await _dbContext.Coupons.AddAsync(new PercentageCoupon(dto.Name, dto.Percent, stripeCouponId));
             await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Percentage coupon: {coupon} was created by {username}:{userId}.", dto, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            _logger.LogInformation("Percentage coupon with given details: {@coupon} was created by {@user}.", dto,
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
 
-        public async Task DeleteAsync(string stripeCouponId)
+        public async Task DeleteAsync(string stripeCouponId, CancellationToken cancellationToken = default)
         {
             var coupon = await _dbContext.Coupons
                 .Include(c => c.Discounts)
-                .SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId);
-            if(coupon is null)
-            {
+                .SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId, cancellationToken) ?? 
                 throw new CouponNotFoundException(stripeCouponId);
-            }
+            await _paymentProcessorService.DeleteCouponAsync(stripeCouponId, cancellationToken);
             if (coupon.Discounts.Any())
             {
                 foreach(var discount in coupon.Discounts)
@@ -119,23 +117,21 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                     await _messageBroker.PublishAsync(new DiscountDeactivated(discount.Code));
                 }
             }
-            await _stripeService.DeleteCouponAsync(stripeCouponId);
             _dbContext.Coupons.Remove(coupon);
             await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Coupon: {coupon} was deleted by {username}:{userId}.", coupon, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            _logger.LogInformation("Coupon: {@coupon} was deleted by {@user}.", coupon,
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
 
-        public async Task UpdateNameAsync(string stripeCouponId, CouponUpdateNameDto dto)
+        public async Task UpdateNameAsync(string stripeCouponId, CouponUpdateNameDto dto, CancellationToken cancellationToken = default)
         {
-            var coupon = await _dbContext.Coupons.SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId);
-            if(coupon is null)
-            {
+            var coupon = await _dbContext.Coupons.SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId, cancellationToken) ?? 
                 throw new CouponNotFoundException(stripeCouponId);
-            }
             coupon.ChangeName(dto.Name);
-            await _stripeService.UpdateCouponName(stripeCouponId, dto.Name);
+            await _paymentProcessorService.UpdateCouponName(stripeCouponId, dto.Name, cancellationToken);
             await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Coupon: {coupon} was updated with new details: {updatingDetails} by {username}:{userId}.", coupon, dto, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            _logger.LogInformation("Coupon: {@coupon} was updated with new details: {@updatingDetails} by {@user}.", coupon, dto,
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

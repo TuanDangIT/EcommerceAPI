@@ -15,14 +15,14 @@ namespace Ecommerce.Modules.Mails.Api.DAL
     {
         public DbSet<Customer> Customers { get; set; }  
         public DbSet<Mail> Mails { get; set; }
-        private const string Schema = "mails";
+        private const string _schema = "mails";
         public MailsDbContext(DbContextOptions<MailsDbContext> options) : base(options)
         {
             
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema(Schema);
+            modelBuilder.HasDefaultSchema(_schema);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

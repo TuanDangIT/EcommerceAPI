@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Services.Externals
 {
-    internal interface IStripeService
+    internal interface IPaymentProcessorService
     {
-        Task<CheckoutStripeSessionDto> CheckoutAsync(CheckoutCart checkoutCart);
+        Task<CheckoutStripeSessionDto> CheckoutAsync(CheckoutCart checkoutCart, CancellationToken cancellationToken = default);
     }
 }

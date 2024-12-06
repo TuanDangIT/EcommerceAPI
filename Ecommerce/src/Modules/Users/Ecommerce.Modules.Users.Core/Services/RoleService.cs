@@ -17,13 +17,13 @@ namespace Ecommerce.Modules.Users.Core.Services
         {
             _dbContext = dbContext;
         }
-        public async Task<IEnumerable<RoleBrowseDto>> BrowseAsync()
+        public async Task<IEnumerable<RoleBrowseDto>> BrowseAsync(CancellationToken cancellationToken = default)
             => await _dbContext.Roles
             .AsNoTracking()
             .Select(r => new RoleBrowseDto()
             {
                 Name = r.Name,
             })
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }

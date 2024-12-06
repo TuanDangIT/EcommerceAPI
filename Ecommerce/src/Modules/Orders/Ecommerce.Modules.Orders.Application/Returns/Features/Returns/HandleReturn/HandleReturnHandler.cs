@@ -10,6 +10,8 @@ using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using Ecommerce.Shared.Abstractions.Messaging;
 using Ecommerce.Modules.Orders.Application.Returns.Events;
 using Ecommerce.Modules.Orders.Application.Shared.Stripe;
+using Microsoft.Extensions.Logging;
+using Ecommerce.Shared.Abstractions.Contexts;
 
 namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleReturn
 {
@@ -18,12 +20,17 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
         private readonly IReturnRepository _returnRepository;
         private readonly IStripeService _stripeService;
         private readonly IMessageBroker _messageBroker;
+        private readonly ILogger<HandleReturnHandler> _logger;
+        private readonly IContextService _contextService;
 
-        public HandleReturnHandler(IReturnRepository returnRepository, IStripeService stripeService, IMessageBroker messageBroker)
+        public HandleReturnHandler(IReturnRepository returnRepository, IStripeService stripeService, IMessageBroker messageBroker,
+            ILogger<HandleReturnHandler> logger, IContextService contextService)
         {
             _returnRepository = returnRepository;
             _stripeService = stripeService;
             _messageBroker = messageBroker;
+            _logger = logger;
+            _contextService = contextService;
         }
         public async Task Handle(HandleReturn request, CancellationToken cancellationToken)
         {
@@ -42,6 +49,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
             }
             @return.Handle();
             await _returnRepository.UpdateAsync();
+            _logger.LogInformation("Return: {return} was handled by {username}:{userId}.", @return, _contextService.Identity!.Username, _contextService.Identity!.Id);
             await _messageBroker.PublishAsync(new ReturnHandled(@return.Id, @return.OrderId, @return.Order.Customer.UserId, @return.Order.Customer.FirstName, @return.Order.Customer.Email,
                 @return.Products.Select(p => new { p.SKU, p.Quantity }), @return.CreatedAt));
         }

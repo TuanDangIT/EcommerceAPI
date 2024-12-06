@@ -10,7 +10,7 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
     public class PercentageCoupon : Coupon
     {
         public decimal Percent { get; private set; }
-        public PercentageCoupon() : base()
+        private PercentageCoupon() : base()
         {
 
         }

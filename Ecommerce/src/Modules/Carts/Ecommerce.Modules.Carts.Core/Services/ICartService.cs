@@ -10,14 +10,12 @@ namespace Ecommerce.Modules.Carts.Core.Services
 {
     public interface ICartService
     {
-        Task<CartDto?> GetAsync(Guid cartId);
-        //Task<Guid> CreateAsync(Guid customerId);
-        Task<Guid> CreateAsync();
-        Task AddProductAsync(Guid cartId, Guid productId, int quantity);
-        Task RemoveProduct(Guid cartId, Guid productId, int quantity);
-        Task SetProductQuantity(Guid cartId, Guid productId, int quantity);
-        Task ClearAsync(Guid cartId);
-        Task CheckoutAsync(Guid cartId);
-        //Task ResetCartAsync(Guid cartId);
+        Task<CartDto?> GetAsync(Guid cartId, CancellationToken cancellationToken = default);
+        Task<Guid> CreateAsync(CancellationToken cancellationToken = default);
+        Task AddProductAsync(Guid cartId, Guid productId, int quantity, CancellationToken cancellationToken = default);
+        Task RemoveProductAsync(Guid cartId, Guid productId, int quantity, CancellationToken cancellationToken = default);
+        Task SetProductQuantityAsync(Guid cartId, Guid productId, int quantity, CancellationToken cancellationToken = default);
+        Task ClearAsync(Guid cartId, CancellationToken cancellationToken = default);
+        Task CheckoutAsync(Guid cartId, CancellationToken cancellationToken = default);
     }
 }

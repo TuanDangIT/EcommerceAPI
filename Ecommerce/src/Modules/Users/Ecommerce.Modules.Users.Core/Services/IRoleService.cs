@@ -9,6 +9,6 @@ namespace Ecommerce.Modules.Users.Core.Services
 {
     public interface IRoleService
     {
-        Task<IEnumerable<RoleBrowseDto>> BrowseAsync();
+        Task<IEnumerable<RoleBrowseDto>> BrowseAsync(CancellationToken cancellationToken = default);
     }
 }

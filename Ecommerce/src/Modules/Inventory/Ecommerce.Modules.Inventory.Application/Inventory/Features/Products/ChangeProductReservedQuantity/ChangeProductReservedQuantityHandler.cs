@@ -1,6 +1,8 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
+using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,20 +14,23 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Ch
     internal class ChangeProductReservedQuantityHandler : ICommandHandler<ChangeProductReservedQuantity>
     {
         private readonly IProductRepository _productRepository;
+        private readonly ILogger<ChangeProductReservedQuantityHandler> _logger;
+        private readonly IContextService _contextService;
 
-        public ChangeProductReservedQuantityHandler(IProductRepository productRepository)
+        public ChangeProductReservedQuantityHandler(IProductRepository productRepository, ILogger<ChangeProductReservedQuantityHandler> logger,
+            IContextService contextService)
         {
             _productRepository = productRepository;
+            _logger = logger;
+            _contextService = contextService;
         }
         public async Task Handle(ChangeProductReservedQuantity request, CancellationToken cancellationToken)
         {
-            var product = await _productRepository.GetAsync(request.ProductId);
-            if (product is null)
-            {
-                throw new ProductNotFoundException(request.ProductId);
-            }
+            var product = await _productRepository.GetAsync(request.ProductId) ?? throw new ProductNotFoundException(request.ProductId);
             product.ChangeReservedQuantity(request.Reserved);
             await _productRepository.UpdateAsync();
+            _logger.LogInformation("Product's: {product} reserved quantity was changed from {oldReservedQuantity} to {newReservedQuantity} by {user}.",
+                product, product.Reserved, request.Reserved, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

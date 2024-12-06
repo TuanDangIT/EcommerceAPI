@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects;
 using System.Reflection.Emit;
 using Ecommerce.Modules.Orders.Application.Orders.Services;
+using Microsoft.Extensions.Logging;
+using Ecommerce.Shared.Abstractions.Contexts;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateShipment
 {
@@ -19,22 +21,22 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
         private readonly IShipmentRepository _shipmentRepository;
         private readonly IDeliveryService _deliveryService;
         private readonly TimeProvider _timeProvider;
+        private readonly ILogger<CreateShipmentHandler> _logger;
+        private readonly IContextService _contextService;
 
         public CreateShipmentHandler(IOrderRepository orderRepository, IShipmentRepository shipmentRepository,
-            IDeliveryService deliveryService, TimeProvider timeProvider)
+            IDeliveryService deliveryService, TimeProvider timeProvider, ILogger<CreateShipmentHandler> logger, IContextService contextService)
         {
             _orderRepository = orderRepository;
             _shipmentRepository = shipmentRepository;
             _deliveryService = deliveryService;
             _timeProvider = timeProvider;
+            _logger = logger;
+            _contextService = contextService;
         }
         public async Task Handle(CreateShipment request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId);
-            if(order is null)
-            {
-                throw new OrderNotFoundException(request.OrderId);
-            }
+            var order = await _orderRepository.GetAsync(request.OrderId) ?? throw new OrderNotFoundException(request.OrderId);
             var receiver = new Receiver(order.Customer.FirstName, order.Customer.LastName, order.Customer.Email, order.Customer.PhoneNumber, order.Customer.Address);
             var parcels = request.Parcels.Select(p =>
             {
@@ -51,6 +53,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
             shipment.SetLabelCreatedAt(_timeProvider.GetUtcNow().UtcDateTime);
             order.Pack();
             await _orderRepository.UpdateAsync();
+            _logger.LogInformation("Shipment was created for order: {order} for {username}:{userId}.", order, _contextService.Identity!.Username, _contextService.Identity!.Id);
         }
     }
 }

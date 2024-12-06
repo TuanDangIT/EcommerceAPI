@@ -15,14 +15,14 @@ namespace Ecommerce.Modules.Users.Core.DAL
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
-        public const string Schema = "users";
+        private const string _schema = "users";
         public UsersDbContext(DbContextOptions<UsersDbContext> options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema(Schema);
+            modelBuilder.HasDefaultSchema(_schema);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

@@ -26,6 +26,6 @@ namespace Ecommerce.Modules.Carts.Core.DTO
         public string StreetNumber { get; set; } = string.Empty;
         [Required]
         [Length(1, 8)]
-        public string AparmentNumber { get; set; } = string.Empty;
+        public string? AparmentNumber { get; set; } 
     }
 }

@@ -16,9 +16,7 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<Role?> GetAsync(string roleName)
-            => await _dbContext.Roles.SingleOrDefaultAsync(r => r.Name == roleName);
-        public async Task<Role?> GetAsync(int roleId)
-           => await _dbContext.Roles.SingleOrDefaultAsync(r => r.Id == roleId);
+        public async Task<Role?> GetAsync(string roleName, CancellationToken cancellationToken = default)
+            => await _dbContext.Roles.SingleOrDefaultAsync(r => r.Name == roleName, cancellationToken);
     }
 }

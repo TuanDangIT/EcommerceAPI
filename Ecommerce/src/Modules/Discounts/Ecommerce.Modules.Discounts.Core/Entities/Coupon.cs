@@ -14,10 +14,8 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
         public CouponType Type { get; protected set; }
         public string StripeCouponId { get; protected set; } = string.Empty;
         public int Redemptions => _discounts.Sum(d => d.Redemptions);
-        public int TotalSumOfDiscounts => _discounts.Count();
         protected readonly List<Discount> _discounts = [];
         public IEnumerable<Discount> Discounts => _discounts;
-
         public DateTime CreatedAt { get; protected set; }
         public DateTime? UpdatedAt { get; protected set; }
         public Coupon(string name, string stripeCouponId)
@@ -25,7 +23,7 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
             Name = name;
             StripeCouponId = stripeCouponId;
         }
-        public Coupon()
+        protected Coupon()
         {
             
         }

@@ -17,6 +17,7 @@ namespace Ecommerce.Modules.Discounts.Core
 {
     public static class Extensions
     {
+        private const string _sieveSectionName = "Sieve";
         public static IServiceCollection AddCore(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IDiscountDbContext>(sp =>
@@ -26,9 +27,9 @@ namespace Ecommerce.Modules.Discounts.Core
             services.AddScoped<IOfferService, OfferService>();
             services.AddScoped<IDiscountService, DiscountService>();
             services.AddScoped<ICouponService, CouponService>();
-            services.AddScoped<IStripeService, StripeService>();    
+            services.AddScoped<IPaymentProcessorService, PaymentProcessorService>();    
             services.AddPostgres<DiscountsDbContext>();
-            services.Configure<SieveOptions>(configuration.GetSection("Sieve"));
+            services.Configure<SieveOptions>(configuration.GetSection(_sieveSectionName));
             services.AddScoped<ISieveProcessor, DiscountsModuleSieveProcessor>();
             return services;
         }

@@ -9,7 +9,6 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
 {
     public interface IRoleRepository
     {
-        Task<Role?> GetAsync(string roleName);
-        Task<Role?> GetAsync(int roleId);
+        Task<Role?> GetAsync(string roleName, CancellationToken cancellationToken = default);
     }
 }

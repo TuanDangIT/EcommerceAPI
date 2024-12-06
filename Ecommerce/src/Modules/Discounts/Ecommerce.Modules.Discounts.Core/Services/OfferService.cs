@@ -40,41 +40,8 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             _logger = logger;
             _contextService = contextService;
         }
-        public async Task AcceptAsync(int offerId)
-        {
-            var offer = await _dbContext.Offers
-                .SingleOrDefaultAsync(o => o.Id == offerId) ??
-                throw new OfferNotFoundException(offerId);
-            var expiresAt = _timeProvider.GetUtcNow().UtcDateTime + TimeSpan.FromDays(7);
-            offer.Accept(expiresAt);
-            var code = GenerateRandomCode();
-            offer.SetCode(code);
-            await _messageBroker
-                .PublishAsync(new OfferAccepted(offer.Id, offer.CustomerId, offer.SKU, offer.ProductName, code, offer.OfferedPrice, offer.OldPrice, expiresAt));
-            await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Offer: {offer} with code: {code} was accepted by {username}:{userId}.", offer, code, _contextService.Identity!.Username, _contextService.Identity!.Id);
-        }
-        public async Task RejectAsync(int offerId)
-        {
-            var offer = await _dbContext.Offers
-                .SingleOrDefaultAsync(o => o.Id == offerId) ??
-                throw new OfferNotFoundException(offerId);
-            offer.Reject();
-            if(offer.Code is null)
-            {
-                await _messageBroker
-                    .PublishAsync(new OfferRejected(offer.Id, offer.CustomerId, offer.SKU, offer.ProductName, offer.OfferedPrice, offer.OldPrice));
-            }
-            else
-            {
-                await _messageBroker
-                    .PublishAsync(new OfferRejected(offer.Id, offer.CustomerId, offer.Code, offer.SKU, offer.ProductName, offer.OfferedPrice, offer.OldPrice));
-            }
-            await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Offer: {offer} was rejected by {username}:{userId}.", offer, _contextService.Identity!.Username, _contextService.Identity!.Id);
-        }
 
-        public async Task<PagedResult<OfferBrowseDto>> BrowseAsync(SieveModel model)
+        public async Task<PagedResult<OfferBrowseDto>> BrowseAsync(SieveModel model, CancellationToken cancellationToken = default)
         {
             if (model.PageSize is null || model.Page is null)
             {
@@ -86,27 +53,61 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             var dtos = await _sieveProcessor
                 .Apply(model, coupons)
                 .Select(o => o.AsBrowseDto())
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             var totalCount = await _sieveProcessor
                 .Apply(model, coupons, applyPagination: false, applySorting: false)
-                .CountAsync();
+                .CountAsync(cancellationToken);
             var pagedResult = new PagedResult<OfferBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
             return pagedResult;
         }
 
-        public async Task DeleteAsync(int offerId) 
-        {
-            await _dbContext.Offers.Where(o => o.Id == offerId).ExecuteDeleteAsync();
-            _logger.LogInformation("Offer: {offerId} was deleted by {username}:{userId}", offerId, _contextService.Identity!.Username, _contextService.Identity!.Id);
-        }
-
-        public async Task<OfferDetailsDto> GetAsync(int offerId)
+        public async Task AcceptAsync(int offerId, CancellationToken cancellationToken = default)
         {
             var offer = await _dbContext.Offers
-                .SingleOrDefaultAsync(o => o.Id == offerId) ?? 
+                .SingleOrDefaultAsync(o => o.Id == offerId, cancellationToken) ??
                 throw new OfferNotFoundException(offerId);
-            return offer.AsDetailsDto();
+            var expiresAt = _timeProvider.GetUtcNow().UtcDateTime + TimeSpan.FromDays(7);
+            offer.Accept(expiresAt);
+            var code = GenerateRandomCode();
+            offer.SetCode(code);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Offer: {@offer} with code: {code} was accepted by {@user}.", offer, code, 
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            await _messageBroker
+                .PublishAsync(new OfferAccepted(offer.Id, offer.CustomerId, offer.SKU, offer.ProductName, code, offer.OfferedPrice, offer.OldPrice, expiresAt));
         }
+        public async Task RejectAsync(int offerId, CancellationToken cancellationToken = default)
+        {
+            var offer = await _dbContext.Offers
+                .SingleOrDefaultAsync(o => o.Id == offerId, cancellationToken) ??
+                throw new OfferNotFoundException(offerId);
+            offer.Reject();
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Offer: {@offer} was rejected by {@user}.", offer, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            if(offer.Code is null)
+            {
+                await _messageBroker
+                    .PublishAsync(new OfferRejected(offer.Id, offer.CustomerId, offer.SKU, offer.ProductName, offer.OfferedPrice, offer.OldPrice));
+            }
+            else
+            {
+                await _messageBroker
+                    .PublishAsync(new OfferRejected(offer.Id, offer.CustomerId, offer.Code, offer.SKU, offer.ProductName, offer.OfferedPrice, offer.OldPrice));
+            }
+        }
+
+        public async Task DeleteAsync(int offerId, CancellationToken cancellationToken = default) 
+        {
+            await _dbContext.Offers.Where(o => o.Id == offerId).ExecuteDeleteAsync(cancellationToken);
+            _logger.LogInformation("Offer: {offerId} was deleted by {user}.", offerId, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+        }
+
+        public async Task<OfferDetailsDto> GetAsync(int offerId, CancellationToken cancellationToken = default)
+            => await _dbContext.Offers
+                .Where(o => o.Id == offerId)
+                .Select(o => o.AsDetailsDto())
+                .SingleOrDefaultAsync(cancellationToken) ??
+                throw new OfferNotFoundException(offerId);
         private static string GenerateRandomCode()
             => Guid.NewGuid().ToString();
 

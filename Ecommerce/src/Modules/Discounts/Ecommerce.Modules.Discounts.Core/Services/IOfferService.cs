@@ -12,11 +12,10 @@ namespace Ecommerce.Modules.Discounts.Core.Services
 {
     public interface IOfferService
     {
-        //Task CreateAsync(Offer offer);
-        Task AcceptAsync(int offerId);
-        Task RejectAsync(int offerId);  
-        Task DeleteAsync(int offerId);
-        Task<PagedResult<OfferBrowseDto>> BrowseAsync(SieveModel model);
-        Task<OfferDetailsDto> GetAsync(int offerId);
+        Task AcceptAsync(int offerId, CancellationToken cancellationToken = default);
+        Task RejectAsync(int offerId, CancellationToken cancellationToken = default);  
+        Task DeleteAsync(int offerId, CancellationToken cancellationToken = default);
+        Task<PagedResult<OfferBrowseDto>> BrowseAsync(SieveModel model, CancellationToken cancellationToken = default);
+        Task<OfferDetailsDto> GetAsync(int offerId, CancellationToken cancellationToken = default);
     }
 }

@@ -29,11 +29,9 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
         public async Task HandleAsync(CustomerPlacedOrder @event)
         {
             var newGuid = Guid.NewGuid();
-            var address = new Address(@event.StreetName, @event.StreetNumber + "/" + @event.ApartmentNumber, @event.City, @event.PostalCode);
+            var address = new Address(@event.StreetName, @event.ApartmentNumber is null ? @event.StreetNumber : @event.StreetNumber + "/" + @event.ApartmentNumber
+                , @event.City, @event.PostalCode);
             var customer = new Customer(@event.FirstName, @event.LastName, @event.Email, @event.PhoneNumber, address, @event.CustomerId);
-            //var shipment = new ShipmentDetails(@event.City, @event.PostalCode, @event.StreetName, @event.StreetNumber, @event.ApartmentNumber);
-            //var receiver = new Receiver(@event.FirstName, @event.LastName, @event.Email, @event.PhoneNumber, address);
-            //var shipment = new Shipment(receiver, @event.TotalSum);
             if (!Enum.TryParse(typeof(PaymentMethod), @event.PaymentMethod, out var paymentMethod))
             {
                 throw new InvalidPaymentMethodException();

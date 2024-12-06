@@ -9,21 +9,20 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Entities
 {
-    public class Cart : BaseEntity
+    public class Cart : BaseEntity, IAuditable
     {
         public Guid? CustomerId {  get; private set; }
-        private List<CartProduct> _products = [];
+        private readonly List<CartProduct> _products = [];
         public IEnumerable<CartProduct> Products => _products;
-        public decimal TotalSum => _products.Sum(cp => cp.Product.Price*cp.Quantity);
-        public Cart(Guid id, Guid customerId)
+        public decimal TotalSum => _products.Sum(cp => cp.Product.Price * cp.Quantity);
+        public DateTime CreatedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
+
+        public Cart(Guid? customerId)
         {
             CustomerId = customerId;
         }
-        public Cart(Guid id)
-        {
-            
-        }
-        public Cart()
+        private Cart()
         {
             
         }

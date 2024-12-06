@@ -20,25 +20,23 @@ namespace Ecommerce.Modules.Carts.Core.Services
             _dbContext = dbContext;
         }
 
-        //public async Task SetActivePaymentMethod(bool isActive, Guid paymentId)
-        //{
-        //    var payment = await _dbContext.Payments
-        //        .SingleOrDefaultAsync(p => p.Id == paymentId);
-        //    if(payment is null)
-        //    {
-        //        throw new PaymentNotFoundException(paymentId);
-        //    }
-        //    payment.SetActive(isActive);
-        //    await _dbContext.SaveChangesAsync();
-        //}
-
-        public async Task<IEnumerable<PaymentDto>> BrowseAsync()
-            => await _dbContext.Payments.Select(p => p.AsDto()).ToListAsync();
-        //public async Task<IEnumerable<AvailablePaymentDto>> BrowseAvailableAsync()
-        //    => await _dbContext.Payments
-        //        .Where(p => p.IsActive == true)
-        //        .Select(p => p.AsAvailableDto())
-        //        .ToListAsync();
-
+        public async Task SetActiveAsync(Guid paymentId, bool isActive, CancellationToken cancellationToken = default)
+        {
+            var payment = await _dbContext.Payments
+                .SingleOrDefaultAsync(p => p.Id == paymentId, cancellationToken) ?? throw new PaymentNotFoundException(paymentId);
+            payment.SetActive(isActive);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        public async Task<IEnumerable<PaymentDto>> BrowseAsync(CancellationToken cancellationToken = default)
+            => await _dbContext.Payments
+                .Select(p => p.AsDto())
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+        public async Task<IEnumerable<PaymentDto>> BrowseAvailableAsync(CancellationToken cancellationToken = default)
+            => await _dbContext.Payments
+                .Where(p => p.IsActive == true)
+                .Select(p => p.AsDto())
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
     }
 }

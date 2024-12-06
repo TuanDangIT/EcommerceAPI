@@ -44,7 +44,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{orderId}", @event.OrderId.ToString());
             var invoice = await _blobStorageService.DownloadAsync(@event.InvoiceNo, _containerName);
             var stream = invoice.FileStream;
-            var file = new FormFile(stream, 0, stream.Length, "invoice", invoice.FileName) 
+            var file = new FormFile(stream, 0, stream.Length, "invoice", invoice.FileName + "-invoice") 
             { 
                 Headers = new HeaderDictionary()
             };

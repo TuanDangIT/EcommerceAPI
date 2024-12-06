@@ -22,7 +22,6 @@ namespace Ecommerce.Modules.Mails.Api.DTO
         [MinLength(1)]
         public string Message { get; set; } = string.Empty;
         public IEnumerable<IFormFile>? Files { get; set; }
-        //[Guid]
         public Guid? OrderId { get; set; }
         public Guid? CustomerId { get; set; }
     }

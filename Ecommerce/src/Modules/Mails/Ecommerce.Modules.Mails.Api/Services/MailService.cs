@@ -28,22 +28,24 @@ namespace Ecommerce.Modules.Mails.Api.Services
     {
         private readonly IMailsDbContext _dbContext;
         private readonly MailOptions _mailOptions;
-        //private readonly IBlobStorageService _blobStorageService;
+        private readonly IBlobStorageService _blobStorageService;
         private readonly CompanyOptions _companyOptions;
         private readonly IFilterService _filterService;
         private const string _mailDefaultTemplatePath = "MailTemplates\\Default.html";
+        private const string _containerName = "mails";
 
-        public MailService(IMailsDbContext dbContext, MailOptions mailOptions/*, IBlobStorageService blobStorageService*/, 
+        public MailService(IMailsDbContext dbContext, MailOptions mailOptions, IBlobStorageService blobStorageService, 
             CompanyOptions companyOptions, IFilterService filterService)
         {
             _dbContext = dbContext;
             _mailOptions = mailOptions;
-            //_blobStorageService = blobStorageService;
+            _blobStorageService = blobStorageService;
             _companyOptions = companyOptions;
             _filterService = filterService;
         }
 
-        public async Task<CursorPagedResult<MailBrowseDto, MailCursorDto>> BrowseAsync(MailCursorDto cursorDto, bool? isNextPage, int pageSize)
+        public async Task<CursorPagedResult<MailBrowseDto, MailCursorDto>> BrowseAsync(MailCursorDto cursorDto, bool? isNextPage, int pageSize, 
+            CancellationToken cancellationToken = default)
         {
             var mailsAsQueryable = _dbContext.Mails
                 .Include(m => m.Customer)
@@ -78,7 +80,7 @@ namespace Ecommerce.Modules.Mails.Api.Services
             var mails = await mailsAsQueryable
                 .Select(m => m.AsBrowseDto())
                 .AsNoTracking()
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             bool isFirstPage = cursorDto is null
                 || (cursorDto is not null && mails.First().Id == _dbContext.Mails.OrderByDescending(m => m.CreatedAt)
                     .ThenBy(m => m.Id).AsNoTracking().First().Id);
@@ -105,11 +107,12 @@ namespace Ecommerce.Modules.Mails.Api.Services
             return new CursorPagedResult<MailBrowseDto, MailCursorDto>(mails, nextCursor, previousCursor, isFirstPage);
         }
 
-        public async Task<MailDetailsDto> GetAsync(int mailId)
-        {
-            var mail = await _dbContext.Mails.SingleOrDefaultAsync(m => m.Id == mailId) ?? throw new MailNotFoundException(mailId);
-            return mail.AsDetailsDto();
-        }
+        public async Task<MailDetailsDto> GetAsync(int mailId, CancellationToken cancellationToken = default)
+            => await _dbContext.Mails
+                .Where(m => m.Id == mailId)
+                .Select(m => m.AsDetailsDto())
+                .SingleOrDefaultAsync(cancellationToken) ??
+                throw new MailNotFoundException(mailId);
 
         public async Task SendAsync(MailSendDto dto)
         {
@@ -136,6 +139,7 @@ namespace Ecommerce.Modules.Mails.Api.Services
                         ContentTransferEncoding = ContentEncoding.Base64,
                         FileName = file.FileName
                     });
+                    await _blobStorageService.UploadAsync(file, file.FileName, _containerName);
                 }
             }
             multipart.Add(bodyHtml);
@@ -148,11 +152,11 @@ namespace Ecommerce.Modules.Mails.Api.Services
             await stream.DisposeAsync();
             if(customer is not null)
             {
-                await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, customer, dto.OrderId));
+                await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, customer, dto.OrderId, dto.Files?.Select(f => f.FileName)));
             }
             else
             {
-                await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, dto.OrderId));
+                await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, dto.OrderId, dto.Files?.Select(f => f.FileName)));
             }
             await _dbContext.SaveChangesAsync();
         }
@@ -170,6 +174,7 @@ namespace Ecommerce.Modules.Mails.Api.Services
                 Body = bodyHtml,
                 OrderId = dto.OrderId,
                 CustomerId = dto.CustomerId,
+                Files = dto.Files
             });
         }
 
@@ -177,8 +182,9 @@ namespace Ecommerce.Modules.Mails.Api.Services
         {
             if(customerId is null || customerId == Guid.Empty) return null;
             var customer = await _dbContext.Customers
-                //.AsNoTracking()
-                .SingleOrDefaultAsync(c => c.Id == customerId) ?? throw new CustomerNotFoundException((Guid)customerId);
+                .AsNoTracking()
+                .SingleOrDefaultAsync(c => c.Id == customerId) ?? 
+                throw new CustomerNotFoundException((Guid)customerId);
             return customer;
         }
     }

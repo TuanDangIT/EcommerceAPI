@@ -17,12 +17,10 @@ namespace Ecommerce.Modules.Discounts.Core.Sieve.Configurations
             mapper.Property<Coupon>(c => c.CreatedAt)
                 .CanFilter()
                 .CanSort();
-            mapper.Property<Coupon>(c => c.Type/*.ToString()*/)
+            mapper.Property<Coupon>(c => c.Type)
                 .CanFilter();
             mapper.Property<Coupon>(c => c.Name)
                 .CanFilter()
-                .CanSort();
-            mapper.Property<Coupon>(c => c.TotalSumOfDiscounts)
                 .CanSort();
             mapper.Property<Coupon>(c => c.Redemptions)
                .CanSort();

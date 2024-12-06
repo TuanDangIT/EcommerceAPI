@@ -20,68 +20,62 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
     internal class CheckoutCartController : BaseController
     {
         private readonly ICheckoutCartService _checkoutCartService;
-        private const string _webhookSecret = "whsec_bcd675ccca84c19fe21093304007e2eff80eebfea4b99552b4097f438ca22955";
 
         public CheckoutCartController(ICheckoutCartService checkoutCartService)
         {
             _checkoutCartService = checkoutCartService;
         }
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ApiResponse<CheckoutCartDto?>>> GetCheckoutCart([FromRoute]Guid id)
-            => OkOrNotFound<CheckoutCartDto?>(await _checkoutCartService.GetAsync(id), "Checkout cart");
+        [HttpGet("{checkoutCartId:guid}")]
+        public async Task<ActionResult<ApiResponse<CheckoutCartDto?>>> GetCheckoutCart([FromRoute]Guid checkoutCartId, CancellationToken cancellationToken)
+            => OkOrNotFound<CheckoutCartDto?>(await _checkoutCartService.GetAsync(checkoutCartId, cancellationToken), "Checkout cart");
         [HttpPut("{checkoutCartId:guid}/customer")]
-        public async Task<ActionResult> SetCustomer([FromRoute] Guid checkoutCartId, [FromBody]CustomerDto customerDto)
+        public async Task<ActionResult> SetCustomer([FromRoute] Guid checkoutCartId, [FromBody]CustomerDto customerDto, CancellationToken cancellationToken)
         {
-            await _checkoutCartService.SetCustomer(checkoutCartId, customerDto);
+            await _checkoutCartService.SetCustomerAsync(checkoutCartId, customerDto, cancellationToken);
             return NoContent();
         }
         [HttpPut("{checkoutCartId:guid}/payment")]
-        public async Task<ActionResult> SetPayment([FromRoute]Guid checkoutCartId, [FromBody]Guid paymentId)
+        public async Task<ActionResult> SetPayment([FromRoute]Guid checkoutCartId, [FromBody]Guid paymentId, CancellationToken cancellationToken)
         {
-            await _checkoutCartService.SetPaymentAsync(checkoutCartId, paymentId);
+            await _checkoutCartService.SetPaymentAsync(checkoutCartId, paymentId, cancellationToken);
             return NoContent();
         }
         [HttpPut("{checkoutCartId:guid}/shipment")]
-        public async Task<ActionResult> SetShipment([FromRoute] Guid checkoutCartId, [FromBody]ShipmentDto shipmentDto)
+        public async Task<ActionResult> SetShipment([FromRoute] Guid checkoutCartId, [FromBody]ShipmentDto shipmentDto, CancellationToken cancellationToken)
         {
-            await _checkoutCartService.SetShipmentAsync(checkoutCartId, shipmentDto);
+            await _checkoutCartService.SetShipmentAsync(checkoutCartId, shipmentDto, cancellationToken);
             return NoContent();
         }
         [HttpPut("{checkoutCartId:guid}/additional-information")]
-        public async Task<ActionResult> SetAdditionalInformation([FromRoute] Guid checkoutCartId, [FromBody] string additionalInformation)
+        public async Task<ActionResult> SetAdditionalInformation([FromRoute] Guid checkoutCartId, [FromBody] string additionalInformation, CancellationToken cancellationToken)
         {
-            await _checkoutCartService.SetAdditionalInformation(checkoutCartId, additionalInformation);
+            await _checkoutCartService.SetAdditionalInformationAsync(checkoutCartId, additionalInformation, cancellationToken);
             return NoContent();
         }
         [HttpPut("{checkoutCartId:guid}/checkoutcart-details")]
-        public async Task<ActionResult> SetCheckoutCartDetails([FromRoute] Guid checkoutCartId, [FromBody]CheckoutCartSetDetailsDto checkoutCartSetDetailsDto)
+        public async Task<ActionResult> SetCheckoutCartDetails([FromRoute] Guid checkoutCartId, [FromBody]CheckoutCartSetDetailsDto checkoutCartSetDetailsDto, 
+            CancellationToken cancellationToken)
         {
-            await _checkoutCartService.SetCheckoutCartDetailsAsync(checkoutCartId, checkoutCartSetDetailsDto);
+            await _checkoutCartService.SetCheckoutCartDetailsAsync(checkoutCartId, checkoutCartSetDetailsDto, cancellationToken);
             return NoContent();
         }
         [HttpPost("{checkoutCartId:guid}/place-order")]
-        public async Task<ActionResult<ApiResponse<CheckoutStripeSessionDto>>> PlaceOrder([FromRoute]Guid checkoutCartId)
+        public async Task<ActionResult<ApiResponse<CheckoutStripeSessionDto>>> PlaceOrder([FromRoute]Guid checkoutCartId, CancellationToken cancellationToken)
         {
-            var checkoutUrl = await _checkoutCartService.PlaceOrderAsync(checkoutCartId);
+            var checkoutUrl = await _checkoutCartService.PlaceOrderAsync(checkoutCartId, cancellationToken);
             return Ok(new ApiResponse<CheckoutStripeSessionDto>(HttpStatusCode.OK, checkoutUrl));
         }
         [HttpPut("{checkoutCartId:guid}/discount")]
-        public async Task<ActionResult> AddDiscount([FromRoute] Guid checkoutCartId, [FromBody] string code)
+        public async Task<ActionResult> AddDiscount([FromRoute] Guid checkoutCartId, [FromBody] string code, CancellationToken cancellationToken)
         {
-            await _checkoutCartService.AddDiscountAsync(checkoutCartId, code);
+            await _checkoutCartService.AddDiscountAsync(checkoutCartId, code, cancellationToken);
             return NoContent();
         }
-        [HttpPost/*("webhook/checkout-session-completed")*/("/api/webhooks/v{v:apiVersion}/" + CartsModule.BasePath + "/[controller]/checkout-session-completed")]
-        public async Task<ActionResult> StripeWebhookHandler()
+        [HttpPost("/api/webhooks/v{v:apiVersion}/" + CartsModule.BasePath + "/[controller]/checkout-session-completed")]
+        public async Task<ActionResult> HandleCheckoutSessionCompleted()
         {
-            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-            var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _webhookSecret);
-            if (stripeEvent.Type == Events.CheckoutSessionCompleted)
-            {
-                var session = stripeEvent.Data.Object as Session;
-                Console.WriteLine(session?.Id);
-                await _checkoutCartService.HandleCheckoutSessionCompletedAsync(session);
-            }
+            await _checkoutCartService.HandleCheckoutSessionCompletedAsync(await new StreamReader(HttpContext.Request.Body).ReadToEndAsync(), 
+                Request.Headers["Stripe-Signature"]);
             return Ok();
         }
     }

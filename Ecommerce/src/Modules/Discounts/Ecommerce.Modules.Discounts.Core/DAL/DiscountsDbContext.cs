@@ -15,14 +15,14 @@ namespace Ecommerce.Modules.Discounts.Core.DAL
         public DbSet<Offer> Offers { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Coupon> Coupons { get; set; }
-        public const string Schema = "discounts";
+        private const string _schema = "discounts";
         public DiscountsDbContext(DbContextOptions<DiscountsDbContext> options) : base(options)
         {
             
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema(Schema);
+            modelBuilder.HasDefaultSchema(_schema);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
@@ -42,7 +42,5 @@ namespace Ecommerce.Modules.Discounts.Core.DAL
             }
             return base.SaveChangesAsync(cancellationToken);
         }
-        public Task<int> SaveChangesAsync()
-            => SaveChangesAsync(default);
     }
 }
