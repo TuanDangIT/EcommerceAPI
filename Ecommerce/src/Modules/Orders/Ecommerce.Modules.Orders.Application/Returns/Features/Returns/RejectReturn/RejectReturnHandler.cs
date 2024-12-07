@@ -30,14 +30,12 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.RejectRet
         }
         public async Task Handle(RejectReturn request, CancellationToken cancellationToken)
         {
-            var @return = await _returnRepository.GetAsync(request.ReturnId);
-            if (@return is null)
-            {
+            var @return = await _returnRepository.GetAsync(request.ReturnId, cancellationToken) ?? 
                 throw new ReturnNotFoundException(request.ReturnId);
-            }
             @return.Reject(request.RejectReason);
-            await _returnRepository.UpdateAsync();
-            _logger.LogInformation("Return: {return} was rejected by {username}:{userId}.", @return, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            await _returnRepository.UpdateAsync(cancellationToken);
+            _logger.LogInformation("Return: {return} was rejected by {user}.", @return,
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new ReturnRejected(@return.Id, @return.OrderId, @return.Order.Customer.UserId, @return.Order.Customer.FirstName, @return.Order.Customer.Email,
                 request.RejectReason, @return.Products.Select(p => new { p.SKU, p.Name, p.Price, p.Quantity }), @return.CreatedAt));
         }

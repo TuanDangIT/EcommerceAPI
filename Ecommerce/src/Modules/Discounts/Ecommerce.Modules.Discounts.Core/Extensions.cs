@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Discounts.Core
             services.AddScoped<IOfferService, OfferService>();
             services.AddScoped<IDiscountService, DiscountService>();
             services.AddScoped<ICouponService, CouponService>();
-            services.AddScoped<IPaymentProcessorService, PaymentProcessorService>();    
+            services.AddScoped<IPaymentProcessorService, StripeService>();    
             services.AddPostgres<DiscountsDbContext>();
             services.Configure<SieveOptions>(configuration.GetSection(_sieveSectionName));
             services.AddScoped<ISieveProcessor, DiscountsModuleSieveProcessor>();

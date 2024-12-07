@@ -25,19 +25,16 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Edi
         }
         public async Task Handle(EditDecision request, CancellationToken cancellationToken)
         {
-            var complaint = await _complaintRepository.GetAsync(request.ComplaintId);
-            if (complaint is null)
-            {
+            var complaint = await _complaintRepository.GetAsync(request.ComplaintId, cancellationToken) ?? 
                 throw new ComplaintNotFoundException(request.ComplaintId);
-            }
             if (complaint.Decision is not null && complaint.Decision.RefundAmount is null && request.Decision.RefundAmount is not null)
             {
                 throw new ComplaintCannotEditRefundAmountException();
             }
             complaint.EditDecision(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation));
-            await _complaintRepository.UpdateAsync();
-            _logger.LogInformation("Decision: {decision} was edited for complaint: {complaint} with new details: {updatingDetails} by {username}:{userId}.", 
-                complaint.Decision, complaint, request.Decision, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            await _complaintRepository.UpdateAsync(cancellationToken);
+            _logger.LogInformation("Decision: {@decision} was edited for complaint: {@complaint} with new details: {@updatingDetails} by {@user}.", 
+                complaint.Decision, complaint, request.Decision, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

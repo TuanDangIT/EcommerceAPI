@@ -28,14 +28,15 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Set
         }
         public async Task Handle(SetNote request, CancellationToken cancellationToken)
         {
-            var complaint = await _complaintRepository.GetAsync(request.ComplaintId);
+            var complaint = await _complaintRepository.GetAsync(request.ComplaintId, cancellationToken);
             if(complaint is null)
             {
                 throw new ComplaintNotFoundException(request.ComplaintId);
             }
             complaint.SetNote(request.Note);
-            await _complaintRepository.UpdateAsync();
-            _logger.LogInformation("Note: {note} was set for complaint: {complaint} by {username}:{userId}.", request.Note, complaint, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            await _complaintRepository.UpdateAsync(cancellationToken);
+            _logger.LogInformation("Note: {note} was set for complaint: {complaint} by {user}.", request.Note, complaint, 
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

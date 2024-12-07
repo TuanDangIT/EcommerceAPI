@@ -9,6 +9,6 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Repositories
 {
     public interface IShipmentRepository
     {
-        Task<Shipment?> GetAsync(int shipmentId);
+        Task<Shipment?> GetAsync(int shipmentId, CancellationToken cancellationToken = default);
     }
 }

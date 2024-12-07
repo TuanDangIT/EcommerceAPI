@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Infrastructure.Stripe
 {
-    internal class StripeService : IStripeService
+    internal class StripeService : IPaymentProcessorService
     {
         private readonly StripeOptions _stripeOptions;
         private readonly RequestOptions _requestOptions;
@@ -24,34 +24,32 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Stripe
                 ApiKey = _stripeOptions.ApiKey
             };
         }
-        public async Task Refund(Domain.Orders.Entities.Order order)
+        public async Task RefundAsync(Domain.Orders.Entities.Order order, CancellationToken cancellationToken = default)
         {
             var refundOptions = new RefundCreateOptions()
             {
                 PaymentIntent = order.StripePaymentIntentId,
-                //Currency = _stripeOptions.Currency
             };
             var refundService = new RefundService();
-            var refund = await refundService.CreateAsync(refundOptions, _requestOptions);
+            var refund = await refundService.CreateAsync(refundOptions, _requestOptions, cancellationToken);
             if(refund.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
-                throw new StripeException("Failed to process Stripe request.");
+                throw new StripeFailedRequestException();
             }
         }
-        public async Task Refund(Domain.Orders.Entities.Order order, decimal amount)
+        public async Task RefundAsync(Domain.Orders.Entities.Order order, decimal amount, CancellationToken cancellationToken = default)
         {
             var refundOptions = new RefundCreateOptions()
             {
                 PaymentIntent = order.StripePaymentIntentId,
                 //In cents or the charge currency’s smallest currency unit
                 Amount = (long)(amount * 100),
-                //Currency = _stripeOptions.Currency.ToLower()
             };
             var refundService = new RefundService();
-            var refund = await refundService.CreateAsync(refundOptions, _requestOptions);
+            var refund = await refundService.CreateAsync(refundOptions, _requestOptions, cancellationToken);
             if (refund.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
-                throw new StripeException("Failed to process Stripe request.");
+                throw new StripeFailedRequestException();
             }
         }
     }

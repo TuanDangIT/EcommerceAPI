@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Shared.Stripe
 {
-    public interface IStripeService
+    public interface IPaymentProcessorService
     {
-        Task Refund(Order order);
-        Task Refund(Order order, decimal amount);
+        Task RefundAsync(Order order, CancellationToken cancellationToken = default);
+        Task RefundAsync(Order order, decimal amount, CancellationToken cancellationToken = default);
     }
 }

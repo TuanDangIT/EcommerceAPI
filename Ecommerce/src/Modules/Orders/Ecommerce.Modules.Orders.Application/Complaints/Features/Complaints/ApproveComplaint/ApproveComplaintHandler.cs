@@ -17,40 +17,38 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
     internal class ApproveComplaintHandler : ICommandHandler<ApproveComplaint>
     {
         private readonly IComplaintRepository _complaintRepository;
-        private readonly IStripeService _stripeService;
+        private readonly IPaymentProcessorService _paymentProcessorService;
         private readonly IMessageBroker _messageBroker;
         private readonly ILogger<ApproveComplaintHandler> _logger;
         private readonly IContextService _contextService;
 
-        public ApproveComplaintHandler(IComplaintRepository complaintRepository, IStripeService stripeService, IMessageBroker messageBroker,
-            ILogger<ApproveComplaintHandler> logger, IContextService contextService)
+        public ApproveComplaintHandler(IComplaintRepository complaintRepository, IPaymentProcessorService paymentProcessorService, 
+            IMessageBroker messageBroker, ILogger<ApproveComplaintHandler> logger, IContextService contextService)
         {
             _complaintRepository = complaintRepository;
-            _stripeService = stripeService;
+            _paymentProcessorService = paymentProcessorService;
             _messageBroker = messageBroker;
             _logger = logger;
             _contextService = contextService;
         }
         public async Task Handle(ApproveComplaint request, CancellationToken cancellationToken)
         {
-            var complaint = await _complaintRepository.GetAsync(request.ComplaintId);
-            if (complaint is null)
-            {
+            var complaint = await _complaintRepository.GetAsync(request.ComplaintId, cancellationToken) ?? 
                 throw new ComplaintNotFoundException(request.ComplaintId);
-            }
-            //complaint.WriteDecision(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation, request.Decision.RefundAmount));
             if (request.Decision.RefundAmount is not null)
             {
-                complaint.Approve(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation, (decimal)request.Decision.RefundAmount));
+                complaint.Approve(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, 
+                    request.Decision.AdditionalInformation, (decimal)request.Decision.RefundAmount));
             }
             else
             {
-                complaint.Approve(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation));
+                complaint.Approve(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, 
+                    request.Decision.AdditionalInformation));
             }
-            await _complaintRepository.UpdateAsync();
+            await _complaintRepository.UpdateAsync(cancellationToken);
             if(request.Decision.RefundAmount is null)
             {
-                await _stripeService.Refund(complaint.Order);
+                await _paymentProcessorService.RefundAsync(complaint.Order);
             }
             else
             {
@@ -58,9 +56,10 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
                 {
                     throw new ComplaintInvalidAmountToReturnException();
                 }
-                await _stripeService.Refund(complaint.Order, (decimal)request.Decision.RefundAmount);
+                await _paymentProcessorService.RefundAsync(complaint.Order, (decimal)request.Decision.RefundAmount);
             }
-            _logger.LogInformation("Complaint: {complaint} was approved by {username}:{userId}.", complaint, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            _logger.LogInformation("Complaint: {@complaint} was approved by {@user}.", complaint, 
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new ComplaintApproved(
                 complaint.Id,
                 complaint.OrderId,

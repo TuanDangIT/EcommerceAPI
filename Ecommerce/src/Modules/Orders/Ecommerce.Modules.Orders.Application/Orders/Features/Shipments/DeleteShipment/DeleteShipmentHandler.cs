@@ -25,10 +25,12 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.DeleteSh
         }
         public async Task Handle(DeleteShipment request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId) ?? throw new OrderNotFoundException(request.OrderId);
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
+                throw new OrderNotFoundException(request.OrderId);
             order.DeleteShipment(request.ShipmentId);
-            await _orderRepository.UpdateAsync();
-            _logger.LogInformation("Shipment: {shipmentId} was deleted for {order} by {username}:{userId}.", request.ShipmentId, order, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            await _orderRepository.UpdateAsync(cancellationToken);
+            _logger.LogInformation("Shipment: {shipmentId} was deleted for {order} by {user}.", request.ShipmentId, order,
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

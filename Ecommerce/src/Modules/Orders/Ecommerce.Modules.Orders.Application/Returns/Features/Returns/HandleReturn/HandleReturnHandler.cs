@@ -18,12 +18,12 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
     internal sealed class HandleReturnHandler : ICommandHandler<HandleReturn>
     {
         private readonly IReturnRepository _returnRepository;
-        private readonly IStripeService _stripeService;
+        private readonly IPaymentProcessorService _stripeService;
         private readonly IMessageBroker _messageBroker;
         private readonly ILogger<HandleReturnHandler> _logger;
         private readonly IContextService _contextService;
 
-        public HandleReturnHandler(IReturnRepository returnRepository, IStripeService stripeService, IMessageBroker messageBroker,
+        public HandleReturnHandler(IReturnRepository returnRepository, IPaymentProcessorService stripeService, IMessageBroker messageBroker,
             ILogger<HandleReturnHandler> logger, IContextService contextService)
         {
             _returnRepository = returnRepository;
@@ -34,24 +34,22 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
         }
         public async Task Handle(HandleReturn request, CancellationToken cancellationToken)
         {
-            var @return = await _returnRepository.GetAsync(request.ReturnId);
-            if (@return is null)
-            {
+            var @return = await _returnRepository.GetAsync(request.ReturnId, cancellationToken) ?? 
                 throw new ReturnNotFoundException(request.ReturnId);
-            }
-            if(@return.IsFullReturn)
+            if (@return.IsFullReturn)
             {
-                await _stripeService.Refund(@return.Order);
+                await _stripeService.RefundAsync(@return.Order, cancellationToken);
             }
             else
             {
-                await _stripeService.Refund(@return.Order, @return.Products.Sum(p => p.Price*p.Quantity));
+                await _stripeService.RefundAsync(@return.Order, @return.Products.Sum(p => p.Price*p.Quantity), cancellationToken);
             }
             @return.Handle();
             await _returnRepository.UpdateAsync();
-            _logger.LogInformation("Return: {return} was handled by {username}:{userId}.", @return, _contextService.Identity!.Username, _contextService.Identity!.Id);
-            await _messageBroker.PublishAsync(new ReturnHandled(@return.Id, @return.OrderId, @return.Order.Customer.UserId, @return.Order.Customer.FirstName, @return.Order.Customer.Email,
-                @return.Products.Select(p => new { p.SKU, p.Quantity }), @return.CreatedAt));
+            _logger.LogInformation("Return: {return} was handled by {user}.", @return, 
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            await _messageBroker.PublishAsync(new ReturnHandled(@return.Id, @return.OrderId, @return.Order.Customer.UserId, 
+                @return.Order.Customer.FirstName, @return.Order.Customer.Email, @return.Products.Select(p => new { p.SKU, p.Quantity }), @return.CreatedAt));
         }
     }
 }

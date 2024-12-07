@@ -15,14 +15,14 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Services.Externals
 {
-    internal class PaymentProcessorService : IPaymentProcessorService
+    internal class StripeService : IPaymentProcessorService
     {
         private readonly StripeOptions _stripeOptions;
-        private readonly ILogger<PaymentProcessorService> _logger;
+        private readonly ILogger<StripeService> _logger;
         private readonly RequestOptions _requestOptions;
         private readonly decimal _defaultDeliveryPrice = 15;
 
-        public PaymentProcessorService(StripeOptions stripeOptions, ILogger<PaymentProcessorService> logger)
+        public StripeService(StripeOptions stripeOptions, ILogger<StripeService> logger)
         {
             _stripeOptions = stripeOptions;
             _logger = logger;

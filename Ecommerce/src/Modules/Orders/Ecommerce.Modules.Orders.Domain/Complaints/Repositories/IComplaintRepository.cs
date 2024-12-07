@@ -9,8 +9,8 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Repositories
 {
     public interface IComplaintRepository
     {
-        Task CreateAsync(Complaint complaint);
-        Task<Complaint?> GetAsync(Guid complaintId);
-        Task UpdateAsync();
+        Task CreateAsync(Complaint complaint, CancellationToken cancellationToken = default);
+        Task<Complaint?> GetAsync(Guid complaintId, CancellationToken cancellationToken = default);
+        Task UpdateAsync(CancellationToken cancellationToken = default);
     }
 }

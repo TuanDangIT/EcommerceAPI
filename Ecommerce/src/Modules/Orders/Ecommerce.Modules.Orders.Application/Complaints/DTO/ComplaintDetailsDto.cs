@@ -11,7 +11,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.DTO
     public class ComplaintDetailsDto
     {
         public Guid Id { get; set; }
-        public CustomerDto Customer { get; set; } = new();
+        //public CustomerDto Customer { get; set; } = new();
         public OrderShortenedDetailsDto Order { get; set; } = new();
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;

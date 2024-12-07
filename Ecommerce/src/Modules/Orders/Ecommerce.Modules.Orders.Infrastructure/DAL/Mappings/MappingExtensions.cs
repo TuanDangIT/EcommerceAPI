@@ -87,7 +87,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
             => new()
             {
                 Id = complaint.Id,
-                Customer = complaint.Order.Customer.AsDto(),
+                //Customer = complaint.Order.Customer.AsDto(),
                 Order = complaint.Order.AsShortenedDetailsDto(),
                 Title = complaint.Title,
                 Description = complaint.Description,

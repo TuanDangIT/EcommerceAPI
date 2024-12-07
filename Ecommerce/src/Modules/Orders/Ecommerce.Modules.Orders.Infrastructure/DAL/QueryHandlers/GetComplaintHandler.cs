@@ -3,6 +3,7 @@ using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.GetComp
 using Ecommerce.Modules.Orders.Domain.Complaints.Repositories;
 using Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,16 +14,19 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
 {
     internal sealed class GetComplaintHandler : IQueryHandler<GetComplaint, ComplaintDetailsDto?>
     {
-        private readonly IComplaintRepository _complaintRepository;
+        private readonly OrdersDbContext _dbContext;
 
-        public GetComplaintHandler(IComplaintRepository complaintRepository)
+        public GetComplaintHandler(OrdersDbContext dbContext)
         {
-            _complaintRepository = complaintRepository;
+            _dbContext = dbContext;
         }
         public async Task<ComplaintDetailsDto?> Handle(GetComplaint request, CancellationToken cancellationToken)
-        {
-            var complaint = await _complaintRepository.GetAsync(request.ComplaintId);
-            return complaint?.AsDetailsDto();
-        }
+            => await _dbContext.Complaints
+                .AsNoTracking()
+                .Include(c => c.Order)
+                .ThenInclude(o => o.Customer)
+                .Where(c => c.Id == request.ComplaintId)
+                .Select(c => c.AsDetailsDto())
+                .SingleOrDefaultAsync(cancellationToken);
     }
 }

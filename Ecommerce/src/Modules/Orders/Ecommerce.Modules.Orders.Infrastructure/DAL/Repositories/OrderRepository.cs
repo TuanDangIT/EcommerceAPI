@@ -17,13 +17,13 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task CreateAsync(Order order)
+        public async Task CreateAsync(Order order, CancellationToken cancellationToken = default)
         {
-            await _dbContext.AddAsync(order);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.AddAsync(order, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<Order?> GetAsync(Guid orderId)
+        public async Task<Order?> GetAsync(Guid orderId, CancellationToken cancellationToken = default)
             => await _dbContext.Orders
                 .Include(o => o.Products)
                 .Include(o => o.Shipments)
@@ -33,14 +33,14 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
                 .ThenInclude(r => r.Address)
                 .Include(o => o.Customer)
                 .Include(o => o.Invoice)
-                .SingleOrDefaultAsync(o => o.Id == orderId);
+                .SingleOrDefaultAsync(o => o.Id == orderId, cancellationToken);
 
-        public async Task<Order?> GetAsync(string trackingNumber)
+        public async Task<Order?> GetAsync(string trackingNumber, CancellationToken cancellationToken = default)
             => await _dbContext.Orders
                 .Include(o => o.Shipments)
-                .SingleOrDefaultAsync(o => o.Shipments.Select(s => s.TrackingNumber).Contains(trackingNumber));
+                .SingleOrDefaultAsync(o => o.Shipments.Select(s => s.TrackingNumber).Contains(trackingNumber), cancellationToken);
 
-        public async Task UpdateAsync()
-            => await _dbContext.SaveChangesAsync();
+        public async Task UpdateAsync(CancellationToken cancellationToken = default)
+            => await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

@@ -9,9 +9,9 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Repositories
 {
     public interface IReturnRepository
     {
-        Task CreateAsync(Return @return);
-        Task<Return?> GetByOrderIdAsync(Guid orderId);
-        Task<Return?> GetAsync(Guid returnId);
-        Task UpdateAsync();
+        Task CreateAsync(Return @return, CancellationToken cancellationToken = default);
+        Task<Return?> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default);
+        Task<Return?> GetAsync(Guid returnId, CancellationToken cancellationToken = default);
+        Task UpdateAsync(CancellationToken cancellationToken = default);
     }
 }

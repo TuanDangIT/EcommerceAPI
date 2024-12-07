@@ -58,7 +58,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 .ThenInclude(o => o.Customer)
                 .Select(o => o.AsBrowseDto())
                 .AsNoTracking()
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             bool isFirstPage = request.CursorDto is null
                 || (request.CursorDto is not null && complaints.First().Id == _dbContext.Complaints.OrderByDescending(i => i.Id).AsNoTracking().First().Id);
             bool hasNextPage = complaints.Count > request.PageSize

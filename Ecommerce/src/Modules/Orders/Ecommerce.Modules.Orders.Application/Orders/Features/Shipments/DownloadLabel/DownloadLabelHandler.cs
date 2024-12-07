@@ -29,19 +29,17 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.Download
         }
         public async Task<(Stream FileStream, string MimeType, string FileName)> Handle(DownloadLabel request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId) ?? throw new OrderNotFoundException(request.OrderId);
-            var shipment = order.Shipments.SingleOrDefault(s => s.Id == request.ShipmentId);
-            if (shipment is null)
-            {
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
+                throw new OrderNotFoundException(request.OrderId);
+            var shipment = order.Shipments.SingleOrDefault(s => s.Id == request.ShipmentId) ?? 
                 throw new ShipmentNotFoundException(request.ShipmentId);
-            }
             if (shipment.TrackingNumber is null)
             {
                 throw new LabelNotCreatedException(request.ShipmentId);
             }
             var file = await _deliveryService.GetLabelAsync(shipment);
-            _logger.LogInformation("Label: {trackingNumber} was downloaded for order: {order} by {username}:{userId}.", shipment.TrackingNumber, 
-                order, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            _logger.LogInformation("Label: {trackingNumber} was downloaded for order: {order} by {user}.", shipment.TrackingNumber, 
+                order, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             return file;
         }
     }

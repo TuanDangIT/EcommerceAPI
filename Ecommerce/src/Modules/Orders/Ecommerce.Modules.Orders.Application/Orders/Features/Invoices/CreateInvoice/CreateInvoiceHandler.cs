@@ -58,29 +58,30 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
         }
         public async Task<string> Handle(CreateInvoice request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId) ?? throw new OrderNotFoundException(request.OrderId);
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
+                throw new OrderNotFoundException(request.OrderId);
             if (!await _orderInvoiceCreationPolicy.CanCreateInvoice(order))
             {
                 throw new OrderInvoiceAlreadyCreatedException(order.Id);
             }
             var now = _timeProvider.GetUtcNow();
-            Random rand = new Random();
+            Random rand = new();
             var invoiceNo = string.Concat(now.Year, "/", now.Month, "/", now.Millisecond, now.Nanosecond, rand.Next(0, 9));
             var invoiceTemplate = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _invoiceTemplatePath));
             invoiceTemplate = FillInvoiceDetails(invoiceTemplate, invoiceNo, order);
-            HtmlToPdf converter = new HtmlToPdf();
+            HtmlToPdf converter = new();
             PdfDocument pdf = converter.ConvertHtmlString(invoiceTemplate);
             var stream = new MemoryStream();
             pdf.Save(stream);
             var file = new FormFile(stream, 0, stream.Length, "invoice", invoiceNo)
             {
-                //ContentType = _contentType,
                 Headers = new HeaderDictionary()
             };
             file.ContentType = _contentType;
-            await _blobStorageService.UploadAsync(file, invoiceNo, _containerName);
+            await _blobStorageService.UploadAsync(file, invoiceNo, _containerName, cancellationToken);
             await _invoiceRepository.CreateAsync(new Domain.Orders.Entities.Invoice(invoiceNo, order));
-            _logger.LogInformation("Invoice: {invoiceNo} was created for order: {order} by {username}:{userId}.", invoiceNo, order, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            _logger.LogInformation("Invoice: {invoiceNo} was created for order: {order} by {user}.", invoiceNo, order, 
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new InvoiceCreated(order.Id, order.Customer.Id, order.Customer.FirstName, order.Customer.Email, invoiceNo));
             return invoiceNo;
         }

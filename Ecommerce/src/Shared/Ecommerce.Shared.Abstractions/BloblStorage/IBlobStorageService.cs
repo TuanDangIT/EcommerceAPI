@@ -9,9 +9,9 @@ namespace Ecommerce.Shared.Abstractions.BloblStorage
 {
     public interface IBlobStorageService
     {
-        Task<string> UploadAsync(IFormFile blob, string fileName, string containerName);
-        Task DeleteManyAsync(IEnumerable<string> fileNames, string containerName);
-        Task DeleteAsync(string fileName, string containerName);
-        Task<BlobStorageDto> DownloadAsync(string fileName, string containerName);
+        Task<string> UploadAsync(IFormFile blob, string fileName, string containerName, CancellationToken cancellationToken = default);
+        Task DeleteManyAsync(IEnumerable<string> fileNames, string containerName, CancellationToken cancellationToken = default);
+        Task DeleteAsync(string fileName, string containerName, CancellationToken cancellationToken = default);
+        Task<BlobStorageDto> DownloadAsync(string fileName, string containerName, CancellationToken cancellationToken = default);
     }
 }

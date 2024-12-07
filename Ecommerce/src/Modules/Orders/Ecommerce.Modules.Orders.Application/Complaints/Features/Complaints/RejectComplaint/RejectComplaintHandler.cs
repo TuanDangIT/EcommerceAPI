@@ -31,14 +31,15 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Rej
         }
         public async Task Handle(RejectComplaint request, CancellationToken cancellationToken)
         {
-            var complaint = await _complaintRepository.GetAsync(request.ComplaintId);
+            var complaint = await _complaintRepository.GetAsync(request.ComplaintId, cancellationToken);
             if (complaint is null)
             {
                 throw new ComplaintNotFoundException(request.ComplaintId);
             }
             complaint.Reject(new Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation));
-            await _complaintRepository.UpdateAsync();
-            _logger.LogInformation("Complaint: {complaint} was rejected by {username}:{userId}.", complaint, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            await _complaintRepository.UpdateAsync(cancellationToken);
+            _logger.LogInformation("Complaint: {complaint} was rejected by {user}.", complaint, 
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new ComplaintRejected(
                 complaint.Id,
                 complaint.OrderId,

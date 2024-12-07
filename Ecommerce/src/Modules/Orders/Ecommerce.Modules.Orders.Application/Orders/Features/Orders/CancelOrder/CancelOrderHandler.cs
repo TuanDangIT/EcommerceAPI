@@ -18,13 +18,13 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
     internal class CancelOrderHandler : ICommandHandler<CancelOrder>
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly IStripeService _stripeService;
+        private readonly IPaymentProcessorService _stripeService;
         private readonly IMessageBroker _messageBroker;
         private readonly IOrderCancellationPolicy _orderCancellationPolicy;
         private readonly ILogger<CancelOrderHandler> _logger;
         private readonly IContextService _contextService;
 
-        public CancelOrderHandler(IOrderRepository orderRepository, IStripeService stripeService, IMessageBroker messageBroker, IOrderCancellationPolicy orderCancellationPolicy,
+        public CancelOrderHandler(IOrderRepository orderRepository, IPaymentProcessorService stripeService, IMessageBroker messageBroker, IOrderCancellationPolicy orderCancellationPolicy,
             ILogger<CancelOrderHandler> logger, IContextService contextService)
         {
             _orderRepository = orderRepository;
@@ -45,7 +45,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
             {
                 throw new OrderCannotCancelException();
             }
-            await _stripeService.Refund(order);
+            await _stripeService.RefundAsync(order);
             order.Cancel();
             await _orderRepository.UpdateAsync();
             var products = order.Products;

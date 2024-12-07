@@ -64,7 +64,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
             var orders = await ordersAsQueryable
                 .Select(o => o.AsBrowseDto())
                 .AsNoTracking()
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             bool isFirstPage = request.CursorDto is null
                 || (request.CursorDto is not null && orders.First().Id == _dbContext.Orders.OrderByDescending(o => o.CreatedAt)
                     .ThenBy(o => o.Id).AsNoTracking().First().Id);

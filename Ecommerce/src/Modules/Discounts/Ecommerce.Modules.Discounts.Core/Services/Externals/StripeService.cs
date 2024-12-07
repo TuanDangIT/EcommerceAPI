@@ -13,13 +13,13 @@ using static Azure.Core.HttpHeader;
 
 namespace Ecommerce.Modules.Discounts.Core.Services.Externals
 {
-    internal class PaymentProcessorService : IPaymentProcessorService
+    internal class StripeService : IPaymentProcessorService
     {
         private readonly StripeOptions _stripeOptions;
         private readonly RequestOptions _requestOptions;
         private const string _couponDuration = "forever";
 
-        public PaymentProcessorService(StripeOptions stripeOptions)
+        public StripeService(StripeOptions stripeOptions)
         {
             _stripeOptions = stripeOptions;
             _requestOptions = new RequestOptions()

@@ -18,8 +18,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<Shipment?> GetAsync(int shipmentId)
+        public async Task<Shipment?> GetAsync(int shipmentId, CancellationToken cancellationToken = default)
             => await _dbContext.Shipments
-                .SingleOrDefaultAsync(s => s.Id == shipmentId);
+                .SingleOrDefaultAsync(s => s.Id == shipmentId, cancellationToken);
     }
 }

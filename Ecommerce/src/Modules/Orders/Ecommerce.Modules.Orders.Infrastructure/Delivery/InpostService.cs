@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
 {
-    internal class DeliveryService : IDeliveryService
+    internal class InpostService : IDeliveryService
     {
         private readonly IHttpClientFactory _factory;
         private readonly InPostOptions _inPostOptions;
@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
             PropertyNameCaseInsensitive = true,
             ReferenceHandler = ReferenceHandler.IgnoreCycles
         };
-        public DeliveryService(IHttpClientFactory factory, InPostOptions inPostOptions)
+        public InpostService(IHttpClientFactory factory, InPostOptions inPostOptions)
         {
             _factory = factory;
             _inPostOptions = inPostOptions;

@@ -18,22 +18,22 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task CreateAsync(Invoice invoice)
+        public async Task CreateAsync(Invoice invoice, CancellationToken cancellationToken = default)
         {
-            await _dbContext.Invoices.AddAsync(invoice); 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.Invoices.AddAsync(invoice, cancellationToken); 
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeleteAsync(int invoiceId)
+        public async Task DeleteAsync(int invoiceId, CancellationToken cancellationToken = default)
             => await _dbContext.Invoices.Where(i => i.Id == invoiceId)
-                .ExecuteDeleteAsync();
+                .ExecuteDeleteAsync(cancellationToken);
 
-        public async Task<Invoice?> GetAsync(int invoiceId)
+        public async Task<Invoice?> GetAsync(int invoiceId, CancellationToken cancellationToken = default)
             => await _dbContext.Invoices
                 .Include(i => i.Order)
-                .SingleOrDefaultAsync(i => i.Id == invoiceId);
+                .SingleOrDefaultAsync(i => i.Id == invoiceId, cancellationToken);
 
-        public async Task UpdateAsync()
-            => await _dbContext.SaveChangesAsync();
+        public async Task UpdateAsync(CancellationToken cancellationToken = default)
+            => await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

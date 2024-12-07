@@ -33,16 +33,13 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.DownloadI
 
         public async Task<(Stream FileStream, string MimeType, string FileName)> Handle(DownloadInvoice request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId);
-            if (order is null)
-            {
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
                 throw new OrderNotFoundException(request.OrderId);
-            }
             if (order.Invoice is null)
             {
                 throw new OrderCannotDownloadInvoiceException(request.OrderId);
             }
-            var dto = await _blobStorageService.DownloadAsync(order.Invoice.InvoiceNo, _containerName);
+            var dto = await _blobStorageService.DownloadAsync(order.Invoice.InvoiceNo, _containerName, cancellationToken);
             _logger.LogInformation("Invoice: {invoice} was downloaded by {username}:{userId}.", order.Invoice, _contextService.Identity!.Username, _contextService.Identity!.Id);
             return (dto.FileStream, _mimeType, $"{order.Invoice.InvoiceNo}-invoice");
         }

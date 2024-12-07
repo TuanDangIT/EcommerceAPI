@@ -3,6 +3,7 @@ using Ecommerce.Modules.Orders.Application.Returns.Features.Return.GetReturn;
 using Ecommerce.Modules.Orders.Domain.Returns.Repositories;
 using Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,16 +14,19 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
 {
     internal class GetReturnHandler : IQueryHandler<GetReturn, ReturnDetailsDto?>
     {
-        private readonly IReturnRepository _returnRepository;
+        private readonly OrdersDbContext _dbContext;
 
-        public GetReturnHandler(IReturnRepository returnRepository)
+        public GetReturnHandler(OrdersDbContext dbContext)
         {
-            _returnRepository = returnRepository;
+            _dbContext = dbContext;
         }
         public async Task<ReturnDetailsDto?> Handle(GetReturn request, CancellationToken cancellationToken)
-        {
-            var @return = await _returnRepository.GetAsync(request.ReturnId);
-            return @return?.AsDetailsDto();
-        }
+            => await _dbContext.Returns
+                .AsNoTracking()
+                .Include(r => r.Order)
+                .ThenInclude(o => o.Customer)
+                .Where(r => r.Id == request.ReturnId)
+                .Select(r => r.AsDetailsDto())
+                .SingleOrDefaultAsync(cancellationToken);
     }
 }

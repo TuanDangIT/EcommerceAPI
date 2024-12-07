@@ -17,17 +17,17 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task CreateAsync(Complaint complaint)
+        public async Task CreateAsync(Complaint complaint, CancellationToken cancellationToken = default)
         {
-            await _dbContext.AddAsync(complaint);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.AddAsync(complaint, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<Complaint?> GetAsync(Guid complaintId)
+        public async Task<Complaint?> GetAsync(Guid complaintId, CancellationToken cancellationToken = default)
             => await _dbContext.Complaints
                 .Include(c => c.Order)
-                .SingleOrDefaultAsync(c => c.Id == complaintId);    
-        public async Task UpdateAsync()
-            => await _dbContext.SaveChangesAsync();
+                .SingleOrDefaultAsync(c => c.Id == complaintId, cancellationToken);    
+        public async Task UpdateAsync(CancellationToken cancellationToken = default)
+            => await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

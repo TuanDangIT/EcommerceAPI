@@ -17,24 +17,24 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task CreateAsync(Return @return)
+        public async Task CreateAsync(Return @return, CancellationToken cancellationToken = default)
         {
-            await _dbContext.Returns.AddAsync(@return);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.Returns.AddAsync(@return, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<Return?> GetAsync(Guid returnId)
+        public async Task<Return?> GetAsync(Guid returnId, CancellationToken cancellationToken = default)
             => await _dbContext.Returns
                 .Include(r => r.Order)
                 .ThenInclude(o => o.Customer)
-                .SingleOrDefaultAsync(r => r.Id == returnId);
+                .SingleOrDefaultAsync(r => r.Id == returnId, cancellationToken);
 
-        public async Task<Return?> GetByOrderIdAsync(Guid orderId)
+        public async Task<Return?> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default)
             => await _dbContext.Returns
                 .Include(r => r.Order)
-                .SingleOrDefaultAsync(r => r.Order.Id == orderId);
+                .SingleOrDefaultAsync(r => r.Order.Id == orderId, cancellationToken);
 
-        public async Task UpdateAsync()
-            => await _dbContext.SaveChangesAsync();
+        public async Task UpdateAsync(CancellationToken cancellationToken = default)
+            => await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

@@ -27,13 +27,10 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.SetNote
         }
         public async Task Handle(SetNote request, CancellationToken cancellationToken)
         {
-            var @return = await _returnRepository.GetAsync(request.ReturnId);
-            if (@return is null)
-            {
+            var @return = await _returnRepository.GetAsync(request.ReturnId, cancellationToken) ?? 
                 throw new ReturnNotFoundException(request.ReturnId);
-            }
             @return.SetNote(request.Note);
-            await _returnRepository.UpdateAsync();
+            await _returnRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Note: {note} was set for return: {return} by {username}:{userId}.", request.Note, @return
                 , _contextService.Identity!.Username, _contextService.Identity!.Id);
         }

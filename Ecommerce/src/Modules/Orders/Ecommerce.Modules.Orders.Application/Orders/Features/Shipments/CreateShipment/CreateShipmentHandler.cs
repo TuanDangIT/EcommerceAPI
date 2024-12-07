@@ -36,7 +36,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
         }
         public async Task Handle(CreateShipment request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId) ?? throw new OrderNotFoundException(request.OrderId);
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
+                throw new OrderNotFoundException(request.OrderId);
             var receiver = new Receiver(order.Customer.FirstName, order.Customer.LastName, order.Customer.Email, order.Customer.PhoneNumber, order.Customer.Address);
             var parcels = request.Parcels.Select(p =>
             {
@@ -53,7 +54,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
             shipment.SetLabelCreatedAt(_timeProvider.GetUtcNow().UtcDateTime);
             order.Pack();
             await _orderRepository.UpdateAsync();
-            _logger.LogInformation("Shipment was created for order: {order} for {username}:{userId}.", order, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            _logger.LogInformation("Shipment was created for order: {order} for {user}.", order, 
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }
