@@ -26,8 +26,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
         }
         public async Task Handle(DeleteManufacturer request, CancellationToken cancellationToken)
         {
-            await _manufacturerRepository.DeleteAsync(request.ManufacturerId);
-            _logger.LogInformation("Manufacturer: {manufacturerId} was deleted by {user}", request.ManufacturerId,
+            await _manufacturerRepository.DeleteAsync(request.ManufacturerId, cancellationToken);
+            _logger.LogInformation("Manufacturer: {manufacturerId} was deleted by {@user}.", request.ManufacturerId,
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
         

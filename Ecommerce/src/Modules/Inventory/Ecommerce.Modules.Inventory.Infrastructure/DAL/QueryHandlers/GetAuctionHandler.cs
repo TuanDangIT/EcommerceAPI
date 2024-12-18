@@ -20,11 +20,11 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
             _dbContext = dbContext;
         }
         public async Task<AuctionDetailsDto?> Handle(GetAuction request, CancellationToken cancellationToken)
-        {
-            var auction = await _dbContext.Auctions
-                .Include(p => p.Reviews)
-                .SingleOrDefaultAsync(p => p.Id == request.AuctionId);
-            return auction?.AsDetailsDto();
-        }
+            => await _dbContext.Auctions
+                .AsNoTracking()
+                .Include(a => a.Reviews)
+                .Where(a => a.Id == request.AuctionId)
+                .Select(a => a.AsDetailsDto())
+                .SingleOrDefaultAsync(cancellationToken);
     }
 }

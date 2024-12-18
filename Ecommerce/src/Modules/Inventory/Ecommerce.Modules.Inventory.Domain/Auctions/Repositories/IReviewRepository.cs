@@ -11,9 +11,9 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Repositories
     public interface IReviewRepository
     {
         //Task<PagedResult<ReviewBrowseDto>> BrowseAsync(SieveModel sieveModel, Guid auctionId);
-        Task<Review?> GetAsync(Guid reviewId);
-        Task DeleteAsync(Guid reviewId);
-        Task UpdateAsync();
+        Task<Review?> GetAsync(Guid reviewId, CancellationToken cancellationToken = default);
+        Task DeleteAsync(Guid reviewId, CancellationToken cancellationToken = default);
+        Task UpdateAsync(CancellationToken cancellationToken = default);
         //Task<int> AddAsync(Review review, Guid auctionId);
     }
 }

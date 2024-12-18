@@ -26,10 +26,11 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Ch
         }
         public async Task Handle(ChangeProductReservedQuantity request, CancellationToken cancellationToken)
         {
-            var product = await _productRepository.GetAsync(request.ProductId) ?? throw new ProductNotFoundException(request.ProductId);
+            var product = await _productRepository.GetAsync(request.ProductId, cancellationToken) ?? 
+                throw new ProductNotFoundException(request.ProductId);
             product.ChangeReservedQuantity(request.Reserved);
-            await _productRepository.UpdateAsync();
-            _logger.LogInformation("Product's: {product} reserved quantity was changed from {oldReservedQuantity} to {newReservedQuantity} by {user}.",
+            await _productRepository.UpdateAsync(cancellationToken);
+            _logger.LogInformation("Product's: {@product} reserved quantity was changed from {oldReservedQuantity} to {newReservedQuantity} by {@user}.",
                 product, product.Reserved, request.Reserved, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

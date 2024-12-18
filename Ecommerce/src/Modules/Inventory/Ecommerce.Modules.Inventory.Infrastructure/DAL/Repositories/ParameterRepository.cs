@@ -23,15 +23,25 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid parameterId) => await _dbContext.Parameters.Where(p => p.Id == parameterId).ExecuteDeleteAsync();
+        public async Task AddManyAsync(IEnumerable<Parameter> parameters, CancellationToken cancellationToken = default)
+        {
+            await _dbContext.AddRangeAsync(parameters, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
 
-        public async Task DeleteManyAsync(params Guid[] parameterIds) => await _dbContext.Parameters.Where(p => parameterIds.Contains(p.Id)).ExecuteDeleteAsync();
+        public async Task DeleteAsync(Guid parameterId, CancellationToken cancellationToken = default) 
+            => await _dbContext.Parameters.Where(p => p.Id == parameterId).ExecuteDeleteAsync(cancellationToken);
 
-        public async Task<IEnumerable<Parameter>> GetAllAsync() => await _dbContext.Parameters.ToListAsync();
+        public async Task DeleteManyAsync(CancellationToken cancellationToken = default, params Guid[] parameterIds) 
+            => await _dbContext.Parameters.Where(p => parameterIds.Contains(p.Id)).ExecuteDeleteAsync(cancellationToken);
 
-        public async Task<Parameter?> GetAsync(Guid parameterId) => await _dbContext.Parameters.SingleOrDefaultAsync(p => p.Id == parameterId);
+        public async Task<IEnumerable<Parameter>> GetAllAsync(CancellationToken cancellationToken = default) 
+            => await _dbContext.Parameters.ToListAsync(cancellationToken);
 
-        public async Task UpdateAsync()
-            => await _dbContext.SaveChangesAsync();
+        public async Task<Parameter?> GetAsync(Guid parameterId, CancellationToken cancellationToken = default) 
+            => await _dbContext.Parameters.SingleOrDefaultAsync(p => p.Id == parameterId, cancellationToken);
+
+        public async Task UpdateAsync(CancellationToken cancellationToken = default)
+            => await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

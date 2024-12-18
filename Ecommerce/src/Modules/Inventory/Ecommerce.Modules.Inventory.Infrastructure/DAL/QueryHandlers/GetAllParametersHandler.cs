@@ -20,6 +20,6 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
             _dbContext = dbContext;
         }
         public async Task<IEnumerable<ParameterOptionDto>> Handle(GetAllParameters request, CancellationToken cancellationToken)
-            => await _dbContext.Parameters.Select(p => p.AsOptionDto()).ToListAsync();
+            => await _dbContext.Parameters.Select(p => p.AsOptionDto()).ToListAsync(cancellationToken);
     }
 }

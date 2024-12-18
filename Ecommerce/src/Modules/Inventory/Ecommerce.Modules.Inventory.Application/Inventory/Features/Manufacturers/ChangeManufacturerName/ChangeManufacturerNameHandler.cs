@@ -27,15 +27,12 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
         }
         public async Task Handle(ChangeManufacturerName request, CancellationToken cancellationToken)
         {
-            var manufacturer = await _manufacturerRepository.GetAsync(request.ManufaturerId);
-            if (manufacturer is null)
-            {
+            var manufacturer = await _manufacturerRepository.GetAsync(request.ManufaturerId, cancellationToken) ?? 
                 throw new ManufacturerNotFoundException(request.ManufaturerId);
-            }
             manufacturer.ChangeName(request.Name);
-            await _manufacturerRepository.UpdateAsync();
-            _logger.LogInformation("Manufacturer: {manufacturer} was changed by {username}:{userId}.", manufacturer,
-                _contextService.Identity!.Username, _contextService.Identity!.Id);
+            await _manufacturerRepository.UpdateAsync(cancellationToken);
+            _logger.LogInformation("Manufacturer: {@manufacturer} was changed to {newName} by {@user}.", manufacturer, request.Name,
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

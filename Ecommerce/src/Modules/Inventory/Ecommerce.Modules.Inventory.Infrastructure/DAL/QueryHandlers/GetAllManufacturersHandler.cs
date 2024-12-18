@@ -20,6 +20,6 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
             _dbContext = dbContext;
         }
         public async Task<IEnumerable<ManufacturerOptionDto>> Handle(GetAllManufacturers request, CancellationToken cancellationToken)
-            => await _dbContext.Manufacturers.Select(m => m.AsOptionDto()).ToListAsync();
+            => await _dbContext.Manufacturers.Select(m => m.AsOptionDto()).ToListAsync(cancellationToken);
     }
 }

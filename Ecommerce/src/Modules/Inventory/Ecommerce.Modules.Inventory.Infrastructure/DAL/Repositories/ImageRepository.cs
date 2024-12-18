@@ -17,11 +17,14 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<IEnumerable<Guid>> GetAllImagesForProductAsync(Guid productId)
-            => await _dbContext.Images.Where(i => i.ProductId == productId).Select(i => i.Id).ToListAsync();
-        public async Task<IEnumerable<Guid>> GetAllImagesForProductsAsync(Guid[] productIds)
-            => await _dbContext.Images.Where(i => productIds.Contains(i.ProductId)).Select(i => i.Id).ToListAsync();
-        public async Task AddRangeAsync(IEnumerable<Image> images)
-            => await _dbContext.Images.AddRangeAsync(images);
+        public async Task<IEnumerable<Guid>> GetAllImagesForProductAsync(Guid productId, CancellationToken cancellationToken = default)
+            => await _dbContext.Images.Where(i => i.ProductId == productId).Select(i => i.Id).ToListAsync(cancellationToken);
+        public async Task<IEnumerable<Guid>> GetAllImagesForProductsAsync(Guid[] productIds, CancellationToken cancellationToken = default)
+            => await _dbContext.Images.Where(i => productIds.Contains(i.ProductId)).Select(i => i.Id).ToListAsync(cancellationToken);
+        public async Task AddRangeAsync(IEnumerable<Image> images, CancellationToken cancellationToken = default)
+        {
+            await _dbContext.Images.AddRangeAsync(images, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
     }
 }

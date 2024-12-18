@@ -26,8 +26,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
         }
         public async Task Handle(DeleteCategory request, CancellationToken cancellationToken)
         {
-            await _categoryRepository.DeleteAsync(request.CategoryId);
-            _logger.LogInformation("Category: {categoryId} was deleted by {user}", request.CategoryId, 
+            await _categoryRepository.DeleteAsync(request.CategoryId, cancellationToken);
+            _logger.LogInformation("Category: {categoryId} was deleted by {@user}.", request.CategoryId, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

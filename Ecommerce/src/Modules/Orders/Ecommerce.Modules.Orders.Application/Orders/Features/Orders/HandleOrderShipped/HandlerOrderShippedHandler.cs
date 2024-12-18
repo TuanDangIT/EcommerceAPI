@@ -49,7 +49,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrder
             order.Ship();
             await _orderRepository.UpdateAsync();
             await _messageBroker.PublishAsync(new OrderShipped(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, order.CreatedAt));
-            _logger.LogInformation("Order's: {order} was changed to shipped by InPost webhook.", order);
+            _logger.LogInformation("Order's: {@order} was changed to shipped by InPost webhook.", order);
         }
     }
 }

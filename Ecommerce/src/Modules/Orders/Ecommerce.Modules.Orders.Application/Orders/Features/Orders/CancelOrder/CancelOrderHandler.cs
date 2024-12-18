@@ -22,34 +22,28 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
         private readonly IMessageBroker _messageBroker;
         private readonly IOrderCancellationPolicy _orderCancellationPolicy;
         private readonly ILogger<CancelOrderHandler> _logger;
-        private readonly IContextService _contextService;
 
         public CancelOrderHandler(IOrderRepository orderRepository, IPaymentProcessorService stripeService, IMessageBroker messageBroker, IOrderCancellationPolicy orderCancellationPolicy,
-            ILogger<CancelOrderHandler> logger, IContextService contextService)
+            ILogger<CancelOrderHandler> logger)
         {
             _orderRepository = orderRepository;
             _stripeService = stripeService;
             _messageBroker = messageBroker;
             _orderCancellationPolicy = orderCancellationPolicy;
             _logger = logger;
-            _contextService = contextService;
         }
         public async Task Handle(CancelOrder request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId);
-            if (order is null)
-            {
-                throw new OrderNotFoundException(request.OrderId);
-            }
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? throw new OrderNotFoundException(request.OrderId);
             if (!await _orderCancellationPolicy.CanCancel(order))
             {
                 throw new OrderCannotCancelException();
             }
-            await _stripeService.RefundAsync(order);
             order.Cancel();
-            await _orderRepository.UpdateAsync();
+            await _orderRepository.UpdateAsync(cancellationToken);
+            await _stripeService.RefundAsync(order);
             var products = order.Products;
-            _logger.LogInformation("Order: {order} was cancelled.", order);
+            _logger.LogInformation("Order: {@order} was cancelled.", order);
             await _messageBroker.PublishAsync(new OrderCancelled(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, products.Select(p => new { p.SKU, p.Quantity }), order.CreatedAt));
         }
     }

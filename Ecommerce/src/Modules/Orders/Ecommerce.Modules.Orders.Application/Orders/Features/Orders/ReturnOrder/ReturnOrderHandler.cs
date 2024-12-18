@@ -36,11 +36,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
         }
         public async Task Handle(ReturnOrder request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId);
-            if (order is null)
-            {
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
                 throw new OrderNotFoundException(request.OrderId);
-            }
             var returnProducts = order.Products
                 .Where(p => request.ProductsToReturn.Select(ptr => ptr.SKU).Contains(p.SKU))
                 .Select(p =>
@@ -53,19 +50,18 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
             {
                 order.DecreaseProductQuantity(product.SKU, product.Quantity);
             }
-            //usuwanie w order tutaj dać logikę
             if(!await _orderReturnPolicy.CanReturn(order))
             {
                 throw new OrderCannotReturnException("Cannot return an order after 14 days of placing it.");
             }
+            order.Return();
+            await _orderRepository.UpdateAsync(cancellationToken);
+            _logger.LogInformation("Order: {@order} was returned.", order);
             bool isFullReturn = !order.Products.Any();
             var domainEvent = new OrderReturned(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, request.ReasonForReturn, returnProducts, isFullReturn);
             await _domainEventDispatcher.DispatchAsync(domainEvent);
             var integrationEvent = _ordersEventMapper.Map(domainEvent);
             await _messageBroker.PublishAsync(integrationEvent);
-            order.Return();
-            await _orderRepository.UpdateAsync();
-            _logger.LogInformation("Order: {order} was returned.", order);
         }
     }
 }

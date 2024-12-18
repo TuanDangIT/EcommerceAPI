@@ -20,9 +20,10 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
             _dbContext = dbContext;
         }
         public async Task<ManufacturerBrowseDto?> Handle(GetManufacturer request, CancellationToken cancellationToken)
-        {
-            var manufacturer = await _dbContext.Manufacturers.AsNoTracking().SingleOrDefaultAsync(m => m.Id == request.ManufacturerId);
-            return manufacturer?.AsBrowseDto();
-        }
+            => await _dbContext.Manufacturers
+                .AsNoTracking()
+                .Where(m => m.Id == request.ManufacturerId)
+                .Select(m => m.AsBrowseDto())
+                .SingleOrDefaultAsync(cancellationToken);
     }
 }

@@ -8,6 +8,7 @@ using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Create
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.DeleteProduct;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.DeleteSelectedProducts;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.GetProduct;
+using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.ImportProducts;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.ListProducts;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.UnlistProducts;
 using Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.UpdateProduct;
@@ -39,6 +40,12 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         {
             var productId = await _mediator.Send(command);
             return CreatedAtAction(nameof(GetProduct), new {productId}, null);
+        }
+        [HttpPost("import")]
+        public async Task<ActionResult> ImportProducts([FromForm] ImportProducts command)
+        {
+            await _mediator.Send(command);
+            return Created();
         }
         [HttpGet()]
         public async Task<ActionResult<ApiResponse<PagedResult<ProductBrowseDto>>>> BrowseProducts([FromQuery] BrowseProducts query)

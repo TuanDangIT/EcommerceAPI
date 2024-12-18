@@ -9,11 +9,12 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Repositories
 {
     public interface IParameterRepository
     {
-        Task AddAsync(Parameter parameter);
-        Task UpdateAsync();
-        Task DeleteAsync(Guid parameterId);
-        Task DeleteManyAsync(Guid[] parameterIds);
-        //Task<IEnumerable<Parameter>> GetAllAsync();
-        Task<Parameter?> GetAsync(Guid parameterId);
+        Task AddAsync(Parameter parameter, CancellationToken cancellationToken = default);
+        Task AddManyAsync(IEnumerable<Parameter> parameter, CancellationToken cancellationToken = default);    
+        Task UpdateAsync(CancellationToken cancellationToken = default);
+        Task DeleteAsync(Guid parameterId, CancellationToken cancellationToken = default);
+        Task DeleteManyAsync(Guid[] parameterIds, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Parameter>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<Parameter?> GetAsync(Guid parameterId, CancellationToken cancellationToken = default);
     }
 }

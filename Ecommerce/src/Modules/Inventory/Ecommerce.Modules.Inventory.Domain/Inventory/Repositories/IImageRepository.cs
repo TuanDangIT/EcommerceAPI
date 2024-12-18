@@ -9,8 +9,8 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Repositories
 {
     public interface IImageRepository
     {
-        Task<IEnumerable<Guid>> GetAllImagesForProductAsync(Guid productId);
-        Task<IEnumerable<Guid>> GetAllImagesForProductsAsync(Guid[] productIds);
-        Task AddRangeAsync(IEnumerable<Image> images);
+        Task<IEnumerable<Guid>> GetAllImagesForProductAsync(Guid productId, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Guid>> GetAllImagesForProductsAsync(Guid[] productIds, CancellationToken cancellationToken = default);
+        Task AddRangeAsync(IEnumerable<Image> images, CancellationToken cancellationToken = default);
     }
 }

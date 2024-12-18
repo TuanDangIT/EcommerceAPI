@@ -26,8 +26,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.
         }
         public async Task Handle(DeleteSelectedParameters request, CancellationToken cancellationToken)
         {
-            await _parameterRepository.DeleteManyAsync(request.ParameterIds);
-            _logger.LogInformation("Selected parameters: {parameterIds} were deleted by {user}.",
+            await _parameterRepository.DeleteManyAsync(request.ParameterIds, cancellationToken);
+            _logger.LogInformation("Selected parameters: {parameterIds} were deleted by {@user}.",
                 request.ParameterIds, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

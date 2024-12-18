@@ -30,15 +30,12 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ChangeStatu
             {
                 throw new OrderInvalidStatusException(request.Status);
             }
-            var order = await _orderRepository.GetAsync(request.OrderId);
-            if(order is null)
-            {
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
                 throw new OrderNotFoundException(request.OrderId);
-            }
             order.ChangeStatus((OrderStatus)status!);
-            await _orderRepository.UpdateAsync();
-            _logger.LogInformation("Order: {order} status was changed to {status} by {username}:{userId}", order, request.Status, 
-                _contextService.Identity!.Username, _contextService.Identity!.Id);
+            await _orderRepository.UpdateAsync(cancellationToken);
+            _logger.LogInformation("Order: {@order} status was changed to {status} by {@user}", order, request.Status, 
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

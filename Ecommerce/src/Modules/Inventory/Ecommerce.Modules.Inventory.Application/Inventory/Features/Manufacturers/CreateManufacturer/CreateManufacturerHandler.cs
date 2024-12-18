@@ -27,9 +27,9 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
         }
         public async Task Handle(CreateManufacturer request, CancellationToken cancellationToken)
         {
-            var manufacturer = new Manufacturer(Guid.NewGuid(), request.Name);
-            await _manufacturerRepository.AddAsync(manufacturer);
-            _logger.LogInformation("Manufacturer: {manufacturer} was created by {user}.",
+            var manufacturer = new Manufacturer(request.Name);
+            await _manufacturerRepository.AddAsync(manufacturer, cancellationToken);
+            _logger.LogInformation("Manufacturer: {@manufacturer} was created by {@user}.",
                 manufacturer, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

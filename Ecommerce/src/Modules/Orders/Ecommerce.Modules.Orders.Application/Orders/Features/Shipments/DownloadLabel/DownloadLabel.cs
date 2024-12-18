@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.DownloadLabel
 {
-    public sealed record class DownloadLabel(Guid OrderId, int ShipmentId) : ICommand<(Stream FileStream, string MimeType, string FileName)>;
+    public sealed record class DownloadLabel(Guid OrderId, int ShipmentId) : IQuery<(Stream FileStream, string MimeType, string FileName)>;
 }

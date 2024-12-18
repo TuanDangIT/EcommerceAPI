@@ -27,15 +27,12 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.
         }
         public async Task Handle(ChangeParameterName request, CancellationToken cancellationToken)
         {
-            var parameter = await _parameterRepository.GetAsync(request.ParameterId);
-            if (parameter is null)
-            {
+            var parameter = await _parameterRepository.GetAsync(request.ParameterId, cancellationToken) ?? 
                 throw new ParameterNotFoundException(request.ParameterId);
-            }
             parameter.ChangeName(request.Name);
-            await _parameterRepository.UpdateAsync();
-            _logger.LogInformation("Parameter's: {parameter} name was changed to {newName} by {username}:{userId}.", parameter, request.Name,
-                _contextService.Identity!.Username, _contextService.Identity!.Id);
+            await _parameterRepository.UpdateAsync(cancellationToken);
+            _logger.LogInformation("Parameter's: {@parameter} name was changed to {newName} by {@user}.", parameter, request.Name,
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

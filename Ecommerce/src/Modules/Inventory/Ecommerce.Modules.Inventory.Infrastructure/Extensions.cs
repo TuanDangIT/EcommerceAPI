@@ -2,6 +2,7 @@
 using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories;
+using Ecommerce.Modules.Inventory.Infrastructure.DAL.UnitOfWork;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Microsoft.Extensions.DependencyInjection;
 using Sieve.Services;
@@ -20,6 +21,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddPostgres<InventoryDbContext>();
+            services.AddScoped<IInventoryUnitOfWork, InventoryUnitOfWork>();
             services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
             services.AddScoped<IParameterRepository, ParameterRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();

@@ -11,16 +11,17 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Repositories
 {
     public interface IProductRepository
     {
-        Task AddAsync(Product product);
-        Task UpdateAsync();
-        Task DeleteAsync(Guid productId);
+        Task AddAsync(Product product, CancellationToken cancellationToken = default);
+        Task AddManyAsync(IEnumerable<Product> products, CancellationToken cancellationToken = default);
+        Task UpdateAsync(CancellationToken cancellationToken = default);
+        Task DeleteAsync(Guid productId, CancellationToken cancellationToken = default);
         //Task<int> DecreaseQuantityAsync(Guid productId, int ammount);
-        Task DeleteManyAsync(Guid[] productIds);
-        Task<IEnumerable<Guid>> GetAllIdThatContainsInArrayAsync(Guid[] productIds);
-        Task<IEnumerable<Product>> GetAllThatContainsInArrayAsync(Guid[] productIds);
-        Task<Product?> GetAsync(Guid productId);
-        Task DeleteProductParametersAndImagesRelatedToProduct(Guid productId);
-        Task UpdateListedFlagAsync(Guid[] productIds, bool isListed);
-        Task<IDbContextTransaction> BeginTransactionAsync();
+        Task DeleteManyAsync(CancellationToken cancellationToken = default, params Guid[] productIds);
+        Task<IEnumerable<Guid>> GetAllIdThatContainsInArrayAsync(Guid[] productIds, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Product>> GetAllThatContainsInArrayAsync(Guid[] productIds, CancellationToken cancellationToken = default);
+        Task<Product?> GetAsync(Guid productId, CancellationToken cancellationToken = default);
+        Task DeleteProductParametersAndImagesRelatedToProduct(Guid productId, CancellationToken cancellationToken = default);
+        Task UpdateListedFlagAsync(Guid[] productIds, bool isListed, CancellationToken cancellationToken = default);
+        Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
     }
 }

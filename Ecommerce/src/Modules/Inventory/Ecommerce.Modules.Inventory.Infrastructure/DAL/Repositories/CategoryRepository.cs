@@ -17,22 +17,31 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task AddAsync(Category category)
+        public async Task AddAsync(Category category, CancellationToken cancellationToken = default)
         {
-            await _dbContext.AddAsync(category);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.AddAsync(category, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        public async Task AddManyAsync(IEnumerable<Category> categories, CancellationToken cancellationToken = default)
+        {
+            await _dbContext.AddRangeAsync(categories, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeleteAsync(Guid categoryId) => await _dbContext.Categories.Where(c => c.Id == categoryId).ExecuteDeleteAsync();
+        public async Task DeleteAsync(Guid categoryId, CancellationToken cancellationToken = default) 
+            => await _dbContext.Categories.Where(c => c.Id == categoryId).ExecuteDeleteAsync(cancellationToken);
 
-        public async Task DeleteManyAsync(Guid[] categoryIds) => await _dbContext.Categories.Where(c => categoryIds.Contains(c.Id)).ExecuteDeleteAsync();
+        public async Task DeleteManyAsync(Guid[] categoryIds, CancellationToken cancellationToken = default) 
+            => await _dbContext.Categories.Where(c => categoryIds.Contains(c.Id)).ExecuteDeleteAsync(cancellationToken);
 
-        public async Task<IEnumerable<Category>> GetAllAsync() => await _dbContext.Categories.ToListAsync();
+        public async Task<IEnumerable<Category>> GetAllAsync(CancellationToken cancellationToken = default) 
+            => await _dbContext.Categories.ToListAsync(cancellationToken);
 
-        public async Task<Category?> GetAsync(Guid categoryId) => await _dbContext.Categories.SingleOrDefaultAsync(c => c.Id == categoryId);
+        public async Task<Category?> GetAsync(Guid categoryId, CancellationToken cancellationToken = default) 
+            => await _dbContext.Categories.SingleOrDefaultAsync(c => c.Id == categoryId, cancellationToken);
 
-        public async Task UpdateAsync()
-            => await _dbContext.SaveChangesAsync();
+        public async Task UpdateAsync(CancellationToken cancellationToken = default)
+            => await _dbContext.SaveChangesAsync(cancellationToken);
         
     }
 }

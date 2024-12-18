@@ -44,10 +44,10 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
             var dtos = await _sieveProcessor
                 .Apply(request, products)
                 .Select(p => p.AsBrowseDto())
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             var totalCount = await _sieveProcessor
                 .Apply(request, products, applyPagination: false)
-                .CountAsync();
+                .CountAsync(cancellationToken);
             var pagedResult = new PagedResult<ProductBrowseDto>(dtos, totalCount, request.PageSize.Value, request.Page.Value);
             return pagedResult;
         }

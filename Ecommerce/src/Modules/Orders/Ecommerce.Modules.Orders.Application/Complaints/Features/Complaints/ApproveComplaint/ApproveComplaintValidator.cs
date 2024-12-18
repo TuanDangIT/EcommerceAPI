@@ -14,7 +14,6 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
             RuleFor(a => a.ComplaintId)
                 .NotNull()
                 .NotEmpty();
-            //.When(a => a.Amount is not null);
             RuleFor(a => a.Decision)
                 .NotEmpty()
                 .NotNull()

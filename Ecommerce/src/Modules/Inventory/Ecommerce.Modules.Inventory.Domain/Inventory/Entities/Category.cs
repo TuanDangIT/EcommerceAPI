@@ -15,10 +15,10 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public IEnumerable<Product> Products => _product;
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        public Category(Guid id, string name)
+        public Category(string name)
         {
             IsNameValid(name);
-            Id = id;
+            Name = name;
         }
         public Category()
         {
@@ -32,7 +32,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         private static void IsNameValid(string name)
         {
-            if (name.Length >= 2 && name.Length <= 32)
+            if (name.Length < 2 && name.Length > 32)
             {
                 throw new CategoryInvalidNameLengthException();
             }

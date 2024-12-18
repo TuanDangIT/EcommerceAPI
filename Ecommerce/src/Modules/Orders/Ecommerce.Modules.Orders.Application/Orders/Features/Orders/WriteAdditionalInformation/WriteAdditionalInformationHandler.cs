@@ -26,19 +26,16 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Orders.WriteAddit
         }
         public async Task Handle(WriteAdditionalInformation request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId);
-            if (order is null)
-            {
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
                 throw new OrderNotFoundException(request.OrderId);
-            }
-            if(request.AdditionalInformation == string.Empty)
+            if (request.AdditionalInformation == string.Empty)
             {
                 return;
             }
             order.WriteAdditionalInformation(request.AdditionalInformation);
-            await _orderRepository.UpdateAsync();
-            _logger.LogInformation("Order's: {order} additional information property was written by {username}:{userId}.", order,
-                _contextService.Identity!.Username, _contextService.Identity!.Id);
+            await _orderRepository.UpdateAsync(cancellationToken);
+            _logger.LogInformation("Order's: {@order} additional information property was written by {@user}.", order,
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

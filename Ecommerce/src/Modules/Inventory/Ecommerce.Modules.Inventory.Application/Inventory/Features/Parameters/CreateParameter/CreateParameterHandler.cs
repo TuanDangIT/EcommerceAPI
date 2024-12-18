@@ -27,9 +27,9 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.
         }
         public async Task Handle(CreateParameter request, CancellationToken cancellationToken)
         {
-            var parameter = new Parameter(Guid.NewGuid(), request.Name);
-            await _parameterRepository.AddAsync(parameter);
-            _logger.LogInformation("Parameter: {parameter} was created by {user}.",
+            var parameter = new Parameter(request.Name);
+            await _parameterRepository.AddAsync(parameter, cancellationToken);
+            _logger.LogInformation("Parameter: {@parameter} was created by {@user}.",
                 parameter, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
 
         }

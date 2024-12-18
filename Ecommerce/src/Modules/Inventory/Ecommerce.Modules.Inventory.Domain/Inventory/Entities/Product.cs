@@ -63,6 +63,24 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             Category = category;
             _images = images;
         }
+        public Product(string sku, string name, decimal price, int vat, string description
+            , List<ProductParameter> productParameters, Manufacturer manufacturer, Category category
+            , List<Image> images, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null, int? reserved = null)
+        {
+            SKU = sku;
+            EAN = ean;
+            Name = name;
+            Price = price;
+            VAT = vat;
+            Quantity = quantity;
+            Location = location;
+            Description = description;
+            AdditionalDescription = additionalDescription;
+            _productParameters = productParameters;
+            Manufacturer = manufacturer;
+            Category = category;
+            _images = images;
+        }
         public Product()
         {
 

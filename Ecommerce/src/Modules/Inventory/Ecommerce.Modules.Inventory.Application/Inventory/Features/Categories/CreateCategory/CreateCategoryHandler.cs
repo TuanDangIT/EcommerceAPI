@@ -27,9 +27,9 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
         }
         public async Task Handle(CreateCategory request, CancellationToken cancellationToken)
         {
-            var category = new Category(Guid.NewGuid(), request.Name);
-            await _categoryRepository.AddAsync(category);
-            _logger.LogInformation("Category: {category} was created by {user}.", 
+            var category = new Category(request.Name);
+            await _categoryRepository.AddAsync(category, cancellationToken);
+            _logger.LogInformation("Category: {@category} was created by {@user}.", 
                 category, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

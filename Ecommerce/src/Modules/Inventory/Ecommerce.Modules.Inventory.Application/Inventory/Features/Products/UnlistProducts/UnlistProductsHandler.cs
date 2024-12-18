@@ -38,7 +38,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Un
         }
         public async Task Handle(UnlistProducts request, CancellationToken cancellationToken)
         {
-            var productIds = await _productRepository.GetAllIdThatContainsInArrayAsync(request.ProductIds);
+            var productIds = await _productRepository.GetAllIdThatContainsInArrayAsync(request.ProductIds, cancellationToken);
             if (productIds.Count() != request.ProductIds.Length)
             {
                 var productIdsNotFound = new List<Guid>();
@@ -51,9 +51,9 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Un
                 }
                 throw new ProductNotAllFoundException(productIdsNotFound);
             }
-            await _productRepository.UpdateListedFlagAsync(request.ProductIds, false);
-            _logger.LogInformation("Products: {productsIds} were listed by {user}.",
-                productIds, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            await _productRepository.UpdateListedFlagAsync(request.ProductIds, false, cancellationToken);
+            _logger.LogInformation("Products: {productsIds} were listed by {@user}.",
+                string.Join(", ", productIds), new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             var domainEvent = new ProductsUnlisted(productIds);
             await _domainEventDispatcher.DispatchAsync(domainEvent);
             var integrationEvent = _eventMapper.Map(domainEvent);

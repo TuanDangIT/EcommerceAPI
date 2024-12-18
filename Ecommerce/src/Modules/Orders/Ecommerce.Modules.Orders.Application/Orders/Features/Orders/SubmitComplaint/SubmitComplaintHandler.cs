@@ -38,11 +38,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitCompl
         }
         public async Task Handle(SubmitComplaint request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId);
-            if (order is null)
-            {
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
                 throw new OrderNotFoundException(request.OrderId);
-            }
             var domainEvent = new ComplaintSubmitted(
                     order.Id,
                     order.Customer.UserId,
@@ -55,8 +52,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitCompl
             await _domainEventDispatcher.DispatchAsync(domainEvent);
             var integrationEvent = _ordersEventMapper.Map(domainEvent);
             await _messageBroker.PublishAsync(integrationEvent);
-            _logger.LogInformation("Complaint was submitted for order: {order} by {username}:{userId}.", order, 
-                _contextService.Identity!.Username, _contextService.Identity!.Id);
+            _logger.LogInformation("Complaint was submitted for order: {@order} by {@user}.", order,
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

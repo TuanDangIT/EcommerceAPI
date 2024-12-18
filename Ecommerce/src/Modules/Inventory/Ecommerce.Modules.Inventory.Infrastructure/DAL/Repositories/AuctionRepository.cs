@@ -18,25 +18,25 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task ListManyAsync(IEnumerable<Auction> auctions)
+        public async Task ListManyAsync(IEnumerable<Auction> auctions, CancellationToken cancellationToken = default)
         {
-            await _dbContext.Auctions.AddRangeAsync(auctions);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.Auctions.AddRangeAsync(auctions, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task UnlistManyAsync(Guid[] auctionIds) 
-            => await _dbContext.Auctions.Where(a => auctionIds.Contains(a.Id)).ExecuteDeleteAsync();
+        public async Task UnlistManyAsync(Guid[] auctionIds, CancellationToken cancellationToken = default) 
+            => await _dbContext.Auctions.Where(a => auctionIds.Contains(a.Id)).ExecuteDeleteAsync(cancellationToken);
 
-        public async Task<IEnumerable<Auction>> GetAllThatContainsInArrayAsync(Guid[] auctionIds)
+        public async Task<IEnumerable<Auction>> GetAllThatContainsInArrayAsync(Guid[] auctionIds, CancellationToken cancellationToken = default)
             => await _dbContext.Auctions
                 .Where(p => auctionIds.Contains(p.Id))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
-        public async Task<Auction?> GetAsync(Guid auctionId)
-            => await _dbContext.Auctions.SingleOrDefaultAsync(a => a.Id == auctionId);
+        public async Task<Auction?> GetAsync(Guid auctionId, CancellationToken cancellationToken = default)
+            => await _dbContext.Auctions.SingleOrDefaultAsync(a => a.Id == auctionId, cancellationToken);
 
-        public async Task UpdateAsync()
-            => await _dbContext.SaveChangesAsync();
+        public async Task UpdateAsync(CancellationToken cancellationToken = default)
+            => await _dbContext.SaveChangesAsync(cancellationToken);
 
     }
 }

@@ -45,7 +45,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrder
             var order = await _orderRepository.GetAsync(trackingNumber) ?? throw new OrderNotFoundException(trackingNumber);
             order.Complete();
             await _orderRepository.UpdateAsync();
-            _logger.LogInformation("Order's: {order} was changed to completed by InPost webhook.", order);
+            _logger.LogInformation("Order's: {@order} was changed to completed by InPost webhook.", order);
         }
     }
 }

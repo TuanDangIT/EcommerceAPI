@@ -36,7 +36,6 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [HttpPost("{cartId:guid}")]
         public async Task<ActionResult> AddProduct([FromRoute]Guid cartId, [FromBody]CartAddProductDto dto, CancellationToken cancellationToken)
         {
-            throw new Exception();
             await _cartService.AddProductAsync(cartId, dto.ProductId, dto.Quantity, cancellationToken);
             return NoContent();
         }

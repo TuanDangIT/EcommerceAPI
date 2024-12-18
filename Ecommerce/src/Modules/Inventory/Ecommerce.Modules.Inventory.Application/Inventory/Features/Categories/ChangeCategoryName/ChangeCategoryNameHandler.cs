@@ -26,15 +26,12 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
         }
         public async Task Handle(ChangeCategoryName request, CancellationToken cancellationToken)
         {
-            var category = await _categoryRepository.GetAsync(request.CategoryId);
-            if (category is null)
-            {
+            var category = await _categoryRepository.GetAsync(request.CategoryId, cancellationToken) ?? 
                 throw new CategoryNotFoundException(request.CategoryId);
-            }
             category.ChangeName(request.Name);
-            await _categoryRepository.UpdateAsync();
-            _logger.LogInformation("Category's: {category} name was changed to {newName} by {username}:{userId}.", category, request.Name,
-                _contextService.Identity!.Username, _contextService.Identity!.Id);
+            await _categoryRepository.UpdateAsync(cancellationToken);
+            _logger.LogInformation("Category's: {@category} name was changed to {newName} by {@user}.", category, request.Name,
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

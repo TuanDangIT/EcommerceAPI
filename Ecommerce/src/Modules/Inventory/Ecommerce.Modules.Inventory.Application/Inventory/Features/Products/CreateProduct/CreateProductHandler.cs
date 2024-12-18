@@ -39,26 +39,17 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
         }
         public async Task<Guid> Handle(CreateProduct request, CancellationToken cancellationToken)
         {
-            var manufacturer = await _manufacturerRepository.GetAsync(request.ManufacturerId);
-            if (manufacturer is null)
-            {
+            var manufacturer = await _manufacturerRepository.GetAsync(request.ManufacturerId, cancellationToken) ?? 
                 throw new ManufacturerNotFoundException(request.ManufacturerId);
-            }
-            var category = await _categoryRepository.GetAsync(request.CategoryId);
-            if (category is null)
-            {
+            var category = await _categoryRepository.GetAsync(request.CategoryId, cancellationToken) ?? 
                 throw new CategoryNotFoundException(request.CategoryId);
-            }
             var productParameters = new List<ProductParameter>();
             if (request.ProductParameters is not null)
             {
                 foreach (var productParameter in request.ProductParameters)
                 {
-                    var parameter = await _parameterRepository.GetAsync(productParameter.ParameterId);
-                    if (parameter is null)
-                    {
+                    var parameter = await _parameterRepository.GetAsync(productParameter.ParameterId, cancellationToken) ?? 
                         throw new ParameterNotFoundException(productParameter.ParameterId);
-                    }
                     productParameters.Add(new ProductParameter()
                     {
                         Parameter = parameter,
@@ -87,7 +78,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
                     reserved: request.Quantity is null ? null : 0
                 );
             await _productRepository.AddAsync(product);
-            _logger.LogInformation("Product: {product} was created by {user}.",
+            _logger.LogInformation("Product: {@product} was created by {@user}.",
                 product, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             return productId;
         }

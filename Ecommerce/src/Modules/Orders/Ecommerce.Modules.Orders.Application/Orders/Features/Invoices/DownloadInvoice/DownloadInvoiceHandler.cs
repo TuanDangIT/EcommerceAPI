@@ -40,7 +40,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.DownloadI
                 throw new OrderCannotDownloadInvoiceException(request.OrderId);
             }
             var dto = await _blobStorageService.DownloadAsync(order.Invoice.InvoiceNo, _containerName, cancellationToken);
-            _logger.LogInformation("Invoice: {invoice} was downloaded by {username}:{userId}.", order.Invoice, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            _logger.LogInformation("Invoice: {@invoice} was downloaded by {@user}.", order.Invoice, 
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             return (dto.FileStream, _mimeType, $"{order.Invoice.InvoiceNo}-invoice");
         }
     }

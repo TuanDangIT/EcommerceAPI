@@ -39,7 +39,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Li
         }
         public async Task Handle(ListProducts request, CancellationToken cancellationToken)
         {
-            var products = await _productRepository.GetAllThatContainsInArrayAsync(request.ProductIds);
+            var products = await _productRepository.GetAllThatContainsInArrayAsync(request.ProductIds, cancellationToken);
             if(products.Count() != request.ProductIds.Length)
             {
                 var productIdsNotFound = new List<Guid>();
@@ -52,8 +52,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Li
                 }
                 throw new ProductNotAllFoundException(productIdsNotFound);
             }
-            await _productRepository.UpdateListedFlagAsync(request.ProductIds, true);
-            _logger.LogInformation("Products: {products} were listed by {user}.",
+            await _productRepository.UpdateListedFlagAsync(request.ProductIds, true, cancellationToken);
+            _logger.LogInformation("Products: {@products} were listed by {@user}.",
                 products, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             var domainEvent = new ProductsListed(products, _timeProvider.GetUtcNow().UtcDateTime);
             await _domainEventDispatcher.DispatchAsync(domainEvent);

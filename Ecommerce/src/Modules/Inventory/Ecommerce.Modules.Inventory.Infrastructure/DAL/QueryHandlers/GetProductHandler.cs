@@ -20,16 +20,15 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
             _dbContext = dbContext;
         }
         public async Task<ProductDetailsDto?> Handle(GetProduct request, CancellationToken cancellationToken)
-        {
-            var product = await _dbContext.Products
+            => await _dbContext.Products
                 .AsNoTracking()
                 .Include(p => p.Manufacturer)
                 .Include(p => p.Category)
                 .Include(p => p.Images.OrderBy(i => i.Order))
                 .Include(p => p.ProductParameters)
                 .ThenInclude(pp => pp.Parameter)
-                .SingleOrDefaultAsync(p => p.Id == request.ProductId);
-            return product?.AsDetailsDto();
-        }
+                .Where(p => p.Id == request.ProductId)
+                .Select(p => p.AsDetailsDto())
+                .SingleOrDefaultAsync(cancellationToken);
     }
 }

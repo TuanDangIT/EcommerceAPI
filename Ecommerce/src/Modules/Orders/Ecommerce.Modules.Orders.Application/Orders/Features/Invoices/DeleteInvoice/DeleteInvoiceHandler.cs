@@ -38,7 +38,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.DeleteInv
             var invoice = order.Invoice ?? throw new OrderInvoiceNotFoundException(request.OrderId);
             await _blobStorageService.DeleteAsync(invoice.InvoiceNo, _containerName, cancellationToken);
             await _invoiceRepository.DeleteAsync(invoice.Id);
-            _logger.LogInformation("Invoice: {invoice} was deleted by {user}.", invoice, 
+            _logger.LogInformation("Invoice: {@invoice} was deleted by {@user}.", invoice, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
 
         }

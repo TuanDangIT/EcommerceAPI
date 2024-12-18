@@ -26,14 +26,11 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Ch
         }
         public async Task Handle(ChangeProductPrice request, CancellationToken cancellationToken)
         {
-            var product = await _productRepository.GetAsync(request.ProductId);
-            if (product is null)
-            {
+            var product = await _productRepository.GetAsync(request.ProductId, cancellationToken) ?? 
                 throw new ProductNotFoundException(request.ProductId);
-            }
             product.ChangePrice(request.Price);
-            await _productRepository.UpdateAsync();
-            _logger.LogInformation("Product's: {product} price was changed from {oldPrice} to {newPrice} by {user}.",
+            await _productRepository.UpdateAsync(cancellationToken);
+            _logger.LogInformation("Product's: {@product} price was changed from {oldPrice} to {newPrice} by {@user}.",
                 product, product.Price, request.Price, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

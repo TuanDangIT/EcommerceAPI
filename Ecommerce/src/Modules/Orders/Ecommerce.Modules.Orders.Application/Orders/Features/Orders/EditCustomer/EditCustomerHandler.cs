@@ -27,16 +27,15 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.EditCustome
         }
         public async Task Handle(EditCustomer request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId);
-            if(order is null)
-            {
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
                 throw new OrderNotFoundException(request.OrderId);
-            }
             var address = new Address(request.Address.Street, request.Address.BuildingNumber, request.Address.City, request.Address.PostCode);
             order.EditCustomer(new Customer(request.FirstName, request.LastName, request.Email, request.PhoneNumber, address));
-            await _orderRepository.UpdateAsync();
-            _logger.LogInformation("Order's: {order} customer: {customer} was editted with new details {updatingDetails} by {username}:{userId}.", order, order.Customer,
-                new { request.FirstName, request.LastName, request.Email, request.PhoneNumber, address }, _contextService.Identity!.Username, _contextService.Identity!.Id);
+            await _orderRepository.UpdateAsync(cancellationToken);
+            _logger.LogInformation("Order's: {@order} customer: {@customer} was editted with new details {@updatingDetails} by {@user}.", 
+                order, order.Customer,
+                new { request.FirstName, request.LastName, request.Email, request.PhoneNumber, address }, 
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }
