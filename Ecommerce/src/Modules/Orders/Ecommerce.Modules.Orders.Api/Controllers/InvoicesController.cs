@@ -26,24 +26,27 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         {
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<CursorPagedResult<InvoiceBrowseDto, InvoiceCursorDto>>>> BrowseInvoices([FromQuery] BrowseInvoices query)
-            => CursorPagedResult(await _mediator.Send(query));
+        public async Task<ActionResult<ApiResponse<CursorPagedResult<InvoiceBrowseDto, InvoiceCursorDto>>>> BrowseInvoices([FromQuery] BrowseInvoices query, 
+            CancellationToken cancellationToken = default)
+            => CursorPagedResult(await _mediator.Send(query, cancellationToken));
         [HttpPost("{orderId:guid}")]
-        public async Task<ActionResult> CreateInvoice([FromRoute] Guid orderId)
+        public async Task<ActionResult> CreateInvoice([FromRoute] Guid orderId, 
+            CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new CreateInvoice(orderId));
+            var result = await _mediator.Send(new CreateInvoice(orderId), cancellationToken);
             return Ok(result);
         }
         [HttpGet("{orderId:guid}")]
-        public async Task<ActionResult<ApiResponse<InvoiceDetailsDto>>> DownloadInvoice([FromRoute]Guid orderId)
+        public async Task<ActionResult<ApiResponse<InvoiceDetailsDto>>> DownloadInvoice([FromRoute]Guid orderId, 
+            CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new DownloadInvoice(orderId));
+            var result = await _mediator.Send(new DownloadInvoice(orderId), cancellationToken);
             return File(result.FileStream, result.MimeType, result.FileName);
         }
         [HttpDelete("{orderId:guid}")]
-        public async Task<ActionResult> DeleteInvoice([FromRoute]Guid orderId)
+        public async Task<ActionResult> DeleteInvoice([FromRoute]Guid orderId, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new DeleteInvoice(orderId));
+            await _mediator.Send(new DeleteInvoice(orderId), cancellationToken);
             return NoContent();
         }
     }

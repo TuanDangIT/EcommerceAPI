@@ -30,38 +30,42 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         {
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>>> BrowseOrders([FromQuery] BrowseComplaints query)
+        public async Task<ActionResult<ApiResponse<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>>> BrowseOrders([FromQuery] BrowseComplaints query, 
+            CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>(HttpStatusCode.OK, result));
         }
         [HttpGet("{complaintId:guid}")]
-        public async Task<ActionResult<ApiResponse<ComplaintDetailsDto>>> GetOrder([FromRoute] Guid complaintId)
-            => OkOrNotFound<ComplaintDetailsDto, Complaint>(await _mediator.Send(new GetComplaint(complaintId)));
+        public async Task<ActionResult<ApiResponse<ComplaintDetailsDto>>> GetOrder([FromRoute] Guid complaintId, CancellationToken cancellationToken = default)
+            => OkOrNotFound<ComplaintDetailsDto, Complaint>(await _mediator.Send(new GetComplaint(complaintId), cancellationToken));
         [HttpPost("{complaintId:guid}/approve")]
-        public async Task<ActionResult> ApproveComplaint([FromRoute] Guid complaintId, [FromForm] ApproveComplaint command)
+        public async Task<ActionResult> ApproveComplaint([FromRoute] Guid complaintId, [FromForm] ApproveComplaint command, 
+            CancellationToken cancellationToken = default)
         {
             command = command with { ComplaintId = complaintId };
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
         [HttpPost("{complaintId:guid}/reject")]
-        public async Task<ActionResult> RejectComplaint([FromRoute] Guid complaintId, [FromForm] DecisionRejectDto decision)
+        public async Task<ActionResult> RejectComplaint([FromRoute] Guid complaintId, [FromForm] DecisionRejectDto decision, 
+            CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new RejectComplaint(complaintId, decision));
+            await _mediator.Send(new RejectComplaint(complaintId, decision), cancellationToken);
             return NoContent();
         }
         [HttpPut("{complaintId:guid}/note")]
-        public async Task<ActionResult> SetNote([FromRoute] Guid complaintId, [FromForm] string note)
+        public async Task<ActionResult> SetNote([FromRoute] Guid complaintId, [FromForm] string note, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new SetNote(complaintId, note));
+            await _mediator.Send(new SetNote(complaintId, note), cancellationToken);
             return NoContent();
         }
         [HttpPut("{complaintId:guid}/decision")]
-        public async Task<ActionResult> EditDecision([FromRoute]Guid complaintId, [FromForm] EditDecision command)
+        public async Task<ActionResult> EditDecision([FromRoute]Guid complaintId, [FromForm] EditDecision command, 
+            CancellationToken cancellationToken = default)
         {
             command = command with { ComplaintId=complaintId };
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
     }

@@ -31,30 +31,32 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return Created();
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<PagedResult<CategoryBrowseDto>>>> BrowseCategories([FromQuery] BrowseCategories query)
+        public async Task<ActionResult<ApiResponse<PagedResult<CategoryBrowseDto>>>> BrowseCategories([FromQuery] BrowseCategories query, 
+            CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<PagedResult<CategoryBrowseDto>>(HttpStatusCode.OK, result));
         }
         [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> DeleteCategory([FromRoute] Guid id)
+        public async Task<ActionResult> DeleteCategory([FromRoute] Guid id, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new DeleteCategory(id));
+            await _mediator.Send(new DeleteCategory(id), cancellationToken);
             return NoContent();
         }
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult> ChangeCategoryName([FromRoute] Guid id, [FromBody] ChangeCategoryName command)
+        public async Task<ActionResult> ChangeCategoryName([FromRoute] Guid id, [FromBody] ChangeCategoryName command,
+            CancellationToken cancellationToken = default)
         {
             await _mediator.Send(command with
             {
                 CategoryId = id
-            });
+            }, cancellationToken);
             return NoContent();
         }
         [HttpDelete]
-        public async Task<ActionResult> DeleteSelectedCategories([FromBody] DeleteSelectedCategories command)
+        public async Task<ActionResult> DeleteSelectedCategories([FromBody] DeleteSelectedCategories command, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
     }

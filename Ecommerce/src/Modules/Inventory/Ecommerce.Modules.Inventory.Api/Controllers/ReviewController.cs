@@ -27,28 +27,32 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         {
         }
         [HttpGet("{auctionId:guid}")]
-        public async Task<ActionResult<ApiResponse<PagedResult<ReviewDto>>>> GetReviews([FromQuery]BrowseReviews query, [FromRoute] Guid auctionId)
+        public async Task<ActionResult<ApiResponse<PagedResult<ReviewDto>>>> GetReviews([FromQuery]BrowseReviews query, [FromRoute] Guid auctionId,
+            CancellationToken cancellationToken = default)
         {
             query.AuctionId = auctionId;
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<PagedResult<ReviewDto>>(HttpStatusCode.OK, result));
         }
         [HttpPost("{auctionId:guid}")]
-        public async Task<ActionResult> AddReview([FromRoute] Guid auctionId, [FromForm]AddReview command)
+        public async Task<ActionResult> AddReview([FromRoute] Guid auctionId, [FromForm]AddReview command, 
+            CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(command with { AuctionId = auctionId });
+            await _mediator.Send(command with { AuctionId = auctionId }, cancellationToken);
             return NoContent();
         }
         [HttpDelete("{auctionId:guid}/{reviewId:guid}")]
-        public async Task<ActionResult> DeleteReview([FromRoute]Guid auctionId, [FromRoute] Guid reviewId)
+        public async Task<ActionResult> DeleteReview([FromRoute]Guid auctionId, [FromRoute] Guid reviewId, 
+            CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new DeleteReview(auctionId, reviewId));
+            await _mediator.Send(new DeleteReview(auctionId, reviewId), cancellationToken);
             return NoContent();
         }
         [HttpPut("{auctionId:guid}/{reviewId:guid}")]
-        public async Task<ActionResult> DeleteReview([FromRoute] Guid auctionId, [FromRoute] Guid reviewId, [FromBody]EditReview command)
+        public async Task<ActionResult> DeleteReview([FromRoute] Guid auctionId, [FromRoute] Guid reviewId, [FromBody]EditReview command, 
+            CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(command with { AuctionId = auctionId, ReviewId = reviewId });
+            await _mediator.Send(command with { AuctionId = auctionId, ReviewId = reviewId }, cancellationToken);
             return NoContent();
         }
     }

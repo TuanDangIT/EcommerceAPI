@@ -48,60 +48,67 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return Created();
         }
         [HttpGet()]
-        public async Task<ActionResult<ApiResponse<PagedResult<ProductBrowseDto>>>> BrowseProducts([FromQuery] BrowseProducts query)
+        public async Task<ActionResult<ApiResponse<PagedResult<ProductBrowseDto>>>> BrowseProducts([FromQuery] BrowseProducts query, 
+            CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<PagedResult<ProductBrowseDto>>(HttpStatusCode.OK, result));
         }
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ApiResponse<ProductDetailsDto>>> GetProduct([FromRoute]Guid id)
-            => OkOrNotFound<ProductDetailsDto, Product>(await _mediator.Send(new GetProduct(id)));
+        public async Task<ActionResult<ApiResponse<ProductDetailsDto>>> GetProduct([FromRoute]Guid id, 
+            CancellationToken cancellationToken = default)
+            => OkOrNotFound<ProductDetailsDto, Product>(await _mediator.Send(new GetProduct(id), cancellationToken));
         [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> DeleteProduct([FromRoute] Guid id)
+        public async Task<ActionResult> DeleteProduct([FromRoute] Guid id, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new DeleteProduct(id));
+            await _mediator.Send(new DeleteProduct(id), cancellationToken);
             return NoContent();
         }
         [HttpDelete]
-        public async Task<ActionResult> DeleteSelectedProducts([FromBody] DeleteSelectedProducts command)
+        public async Task<ActionResult> DeleteSelectedProducts([FromBody] DeleteSelectedProducts command, 
+            CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult> UpdateProduct([FromForm] UpdateProduct command)
+        public async Task<ActionResult> UpdateProduct([FromForm] UpdateProduct command, 
+            CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
         [HttpPost("list")]
-        public async Task<ActionResult> ListProduct([FromBody]Guid[] ids)
+        public async Task<ActionResult> ListProduct([FromBody]Guid[] ids, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new ListProducts(ids));
+            await _mediator.Send(new ListProducts(ids), cancellationToken);
             return NoContent();
         }
         [HttpPost("unlist")]
-        public async Task<ActionResult> UnlistProduct([FromBody] Guid[] ids)
+        public async Task<ActionResult> UnlistProduct([FromBody] Guid[] ids, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new UnlistProducts(ids));
+            await _mediator.Send(new UnlistProducts(ids), cancellationToken);
             return NoContent();
         }
         [HttpPut("{productId:guid}/quantity")]
-        public async Task<ActionResult> ChangeProductQuantity([FromRoute]Guid productId, [FromBody]int quantity)
+        public async Task<ActionResult> ChangeProductQuantity([FromRoute]Guid productId, [FromBody]int quantity, 
+            CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new ChangeProductQuantity(productId, quantity));
+            await _mediator.Send(new ChangeProductQuantity(productId, quantity), cancellationToken);
             return NoContent();
         }
         [HttpPut("{productId:guid}/price")]
-        public async Task<ActionResult> ChangeProductPrice([FromRoute] Guid productId, [FromBody] decimal price)
+        public async Task<ActionResult> ChangeProductPrice([FromRoute] Guid productId, [FromBody] decimal price, 
+            CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new ChangeProductPrice(productId, price));
+            await _mediator.Send(new ChangeProductPrice(productId, price), cancellationToken);
             return NoContent();
         }
         [HttpPut("{productId:guid}/reserved")]
-        public async Task<ActionResult> ChangeProductReservedQuantity([FromRoute] Guid productId, [FromBody] int reserved)
+        public async Task<ActionResult> ChangeProductReservedQuantity([FromRoute] Guid productId, [FromBody] int reserved, 
+            CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new ChangeProductReservedQuantity(productId, reserved));
+            await _mediator.Send(new ChangeProductReservedQuantity(productId, reserved), cancellationToken);
             return NoContent();
         }
     }

@@ -26,31 +26,32 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         {
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>>> BrowseOrders([FromQuery] BrowseReturns query)
+        public async Task<ActionResult<ApiResponse<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>>> BrowseOrders([FromQuery] BrowseReturns query, 
+            CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>(HttpStatusCode.OK, result));
         }
         [HttpGet("{returnId:guid}")]
-        public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> GetOrder([FromRoute] Guid returnId)
-            => OkOrNotFound<ReturnDetailsDto, Return>(await _mediator.Send(new GetReturn(returnId)));
+        public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> GetOrder([FromRoute] Guid returnId, CancellationToken cancellationToken = default)
+            => OkOrNotFound<ReturnDetailsDto, Return>(await _mediator.Send(new GetReturn(returnId), cancellationToken));
         [HttpPost("{returnId:guid}/handle")]
-        public async Task<ActionResult> HandleReturn([FromRoute]Guid returnId)
+        public async Task<ActionResult> HandleReturn([FromRoute]Guid returnId, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new HandleReturn(returnId));
+            await _mediator.Send(new HandleReturn(returnId), cancellationToken);
             return NoContent();
         }
         [HttpPost("{returnId:guid}/reject")]
-        public async Task<ActionResult> RejectReturn([FromRoute] Guid returnId, [FromBody] RejectReturn command)
+        public async Task<ActionResult> RejectReturn([FromRoute] Guid returnId, [FromBody] RejectReturn command, CancellationToken cancellationToken = default)
         {
             command = command with { ReturnId = returnId };
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
         [HttpPut("{returnId:guid}/note")]
-        public async Task<ActionResult> SetNote([FromRoute] Guid returnId, [FromForm]string note)
+        public async Task<ActionResult> SetNote([FromRoute] Guid returnId, [FromForm]string note, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new SetNote(note, returnId));
+            await _mediator.Send(new SetNote(note, returnId), cancellationToken);
             return NoContent();
         }
     }

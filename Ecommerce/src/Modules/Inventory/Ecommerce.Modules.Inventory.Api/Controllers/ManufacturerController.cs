@@ -27,28 +27,30 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         {
         }
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ApiResponse<ManufacturerBrowseDto>>> GetManufacturer([FromRoute] Guid id)
-            => OkOrNotFound<ManufacturerBrowseDto, Manufacturer>(await _mediator.Send(new GetManufacturer(id)));
+        public async Task<ActionResult<ApiResponse<ManufacturerBrowseDto>>> GetManufacturer([FromRoute] Guid id, CancellationToken cancellationToken = default)
+            => OkOrNotFound<ManufacturerBrowseDto, Manufacturer>(await _mediator.Send(new GetManufacturer(id), cancellationToken));
         [HttpPost()]
-        public async Task<ActionResult> CreateManufacturer([FromBody]CreateManufacturer command)
+        public async Task<ActionResult> CreateManufacturer([FromBody]CreateManufacturer command, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return Created();
         }
         [HttpGet()]
-        public async Task<ActionResult<ApiResponse<PagedResult<ManufacturerBrowseDto>>>> BrowseManufacturers([FromQuery] BrowseManufacturers query)
+        public async Task<ActionResult<ApiResponse<PagedResult<ManufacturerBrowseDto>>>> BrowseManufacturers([FromQuery] BrowseManufacturers query,
+            CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<PagedResult<ManufacturerBrowseDto>>(HttpStatusCode.OK, result));
         }
         [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> DeleteManufacturer([FromRoute]Guid id)
+        public async Task<ActionResult> DeleteManufacturer([FromRoute]Guid id, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new DeleteManufacturer(id));
+            await _mediator.Send(new DeleteManufacturer(id), cancellationToken);
             return NoContent();
         }
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult> ChangeManufacturerName([FromRoute]Guid id, [FromBody]ChangeManufacturerName command)
+        public async Task<ActionResult> ChangeManufacturerName([FromRoute]Guid id, [FromBody]ChangeManufacturerName command, 
+            CancellationToken cancellationToken = default)
         {
             await _mediator.Send(command with
             {
@@ -57,9 +59,10 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return NoContent();
         }
         [HttpDelete]
-        public async Task<ActionResult> DeleteSelectedManufacturers([FromBody]DeleteSelectedManufacturers command)
+        public async Task<ActionResult> DeleteSelectedManufacturers([FromBody]DeleteSelectedManufacturers command, 
+            CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
 

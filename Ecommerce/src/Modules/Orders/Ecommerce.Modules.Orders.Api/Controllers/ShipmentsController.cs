@@ -26,25 +26,26 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         {
         }
         [HttpGet("/api/v{v:apiVersion}/" + OrdersModule.BasePath + "/[controller]")]
-        public async Task<ActionResult<ApiResponse<CursorPagedResult<ShipmentBrowseDto, ShipmentCursorDto>>>> BrowseShipments([FromQuery] BrowseShipments query)
-            => CursorPagedResult(await _mediator.Send(query));
+        public async Task<ActionResult<ApiResponse<CursorPagedResult<ShipmentBrowseDto, ShipmentCursorDto>>>> BrowseShipments([FromQuery] BrowseShipments query, 
+            CancellationToken cancellationToken = default)
+            => CursorPagedResult(await _mediator.Send(query, cancellationToken));
         [HttpPost()]
-        public async Task<ActionResult> CreateShipment([FromRoute] Guid orderId, [FromBody] CreateShipment command)
+        public async Task<ActionResult> CreateShipment([FromRoute] Guid orderId, [FromBody] CreateShipment command, CancellationToken cancellationToken = default)
         {
             command = command with { OrderId = orderId };
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
         [HttpGet("{shipmentId:int}")]
-        public async Task<ActionResult<IFormFile>> DownloadLabel([FromRoute] Guid orderId, [FromRoute] int shipmentId)
+        public async Task<ActionResult<IFormFile>> DownloadLabel([FromRoute] Guid orderId, [FromRoute] int shipmentId, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new DownloadLabel(orderId, shipmentId));
+            var result = await _mediator.Send(new DownloadLabel(orderId, shipmentId), cancellationToken);
             return File(result.FileStream, result.MimeType, result.FileName);
         }
         [HttpDelete("{shipmentId:int}")]
-        public async Task<ActionResult> DeleteShipment([FromRoute] Guid orderId, [FromRoute] int shipmentId)
+        public async Task<ActionResult> DeleteShipment([FromRoute] Guid orderId, [FromRoute] int shipmentId, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new DeleteShipment(orderId, shipmentId));
+            await _mediator.Send(new DeleteShipment(orderId, shipmentId), cancellationToken);
             return NoContent();
         }
     }

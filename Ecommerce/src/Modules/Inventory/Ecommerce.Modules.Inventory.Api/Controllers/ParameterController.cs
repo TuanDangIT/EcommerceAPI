@@ -31,30 +31,33 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return Created();
         }
         [HttpGet()]
-        public async Task<ActionResult<ApiResponse<PagedResult<ParameterBrowseDto>>>> BrowseParameters([FromQuery] BrowseParameters query)
+        public async Task<ActionResult<ApiResponse<PagedResult<ParameterBrowseDto>>>> BrowseParameters([FromQuery] BrowseParameters query, 
+            CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<PagedResult<ParameterBrowseDto>>(HttpStatusCode.OK, result));
         }
         [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> DeleteParameter([FromRoute] Guid id)
+        public async Task<ActionResult> DeleteParameter([FromRoute] Guid id, CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(new DeleteParameter(id));
+            await _mediator.Send(new DeleteParameter(id), cancellationToken);
             return NoContent();
         }
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult> ChangeParameterName([FromRoute] Guid id, [FromBody] ChangeParameterName command)
+        public async Task<ActionResult> ChangeParameterName([FromRoute] Guid id, [FromBody] ChangeParameterName command,
+            CancellationToken cancellationToken = default)
         {
             await _mediator.Send(command with
             {
                 ParameterId = id
-            });
+            }, cancellationToken);
             return NoContent();
         }
         [HttpDelete]
-        public async Task<ActionResult> DeleteSelectedParameters([FromBody] DeleteSelectedParameters command)
+        public async Task<ActionResult> DeleteSelectedParameters([FromBody] DeleteSelectedParameters command, 
+            CancellationToken cancellationToken = default)
         {
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
     }
