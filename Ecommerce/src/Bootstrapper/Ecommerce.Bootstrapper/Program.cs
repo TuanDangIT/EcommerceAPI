@@ -11,9 +11,9 @@ foreach (var module in modules)
 }
 var app = builder.Build();
 app.UseInfrastructure();
-foreach (var module in modules)
-{
-    Console.WriteLine(module.Name);
-    module.Use(app);
-}
+//foreach (var module in modules)
+//{
+//    Console.WriteLine(module.Name);
+//    module.Use(app);
+//}
 app.Run();

@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Carts.Core.Entities.Enums;
+using Ecommerce.Modules.Carts.Core.Entities.Exceptions;
 using Ecommerce.Modules.Carts.Core.Entities.ValueObjects;
 using Ecommerce.Shared.Abstractions.Entities;
 using System;
@@ -19,41 +20,33 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public string? StripePaymentIntentId { get; private set; }
         public string? StripeSessionId { get; private set; }
         public bool IsPaid { get; private set; } = false;
+        public Cart Cart { get; private set; } = default!;
         private readonly List<CartProduct> _products = [];
         public IEnumerable<CartProduct> Products => _products;
+        public decimal TotalSum { get; private set; }
         public Discount? Discount { get; private set; }
         public int? DiscountId { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        public CheckoutCart(Cart cart)
+        public CheckoutCart(Cart cart, Guid? customerId)
         {
-            Id = cart.Id;
-            Customer.SetCustomerId(cart.CustomerId ?? Guid.Empty);
+            Customer.SetCustomerId(customerId ?? Guid.Empty);
             _products = cart.Products.ToList();
+            TotalSum = cart.TotalSum;
+            Discount = cart.Discount;
+            Cart = cart;
         }
         private CheckoutCart()
         {
             
         }
-        public decimal TotalSum()
-        {
-            var productsTotal = _products.Sum(cp => cp.Product.Price * cp.Quantity);
-            if (Discount is null)
-            {
-                return productsTotal;
-            }
-            if(Discount.Type is DiscountType.NominalDiscount)
-            {
-                return productsTotal - Discount.Value;
-            }
-            return productsTotal * Discount.Value;
-        }
         public void SetCustomer(Customer customer)
-        {
-            Customer.SetCustomerDetails(customer.FirstName, customer.LastName, customer.Email, customer.PhoneNumber);
-        }
+            => Customer.SetDetails(customer.FirstName, customer.LastName, customer.Email, customer.PhoneNumber);
         public void SetShipment(Shipment shipment)
-            => Shipment = shipment;
+        {
+            Shipment = shipment;
+            SetTotalSum(TotalSum);
+        }
         public void SetPayment(Payment payment)
             => Payment = payment;
         public void SetAdditionalInformation(string additionalInformation)
@@ -64,7 +57,17 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             => StripePaymentIntentId = stripePaymentIntentId;
         public void SetPaid()
             => IsPaid = true;
-        public void AddDiscount(Discount discount)
-            => Discount = discount;
+        public void AddDiscount(Discount discount, decimal totalSum)
+        {
+            Discount = discount;
+            TotalSum = totalSum;
+        }
+        public void RemoveDiscount(decimal totalSum)
+        {
+            Discount = null;
+            TotalSum = totalSum;
+        }
+        public void SetTotalSum(decimal totalSum) 
+            => TotalSum = totalSum + (Shipment is not null ? Shipment.Price : 0);
     }
 }

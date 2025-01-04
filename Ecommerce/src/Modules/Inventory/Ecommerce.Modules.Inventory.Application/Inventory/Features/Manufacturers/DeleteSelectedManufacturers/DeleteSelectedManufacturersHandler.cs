@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
         public async Task Handle(DeleteSelectedManufacturers request, CancellationToken cancellationToken)
         {
             await _manufacturerRepository.DeleteManyAsync(cancellationToken, request.ManufacturerIds);
-            _logger.LogInformation("Selected manufacturers: {manufacturerIds} were deleted by {@user}.",
+            _logger.LogInformation("Selected manufacturers: {@manufacturerIds} were deleted by {@user}.",
                 request.ManufacturerIds, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
         

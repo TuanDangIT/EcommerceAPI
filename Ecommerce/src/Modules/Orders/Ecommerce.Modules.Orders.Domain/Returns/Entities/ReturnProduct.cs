@@ -19,8 +19,8 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Entities
         [JsonInclude]
         public int Quantity { get; private set; }
         [JsonInclude]
-        public string ImagePathUrl { get; private set; } = string.Empty;
-        public ReturnProduct(string sku, string name, decimal price, int quantity, string imagePathUrl)
+        public string? ImagePathUrl { get; private set; }
+        public ReturnProduct(string sku, string name, decimal price, int quantity, string? imagePathUrl)
         {
             SKU = sku;
             Name = name;

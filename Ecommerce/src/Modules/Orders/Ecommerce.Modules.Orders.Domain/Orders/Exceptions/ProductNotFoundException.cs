@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Exceptions
 {
-    internal sealed class ProductNotFoundException(string sku) : EcommerceException($"Product with SKU: {sku} was not found.")
+    internal sealed class ProductNotFoundException(int productId) : EcommerceException($"ProductU: {productId} was not found.")
     {
     }
 }

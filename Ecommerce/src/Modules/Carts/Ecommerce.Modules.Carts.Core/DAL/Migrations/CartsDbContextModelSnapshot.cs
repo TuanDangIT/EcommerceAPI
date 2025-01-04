@@ -29,16 +29,27 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("CheckoutCartId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uuid");
+                    b.Property<int?>("DiscountId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TotalSum")
+                        .HasColumnType("numeric");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CheckoutCartId")
+                        .IsUnique();
+
+                    b.HasIndex("DiscountId");
 
                     b.ToTable("Carts", "carts");
                 });
@@ -54,6 +65,12 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 
                     b.Property<Guid?>("CheckoutCartId")
                         .HasColumnType("uuid");
+
+                    b.Property<decimal?>("DiscountedPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
@@ -100,6 +117,9 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                     b.Property<string>("StripeSessionId")
                         .HasColumnType("text");
 
+                    b.Property<decimal>("TotalSum")
+                        .HasColumnType("numeric");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -132,7 +152,8 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SKU")
-                        .HasColumnType("text");
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
 
                     b.Property<string>("StripePromotionCodeId")
                         .HasColumnType("text");
@@ -209,6 +230,21 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                     b.ToTable("Products", "carts");
                 });
 
+            modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.Cart", b =>
+                {
+                    b.HasOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart", "CheckoutCart")
+                        .WithOne("Cart")
+                        .HasForeignKey("Ecommerce.Modules.Carts.Core.Entities.Cart", "CheckoutCartId");
+
+                    b.HasOne("Ecommerce.Modules.Carts.Core.Entities.Discount", "Discount")
+                        .WithMany("Carts")
+                        .HasForeignKey("DiscountId");
+
+                    b.Navigation("CheckoutCart");
+
+                    b.Navigation("Discount");
+                });
+
             modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.CartProduct", b =>
                 {
                     b.HasOne("Ecommerce.Modules.Carts.Core.Entities.Cart", "Cart")
@@ -243,48 +279,6 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                     b.HasOne("Ecommerce.Modules.Carts.Core.Entities.Payment", "Payment")
                         .WithMany("CheckoutCarts")
                         .HasForeignKey("PaymentId");
-
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.Shipment", "Shipment", b1 =>
-                        {
-                            b1.Property<Guid>("CheckoutCartId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("AparmentNumber")
-                                .HasMaxLength(8)
-                                .HasColumnType("character varying(8)");
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasMaxLength(32)
-                                .HasColumnType("character varying(32)");
-
-                            b1.Property<string>("Country")
-                                .IsRequired()
-                                .HasMaxLength(64)
-                                .HasColumnType("character varying(64)");
-
-                            b1.Property<string>("PostalCode")
-                                .IsRequired()
-                                .HasMaxLength(16)
-                                .HasColumnType("character varying(16)");
-
-                            b1.Property<string>("StreetName")
-                                .IsRequired()
-                                .HasMaxLength(64)
-                                .HasColumnType("character varying(64)");
-
-                            b1.Property<string>("StreetNumber")
-                                .IsRequired()
-                                .HasMaxLength(8)
-                                .HasColumnType("character varying(8)");
-
-                            b1.HasKey("CheckoutCartId");
-
-                            b1.ToTable("CheckoutCarts", "carts");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CheckoutCartId");
-                        });
 
                     b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.ValueObjects.Customer", "Customer", b1 =>
                         {
@@ -322,6 +316,55 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                                 .HasForeignKey("CheckoutCartId");
                         });
 
+                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.ValueObjects.Shipment", "Shipment", b1 =>
+                        {
+                            b1.Property<Guid>("CheckoutCartId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("AparmentNumber")
+                                .HasMaxLength(8)
+                                .HasColumnType("character varying(8)");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(32)
+                                .HasColumnType("character varying(32)");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasMaxLength(64)
+                                .HasColumnType("character varying(64)");
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired()
+                                .HasMaxLength(16)
+                                .HasColumnType("character varying(16)");
+
+                            b1.Property<decimal>("Price")
+                                .HasColumnType("numeric");
+
+                            b1.Property<string>("Service")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("StreetName")
+                                .IsRequired()
+                                .HasMaxLength(64)
+                                .HasColumnType("character varying(64)");
+
+                            b1.Property<string>("StreetNumber")
+                                .IsRequired()
+                                .HasMaxLength(8)
+                                .HasColumnType("character varying(8)");
+
+                            b1.HasKey("CheckoutCartId");
+
+                            b1.ToTable("CheckoutCarts", "carts");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CheckoutCartId");
+                        });
+
                     b.Navigation("Customer")
                         .IsRequired();
 
@@ -339,11 +382,16 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 
             modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart", b =>
                 {
+                    b.Navigation("Cart")
+                        .IsRequired();
+
                     b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.Discount", b =>
                 {
+                    b.Navigation("Carts");
+
                     b.Navigation("CheckoutCarts");
                 });
 

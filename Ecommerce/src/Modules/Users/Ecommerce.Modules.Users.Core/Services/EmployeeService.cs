@@ -82,14 +82,14 @@ namespace Ecommerce.Modules.Users.Core.Services
             var role = await _roleRepository.GetAsync(dto.Role, cancellationToken);
             employee.Role = role!;
             await _userRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Employee: {@employee} was updated with new details {@newDetails} by {@user}.", employee, dto, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            _logger.LogInformation("Employee: {employeeId} was updated with new details {@newDetails} by {@user}.", employee.Id, dto, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
         public async Task SetActiveAsync(Guid employeeId, bool isActive, CancellationToken cancellationToken = default)
         {
             var employee = await _employeeRepository.GetAsync(employeeId, false, cancellationToken) ?? throw new EmployeeNotFoundException(employeeId);
             employee.IsActive = isActive;
             await _userRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Employee: {@employee} was set to {isActive} by {@user}.", employee, isActive, 
+            _logger.LogInformation("Employee: {employeeId} was set to {isActive} by {@user}.", employee.Id, isActive, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

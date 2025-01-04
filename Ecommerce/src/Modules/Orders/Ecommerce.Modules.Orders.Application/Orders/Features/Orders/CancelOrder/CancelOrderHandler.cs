@@ -43,8 +43,9 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
             await _orderRepository.UpdateAsync(cancellationToken);
             await _stripeService.RefundAsync(order);
             var products = order.Products;
-            _logger.LogInformation("Order: {@order} was cancelled.", order);
-            await _messageBroker.PublishAsync(new OrderCancelled(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, products.Select(p => new { p.SKU, p.Quantity }), order.CreatedAt));
+            _logger.LogInformation("Order: {orderId} was cancelled.", order.Id);
+            await _messageBroker.PublishAsync(new OrderCancelled(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email,
+                products.Select(p => new { p.SKU, p.Quantity }), order.CreatedAt));
         }
     }
 }

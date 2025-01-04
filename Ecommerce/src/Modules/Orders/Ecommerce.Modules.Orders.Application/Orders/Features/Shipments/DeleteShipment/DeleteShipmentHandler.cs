@@ -29,7 +29,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.DeleteSh
                 throw new OrderNotFoundException(request.OrderId);
             order.DeleteShipment(request.ShipmentId);
             await _orderRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Shipment: {shipmentId} was deleted for {@order} by {@user}.", request.ShipmentId, order,
+            _logger.LogInformation("Shipment: {shipmentId} was deleted for {orderId} by {@user}.", request.ShipmentId, order.Id,
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

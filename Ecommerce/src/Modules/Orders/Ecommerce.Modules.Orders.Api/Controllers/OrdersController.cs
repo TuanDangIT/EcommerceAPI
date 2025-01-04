@@ -8,6 +8,11 @@ using Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrderDeli
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrderShipped;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitComplaint;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.AddProduct;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.CreateDraftOrder;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.EditProductUnitPrice;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.RemoveProduct;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.SubmitOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.WriteAdditionalInformation;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateShipment;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
@@ -35,12 +40,44 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         public async Task<ActionResult<ApiResponse<CursorPagedResult<OrderBrowseDto, OrderCursorDto>>>> BrowseOrders([FromQuery] BrowseOrders query, 
             CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(query);
-            return Ok(new ApiResponse<CursorPagedResult<OrderBrowseDto, OrderCursorDto>>(HttpStatusCode.OK, result), cancellationToken);
+            var result = await _mediator.Send(query, cancellationToken);
+            return Ok(new ApiResponse<CursorPagedResult<OrderBrowseDto, OrderCursorDto>>(HttpStatusCode.OK, result));
         }
         [HttpGet("{orderId:guid}")]
         public async Task<ActionResult<ApiResponse<OrderDetailsDto>>> GetOrder([FromRoute]Guid orderId, CancellationToken cancellationToken = default)
             => OkOrNotFound<OrderDetailsDto, Order>(await _mediator.Send(new GetOrder(orderId), cancellationToken));
+        [HttpPost()]
+        public async Task<ActionResult> CreateDraftOrder()
+        {
+            var orderId = await _mediator.Send(new CreateDraftOrder());
+            return CreatedAtAction(nameof(GetOrder), new { orderId }, null);
+        }
+        [HttpPut("{orderId:guid}/submit")]
+        public async Task<ActionResult> SubmitOrder([FromRoute]Guid orderId)
+        {
+            await _mediator.Send(new SubmitOrder(orderId));
+            return NoContent();
+        }
+        [HttpPost("{orderId:guid}/products")]
+        public async Task<ActionResult> AddProduct([FromRoute]Guid orderId, [FromBody]AddProduct command)
+        {
+            command = command with { OrderId = orderId };
+            await _mediator.Send(command);
+            return NoContent();
+        }
+        [HttpDelete("{orderId:guid}/products")]
+        public async Task<ActionResult> RemoveProduct([FromRoute] Guid orderId, [FromBody] RemoveProduct command)
+        {
+            command = command with { OrderId = orderId };
+            await _mediator.Send(command);
+            return NoContent();
+        }
+        [HttpPut("{orderId:guid}/products/{productId:int}/unit-price")]
+        public async Task<ActionResult> EditProductUnitPrice([FromRoute]Guid orderId, [FromRoute]int productId, [FromBody]decimal unitPrice)
+        {
+            await _mediator.Send(new EditProductUnitPrice(orderId, productId, unitPrice));
+            return NoContent();
+        }
         [HttpPost("{orderId:guid}/cancel")]
         public async Task<ActionResult> CancelOrder([FromRoute] Guid orderId, CancellationToken cancellationToken = default)
         {

@@ -49,9 +49,5 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             LabelCreatedAt = labelCreatedAt;
             IncrementVersion();
         }
-        public void EditShipment()
-        {
-
-        }
     }
 }

@@ -30,11 +30,11 @@ namespace Ecommerce.Shared.Infrastructure.Exceptions
         {
             if(_contextService.Identity is null)
             {
-                _logger.LogError(exception, "Exception occured at {now}. Exception details: {exception}", _timeProvider.GetUtcNow().UtcDateTime, exception);
+                _logger.LogError(exception, "An exception occured at {now}.", _timeProvider.GetUtcNow().UtcDateTime);
             }
             else
             {
-                _logger.LogError(exception, "Exception occured at {now} for user: {@user}. Exception details: {exception}", _timeProvider.GetUtcNow().UtcDateTime, new { _contextService.Identity.Username, _contextService.Identity.Id }, exception);
+                _logger.LogError(exception, "An exception occured at {now} for user: {@user}.", _timeProvider.GetUtcNow().UtcDateTime, new { _contextService.Identity.Username, _contextService.Identity.Id });
             }
             var response = _exceptionToResponseMapper.Map(exception);
             if(response is ValidationProblemDetails validationProblemDetails)

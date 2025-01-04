@@ -31,8 +31,8 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.SetNote
                 throw new ReturnNotFoundException(request.ReturnId);
             @return.SetNote(request.Note);
             await _returnRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Note: {note} was set for return: {return} by {username}:{userId}.", request.Note, @return
-                , _contextService.Identity!.Username, _contextService.Identity!.Id);
+            _logger.LogInformation("Note: {note} was set for return: {returnId} by {@user}.", request.Note, @return.Id
+                , new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

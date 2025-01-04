@@ -35,7 +35,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Set
             }
             complaint.SetNote(request.Note);
             await _complaintRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Note: {note} was set for complaint: {complaint} by {user}.", request.Note, complaint, 
+            _logger.LogInformation("Note: {note} was set for complaint: {complaintId} by {@user}.", request.Note, complaint.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

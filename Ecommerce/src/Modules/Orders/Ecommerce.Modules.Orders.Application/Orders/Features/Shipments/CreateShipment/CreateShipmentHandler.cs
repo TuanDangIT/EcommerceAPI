@@ -54,7 +54,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
             shipment.SetLabelCreatedAt(_timeProvider.GetUtcNow().UtcDateTime);
             order.Pack();
             await _orderRepository.UpdateAsync();
-            _logger.LogInformation("Shipment was created for order: {@order} for {@user}.", order, 
+            _logger.LogInformation("Shipment was created for order: {orderId} for {@user}.", order.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

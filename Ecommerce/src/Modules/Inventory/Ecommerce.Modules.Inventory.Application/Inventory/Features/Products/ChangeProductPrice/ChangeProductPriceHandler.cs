@@ -30,8 +30,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Ch
                 throw new ProductNotFoundException(request.ProductId);
             product.ChangePrice(request.Price);
             await _productRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Product's: {@product} price was changed from {oldPrice} to {newPrice} by {@user}.",
-                product, product.Price, request.Price, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            _logger.LogInformation("Product's: {productId} price was changed from {oldPrice} to {newPrice} by {@user}.",
+                product.Id, product.Price, request.Price, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

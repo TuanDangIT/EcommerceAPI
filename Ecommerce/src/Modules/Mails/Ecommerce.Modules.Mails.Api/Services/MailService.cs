@@ -4,6 +4,7 @@ using Ecommerce.Modules.Mails.Api.DTO;
 using Ecommerce.Modules.Mails.Api.Entities;
 using Ecommerce.Modules.Mails.Api.Exceptions;
 using Ecommerce.Shared.Abstractions.BloblStorage;
+using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Infrastructure.Company;
 using Ecommerce.Shared.Infrastructure.Mails;
 using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
@@ -13,6 +14,7 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MimeKit;
 using System;
 using System.Collections.Generic;
@@ -31,17 +33,21 @@ namespace Ecommerce.Modules.Mails.Api.Services
         private readonly IBlobStorageService _blobStorageService;
         private readonly CompanyOptions _companyOptions;
         private readonly IFilterService _filterService;
+        private readonly ILogger<MailService> _logger;
+        private readonly IContextService _contextService;
         private const string _mailDefaultTemplatePath = "MailTemplates\\Default.html";
         private const string _containerName = "mails";
 
         public MailService(IMailsDbContext dbContext, MailOptions mailOptions, IBlobStorageService blobStorageService, 
-            CompanyOptions companyOptions, IFilterService filterService)
+            CompanyOptions companyOptions, IFilterService filterService, ILogger<MailService> logger, IContextService contextService)
         {
             _dbContext = dbContext;
             _mailOptions = mailOptions;
             _blobStorageService = blobStorageService;
             _companyOptions = companyOptions;
             _filterService = filterService;
+            _logger = logger;
+            _contextService = contextService;
         }
 
         public async Task<CursorPagedResult<MailBrowseDto, MailCursorDto>> BrowseAsync(MailCursorDto cursorDto, bool? isNextPage, int pageSize, 
@@ -176,6 +182,8 @@ namespace Ecommerce.Modules.Mails.Api.Services
                 CustomerId = dto.CustomerId,
                 Files = dto.Files
             });
+            _logger.LogInformation("Mail: {@mail} was sent by {@user}.", dto,
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
 
         private async Task<Customer?> GetCustomerAsync(Guid? customerId)

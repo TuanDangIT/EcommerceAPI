@@ -22,7 +22,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
             RuleForEach(r => r.ProductsToReturn)
                 .ChildRules(ptr =>
                 {
-                    ptr.RuleFor(ptr => ptr.SKU)
+                    ptr.RuleFor(ptr => ptr.ProductId)
                         .NotEmpty()
                         .NotNull();
                     ptr.RuleFor(ptr => ptr.Quantity)

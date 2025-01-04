@@ -31,7 +31,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.
                 throw new ParameterNotFoundException(request.ParameterId);
             parameter.ChangeName(request.Name);
             await _parameterRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Parameter's: {@parameter} name was changed to {newName} by {@user}.", parameter, request.Name,
+            _logger.LogInformation("Parameter's: {parameterId} name was changed to {newName} by {@user}.", parameter.Id, request.Name,
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

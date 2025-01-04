@@ -52,7 +52,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitCompl
             await _domainEventDispatcher.DispatchAsync(domainEvent);
             var integrationEvent = _ordersEventMapper.Map(domainEvent);
             await _messageBroker.PublishAsync(integrationEvent);
-            _logger.LogInformation("Complaint was submitted for order: {@order} by {@user}.", order,
+            _logger.LogInformation("Complaint was submitted for order: {orderId} by {@user}.", order.Id,
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

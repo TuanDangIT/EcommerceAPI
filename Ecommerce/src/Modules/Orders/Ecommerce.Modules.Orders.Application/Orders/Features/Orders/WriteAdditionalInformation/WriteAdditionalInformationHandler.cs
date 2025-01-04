@@ -34,7 +34,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Orders.WriteAddit
             }
             order.WriteAdditionalInformation(request.AdditionalInformation);
             await _orderRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Order's: {@order} additional information property was written by {@user}.", order,
+            _logger.LogInformation("Order's: {orderId} additional information property was written by {@user}.", order.Id,
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

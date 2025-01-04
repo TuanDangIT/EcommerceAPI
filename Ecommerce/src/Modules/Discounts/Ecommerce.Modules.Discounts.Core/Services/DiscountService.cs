@@ -86,7 +86,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             var stripePromotionCodeId = await _paymentProcessorService.CreateDiscountAsync(stripeCouponId, dto, cancellationToken);
             coupon.AddDiscount(new Discount(dto.Code, stripePromotionCodeId, dto.EndingDate));
             await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Discount with given details: {@discount} was created for coupon: {@coupon} by {@user}.", dto, coupon, 
+            _logger.LogInformation("Discount with given details: {@discount} was created for coupon: {coupon} by {@user}.", dto, coupon.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
 
@@ -100,7 +100,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             await _paymentProcessorService.ActivateDiscountAsync(discount.StripePromotionCodeId, cancellationToken);
             discount.Activate();
             await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Discount: {@discount} was activated by {@user}.", discount, 
+            _logger.LogInformation("Discount: {discountId} was activated by {@user}.", discount.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             var coupon = discount.Coupon;
             switch (coupon)
@@ -126,7 +126,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             await _paymentProcessorService.DeactivateDiscountAsync(discount.StripePromotionCodeId, cancellationToken);
             discount.Deactive();
             await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Discount: {@discount} was deactivated by {@user}.", discount,
+            _logger.LogInformation("Discount: {discountId} was deactivated by {@user}.", discount.Id,
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new DiscountDeactivated(discount.Code));
         }

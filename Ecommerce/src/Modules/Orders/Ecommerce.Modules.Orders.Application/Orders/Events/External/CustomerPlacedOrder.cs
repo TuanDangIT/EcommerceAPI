@@ -17,6 +17,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External
         public string PhoneNumber { get; set; } = string.Empty;
         public IEnumerable<Product> Products { get; set; } = Enumerable.Empty<Product>();
         public decimal TotalSum { get; set; }
+        public string ShippingService { get; set; } = string.Empty;
+        public decimal ShippingPrice { get; set; }
         public string City { get; set; } = string.Empty;
         public string PostalCode { get; set; } = string.Empty;
         public string StreetName { get; set; } = string.Empty;
@@ -25,6 +27,9 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External
         public string PaymentMethod { get; set; } = string.Empty;
         public string? AdditionalInformation { get; set; }
         public string? DiscountCode { get; set; }
+        public string? DiscountType { get; set; }
+        public decimal? DiscountValue { get; set; }
+        public string? DiscountSku { get; set; }
         public string StripePaymentIntentId { get; set; } = string.Empty;
     };
 }

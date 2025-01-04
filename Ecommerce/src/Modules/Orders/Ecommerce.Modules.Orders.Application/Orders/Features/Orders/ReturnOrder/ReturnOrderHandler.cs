@@ -39,16 +39,16 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
             var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
                 throw new OrderNotFoundException(request.OrderId);
             var returnProducts = order.Products
-                .Where(p => request.ProductsToReturn.Select(ptr => ptr.SKU).Contains(p.SKU))
+                .Where(p => request.ProductsToReturn.Select(ptr => ptr.ProductId).Contains(p.Id))
                 .Select(p =>
                 {
-                    var returnedQuantity = request.ProductsToReturn.Single(ptr => ptr.SKU == p.SKU).Quantity;
+                    var returnedQuantity = request.ProductsToReturn.Single(ptr => ptr.ProductId == p.Id).Quantity;
                     p = new Domain.Orders.Entities.Product(p.SKU, p.Name, p.Price, returnedQuantity, p.ImagePathUrl);
                     return p;
                 }).ToList();
             foreach(var product in request.ProductsToReturn)
             {
-                order.DecreaseProductQuantity(product.SKU, product.Quantity);
+                order.RemoveProduct(product.ProductId, product.Quantity);
             }
             if(!await _orderReturnPolicy.CanReturn(order))
             {
@@ -56,7 +56,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
             }
             order.Return();
             await _orderRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Order: {@order} was returned.", order);
+            _logger.LogInformation("Order: {orderId} was returned. Products that were returned: {@productToReturn}.", order.Id, request.ProductsToReturn);
             bool isFullReturn = !order.Products.Any();
             var domainEvent = new OrderReturned(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, request.ReasonForReturn, returnProducts, isFullReturn);
             await _domainEventDispatcher.DispatchAsync(domainEvent);

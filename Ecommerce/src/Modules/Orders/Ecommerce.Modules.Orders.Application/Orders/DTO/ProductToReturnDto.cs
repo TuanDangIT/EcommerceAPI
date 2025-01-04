@@ -8,7 +8,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.DTO
 {
     public class ProductToReturnDto
     {
-        public string SKU { get; set; } = string.Empty;
+        public int ProductId { get; set; }
         public int Quantity { get; set; }
     }
 }

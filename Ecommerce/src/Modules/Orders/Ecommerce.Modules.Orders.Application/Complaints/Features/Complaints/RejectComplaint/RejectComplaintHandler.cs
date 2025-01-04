@@ -38,7 +38,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Rej
             }
             complaint.Reject(new Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation));
             await _complaintRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Complaint: {complaint} was rejected by {user}.", complaint, 
+            _logger.LogInformation("Complaint: {complaintId} was rejected by {@user}.", complaint.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new ComplaintRejected(
                 complaint.Id,

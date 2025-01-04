@@ -80,7 +80,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
             file.ContentType = _contentType;
             await _blobStorageService.UploadAsync(file, invoiceNo, _containerName, cancellationToken);
             await _invoiceRepository.CreateAsync(new Domain.Orders.Entities.Invoice(invoiceNo, order));
-            _logger.LogInformation("Invoice: {invoiceNo} was created for order: {@order} by {@user}.", invoiceNo, order, 
+            _logger.LogInformation("Invoice: {invoiceNo} was created for order: {orderId} by {@user}.", invoiceNo, order.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new InvoiceCreated(order.Id, order.Customer.Id, order.Customer.FirstName, order.Customer.Email, invoiceNo));
             return invoiceNo;

@@ -52,7 +52,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Un
                 throw new ProductNotAllFoundException(productIdsNotFound);
             }
             await _productRepository.UpdateListedFlagAsync(request.ProductIds, false, cancellationToken);
-            _logger.LogInformation("Products: {productsIds} were listed by {@user}.",
+            _logger.LogInformation("Products: {@productsIds} were listed by {@user}.",
                 string.Join(", ", productIds), new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             var domainEvent = new ProductsUnlisted(productIds);
             await _domainEventDispatcher.DispatchAsync(domainEvent);

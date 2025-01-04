@@ -32,9 +32,17 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Status = order.Status.ToString(),
                 ClientAdditionalInformation = order.ClientAdditionalInformation,
                 CompanyAdditionalInformation = order.CompanyAdditionalInformation,
-                DiscountCode = order.DiscountCode,
+                Discount = order.Discount?.AsDto(),
                 PlacedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt
+            };
+        public static DiscountDto AsDto(this Discount discount)
+            => new()
+            {
+                Type = discount.Type.ToString(),
+                Code = discount.Code,
+                SKU = discount.SKU,
+                Value = discount.Value
             };
         public static ProductDto AsDto(this Product product)
             => new()

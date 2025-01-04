@@ -119,7 +119,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             }
             _dbContext.Coupons.Remove(coupon);
             await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Coupon: {@coupon} was deleted by {@user}.", coupon,
+            _logger.LogInformation("Coupon: {couponId} was deleted by {@user}.", coupon.Id,
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
 
@@ -130,7 +130,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             coupon.ChangeName(dto.Name);
             await _paymentProcessorService.UpdateCouponName(stripeCouponId, dto.Name, cancellationToken);
             await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Coupon: {@coupon} was updated with new details: {@updatingDetails} by {@user}.", coupon, dto,
+            _logger.LogInformation("Coupon: {couponId} was updated with new details: {@updatingDetails} by {@user}.", coupon.Id, dto,
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

@@ -18,14 +18,26 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         [JsonInclude]
         public decimal Price { get; private set; }
         [JsonInclude]
+        public decimal UnitPrice { get; private set; }
+        [JsonInclude]
         public int Quantity { get; private set; }
         [JsonInclude]
-        public string ImagePathUrl { get; private set; } = string.Empty;
-        public Product(string sku, string name, decimal price, int quantity, string imagePathUrl)
+        public string? ImagePathUrl { get; private set; }
+        public Product(string sku, string name, decimal price, decimal unitPrice, int quantity, string? imagePathUrl)
         {
             SKU = sku;
             Name = name;
             Price = price;
+            UnitPrice = unitPrice;
+            Quantity = quantity;
+            ImagePathUrl = imagePathUrl;
+        }
+        public Product(string sku, string name, decimal unitPrice, int quantity, string? imagePathUrl)
+        {
+            SKU = sku;
+            Name = name;
+            Price = unitPrice * quantity;
+            UnitPrice = unitPrice;
             Quantity = quantity;
             ImagePathUrl = imagePathUrl;
         }
@@ -40,6 +52,19 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
                 throw new ProductQuantityBelowZeroException();
             }
             Quantity -= quantity;
+            CalculatePrice();
         }
+        public void IncreaseQuantity(int quantity)
+        {
+            Quantity += quantity;
+            CalculatePrice();
+        }
+        public void EditUnitPrice(decimal unitPrice)
+        {
+            UnitPrice = unitPrice;
+            CalculatePrice();
+        }
+        private void CalculatePrice()
+            => Price = UnitPrice * Quantity;
     }
 }

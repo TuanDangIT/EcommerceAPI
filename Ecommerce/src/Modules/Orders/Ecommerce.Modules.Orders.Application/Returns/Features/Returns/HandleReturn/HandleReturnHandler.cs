@@ -46,7 +46,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
             }
             @return.Handle();
             await _returnRepository.UpdateAsync();
-            _logger.LogInformation("Return: {return} was handled by {user}.", @return, 
+            _logger.LogInformation("Return: {returnId} was handled by {@user}.", @return.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new ReturnHandled(@return.Id, @return.OrderId, @return.Order.Customer.UserId, 
                 @return.Order.Customer.FirstName, @return.Order.Customer.Email, @return.Products.Select(p => new { p.SKU, p.Quantity }), @return.CreatedAt));

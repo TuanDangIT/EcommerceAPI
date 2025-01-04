@@ -9,6 +9,7 @@ using Ecommerce.Shared.Abstractions.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 
 namespace Ecommerce.Modules.Carts.Core.Services
 {
@@ -32,14 +33,16 @@ namespace Ecommerce.Modules.Carts.Core.Services
             await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
             try
             {
-                var cart = await GetByCartOrThrowIfNullAsync(cartId, cancellationToken);
+                var cart = await GetByCartOrThrowIfNullAsync(cartId, cancellationToken,
+                    query => query.Include(c => c.CheckoutCart),
+                    query => query.Include(c => c.Products).ThenInclude(cp => cp.Product));
                 var product = await _dbContext.Products
                     .FromSqlInterpolated($"SELECT * FROM carts.\"Products\" WHERE \"Id\" = {productId} FOR UPDATE NOWAIT")
                     .SingleOrDefaultAsync(cancellationToken) ?? throw new ProductNotFoundException(productId);
                 cart.AddProduct(product, quantity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
-                _logger.LogInformation("Product: {@product} was added to cart: {@cart}.", product, cart);
+                _logger.LogInformation("Product: {productId} was added to cart: {cartId}.", product.Id, cart.Id);
                 await _messageBroker.PublishAsync(new ProductReserved(productId, quantity));
             }
             catch (Exception)
@@ -49,41 +52,42 @@ namespace Ecommerce.Modules.Carts.Core.Services
             }
         }
 
-        public async Task CheckoutAsync(Guid cartId, CancellationToken cancellationToken = default)
+        public async Task<Guid> CheckoutAsync(Guid cartId, CancellationToken cancellationToken = default)
         {
-            var cart = await GetByCartOrThrowIfNullAsync(cartId, cancellationToken);
-            var checkoutCart = await _dbContext.CheckoutCarts
-                .SingleOrDefaultAsync(cc => cc.Id == cartId, cancellationToken);
-            if(checkoutCart is not null)
+            var cart = await GetByCartOrThrowIfNullAsync(cartId, cancellationToken,
+                query => query.Include(c => c.CheckoutCart),
+                query => query.Include(c => c.Products));
+            var hasCheckout = cart.CheckoutCart is not null;
+            var customerId = _contextService.Identity?.Id;
+            var checkoutCart = cart.Checkout(customerId);
+            if (!hasCheckout)
             {
-                _logger.LogInformation("Cart: {@cart} was already checked out.", cart);   
-                return;
+                await _dbContext.CheckoutCarts.AddAsync(checkoutCart, cancellationToken);
             }
-            checkoutCart = cart.Checkout();
-            await _dbContext.CheckoutCarts.AddAsync(checkoutCart, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Cart: {@cart} was checked out.", cart);
+            _logger.LogInformation("Cart: {cartId} was checked out.", cart.Id);
+            return checkoutCart.Id;
         }
 
         public async Task ClearAsync(Guid cartId, CancellationToken cancellationToken = default)
         {
-            var cart = await GetByCartOrThrowIfNullAsync(cartId, cancellationToken);
+            var cart = await GetByCartOrThrowIfNullAsync(cartId, cancellationToken,
+                query => query.Include(c => c.Products));
             IEnumerable<object> products = cart.Products
                 .Select(cp => new { cp.Product.Id, cp.Quantity })
                 .ToList();
             cart.Clear();
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Cart: {@cart} was cleared.", cart);
+            _logger.LogInformation("Cart: {cartId} was cleared.", cart.Id);
             await _messageBroker.PublishAsync(new CartCleared(products));
         }
 
         public async Task<Guid> CreateAsync(CancellationToken cancellationToken = default)
         {
-            var userId = _contextService.Identity?.Id;
             EntityEntry<Cart> entry;
-            entry = await _dbContext.Carts.AddAsync(new Cart(userId), cancellationToken);
+            entry = await _dbContext.Carts.AddAsync(new Cart(), cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Cart was created.");
+            _logger.LogInformation("Cart: {cartId} was created.", entry.Entity.Id);
             return entry.Entity.Id;
         }
 
@@ -98,20 +102,22 @@ namespace Ecommerce.Modules.Carts.Core.Services
 
         public async Task RemoveProductAsync(Guid cartId, Guid productId, int quantity, CancellationToken cancellationToken = default)
         {
-            var cart = await GetByCartOrThrowIfNullAsync(cartId, cancellationToken);
+            var cart = await GetByCartOrThrowIfNullAsync(cartId, cancellationToken,
+                query => query.Include(c => c.Products).ThenInclude(cp => cp.Product));
             await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
             try
             {
                 var cartProduct = await _dbContext.CartProducts
                     .FromSqlInterpolated(
-                        $"SELECT cp.\"Id\", cp.\"CartId\", cp.\"CheckoutCartId\", cp.\"ProductId\", p.\"Id\", p.\"Quantity\" FROM carts.\"CartProducts\" cp JOIN carts.\"Products\" p ON p.\"Id\" = cp.\"ProductId\" JOIN carts.\"Carts\" c ON c.\"Id\" = cp.\"CartId\" WHERE p.\"Id\" = {productId} AND c.\"Id\" = {cartId} FOR UPDATE NOWAIT")
+                        $"SELECT cp.\"Id\", cp.\"CartId\", cp.\"CheckoutCartId\", cp.\"ProductId\", cp.\"DiscountedPrice\", p.\"Quantity\", p.\"Price\" FROM carts.\"CartProducts\" cp JOIN carts.\"Products\" p ON p.\"Id\" = cp.\"ProductId\" JOIN carts.\"Carts\" c ON c.\"Id\" = cp.\"CartId\" WHERE p.\"Id\" = {productId} AND c.\"Id\" = {cartId} FOR UPDATE NOWAIT")
+                    .Include(cp => cp.Product)
                     .SingleOrDefaultAsync(cancellationToken) ?? 
                     throw new ProductNotFoundException(productId);
                 var product = cartProduct.Product;
                 cart.RemoveProduct(product, quantity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
-                _logger.LogInformation("Product: {@product} was removed from cart: {@cart}.", product, cart);
+                _logger.LogInformation("Product: {productId} was removed from cart: {cartId}.", product.Id, cart.Id);
                 await _messageBroker.PublishAsync(new ProductUnreserved(productId, quantity));
             }
             catch (Exception)
@@ -122,18 +128,64 @@ namespace Ecommerce.Modules.Carts.Core.Services
         }
         public async Task SetProductQuantityAsync(Guid cartId, Guid productId, int quantity, CancellationToken cancellationToken = default)
         {
-            var cart = await GetByCartOrThrowIfNullAsync(cartId, cancellationToken);
+            var cart = await GetByCartOrThrowIfNullAsync(cartId, cancellationToken,
+                query => query.Include(c => c.Products).ThenInclude(cp => cp.Product));
             var product = cart.Products.SingleOrDefault(p => p.Product.Id == productId)?.Product ??
                 throw new ProductNotFoundException(productId);
             cart.SetProductQuantity(product, quantity);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Set product quantity: {quantity} for product: {@product} in cart: {@cart}.", quantity, product, cart);
+            _logger.LogInformation("Product quantity: {quantity} was set for product: {productId} in cart: {cartId}.", quantity, product.Id, cart.Id);
         }
-        private async Task<Cart> GetByCartOrThrowIfNullAsync(Guid cartId, CancellationToken cancellationToken = default)
-            => await _dbContext.Carts
-                .Include(c => c.Products)
-                .ThenInclude(cp => cp.Product)
+        public async Task AddDiscountAsync(Guid cartId, string code, CancellationToken cancellationToken = default)
+        {
+            var cart = await GetByCartOrThrowIfNullAsync(cartId, cancellationToken,
+                query => query.Include(c => c.Discount),
+                query => query.Include(c => c.Products).ThenInclude(cp => cp.Product));
+            var discount = await _dbContext.Discounts
+                .SingleOrDefaultAsync(d => d.Code == code, cancellationToken) ??
+                throw new DiscountNotFoundException(code);
+            if (discount.CustomerId is not null && _contextService.Identity is null)
+            {
+                throw new IndividualDiscountCannotBeAppliedException("Cannot use individual discount without registering");
+            }
+            if (discount.CustomerId is not null && discount.CustomerId != _contextService.Identity!.Id &&
+                !cart.Products.Select(p => p.Product.SKU).Contains(discount.SKU))
+            {
+                throw new IndividualDiscountCannotBeAppliedException("Discount cannot be applied because of wrong user or SKU of a product.");
+            }
+            cart.AddDiscount(discount);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Discount: {discountId} was redeemed for cart: {cartId}.", discount.Id, cart.Id);
+        }
+        public async Task RemoveDiscountAsync(Guid cartId, CancellationToken cancellationToken = default)
+        {
+            var cart = await GetByCartOrThrowIfNullAsync(cartId, cancellationToken,
+                query => query.Include(c => c.Discount),
+                query => query.Include(c => c.Products).ThenInclude(cp => cp.Product));
+            if (cart.Discount is null)
+            {
+                throw new CheckoutCartCannotRemoveDiscountException();
+            }
+            cart.RemoveDiscount();
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Discount: {discountId} was removed from cart: {cartId}.", cart.Discount.Id, cart.Id);
+        }
+        private async Task<Cart> GetByCartOrThrowIfNullAsync(Guid cartId, CancellationToken cancellationToken = default,
+            params Func<IQueryable<Cart>, IQueryable<Cart>>[] includeActions)
+        {
+            var query = _dbContext.Carts
+                .AsQueryable();
+            if (includeActions is not null)
+            {
+                foreach (var includeAction in includeActions)
+                {
+                    query = includeAction(query);
+                }
+            }
+            var cart = await query
                 .SingleOrDefaultAsync(c => c.Id == cartId, cancellationToken) ??
                 throw new CartNotFoundException(cartId);
+            return cart;
+        }
     }
 }

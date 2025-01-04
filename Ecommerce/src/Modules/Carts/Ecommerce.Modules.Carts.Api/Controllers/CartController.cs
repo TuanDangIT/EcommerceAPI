@@ -57,11 +57,23 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             await _cartService.ClearAsync(cartId, cancellationToken);
             return NoContent();
         }
+        [HttpPut("{cartId:guid}/discount")]
+        public async Task<ActionResult> AddDiscount([FromRoute] Guid cartId, [FromBody] string code, CancellationToken cancellationToken)
+        {
+            await _cartService.AddDiscountAsync(cartId, code, cancellationToken);
+            return NoContent();
+        }
+        [HttpDelete("{cartId:guid}/discount")]
+        public async Task<ActionResult> RemoveDiscount([FromRoute] Guid cartId, CancellationToken cancellationToken)
+        {
+            await _cartService.RemoveDiscountAsync(cartId, cancellationToken);
+            return NoContent();
+        }
         [HttpPost("{cartId:guid}/checkout")]
         public async Task<ActionResult> Checkout([FromRoute]Guid cartId, CancellationToken cancellationToken)
         {
-            await _cartService.CheckoutAsync(cartId, cancellationToken);
-            return CreatedAtAction(nameof(CheckoutCartController.GetCheckoutCart), typeof(CheckoutCart).Name, new { checkoutCartId = cartId }, null);
+            var checkoutCartId = await _cartService.CheckoutAsync(cartId, cancellationToken);
+            return CreatedAtAction(nameof(CheckoutCartController.GetCheckoutCart), typeof(CheckoutCart).Name, new { checkoutCartId }, null);
         }
     }
 }

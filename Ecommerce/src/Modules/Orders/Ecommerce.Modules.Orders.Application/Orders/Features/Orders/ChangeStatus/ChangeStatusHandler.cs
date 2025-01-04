@@ -34,7 +34,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ChangeStatu
                 throw new OrderNotFoundException(request.OrderId);
             order.ChangeStatus((OrderStatus)status!);
             await _orderRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Order: {@order} status was changed to {status} by {@user}", order, request.Status, 
+            _logger.LogInformation("Order: {orderId} status was changed to {status} by {@user}.", order.Id, request.Status, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

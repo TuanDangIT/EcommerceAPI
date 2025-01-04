@@ -26,6 +26,11 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
             builder.HasMany(d => d.CheckoutCarts)
                 .WithOne(cc => cc.Discount)
                 .HasForeignKey(cc => cc.DiscountId);
+            builder.HasMany(d => d.Carts)
+                .WithOne(cc => cc.Discount)
+                .HasForeignKey(cc => cc.DiscountId);
+            builder.Property(d => d.SKU)
+                .HasMaxLength(16);
         }
     }
 }

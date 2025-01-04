@@ -30,7 +30,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
                 throw new CategoryNotFoundException(request.CategoryId);
             category.ChangeName(request.Name);
             await _categoryRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Category's: {@category} name was changed to {newName} by {@user}.", category, request.Name,
+            _logger.LogInformation("Category's: {categoryId} name was changed to {newName} by {@user}.", category.Id, request.Name,
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

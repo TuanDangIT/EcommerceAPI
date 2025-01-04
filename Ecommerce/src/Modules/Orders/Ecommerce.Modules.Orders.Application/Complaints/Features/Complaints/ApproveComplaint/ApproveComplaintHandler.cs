@@ -58,7 +58,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
                 }
                 await _paymentProcessorService.RefundAsync(complaint.Order, (decimal)request.Decision.RefundAmount);
             }
-            _logger.LogInformation("Complaint: {@complaint} was approved by {@user}.", complaint, 
+            _logger.LogInformation("Complaint: {complaintId} was approved by {@user}.", complaint.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new ComplaintApproved(
                 complaint.Id,

@@ -71,7 +71,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             var code = GenerateRandomCode();
             offer.SetCode(code);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Offer: {@offer} with code: {code} was accepted by {@user}.", offer, code, 
+            _logger.LogInformation("Offer: {offerId} with code: {code} was accepted by {@user}.", offer.Id, code, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker
                 .PublishAsync(new OfferAccepted(offer.Id, offer.CustomerId, offer.SKU, offer.ProductName, code, offer.OfferedPrice, offer.OldPrice, expiresAt));
@@ -83,7 +83,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 throw new OfferNotFoundException(offerId);
             offer.Reject();
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Offer: {@offer} was rejected by {@user}.", offer, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            _logger.LogInformation("Offer: {offerId} was rejected by {@user}.", offer.Id, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             if(offer.Code is null)
             {
                 await _messageBroker
@@ -99,7 +99,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         public async Task DeleteAsync(int offerId, CancellationToken cancellationToken = default) 
         {
             await _dbContext.Offers.Where(o => o.Id == offerId).ExecuteDeleteAsync(cancellationToken);
-            _logger.LogInformation("Offer: {offerId} was deleted by {user}.", offerId, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            _logger.LogInformation("Offer: {offerId} was deleted by {@user}.", offerId, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
 
         public async Task<OfferDetailsDto> GetAsync(int offerId, CancellationToken cancellationToken = default)

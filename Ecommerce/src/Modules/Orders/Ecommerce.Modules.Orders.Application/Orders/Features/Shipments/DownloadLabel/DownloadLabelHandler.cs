@@ -38,8 +38,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.Download
                 throw new LabelNotCreatedException(request.ShipmentId);
             }
             var file = await _deliveryService.GetLabelAsync(shipment);
-            _logger.LogInformation("Label: {trackingNumber} was downloaded for order: {@order} by {@user}.", shipment.TrackingNumber,
-                order, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            _logger.LogInformation("Label: {trackingNumber} was downloaded for order: {orderId} by {@user}.", shipment.TrackingNumber,
+                order.Id, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             return file;
         }
     }

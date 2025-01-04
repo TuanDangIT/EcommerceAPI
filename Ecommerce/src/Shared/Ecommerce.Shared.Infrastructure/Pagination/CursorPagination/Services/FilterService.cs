@@ -33,6 +33,7 @@ namespace Ecommerce.Shared.Infrastructure.Pagination.CursorPagination.Services
                     Type t when t == typeof(string) => ApplyStringFilter(query, property, null, filterValue),
                     Type t when t == typeof(decimal) => ApplyDecimalFilter(query, propertyPath, property, null, filterValue),
                     Type t when t == typeof(int) => ApplyIntegerFilter(query, propertyPath, property, null, filterValue),
+                    Type t when t == typeof(bool) => ApplyBooleanFilter(query, propertyPath, property, null, filterValue),
                     _ => throw new InvalidFilterException(propertyPath)
                 };
             }
@@ -52,6 +53,7 @@ namespace Ecommerce.Shared.Infrastructure.Pagination.CursorPagination.Services
                 Type t when t == typeof(string) => ApplyStringFilter(query, navigation, subProperty, filterValue),
                 Type t when t == typeof(decimal) => ApplyDecimalFilter(query, propertyPath, navigation, subProperty, filterValue),
                 Type t when t == typeof(int) => ApplyIntegerFilter(query, propertyPath, navigation, subProperty, filterValue),
+                Type t when t == typeof(bool) => ApplyBooleanFilter(query, propertyPath, subProperty, null, filterValue),
                 _ => throw new InvalidFilterException(propertyPath)
             };
         }
@@ -111,6 +113,17 @@ namespace Ecommerce.Shared.Infrastructure.Pagination.CursorPagination.Services
             return DateTime.TryParse(dateString.Trim(), out var parsedDate)
                 ? parsedDate
                 : throw new InvalidFilterException(propertyPath);
+        }
+        private IQueryable<TEntity> ApplyBooleanFilter<TEntity>(IQueryable<TEntity> query, string propertyPath, PropertyInfo property, PropertyInfo? subProperty, string filterValue)
+        {
+            if (!bool.TryParse(filterValue, out var parsedBool))
+            {
+                throw new InvalidFilterException(propertyPath);
+            }
+
+            return subProperty is null
+                ? query.Where(x => EF.Property<bool>(x!, property.Name) == parsedBool)
+                : query.Where(x => EF.Property<bool>(EF.Property<object>(x!, subProperty.Name), property.Name) == parsedBool);
         }
     }
 }

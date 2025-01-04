@@ -19,6 +19,8 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public CheckoutCart? CheckoutCart { get; private set; }
         public Guid? CheckoutCartId { get; private set; }
         public int Quantity { get; private set; }
+        public decimal Price {  get; private set; }
+        public decimal? DiscountedPrice { get; private set; }
         public CartProduct(Product product, int quantity)
         {
             Product = product;
@@ -27,6 +29,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 product.DecreaseQuantity(quantity);
             }
+            CalculatePrice();
         }
         private CartProduct()
         {
@@ -39,6 +42,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
                 Product.DecreaseQuantity(quantity);
             }
             Quantity += quantity;
+            CalculatePrice();
         }
         public void DecreaseQuantity(int quantity)
         {
@@ -51,9 +55,14 @@ namespace Ecommerce.Modules.Carts.Core.Entities
                 Product.IncreaseQuantity(quantity);
             }
             Quantity -= quantity;
+            CalculatePrice();
         }
         public void SetQuantity(int quantity)
         {
+            if(Quantity == quantity)
+            {
+                return;
+            }
             if (Product.HasQuantity)
             {
                 if (quantity > Quantity)
@@ -66,6 +75,12 @@ namespace Ecommerce.Modules.Carts.Core.Entities
                 }
             }
             Quantity = quantity;
+            CalculatePrice();
         }
+        public void ApplyDiscountedPrice()
+            => DiscountedPrice = (Product.Price * Quantity) -
+                (Cart.Discount!.Value * Quantity);
+        private void CalculatePrice()
+            => Price = Product.Price * Quantity;
     }
 }

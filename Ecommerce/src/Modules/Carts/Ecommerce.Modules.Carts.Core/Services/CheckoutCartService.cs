@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Services
@@ -64,7 +65,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
             var dto = await _paymentProcessorService.CheckoutAsync(checkoutCart, cancellationToken);
             checkoutCart.SetStripeSessionId(dto.SessionId);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Order was placed for checkout cart: {@checkoutCart}.", checkoutCart);
+            _logger.LogInformation("Order was placed for checkout cart: {checkoutCartId}.", checkoutCart.Id);
             return dto;
         }
 
@@ -79,7 +80,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 _contextService.Identity?.Id
                 ));
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Set customer: {@customer} for checkout cart: {@checkoutCart}.", customerDto, checkoutCart);
+            _logger.LogInformation("Customer: {@customer} was set for checkout cart: {checkoutCartId}.", customerDto, checkoutCart.Id);
         }
         public async Task SetPaymentAsync(Guid checkoutCartId, Guid paymentId, CancellationToken cancellationToken = default)
         {
@@ -89,7 +90,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 throw new PaymentNotFoundException(paymentId);
             checkoutCart.SetPayment(payment);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Set payment: {@payment} for checkout cart: {@checkoutCart}.", payment, checkoutCart);
+            _logger.LogInformation("Payment: {paymentId} was set for checkout cart: {checkoutCartId}.", payment.Id, checkoutCart.Id);
         }
 
         public async Task SetShipmentAsync(Guid checkoutCartId, ShipmentDto shipmentDto, CancellationToken cancellationToken = default)
@@ -104,14 +105,14 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 shipmentDto.AparmentNumber
                 ));
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Set shipment: {@shipment} for checkout cart: {@checkoutCart}.", shipmentDto, checkoutCart);
+            _logger.LogInformation("Shipment: {@shipment} was set for checkout cart: {checkoutCartId}.", shipmentDto, checkoutCart.Id);
         }
         public async Task SetAdditionalInformationAsync(Guid checkoutCartId, string additionalInformation, CancellationToken cancellationToken = default)
         {
             var checkoutCart = await GetCheckoutCartOrThrowIfNullAsync(checkoutCartId, cancellationToken);
             checkoutCart.SetAdditionalInformation(additionalInformation);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Set additional information: {@additionalInformation} for checkout cart: {@checkoutCart}.", additionalInformation, checkoutCart);
+            _logger.LogInformation("Additional information: {additionalInformation} was set for checkout cart: {checkoutCartId}.", additionalInformation, checkoutCart.Id);
         }
         public async Task SetCheckoutCartDetailsAsync(Guid checkoutCartId, CheckoutCartSetDetailsDto checkoutCartSetDetailsDto, CancellationToken cancellationToken = default)
         {
@@ -143,26 +144,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 checkoutCart.SetAdditionalInformation(additionalInformation);
             }
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Set needed details {@checkoutCartDetails} for checkout cart: {@checkoutCart}.", checkoutCartSetDetailsDto, checkoutCart);
-        }
-        public async Task AddDiscountAsync(Guid checkoutCartId, string code, CancellationToken cancellationToken = default)
-        {
-            var checkoutCart = await GetCheckoutCartOrThrowIfNullAsync(checkoutCartId, cancellationToken);
-            var discount = await _dbContext.Discounts
-                .SingleOrDefaultAsync(d => d.Code == code, cancellationToken) ?? 
-                throw new DiscountNotFoundException(code);
-            if (discount.CustomerId is not null && _contextService.Identity is null)
-            {
-                throw new IndividualDiscountCannotBeAppliedException("Cannot use individual discount without registering");
-            }
-            if (discount.CustomerId is not null && discount.CustomerId != _contextService.Identity!.Id &&
-                !checkoutCart.Products.Select(p => p.Product.SKU).Contains(discount.SKU))
-            {
-                throw new IndividualDiscountCannotBeAppliedException("Discount cannot be applied because of wrong user or SKU of a product.");
-            }
-            checkoutCart.AddDiscount(discount);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Discount: {@discount} redeemed for checkout cart: {@checkoutCart}.", discount, checkoutCart);
+            _logger.LogInformation("Necessary details {@checkoutCartDetails} were set for checkout cart: {checkoutCartId}.", checkoutCartSetDetailsDto, checkoutCart.Id);
         }
         public async Task HandleCheckoutSessionCompletedAsync(string? json, string? stripeSignatureHeader)
         {
@@ -198,11 +180,14 @@ namespace Ecommerce.Modules.Carts.Core.Services
                     cp.Product.Id,
                     cp.Product.SKU,
                     cp.Product.Name,
-                    cp.Product.Price,
+                    Price = cp.DiscountedPrice ?? cp.Price,
+                    UnitPrice = cp.DiscountedPrice is null ? cp.Product.Price : cp.DiscountedPrice/cp.Quantity,
                     cp.Quantity,
                     cp.Product.ImagePathUrl
                 }),
-                TotalSum = checkoutCart.TotalSum(),
+                TotalSum = checkoutCart.TotalSum,
+                ShippingService = checkoutCart.Shipment!.Service,
+                ShippingPrice = checkoutCart.Shipment!.Price,
                 Country =   checkoutCart.Shipment!.Country,
                 City = checkoutCart.Shipment!.City,
                 PostalCode = checkoutCart.Shipment.PostalCode,
@@ -213,7 +198,6 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 AdditionalInformation = checkoutCart.AdditionalInformation,
                 DiscountCode = checkoutCart.Discount?.Code,
                 StripePaymentIntentId = checkoutCart.StripePaymentIntentId!
-
             });
             if(checkoutCart.Discount is not null)
             {
@@ -222,12 +206,12 @@ namespace Ecommerce.Modules.Carts.Core.Services
             _dbContext.CartProducts.RemoveRange(checkoutCart.Products);
             _dbContext.CheckoutCarts.Remove(checkoutCart);
             await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Handling session checkout completed for {@checkoutCart}.", checkoutCart);
+            _logger.LogInformation("Handling session checkout was completed for {checkoutCartId}.", checkoutCart.Id);
         }
         private async Task<CheckoutCart> GetCheckoutCartOrThrowIfNullAsync(Guid checkoutCartId, CancellationToken cancellationToken = default, 
             params Expression<Func<CheckoutCart, object?>>[] includes)
         {
-            var checkoutCarts = _dbContext.CheckoutCarts
+            var query = _dbContext.CheckoutCarts
                 .Include(cc => cc.Products)
                 .ThenInclude(cp => cp.Product)
                 .AsQueryable();
@@ -235,10 +219,10 @@ namespace Ecommerce.Modules.Carts.Core.Services
             {
                 foreach (var include in includes)
                 {
-                    checkoutCarts = checkoutCarts.Include(include);
+                    query = query.Include(include);
                 }
             }
-            var checkoutCart = await checkoutCarts
+            var checkoutCart = await query
                 .SingleOrDefaultAsync(cc => cc.Id == checkoutCartId, cancellationToken) ?? 
                 throw new CheckoutCartNotFoundException(checkoutCartId);
             return checkoutCart;

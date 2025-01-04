@@ -20,6 +20,8 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public DateTime? ExpiresAt { get; private set; }
         private readonly List<CheckoutCart> _checkoutCarts = [];
         public IEnumerable<CheckoutCart> CheckoutCarts => _checkoutCarts;
+        private readonly List<Cart> _carts = [];
+        public IEnumerable<Cart> Carts => _carts;
         public Discount(string code, DiscountType type, decimal value, DateTime? expiresAt, string stripePromotionCodeId)
         {
             Code = code;

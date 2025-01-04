@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Modules.Orders.Application.Shared.Stripe;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Shared.Infrastructure.Stripe;
+using Microsoft.Extensions.Logging;
 using Stripe;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,13 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Stripe
     internal class StripeService : IPaymentProcessorService
     {
         private readonly StripeOptions _stripeOptions;
+        private readonly ILogger<StripeService> _logger;
         private readonly RequestOptions _requestOptions;
 
-        public StripeService(StripeOptions stripeOptions)
+        public StripeService(StripeOptions stripeOptions, ILogger<StripeService> logger)
         {
             _stripeOptions = stripeOptions;
+            _logger = logger;
             _requestOptions = new RequestOptions()
             {
                 ApiKey = _stripeOptions.ApiKey
@@ -36,6 +39,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Stripe
             {
                 throw new StripeFailedRequestException();
             }
+            _logger.LogDebug("Money was refunded for order: {orderId} on stripe.", order.Id);
         }
         public async Task RefundAsync(Domain.Orders.Entities.Order order, decimal amount, CancellationToken cancellationToken = default)
         {
@@ -51,6 +55,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Stripe
             {
                 throw new StripeFailedRequestException();
             }
+            _logger.LogDebug("Money was refunded for order: {orderId} on stripe.", order.Id);
         }
     }
 }

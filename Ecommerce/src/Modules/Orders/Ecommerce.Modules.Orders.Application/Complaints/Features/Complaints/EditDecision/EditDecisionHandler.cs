@@ -33,8 +33,8 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Edi
             }
             complaint.EditDecision(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation));
             await _complaintRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Decision: {@decision} was edited for complaint: {@complaint} with new details: {@updatingDetails} by {@user}.", 
-                complaint.Decision, complaint, request.Decision, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            _logger.LogInformation("Decision was edited for complaint: {complaintId} with new details: {@updatingDetails} by {@user}.", 
+                complaint.Id, request.Decision, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

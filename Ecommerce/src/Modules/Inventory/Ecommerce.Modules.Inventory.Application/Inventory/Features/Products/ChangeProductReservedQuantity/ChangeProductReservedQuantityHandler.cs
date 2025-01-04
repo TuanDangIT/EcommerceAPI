@@ -30,8 +30,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Ch
                 throw new ProductNotFoundException(request.ProductId);
             product.ChangeReservedQuantity(request.Reserved);
             await _productRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Product's: {@product} reserved quantity was changed from {oldReservedQuantity} to {newReservedQuantity} by {@user}.",
-                product, product.Reserved, request.Reserved, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            _logger.LogInformation("Product's: {productId} reserved quantity was changed from {oldReservedQuantity} to {newReservedQuantity} by {@user}.",
+                product.Id, product.Reserved, request.Reserved, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

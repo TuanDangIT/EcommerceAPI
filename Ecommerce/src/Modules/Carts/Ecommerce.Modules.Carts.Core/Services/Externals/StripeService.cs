@@ -20,7 +20,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
         private readonly StripeOptions _stripeOptions;
         private readonly ILogger<StripeService> _logger;
         private readonly RequestOptions _requestOptions;
-        private readonly decimal _defaultDeliveryPrice = 15;
+        //private readonly decimal _defaultDeliveryPrice = 3;
 
         public StripeService(StripeOptions stripeOptions, ILogger<StripeService> logger)
         {
@@ -63,7 +63,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
             }
             var sessionOptions = new SessionCreateOptions()
             {
-                //Urls are just temporary here
+                //Given links below are just temporary.
                 SuccessUrl = "https://localhost:7089/api",
                 CancelUrl = "https://localhost:7089/api",
                 PaymentMethodTypes =
@@ -81,7 +81,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                             DisplayName = "Kurier InPost",
                             FixedAmount = new SessionShippingOptionShippingRateDataFixedAmountOptions()
                             {
-                                Amount = (long)(_defaultDeliveryPrice * 100),
+                                Amount = (long)(checkoutCart.Shipment!.Price * 100),
                                 Currency = _stripeOptions.Currency,
                             },
                             Type = "fixed_amount"
@@ -105,7 +105,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
             {
                 throw new StripeFailedRequestException();
             }
-            _logger.LogInformation("Session created: {session}", session);
+            _logger.LogDebug("Stripe session was created: {@session} for checkout cart: {checkoutCartId}.", session, checkoutCart.Id);
             return session.AsDto();
         }
     }

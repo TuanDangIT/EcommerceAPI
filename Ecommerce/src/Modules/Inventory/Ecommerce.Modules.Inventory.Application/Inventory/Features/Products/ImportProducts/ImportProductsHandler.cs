@@ -133,13 +133,13 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Im
                     await _parameterRepository.AddManyAsync(newParameters.Values, cancellationToken);
                 await _productRepository.AddManyAsync(products, cancellationToken);
                 transaction.Commit();
-                _logger.LogInformation("Producs were imported by {@user}", 
+                _logger.LogInformation("Producs were imported by {@user}.", 
                     new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             }
             catch(Exception e)
             {
                 transaction.Rollback();
-                _logger.LogError("Import products operation that was called by {@user} failed. Exception: {@exception}", 
+                _logger.LogError("Import products operation that was called by {@user} failed. Exception: {@exception}.", 
                     new { _contextService.Identity!.Username, _contextService.Identity!.Id }, e);
                 throw;
             }

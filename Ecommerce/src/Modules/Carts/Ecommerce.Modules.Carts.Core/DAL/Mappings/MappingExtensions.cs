@@ -17,9 +17,9 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
             => new()
             {
                 Id = cart.Id,
-                CustomerId = cart.CustomerId,
                 Products = cart.Products.Select(p => p.AsDto()),
                 TotalSum = cart.TotalSum,
+                Discount = cart.Discount?.AsDto()
             };
         public static CheckoutCartDto AsDto(this CheckoutCart cart)
             => new()
@@ -30,7 +30,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
                 Shipment = cart.Shipment?.AsDto(),
                 IsPaid = cart.IsPaid,
                 Products = cart.Products.Select(p => p.AsDto()),
-                TotalSum = cart.TotalSum(),
+                TotalSum = cart.TotalSum,
                 AdditionalInformation = cart.AdditionalInformation,
                 Discount = cart.Discount?.AsDto()
             };
@@ -41,7 +41,8 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
                 ProductId = product.ProductId,
                 SKU = product.Product.SKU,
                 Name = product.Product.Name,
-                Price = product.Product.Price,
+                Price = product.Price,
+                DiscountedPrice = product.DiscountedPrice,
                 ImagePathUrl = product.Product.ImagePathUrl,
                 Quantity = product.Quantity
             };

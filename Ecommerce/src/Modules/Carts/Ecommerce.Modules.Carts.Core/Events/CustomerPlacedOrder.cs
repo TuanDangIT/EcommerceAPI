@@ -17,6 +17,8 @@ namespace Ecommerce.Modules.Carts.Core.Events
         public string PhoneNumber { get; set; } = string.Empty;
         public IEnumerable<object> Products { get; set; } = Enumerable.Empty<object>();
         public decimal TotalSum { get; set; }
+        public string ShippingService { get; set; } = string.Empty;
+        public decimal ShippingPrice { get; set; }
         public string Country { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string PostalCode { get; set; } = string.Empty;

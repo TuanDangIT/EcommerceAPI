@@ -29,8 +29,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
         public async Task HandleAsync(CustomerPlacedOrder @event)
         {
             var newGuid = Guid.NewGuid();
-            var address = new Address(@event.StreetName, @event.ApartmentNumber is null ? @event.StreetNumber : @event.StreetNumber + "/" + @event.ApartmentNumber
-                , @event.City, @event.PostalCode);
+            var address = new Address(@event.StreetName, @event.ApartmentNumber is null ? @event.StreetNumber : @event.StreetNumber + "/" + @event.ApartmentNumber, 
+                @event.City, @event.PostalCode);
             var customer = new Customer(@event.FirstName, @event.LastName, @event.Email, @event.PhoneNumber, address, @event.CustomerId);
             if (!Enum.TryParse(typeof(PaymentMethod), @event.PaymentMethod, out var paymentMethod))
             {
@@ -38,16 +38,25 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
             }
             var additionalInformation = @event.AdditionalInformation;
             var now = _timeProvider.GetUtcNow().UtcDateTime;
+            Discount? discount = null;
+            if (@event.DiscountCode is null)
+            {
+                if (!Enum.TryParse(typeof(DiscountType), @event.DiscountType, out var discountType))
+                {
+                    throw new InvalidDiscountTypeException();
+                }
+                discount = new Discount((DiscountType)discountType, @event.DiscountCode!, @event.DiscountValue, @event.DiscountSku);
+            }
             var order = new Order(
                 newGuid,
                 customer, 
                 @event.Products, 
                 @event.TotalSum,
-                //shipment,
                 (PaymentMethod)paymentMethod!,
-                now,
+                @event.ShippingService,
+                @event.ShippingPrice,
                 additionalInformation,
-                @event.DiscountCode,
+                discount,
                 @event.StripePaymentIntentId
                 );
             await _orderRepository.CreateAsync(order);

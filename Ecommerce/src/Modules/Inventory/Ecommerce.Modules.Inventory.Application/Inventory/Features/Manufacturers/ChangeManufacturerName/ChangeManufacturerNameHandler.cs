@@ -31,7 +31,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
                 throw new ManufacturerNotFoundException(request.ManufaturerId);
             manufacturer.ChangeName(request.Name);
             await _manufacturerRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Manufacturer: {@manufacturer} was changed to {newName} by {@user}.", manufacturer, request.Name,
+            _logger.LogInformation("Manufacturer: {manufacturerId} was changed to {newName} by {@user}.", manufacturer.Id, request.Name,
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

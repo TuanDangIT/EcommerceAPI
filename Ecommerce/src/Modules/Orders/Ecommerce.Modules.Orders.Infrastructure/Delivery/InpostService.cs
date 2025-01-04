@@ -2,6 +2,7 @@
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Shared.Infrastructure.InPost;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
     {
         private readonly IHttpClientFactory _factory;
         private readonly InPostOptions _inPostOptions;
+        private readonly ILogger<InpostService> _logger;
         private const string _inPost = "inpost";
         private const string _inPostErrorPropertyName = "error";
         private const string _inPostItemsPropertyName = "items";
@@ -27,10 +29,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
             PropertyNameCaseInsensitive = true,
             ReferenceHandler = ReferenceHandler.IgnoreCycles
         };
-        public InpostService(IHttpClientFactory factory, InPostOptions inPostOptions)
+        public InpostService(IHttpClientFactory factory, InPostOptions inPostOptions, ILogger<InpostService> logger)
         {
             _factory = factory;
             _inPostOptions = inPostOptions;
+            _logger = logger;
         }
         public async Task<(int Id, string TrackingNumber)> CreateShipmentAsync(Shipment shipment)
         {
@@ -38,6 +41,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
             var id = await PostCreateShipmentRequestAsync(shipment, client);
             await Task.Delay(6000);
             var trackingNumber = await GetTrackingNumberFromCreatedShipmentAsync(id, client);
+            _logger.LogDebug("Shipment was created on InPost.");
             return (id, trackingNumber);
         }
         public async Task<(Stream FileStream, string MimeType, string FileName)> GetLabelAsync(Shipment shipment)
@@ -52,6 +56,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
                 throw new HttpRequestException($"HTTP request failed: {errorMessage!}");
             }
             var stream = await httpResponse.Content.ReadAsStreamAsync();
+            _logger.LogDebug("Label was downloaded for shipment: {shipmentId}.", shipment.Id);
             return (stream, _pdfMimeType, $"{shipment.TrackingNumber}-inpost-label");
         }
         private async Task<int> PostCreateShipmentRequestAsync(Shipment shipment, HttpClient client)

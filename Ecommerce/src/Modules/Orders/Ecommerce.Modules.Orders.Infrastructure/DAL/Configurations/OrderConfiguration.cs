@@ -28,6 +28,12 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                     .IsRequired();
                 p.ToTable("Products");
             });
+            builder.OwnsOne(o => o.Discount, d =>
+            {
+                d.Property(d => d.Type).IsRequired();
+                d.Property(d => d.Code).IsRequired().HasMaxLength(48);
+                d.Property(d => d.SKU).HasMaxLength(16);
+            });
             //builder.OwnsOne(o => o.ShipmentDetails, s =>
             //{
             //    s.Property(s => s.City).IsRequired().HasMaxLength(32);

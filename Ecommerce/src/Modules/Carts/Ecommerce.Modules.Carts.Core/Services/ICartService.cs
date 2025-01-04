@@ -16,6 +16,8 @@ namespace Ecommerce.Modules.Carts.Core.Services
         Task RemoveProductAsync(Guid cartId, Guid productId, int quantity, CancellationToken cancellationToken = default);
         Task SetProductQuantityAsync(Guid cartId, Guid productId, int quantity, CancellationToken cancellationToken = default);
         Task ClearAsync(Guid cartId, CancellationToken cancellationToken = default);
-        Task CheckoutAsync(Guid cartId, CancellationToken cancellationToken = default);
+        Task<Guid> CheckoutAsync(Guid cartId, CancellationToken cancellationToken = default);
+        Task AddDiscountAsync(Guid cartId, string code, CancellationToken cancellationToken = default);
+        Task RemoveDiscountAsync(Guid cartId, CancellationToken cancellationToken = default);
     }
 }

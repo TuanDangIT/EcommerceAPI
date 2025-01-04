@@ -161,6 +161,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.Property<string>("DiscountCode")
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsDraft")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Payment")
                         .IsRequired()
                         .HasColumnType("text");
@@ -329,7 +332,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Ecommerce.Modules.Orders.Domain.Complaints.Entities.Decision", "Decision", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Orders.Domain.Complaints.Entities.Complaint.Decision#Ecommerce.Modules.Orders.Domain.Complaints.Entities.Decision", "Decision", b1 =>
                         {
                             b1.Property<Guid>("ComplaintId")
                                 .HasColumnType("uuid");
@@ -366,7 +369,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Address", "Address", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer.Address#Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("CustomerId")
                                 .HasColumnType("uuid");
@@ -418,7 +421,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", b =>
                 {
-                    b.OwnsMany("Ecommerce.Modules.Orders.Domain.Orders.Entities.Product", "Products", b1 =>
+                    b.OwnsMany("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order.Products#Ecommerce.Modules.Orders.Domain.Orders.Entities.Product", "Products", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
                                 .HasColumnType("uuid");
@@ -450,6 +453,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                 .HasMaxLength(16)
                                 .HasColumnType("character varying(16)");
 
+                            b1.Property<decimal>("UnitPrice")
+                                .HasColumnType("numeric");
+
                             b1.HasKey("OrderId", "Id");
 
                             b1.ToTable("Products", "orders");
@@ -469,7 +475,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Insurance", "Insurance", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Shipment.Insurance#Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Insurance", "Insurance", b1 =>
                         {
                             b1.Property<int>("ShipmentId")
                                 .HasColumnType("integer");
@@ -490,7 +496,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                 .HasForeignKey("ShipmentId");
                         });
 
-                    b.OwnsMany("Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Parcel", "Parcels", b1 =>
+                    b.OwnsMany("Ecommerce.Modules.Orders.Domain.Orders.Entities.Shipment.Parcels#Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Parcel", "Parcels", b1 =>
                         {
                             b1.Property<int>("ShipmentId")
                                 .HasColumnType("integer");
@@ -508,7 +514,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("ShipmentId");
 
-                            b1.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Dimensions", "Dimensions", b2 =>
+                            b1.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Shipment.Parcels#Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Parcel.Dimensions#Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Dimensions", "Dimensions", b2 =>
                                 {
                                     b2.Property<int>("ParcelShipmentId")
                                         .HasColumnType("integer");
@@ -540,7 +546,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                         .HasForeignKey("ParcelShipmentId", "ParcelId");
                                 });
 
-                            b1.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Weight", "Weight", b2 =>
+                            b1.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Shipment.Parcels#Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Parcel.Weight#Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Weight", "Weight", b2 =>
                                 {
                                     b2.Property<int>("ParcelShipmentId")
                                         .HasColumnType("integer");
@@ -571,7 +577,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                 .IsRequired();
                         });
 
-                    b.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Receiver", "Receiver", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Shipment.Receiver#Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Receiver", "Receiver", b1 =>
                         {
                             b1.Property<int>("ShipmentId")
                                 .HasColumnType("integer");
@@ -602,7 +608,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("ShipmentId");
 
-                            b1.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Address", "Address", b2 =>
+                            b1.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Shipment.Receiver#Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Receiver.Address#Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.Address", "Address", b2 =>
                                 {
                                     b2.Property<int>("ReceiverShipmentId")
                                         .HasColumnType("integer");
@@ -657,7 +663,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("Ecommerce.Modules.Orders.Domain.Returns.Entities.ReturnProduct", "Products", b1 =>
+                    b.OwnsMany("Ecommerce.Modules.Orders.Domain.Returns.Entities.Return.Products#Ecommerce.Modules.Orders.Domain.Returns.Entities.ReturnProduct", "Products", b1 =>
                         {
                             b1.Property<Guid>("ReturnId")
                                 .HasColumnType("uuid");

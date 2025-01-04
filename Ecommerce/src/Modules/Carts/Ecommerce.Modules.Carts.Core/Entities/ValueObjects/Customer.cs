@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities.ValueObjects
         }
         public void SetCustomerId(Guid customerId)
             => CustomerId = customerId;
-        public void SetCustomerDetails(string firstName, string lastName, string email, string phoneNumber)
+        public void SetDetails(string firstName, string lastName, string email, string phoneNumber)
         {
             FirstName = firstName;
             LastName = lastName;

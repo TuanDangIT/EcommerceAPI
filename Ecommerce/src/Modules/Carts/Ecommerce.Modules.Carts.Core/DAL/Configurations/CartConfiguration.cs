@@ -16,6 +16,12 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
             builder.HasMany(c => c.Products)
                 .WithOne(cp => cp.Cart)
                 .HasForeignKey(cp => cp.CartId);
+            builder.HasOne(c => c.CheckoutCart)
+                .WithOne(cc => cc.Cart)
+                .HasForeignKey<Cart>(c => c.CheckoutCartId);
+            builder.HasOne(c => c.Discount)
+                .WithMany(d => d.Carts)
+                .HasForeignKey(c => c.DiscountId);
         }
     }
 }

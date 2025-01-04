@@ -73,11 +73,11 @@ namespace Ecommerce.Shared.Infrastructure
                     }
                     Console.WriteLine("--------------");
                     manager.FeatureProviders.Add(new InternalControllerFeatureProvider());
-                });
-            //.AddJsonOptions(option =>
-            //{
-            //    option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-            //});
+                })
+            .AddJsonOptions(option =>
+            {
+                option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
             services.AddEndpointsApiExplorer();
             services.AddVersioning();
             services.AddDocumentation();

@@ -52,14 +52,14 @@ namespace Ecommerce.Modules.Users.Core.Services
             customer.Email = dto.Email;
             customer.Username = dto.Username;
             await _userRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Customer: {@cutomer} was updated with new details {@newDetails} by {@user}.", customer, dto, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            _logger.LogInformation("Customer: {cutomerId} was updated with new details {@newDetails} by {@user}.", customer.Id, dto, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
         public async Task SetActiveAsync(Guid customerId, bool isActive, CancellationToken cancellationToken = default)
         {
             var customer = await _customerRepository.GetAsync(customerId, false, cancellationToken) ?? throw new CustomerNotFoundException(customerId);
             customer.IsActive = isActive;
             await _userRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Customer: {@customer} was set to {isActive} by {@user}.", customer, isActive, 
+            _logger.LogInformation("Customer: {customerId} was set to {isActive} by {@user}.", customer.Id, isActive, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

@@ -15,6 +15,8 @@ namespace Ecommerce.Modules.Carts.Core.Entities.ValueObjects
         public string StreetName { get; private set; } = string.Empty;
         public string StreetNumber { get; private set; } = string.Empty;
         public string? AparmentNumber { get; private set; }
+        public string Service { get; set; } = "Kurier InPost";
+        public decimal Price { get; set; } = 3;
         public Shipment(string country, string city, string postalCode, string streetName, string streetNumber, string? apartmentNumber)
         {
             Country = country;

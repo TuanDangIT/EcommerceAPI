@@ -34,7 +34,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.RejectRet
                 throw new ReturnNotFoundException(request.ReturnId);
             @return.Reject(request.RejectReason);
             await _returnRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Return: {return} was rejected by {user}.", @return,
+            _logger.LogInformation("Return: {returnId} was rejected by {@user}.", @return.Id,
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new ReturnRejected(@return.Id, @return.OrderId, @return.Order.Customer.UserId, @return.Order.Customer.FirstName, @return.Order.Customer.Email,
                 request.RejectReason, @return.Products.Select(p => new { p.SKU, p.Name, p.Price, p.Quantity }), @return.CreatedAt));

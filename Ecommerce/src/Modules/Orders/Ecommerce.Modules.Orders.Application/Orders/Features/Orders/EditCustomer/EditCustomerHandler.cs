@@ -32,8 +32,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.EditCustome
             var address = new Address(request.Address.Street, request.Address.BuildingNumber, request.Address.City, request.Address.PostCode);
             order.EditCustomer(new Customer(request.FirstName, request.LastName, request.Email, request.PhoneNumber, address));
             await _orderRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Order's: {@order} customer: {@customer} was editted with new details {@updatingDetails} by {@user}.", 
-                order, order.Customer,
+            _logger.LogInformation("Order's: {orderId} customer was editted with new details {@updatingDetails} by {@user}.", 
+                order.Id,
                 new { request.FirstName, request.LastName, request.Email, request.PhoneNumber, address }, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }

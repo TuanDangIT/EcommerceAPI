@@ -85,8 +85,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
             product.ChangeParameters(productParameters);
             await _productRepository.UpdateAsync();
             await UploadImagesToBlobStorageAsync(request.Images, product);
-            _logger.LogInformation("Product: {@product} was updated with new details {@request} by {@user}.",
-                product, request, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            _logger.LogInformation("Product: {productId} was updated with new details {@request} by {@user}.",
+                product.Id, request, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
         private async Task UploadImagesToBlobStorageAsync(List<IFormFile> images, Product product)
         {
