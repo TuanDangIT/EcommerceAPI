@@ -24,6 +24,13 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
                 .IsRequired();
             builder.Property(o => o.CreatedAt)
                 .IsRequired();
+            builder.ToTable(o =>
+            {
+                o.HasCheckConstraint("CK_Offer_ExpiresAt", "\"ExpiresAt\" > NOW()");
+                o.HasCheckConstraint("CK_Offer_OldPrice", "\"OldPrice\" >= 0");
+                o.HasCheckConstraint("CK_Offer_OfferedPrice", "\"OfferedPrice\" >= 0");
+                o.HasCheckConstraint("CK_Offer_PriceComparison", "\"OldPrice\" > \"OfferedPrice\"");
+            });
         }
     }
 }

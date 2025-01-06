@@ -1,4 +1,5 @@
-﻿using Ecommerce.Shared.Abstractions.Entities;
+﻿using Ecommerce.Modules.Inventory.Domain.Auctions.Exceptions;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,10 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
         public DateTime? UpdatedAt { get; private set; }
         public void Edit(string text, int grade)
         {
+            if(grade < 1 && grade > 10)
+            {
+                throw new AuctionInvalidGradeException();
+            }
             Text = text;
             Grade = grade;
         }

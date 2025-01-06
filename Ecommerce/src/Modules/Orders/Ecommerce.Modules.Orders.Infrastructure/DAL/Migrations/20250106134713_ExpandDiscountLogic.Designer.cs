@@ -3,6 +3,7 @@ using System;
 using Ecommerce.Modules.Orders.Infrastructure.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 {
     [DbContext(typeof(OrdersDbContext))]
-    partial class OrdersDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250106134713_ExpandDiscountLogic")]
+    partial class ExpandDiscountLogic
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,10 +67,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
                     b.HasIndex("Id", "CreatedAt");
 
-                    b.ToTable("Complaints", "orders", t =>
-                        {
-                            t.HasCheckConstraint("CK_Complaint_RefundAmount", "\"Decision_RefundAmount\" >= 0");
-                        });
+                    b.ToTable("Complaints", "orders");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Customer", b =>
@@ -197,14 +197,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
                     b.HasIndex("Id", "CreatedAt");
 
-                    b.ToTable("Orders", "orders", t =>
-                        {
-                            t.HasCheckConstraint("CK_Order_DiscountValue", "\"Discount_Value\" > 0");
-
-                            t.HasCheckConstraint("CK_Order_ShippingPrice", "\"ShippingPrice\" >= 0");
-
-                            t.HasCheckConstraint("CK_Order_TotalSum", "\"TotalSum\" >= 0");
-                        });
+                    b.ToTable("Orders", "orders");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Shipment", b =>
@@ -472,16 +465,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
                             b1.HasKey("OrderId", "Id");
 
-                            b1.ToTable("Products", "orders", t =>
-                                {
-                                    t.HasCheckConstraint("CK_Product_Price", "\"Price\" >= 0");
-
-                                    t.HasCheckConstraint("CK_Product_PriceComparison", "\"UnitPrice\" <= \"Price\"");
-
-                                    t.HasCheckConstraint("CK_Product_Quantity", "\"Quantity\" > 0");
-
-                                    t.HasCheckConstraint("CK_Product_UnitPrice", "\"UnitPrice\" >= 0");
-                                });
+                            b1.ToTable("Product", "orders");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
@@ -750,12 +734,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
                             b1.HasKey("ReturnId", "Id");
 
-                            b1.ToTable("ReturnProducts", "orders", t =>
-                                {
-                                    t.HasCheckConstraint("CK_ReturnProduct_Price", "\"Price\" >= 0");
-
-                                    t.HasCheckConstraint("CK_ReturnProduct_Quantity", "\"Quantity\" > 0");
-                                });
+                            b1.ToTable("ReturnProduct", "orders");
 
                             b1.WithOwner()
                                 .HasForeignKey("ReturnId");

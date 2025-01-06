@@ -27,7 +27,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                     .IsRequired();
                 p.Property(p => p.ImagePathUrl)
                     .IsRequired();
-                p.ToTable("ReturnProducts");
+                p.ToTable("ReturnProducts", rp =>
+                {
+                    rp.HasCheckConstraint("CK_ReturnProduct_Price", "\"Price\" >= 0");
+                    rp.HasCheckConstraint("CK_ReturnProduct_Quantity", "\"Quantity\" > 0");
+                });
             });
             builder.Property(c => c.CreatedAt)
                 .IsRequired();

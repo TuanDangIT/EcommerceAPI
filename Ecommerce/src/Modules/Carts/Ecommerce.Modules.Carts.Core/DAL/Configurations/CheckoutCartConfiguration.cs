@@ -39,6 +39,10 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
             builder.HasMany(cc => cc.Products)
                 .WithOne(cp => cp.CheckoutCart)
                 .HasForeignKey(cp => cp.CheckoutCartId);
+            builder.ToTable(cc =>
+            {
+                cc.HasCheckConstraint("CK_CheckoutCart_TotalSum", "\"TotalSum\" >= 0");
+            });
         }
     }
 }

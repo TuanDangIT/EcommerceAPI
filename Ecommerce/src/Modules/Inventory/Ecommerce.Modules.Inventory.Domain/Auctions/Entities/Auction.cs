@@ -28,6 +28,14 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
         public Auction(Guid id, string sku, string name, decimal price, string description, List<string> imagePathUrls, string category, 
             int? quantity = null, string? additionalDescription = null, List<AuctionParameter>? parameters = null, string? manufacturer = null)
         {
+            if (quantity < 0)
+            {
+                throw new AuctionQuantityBelowZeroException();
+            }
+            if (price < 0)
+            {
+                throw new AuctionPriceBelowZeroOrEqualException();
+            }
             Id = id;
             SKU = sku;
             Name = name;

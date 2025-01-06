@@ -22,6 +22,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
             builder.HasOne(c => c.Discount)
                 .WithMany(d => d.Carts)
                 .HasForeignKey(c => c.DiscountId);
+            builder.ToTable(c => c.HasCheckConstraint("CK_Cart_TotalSum", "\"TotalSum\" >= 0"));
         }
     }
 }

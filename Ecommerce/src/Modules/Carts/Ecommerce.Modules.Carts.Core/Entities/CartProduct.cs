@@ -23,6 +23,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public decimal? DiscountedPrice { get; private set; }
         public CartProduct(Product product, int quantity)
         {
+            IsQuantityValid(quantity);
             Product = product;
             Quantity = quantity;
             if (product.HasQuantity)
@@ -46,9 +47,9 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void DecreaseQuantity(int quantity)
         {
-            if(Quantity - quantity < 0)
+            if(Quantity - quantity <= 0)
             {
-                throw new CartProductQuantityBelowZeroException();
+                throw new PropertyValueBelowOrEqualZeroException(nameof(CartProduct));
             }
             if (Product.HasQuantity)
             {
@@ -59,7 +60,8 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void SetQuantity(int quantity)
         {
-            if(Quantity == quantity)
+            IsQuantityValid(quantity);
+            if (Quantity == quantity)
             {
                 return;
             }
@@ -82,5 +84,12 @@ namespace Ecommerce.Modules.Carts.Core.Entities
                 (Cart.Discount!.Value * Quantity);
         private void CalculatePrice()
             => Price = Product.Price * Quantity;
+        private void IsQuantityValid(int quantity)
+        {
+            if (quantity <= 0)
+            {
+                throw new PropertyValueBelowOrEqualZeroException(nameof(CartProduct));
+            }
+        }
     }
 }

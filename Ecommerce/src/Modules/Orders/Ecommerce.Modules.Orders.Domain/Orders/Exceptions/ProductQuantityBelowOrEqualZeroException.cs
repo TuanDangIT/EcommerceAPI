@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Exceptions
 {
-    internal class ProductQuantityBelowZeroException : EcommerceException
+    internal class ProductQuantityBelowOrEqualZeroException : EcommerceException
     {
-        public ProductQuantityBelowZeroException() : base("Product's quantity must be higher or equal 0.")
+        public ProductQuantityBelowOrEqualZeroException() : base("Product's quantity must be higher than 0.")
         {
         }
     }

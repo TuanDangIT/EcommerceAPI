@@ -37,6 +37,10 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                 .HasIndex(c => new { c.Id, c.CreatedAt });
             builder.Property(c => c.Version)
                 .IsConcurrencyToken();
+            builder.ToTable(c =>
+            {
+                c.HasCheckConstraint("CK_Complaint_RefundAmount", "\"Decision_RefundAmount\" >= 0");
+            });
         }
     }
 }

@@ -36,6 +36,10 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public Discount(string code, string sku, decimal value, Guid customerId, DateTime expiresAt)
         {
+            if(value >= 0)
+            {
+                throw new PropertyValueBelowOrEqualZeroException(nameof(Discount));
+            }
             Code = code;
             Type = DiscountType.NominalDiscount;
             SKU = sku;

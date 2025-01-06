@@ -52,6 +52,13 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
                 .HasForeignKey(p => p.CategoryId);
             builder.Property(p => p.Version)
                 .IsConcurrencyToken();
+            builder.ToTable(p =>
+            {
+                p.HasCheckConstraint("CK_Product_Price", "\"Price\" >= 0");
+                p.HasCheckConstraint("CK_Product_Quantity", "\"Quantity\" >= 0");
+                p.HasCheckConstraint("CK_Product_VAT", "\"VAT\" >= 0");
+                p.HasCheckConstraint("CK_Product_Reserved", "\"Reserved\" >= 0");
+            });
         }
     }
 }

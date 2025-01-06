@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
+namespace Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects
 {
     public class Discount
     {
@@ -22,7 +22,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         }
         private Discount()
         {
-            
+
         }
     }
 }

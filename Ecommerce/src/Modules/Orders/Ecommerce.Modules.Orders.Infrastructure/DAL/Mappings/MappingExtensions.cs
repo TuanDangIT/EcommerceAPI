@@ -3,6 +3,7 @@ using Ecommerce.Modules.Orders.Application.Orders.DTO;
 using Ecommerce.Modules.Orders.Application.Returns.DTO;
 using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
+using Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 
 namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings

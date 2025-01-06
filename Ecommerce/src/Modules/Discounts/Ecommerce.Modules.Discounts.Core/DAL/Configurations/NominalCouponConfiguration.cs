@@ -16,6 +16,10 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
             builder.Property(nd => nd.NominalValue)
                 .HasPrecision(8, 2)
                 .IsRequired();
+            builder.ToTable(nd =>
+            {
+                nd.HasCheckConstraint("CK_Coupon_NominalValue", "\"NominalValue\" >= 0");
+            });
         }
     }
 }

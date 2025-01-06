@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Auctions.Exceptions
 {
-    internal class AuctionQuantityBelowZeroException : EcommerceException
+    internal class AuctionInvalidGradeException : EcommerceException
     {
-        public AuctionQuantityBelowZeroException() : base("Auction's quantity must be higher than 0.")
+        public AuctionInvalidGradeException() : base("Auction's grade must be between 1 and 10.")
         {
         }
     }

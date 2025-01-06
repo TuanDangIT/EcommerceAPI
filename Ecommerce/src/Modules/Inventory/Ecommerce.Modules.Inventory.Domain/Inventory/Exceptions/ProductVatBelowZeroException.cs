@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Inventory.Exceptions
 {
-    internal class ProductQuantityBelowZeroException : EcommerceException
+    internal class ProductVatBelowZeroException : EcommerceException
     {
-        public ProductQuantityBelowZeroException() : base("Product's quantity must be higher or equal zero.")
+        public ProductVatBelowZeroException() : base("Product's VAT must be higher than 0.")
         {
         }
     }

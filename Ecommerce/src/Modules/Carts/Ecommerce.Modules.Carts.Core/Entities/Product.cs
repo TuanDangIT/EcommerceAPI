@@ -26,6 +26,14 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public IEnumerable<CartProduct> CartProducts => _cartProducts;
         public Product(string sku, string name, decimal price, int? quantity, string imagePathUrl)
         {
+            if(quantity <= 0)
+            {
+                throw new PropertyValueBelowOrEqualZeroException(nameof(Product));
+            }
+            if(price < 0)
+            {
+                throw new ProductPriceBelowZeroException();
+            }
             SKU = sku;
             Name = name;
             Price = price;
@@ -42,9 +50,9 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 throw new ProductInvalidChangeInQuantityException();
             }
-            if(Quantity < quantity)
+            if(Quantity <= quantity)
             {
-                throw new ProductQuantityBelowZeroException();
+                throw new PropertyValueBelowOrEqualZeroException(nameof(Product));
             }
             Quantity -= quantity;
         }

@@ -26,6 +26,11 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
             builder.HasMany(p => p.CartProducts)
                 .WithOne(cp => cp.Product)
                 .HasForeignKey(cp => cp.ProductId);
+            builder.ToTable(p =>
+            {
+                p.HasCheckConstraint("CK_Product_Price", "\"Price\" >= 0");
+                p.HasCheckConstraint("CK_Product_Quantity", "\"Quantity\" > 0");
+            });
         }
     }
 }

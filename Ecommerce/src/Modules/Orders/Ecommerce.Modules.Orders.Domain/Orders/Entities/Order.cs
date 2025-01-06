@@ -36,6 +36,18 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public Order(Guid id, Customer customer, IEnumerable<Product> products, decimal totalSum, PaymentMethod paymentMethod, 
             string shippingService, decimal shippingPrice, string? clientAdditionalInformation, Discount? discount, string stripePaymentIntentId)
         {
+            if(totalSum < 0)
+            {
+                throw new OrderTotalSumBelowZeroException();
+            }
+            if(discount?.Value <= 0)
+            {
+                throw new OrderDiscountValueBelowOrEqualZeroException();
+            }
+            if(shippingPrice < 0)
+            {
+                throw new OrderShippingPriceBelowZeroException();
+            }
             Id = id;
             IsDraft = false;
             Customer = customer;

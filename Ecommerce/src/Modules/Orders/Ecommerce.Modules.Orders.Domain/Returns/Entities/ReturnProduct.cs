@@ -1,4 +1,5 @@
-﻿using Ecommerce.Shared.Abstractions.Entities;
+﻿using Ecommerce.Modules.Orders.Domain.Returns.Exception;
+using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,14 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Entities
         public string? ImagePathUrl { get; private set; }
         public ReturnProduct(string sku, string name, decimal price, int quantity, string? imagePathUrl)
         {
+            if(quantity <= 0)
+            {
+                throw new ReturnProductQuantityBelowZeroOrEqualException();
+            }
+            if(price < 0)
+            {
+                throw new ReturnProductPriceBelowZeroException();
+            }
             SKU = sku;
             Name = name;
             Price = price;

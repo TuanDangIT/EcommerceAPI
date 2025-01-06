@@ -29,6 +29,11 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
                 .IsRequired();
             builder.HasIndex(d => d.StripePromotionCodeId)
                 .IsUnique();
+            builder.ToTable(d =>
+            {
+                d.HasCheckConstraint("CK_Discount_Redemptions", "\"Redemptions\" >= 0");
+                d.HasCheckConstraint("CK_Discount_ExpiresAt", "\"ExpiresAt\" > NOW()");
+            });
             //builder.Property(d => d.Coupon)
             //    .IsRequired();
             //builder.Property(d => d.Type)

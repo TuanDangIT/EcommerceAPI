@@ -48,6 +48,18 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             , List<ProductParameter> productParameters, Manufacturer manufacturer, Category category
             , List<Image> images, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null, int? reserved = null)
         {
+            if(vat < 0)
+            {
+                throw new ProductVatBelowZeroException();
+            }
+            if(quantity < 0)
+            {
+                throw new ProductQuantityBelowZeroException();
+            }
+            if(price < 0)
+            {
+                throw new ProductPriceBelowZeroException();
+            }
             Id = id;
             SKU = sku;
             EAN = ean;

@@ -19,6 +19,13 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
                 .IsRequired();
             builder.Property(cp => cp.CartId)
                 .IsRequired();
+            builder
+                .ToTable(cp =>
+                {
+                    cp.HasCheckConstraint("CK_CartProduct_Quantity", "\"Quantity\" > 0");
+                    cp.HasCheckConstraint("CK_CartProduct_Price", "\"Price\" >= 0");
+                    cp.HasCheckConstraint("CK_CartProduct_DiscountedPrice", "\"DiscountedPrice\" >= 0");
+                });
         }
     }
 }

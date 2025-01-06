@@ -31,6 +31,11 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
                 .HasForeignKey(cc => cc.DiscountId);
             builder.Property(d => d.SKU)
                 .HasMaxLength(16);
+            builder.ToTable(d =>
+            {
+                d.HasCheckConstraint("CK_Discount_Value", "\"Value\" >= 0");
+                d.HasCheckConstraint("CK_Discount_ExpiresAt", "\"ExpiresAt\" > NOW()");
+            });
         }
     }
 }

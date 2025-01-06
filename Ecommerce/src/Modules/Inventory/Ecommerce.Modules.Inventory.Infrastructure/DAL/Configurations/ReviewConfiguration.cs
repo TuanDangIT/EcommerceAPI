@@ -18,6 +18,10 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
             builder.Property(r => r.Grade).IsRequired();
             builder.Property(r => r.AuctionId).IsRequired();
             builder.Property(r => r.CreatedAt).IsRequired();
+            builder.ToTable(r =>
+            {
+                r.HasCheckConstraint("CK_Review_Grade", "\"Grade\" >= 1 AND \"Grade\" <= 10");
+            });
         }
     }
 }

@@ -16,6 +16,10 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
             builder.Property(pd => pd.Percent)
                 .HasPrecision(2, 2)
                 .IsRequired();
+            builder.ToTable(pd =>
+            {
+                pd.HasCheckConstraint("CK_Coupon_Percent", "\"Percent\" >= 0.01 AND \"Percent\" <= 1");
+            });
         }
     }
 }

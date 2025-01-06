@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Complaints.Entities.Enums;
+using Ecommerce.Modules.Orders.Domain.Complaints.Exceptions;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 using Ecommerce.Shared.Abstractions.Entities;
@@ -56,6 +57,10 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
         }
         public void WriteDecision(Decision decision)
         {
+            if(decision.RefundAmount is not null && decision.RefundAmount < 0)
+            {
+                throw new ComplaintRefundAmountBelowZeroException();
+            }
             Decision = decision;
         }
         public void EditDecision(Decision decision)

@@ -15,6 +15,6 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
 
         }
         public NominalCoupon(string code, decimal nominalValue, string stripeCouponId) : base(code, stripeCouponId)
-            => NominalValue = nominalValue > 0 ? nominalValue : throw new CouponNominalValueBelowOrEqualZeroException();
+            => NominalValue = nominalValue >= 0 ? nominalValue : throw new CouponNominalValueBelowOrEqualZeroException();
     }
 }

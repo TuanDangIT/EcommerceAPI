@@ -15,6 +15,6 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
 
         }
         public PercentageCoupon(string code, decimal percent, string stripeCouponId) : base(code, stripeCouponId)
-            => Percent = percent > 0 && percent <= 100 ? percent : throw new CouponPercentageValueOutOfBoundException();
+            => Percent = percent >= (decimal)0.01 && percent <= 1 ? percent : throw new CouponPercentageValueOutOfBoundException();
     }
 }

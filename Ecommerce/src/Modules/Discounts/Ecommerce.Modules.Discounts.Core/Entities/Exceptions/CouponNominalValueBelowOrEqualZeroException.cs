@@ -9,7 +9,7 @@ namespace Ecommerce.Modules.Discounts.Core.Entities.Exceptions
 {
     internal class CouponNominalValueBelowOrEqualZeroException : EcommerceException
     {
-        public CouponNominalValueBelowOrEqualZeroException() : base("Nominal value should be greater than 0.")
+        public CouponNominalValueBelowOrEqualZeroException() : base("Nominal value must be greater than 0.")
         {
 
         }

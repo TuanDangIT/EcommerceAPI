@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Entities.Exceptions
 {
-    internal class ProductQuantityBelowZeroException : EcommerceException
+    internal class ProductPriceBelowZeroException : EcommerceException
     {
-        public ProductQuantityBelowZeroException() : base("Product quantity can't be below 0.")
+        public ProductPriceBelowZeroException() : base("Product's price must be higher or equal 0.")
         {
         }
     }

@@ -26,7 +26,13 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                     .IsRequired();
                 p.Property(p => p.ImagePathUrl)
                     .IsRequired();
-                p.ToTable("Products");
+                p.ToTable("Products", p =>
+                {
+                    p.HasCheckConstraint("CK_Product_UnitPrice", "\"UnitPrice\" >= 0");
+                    p.HasCheckConstraint("CK_Product_Price", "\"Price\" >= 0");
+                    p.HasCheckConstraint("CK_Product_Quantity", "\"Quantity\" > 0");
+                    p.HasCheckConstraint("CK_Product_PriceComparison", "\"UnitPrice\" <= \"Price\"");
+                });
             });
             builder.OwnsOne(o => o.Discount, d =>
             {
@@ -34,14 +40,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                 d.Property(d => d.Code).IsRequired().HasMaxLength(48);
                 d.Property(d => d.SKU).HasMaxLength(16);
             });
-            //builder.OwnsOne(o => o.ShipmentDetails, s =>
-            //{
-            //    s.Property(s => s.City).IsRequired().HasMaxLength(32);
-            //    s.Property(s => s.PostalCode).IsRequired().HasMaxLength(16);
-            //    s.Property(s => s.StreetName).IsRequired().HasMaxLength(64);
-            //    s.Property(s => s.StreetNumber).IsRequired().HasMaxLength(8);
-            //    s.Property(s => s.ApartmentNumber).HasMaxLength(8);
-            //});
             builder.HasOne(o => o.Customer)
                 .WithOne(c => c.Order)
                 .HasForeignKey<Customer>(o => o.OrderId);
@@ -55,8 +53,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                 .HasMaxLength(256);
             builder.Property(cc => cc.CompanyAdditionalInformation)
                 .HasMaxLength(256);
-            //builder.Property(o => o.IsCompleted)
-            //    .IsRequired();
             builder.Property(o => o.CreatedAt)
                 .IsRequired();
             builder.HasIndex(o => new { o.Id, o.CreatedAt });
@@ -65,6 +61,12 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                 .HasForeignKey(s => s.OrderId);
             builder.Property(o => o.Version)
                 .IsConcurrencyToken();
+            builder.ToTable(o =>
+            {
+                o.HasCheckConstraint("CK_Order_TotalSum", "\"TotalSum\" >= 0");
+                o.HasCheckConstraint("CK_Order_ShippingPrice", "\"ShippingPrice\" >= 0");
+                o.HasCheckConstraint("CK_Order_DiscountValue", "\"Discount_Value\" > 0");
+            });
         }
     }
 }

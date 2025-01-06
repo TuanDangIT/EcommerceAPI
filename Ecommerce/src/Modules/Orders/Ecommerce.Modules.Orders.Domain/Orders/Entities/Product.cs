@@ -25,6 +25,18 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public string? ImagePathUrl { get; private set; }
         public Product(string sku, string name, decimal price, decimal unitPrice, int quantity, string? imagePathUrl)
         {
+            if(unitPrice < 0)
+            {
+                throw new ProductUnitPriceBelowZeroException();
+            }
+            if(price < 0)
+            {
+                throw new ProductPriceBelowZeroException();
+            }
+            if(quantity <= 0)
+            {
+                throw new ProductQuantityBelowOrEqualZeroException();
+            }
             SKU = sku;
             Name = name;
             Price = price;

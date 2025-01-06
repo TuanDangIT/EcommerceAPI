@@ -14,7 +14,7 @@ namespace Ecommerce.Modules.Discounts.Core.DTO
         [Length(2, 36)]
         public string Name { get; set; } = string.Empty;
         [Required]
-        [Range(0.01, 0.99)]
+        [Range(0.01, 1)]
         public decimal Percent { get; set; }
     }
 }
