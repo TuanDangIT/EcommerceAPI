@@ -43,10 +43,13 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Ch
             await _productRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Product's: {productId} quantity was changed from {oldQuantity} to {newQuantity} by {@user}.",
                 product, product.Quantity, request.Quantity, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-            var domainEvent = new ProductQuantityChanged(product.Id, request.Quantity);
-            await _domainEventDispatcher.DispatchAsync(domainEvent);
-            var integrationEvent = _inventoryEventMapper.Map(domainEvent);
-            await _messageBroker.PublishAsync(integrationEvent);
+            if (product.IsListed)
+            {
+                var domainEvent = new ProductQuantityChanged(product.Id, request.Quantity);
+                await _domainEventDispatcher.DispatchAsync(domainEvent);
+                var integrationEvent = _inventoryEventMapper.Map(domainEvent);
+                await _messageBroker.PublishAsync(integrationEvent);
+            }
         }
     }
 }

@@ -18,6 +18,7 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
         public IEnumerable<Discount> Discounts => _discounts;
         public DateTime CreatedAt { get; protected set; }
         public DateTime? UpdatedAt { get; protected set; }
+        public bool HasDiscounts => _discounts.Count != 0;
         public Coupon(string name, string stripeCouponId)
         {
             Name = name;

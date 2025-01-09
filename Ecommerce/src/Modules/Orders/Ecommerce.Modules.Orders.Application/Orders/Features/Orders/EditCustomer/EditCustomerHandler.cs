@@ -4,6 +4,7 @@ using Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -27,9 +28,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.EditCustome
         }
         public async Task Handle(EditCustomer request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
+                query => query.Include(o => o.Customer)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
-            var address = new Address(request.Address.Street, request.Address.BuildingNumber, request.Address.City, request.Address.PostCode);
+            var address = new Address(request.Address.Country, request.Address.Street, request.Address.BuildingNumber, request.Address.City, request.Address.PostCode);
             order.EditCustomer(new Customer(request.FirstName, request.LastName, request.Email, request.PhoneNumber, address));
             await _orderRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Order's: {orderId} customer was editted with new details {@updatingDetails} by {@user}.", 

@@ -22,11 +22,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
             await using var transaction = await _productRepository.BeginTransactionAsync();
             try
             {
-                var product = await _productRepository.GetAsync(@event.ProductId);
-                if(product is null)
-                {
+                var product = await _productRepository.GetAsync(@event.ProductId) ?? 
                     throw new ProductNotFoundException(@event.ProductId);
-                }
                 product.Reserve(@event.Quantity);
                 await _productRepository.UpdateAsync();
                 await transaction.CommitAsync();

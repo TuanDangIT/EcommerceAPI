@@ -12,6 +12,8 @@ namespace Ecommerce.Modules.Carts.Core.Entities
     public class Product : BaseEntity
     {
         [JsonInclude]
+        public new Guid Id { get; private set; }
+        [JsonInclude]
         public string SKU { get; private set; } = string.Empty;
         [JsonInclude]
         public string Name { get; private set; } = string.Empty;
@@ -26,9 +28,9 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public IEnumerable<CartProduct> CartProducts => _cartProducts;
         public Product(string sku, string name, decimal price, int? quantity, string imagePathUrl)
         {
-            if(quantity <= 0)
+            if(quantity < 0)
             {
-                throw new PropertyValueBelowOrEqualZeroException(nameof(Product));
+                throw new ProductQuantityBelowZeroException();
             }
             if(price < 0)
             {
@@ -50,9 +52,9 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 throw new ProductInvalidChangeInQuantityException();
             }
-            if(Quantity <= quantity)
+            if(Quantity < quantity)
             {
-                throw new PropertyValueBelowOrEqualZeroException(nameof(Product));
+                throw new ProductQuantityBelowZeroException();
             }
             Quantity -= quantity;
         }
@@ -63,6 +65,10 @@ namespace Ecommerce.Modules.Carts.Core.Entities
                 throw new ProductInvalidChangeInQuantityException();
             }
             Quantity += quantity;
+        }
+        public void ChangePrice(decimal price)
+        {
+            Price = price;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Ecommerce.Modules.Carts.Core.DTO
         public CustomerDto CustomerDto { get; set; } = new();
         [Required]
         public Guid PaymentId { get; set; } 
-        public ShipmentDto ShipmentDto { get; set; } = new();
+        public ShipmentFillDto ShipmentFillDto { get; set; } = new();
         [MaxLength(256)]
         public string? AdditionalInformation { get; set; } 
     }

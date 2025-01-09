@@ -18,6 +18,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Services
                 Domain.Inventory.Events.ProductsListed e => new Events.ProductsListed(e.Products.Select(p => new { p.Id, p.SKU, p.Name, p.Price, p.Quantity, ImagePathUrl = p.Images.First(i => i.Order == 1).ImageUrlPath })),
                 Domain.Inventory.Events.ProductsUnlisted e => new Events.ProductsUnlisted(e.ProductIds),
                 Domain.Inventory.Events.ProductQuantityChanged e => new Events.ProductQuantityChanged(e.ProductId, e.Quantity),
+                Domain.Inventory.Events.ProductPriceChanged e => new Events.ProductPriceChanged(e.ProductId, e.Price),
                 _ => throw new ArgumentException(nameof(@event)),
             };
     }

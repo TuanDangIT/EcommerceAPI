@@ -28,11 +28,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
             => await _dbContext.Invoices.Where(i => i.Id == invoiceId)
                 .ExecuteDeleteAsync(cancellationToken);
 
-        public async Task<Invoice?> GetAsync(int invoiceId, CancellationToken cancellationToken = default)
-            => await _dbContext.Invoices
-                .Include(i => i.Order)
-                .SingleOrDefaultAsync(i => i.Id == invoiceId, cancellationToken);
-
         public async Task UpdateAsync(CancellationToken cancellationToken = default)
             => await _dbContext.SaveChangesAsync(cancellationToken);
     }

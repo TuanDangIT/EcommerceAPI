@@ -46,20 +46,9 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public DateTime? UpdatedAt { get; private set; }
         public Product(Guid id, string sku, string name, decimal price, int vat, string description
             , List<ProductParameter> productParameters, Manufacturer manufacturer, Category category
-            , List<Image> images, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null, int? reserved = null)
+            , List<Image> images, string? ean, int? quantity, string? location, string? additionalDescription, int? reserved)
         {
-            if(vat < 0)
-            {
-                throw new ProductVatBelowZeroException();
-            }
-            if(quantity < 0)
-            {
-                throw new ProductQuantityBelowZeroException();
-            }
-            if(price < 0)
-            {
-                throw new ProductPriceBelowZeroException();
-            }
+            IsPriceAndQuantityAndVatValid(price, quantity, vat);
             Id = id;
             SKU = sku;
             EAN = ean;
@@ -74,11 +63,13 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             Manufacturer = manufacturer;
             Category = category;
             _images = images;
+            Reserved = reserved;
         }
         public Product(string sku, string name, decimal price, int vat, string description
             , List<ProductParameter> productParameters, Manufacturer manufacturer, Category category
-            , List<Image> images, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null, int? reserved = null)
+            , List<Image> images, string? ean, int? quantity, string? location, string? additionalDescription, int? reserved)
         {
+            IsPriceAndQuantityAndVatValid(price, quantity, vat);
             SKU = sku;
             EAN = ean;
             Name = name;
@@ -92,6 +83,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             Manufacturer = manufacturer;
             Category = category;
             _images = images;
+            Reserved = reserved;
         }
         public Product()
         {
@@ -135,8 +127,10 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             IncreaseQuantity(quantity);
             Reserved -= quantity;
         }
-        public void ChangeBaseDetails(string sku, string name, decimal price, int vat, string description, string? ean = null, int? quantity = null, string? location = null, string? additionalDescription = null, int? reserved = null)
+        public void ChangeBaseDetails(string sku, string name, decimal price, int vat, string description, string? ean = null, 
+            int? quantity = null, string? location = null, string? additionalDescription = null, int? reserved = null)
         {
+            IsPriceAndQuantityAndVatValid(price, quantity, vat);
             SKU = sku;
             EAN = ean;
             Name = name;
@@ -191,6 +185,21 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             if (!HasQuantity)
             {
                 throw new ProductInvalidChangeOfQuantityException();
+            }
+        }
+        private void IsPriceAndQuantityAndVatValid(decimal price, int? quantity, int vat)
+        {
+            if(price < 0)
+            {
+                throw new ProductPriceBelowZeroException();
+            }
+            if(quantity < 0)
+            {
+                throw new ProductQuantityBelowZeroException();
+            }
+            if (vat < 0)
+            {
+                throw new ProductVatBelowZeroException();
             }
         }
         private static void IsSkuValid(string sku)

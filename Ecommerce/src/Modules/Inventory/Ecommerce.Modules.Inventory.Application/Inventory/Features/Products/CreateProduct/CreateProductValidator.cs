@@ -24,12 +24,10 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
                 .MinimumLength(2)
                 .MaximumLength(24);
             RuleFor(c => c.Price)
-                .NotEmpty()
                 .NotNull()
                 .PrecisionScale(11, 2, false)
                 .GreaterThanOrEqualTo(0);
             RuleFor(c => c.VAT)
-                .NotEmpty()
                 .NotNull()
                 .GreaterThanOrEqualTo(0)
                 .LessThanOrEqualTo(100);
@@ -59,8 +57,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
                         .NotNull()
                         .NotEmpty();
                 });
-                //.When(c => c.ProductParameters is not null);
-
         }
     }
 }

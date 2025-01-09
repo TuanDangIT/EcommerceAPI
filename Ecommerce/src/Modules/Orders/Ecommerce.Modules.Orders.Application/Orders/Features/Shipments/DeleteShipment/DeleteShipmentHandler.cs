@@ -2,6 +2,7 @@
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.DeleteSh
         }
         public async Task Handle(DeleteShipment request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
+                query => query.Include(o => o.Shipments)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
             order.DeleteShipment(request.ShipmentId);
             await _orderRepository.UpdateAsync(cancellationToken);

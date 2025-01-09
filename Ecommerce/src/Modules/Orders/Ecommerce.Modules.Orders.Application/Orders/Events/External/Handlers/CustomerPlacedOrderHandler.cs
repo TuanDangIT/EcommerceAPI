@@ -29,7 +29,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
         public async Task HandleAsync(CustomerPlacedOrder @event)
         {
             var newGuid = Guid.NewGuid();
-            var address = new Address(@event.StreetName, @event.ApartmentNumber is null ? @event.StreetNumber : @event.StreetNumber + "/" + @event.ApartmentNumber, 
+            var address = new Address(@event.Country, @event.StreetName, @event.ApartmentNumber is null ? @event.StreetNumber : @event.StreetNumber + "/" + @event.ApartmentNumber, 
                 @event.City, @event.PostalCode);
             var customer = new Customer(@event.FirstName, @event.LastName, @event.Email, @event.PhoneNumber, address, @event.CustomerId);
             if (!Enum.TryParse(typeof(PaymentMethod), @event.PaymentMethod, out var paymentMethod))
@@ -39,7 +39,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
             var additionalInformation = @event.AdditionalInformation;
             var now = _timeProvider.GetUtcNow().UtcDateTime;
             Discount? discount = null;
-            if (@event.DiscountCode is null)
+            if (@event.DiscountCode is not null)
             {
                 if (!Enum.TryParse(typeof(DiscountType), @event.DiscountType, out var discountType))
                 {

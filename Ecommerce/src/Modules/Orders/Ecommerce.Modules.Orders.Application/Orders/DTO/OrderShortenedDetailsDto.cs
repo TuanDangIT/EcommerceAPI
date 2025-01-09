@@ -8,7 +8,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.DTO
 {
     public class OrderShortenedDetailsDto
     {
-        public Guid OrderId { get; set; }
+        public Guid Id { get; set; }
         public CustomerDto Customer { get; set; } = new();
         public decimal TotalSum { get; set; }
         public IEnumerable<ProductDto> Products { get; set; } = [];

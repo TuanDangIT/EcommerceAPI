@@ -26,9 +26,9 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public ManufacturerController(IMediator mediator) : base(mediator)
         {
         }
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ApiResponse<ManufacturerBrowseDto>>> GetManufacturer([FromRoute] Guid id, CancellationToken cancellationToken = default)
-            => OkOrNotFound<ManufacturerBrowseDto, Manufacturer>(await _mediator.Send(new GetManufacturer(id), cancellationToken));
+        //[HttpGet("{id:guid}")]
+        //public async Task<ActionResult<ApiResponse<ManufacturerBrowseDto>>> GetManufacturer([FromRoute] Guid id, CancellationToken cancellationToken = default)
+        //    => OkOrNotFound<ManufacturerBrowseDto, Manufacturer>(await _mediator.Send(new GetManufacturer(id), cancellationToken));
         [HttpPost()]
         public async Task<ActionResult> CreateManufacturer([FromBody]CreateManufacturer command, CancellationToken cancellationToken = default)
         {

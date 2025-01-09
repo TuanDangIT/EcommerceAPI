@@ -396,6 +396,10 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                 .IsRequired()
                                 .HasColumnType("text");
 
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasColumnType("text");
+
                             b1.Property<string>("CountryCode")
                                 .IsRequired()
                                 .HasColumnType("text");
@@ -671,6 +675,10 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                         .HasColumnType("text");
 
                                     b2.Property<string>("City")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.Property<string>("Country")
                                         .IsRequired()
                                         .HasColumnType("text");
 

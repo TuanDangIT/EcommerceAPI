@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Exceptions
 {
-    internal class OrderInvoiceAlreadyCreatedException(Guid orderId) : EcommerceException($"Order: {orderId} invoice was already created.")
+    internal class InvoiceAlreadyCreatedException(Guid orderId) : EcommerceException($"Order: {orderId} invoice was already created.")
     {
     }
 }

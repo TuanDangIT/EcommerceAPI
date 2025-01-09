@@ -21,6 +21,8 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public string? StripeSessionId { get; private set; }
         public bool IsPaid { get; private set; } = false;
         public Cart Cart { get; private set; } = default!;
+        public Guid CartId { get; private set; }
+
         private readonly List<CartProduct> _products = [];
         public IEnumerable<CartProduct> Products => _products;
         public decimal TotalSum { get; private set; }
@@ -42,7 +44,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void SetCustomer(Customer customer)
             => Customer.SetDetails(customer.FirstName, customer.LastName, customer.Email, customer.PhoneNumber);
-        public void SetShipment(Shipment shipment)
+        public void FillShipment(Shipment shipment)
         {
             Shipment = shipment;
             SetTotalSum(TotalSum);

@@ -23,11 +23,21 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<Return?> GetAsync(Guid returnId, CancellationToken cancellationToken = default)
-            => await _dbContext.Returns
-                .Include(r => r.Order)
-                .ThenInclude(o => o.Customer)
+        public async Task<Return?> GetAsync(Guid returnId, CancellationToken cancellationToken = default, params Func<IQueryable<Return>, IQueryable<Return>>[] includeActions)
+        {
+            var query = _dbContext.Returns
+                .AsQueryable();
+            if(includeActions is not null)
+            {
+                foreach(var includeAction in includeActions)
+                {
+                    query = includeAction(query);
+                }
+            }
+            var @return = await query
                 .SingleOrDefaultAsync(r => r.Id == returnId, cancellationToken);
+            return @return;
+        }
 
         public async Task<Return?> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default)
             => await _dbContext.Returns

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 {
-    //This could be merged with order as one table. It could improve reading performance
+    //This could be merged with order as one table. It would improve reading performance.
     public class Customer : BaseEntity
     {
         public Guid? UserId { get; private set; }

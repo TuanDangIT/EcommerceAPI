@@ -48,6 +48,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
         public static ProductDto AsDto(this Product product)
             => new()
             {
+                Id = product.Id,
                 SKU = product.SKU,
                 Name = product.Name,
                 Price = product.Price,
@@ -57,15 +58,27 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
         public static CustomerDto AsDto(this Customer customer)
             => new()
             {
+                Id = customer.Id,
                 CustomerId = customer.UserId,
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 Email = customer.Email,
-                PhoneNumber = customer.PhoneNumber
+                PhoneNumber = customer.PhoneNumber,
+                Address = customer.Address.AsDto()
+            };
+        public static AddressDto AsDto(this Address address)
+            => new()
+            {
+                Country = address.Country,
+                City = address.City,
+                BuildingNumber = address.BuildingNumber,
+                PostCode = address.PostCode,
+                Street = address.Street
             };
         public static ReturnProductDto AsDto(this ReturnProduct product)
             => new()
             {
+                Id = product.Id,
                 SKU = product.SKU,
                 Name = product.Name,
                 Price = product.Price,
@@ -75,7 +88,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
         public static OrderShortenedDetailsDto AsShortenedDetailsDto(this Order order)
             => new()
             {
-                OrderId = order.Id,
+                Id = order.Id,
                 Customer = order.Customer.AsDto(),
                 TotalSum = order.TotalSum,
                 Products = order.Products.Select(p => p.AsDto()),

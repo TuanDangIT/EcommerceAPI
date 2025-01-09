@@ -29,7 +29,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
         {
             var manufacturer = new Manufacturer(request.Name);
             await _manufacturerRepository.AddAsync(manufacturer, cancellationToken);
-            _logger.LogInformation("Manufacturer: {@manufacturer} was created by {@user}.",
+            _logger.LogInformation("Manufacturer was created by {@user}.",
                 manufacturer, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }

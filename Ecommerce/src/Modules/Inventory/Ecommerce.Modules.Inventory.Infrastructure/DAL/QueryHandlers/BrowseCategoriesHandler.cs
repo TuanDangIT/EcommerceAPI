@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
         }
         public async Task<PagedResult<CategoryBrowseDto>> Handle(BrowseCategories request, CancellationToken cancellationToken)
         {
-            if (request.PageSize is null || request.Page is null)
+            if (/*request.PageSize is null || */request.Page is null)
             {
                 throw new PaginationException();
             }

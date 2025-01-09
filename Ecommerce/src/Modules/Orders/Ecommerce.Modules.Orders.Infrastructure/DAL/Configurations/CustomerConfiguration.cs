@@ -37,6 +37,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                     .IsRequired();
                 a.Property(a => a.CountryCode)
                     .IsRequired();
+                a.Property(a => a.Country)
+                    .IsRequired();
             });
         }
     }

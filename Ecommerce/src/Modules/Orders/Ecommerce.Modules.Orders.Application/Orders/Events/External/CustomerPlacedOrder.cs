@@ -19,6 +19,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External
         public decimal TotalSum { get; set; }
         public string ShippingService { get; set; } = string.Empty;
         public decimal ShippingPrice { get; set; }
+        public string Country { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string PostalCode { get; set; } = string.Empty;
         public string StreetName { get; set; } = string.Empty;

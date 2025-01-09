@@ -8,6 +8,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.DTO
 {
     public class ProductDetailsDto
     {
+        public Guid Id { get; set; }
         public string SKU { get; set; } = string.Empty;
         public string? EAN { get; set; }
         public string Name { get; set; } = string.Empty;

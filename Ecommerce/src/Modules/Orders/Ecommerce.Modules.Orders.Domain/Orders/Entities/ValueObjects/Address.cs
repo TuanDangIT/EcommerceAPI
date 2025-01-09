@@ -14,8 +14,10 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects
         public string City { get; private set; } = string.Empty;
         public string PostCode { get; private set; } = string.Empty;
         public string CountryCode { get; private set; } = "PL";
-        public Address(string street, string buildingNumber, string city, string postCode)
+        public string Country { get; private set; } = string.Empty;
+        public Address(string country, string street, string buildingNumber, string city, string postCode)
         {
+            Country = country;
             Street = street;
             BuildingNumber = buildingNumber;
             City = city;

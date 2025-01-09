@@ -3,6 +3,7 @@ using Ecommerce.Modules.Orders.Application.Orders.Services;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -29,15 +30,16 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.Download
         }
         public async Task<(Stream FileStream, string MimeType, string FileName)> Handle(DownloadLabel request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ??
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
+                query => query.Include(o => o.Shipments)) ??
                 throw new OrderNotFoundException(request.OrderId);
             var shipment = order.Shipments.SingleOrDefault(s => s.Id == request.ShipmentId) ??
                 throw new ShipmentNotFoundException(request.ShipmentId);
-            if (shipment.TrackingNumber is null)
+            if (!shipment.HasTrackingNumber)
             {
                 throw new LabelNotCreatedException(request.ShipmentId);
             }
-            var file = await _deliveryService.GetLabelAsync(shipment);
+            var file = await _deliveryService.GetLabelAsync(shipment, cancellationToken);
             _logger.LogInformation("Label: {trackingNumber} was downloaded for order: {orderId} by {@user}.", shipment.TrackingNumber,
                 order.Id, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             return file;

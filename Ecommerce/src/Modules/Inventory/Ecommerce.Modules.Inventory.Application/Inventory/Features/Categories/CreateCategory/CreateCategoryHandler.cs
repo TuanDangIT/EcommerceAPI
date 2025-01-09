@@ -29,8 +29,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
         {
             var category = new Category(request.Name);
             await _categoryRepository.AddAsync(category, cancellationToken);
-            _logger.LogInformation("Category: {@category} was created by {@user}.", 
-                category, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            _logger.LogInformation("Category was created by {@user}.", 
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

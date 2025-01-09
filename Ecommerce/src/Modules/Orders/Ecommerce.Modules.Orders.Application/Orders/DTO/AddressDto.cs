@@ -8,9 +8,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.DTO
 {
     public class AddressDto
     {
-        public string Street { get; private set; } = string.Empty;
-        public string BuildingNumber { get; private set; } = string.Empty;
-        public string City { get; private set; } = string.Empty;
-        public string PostCode { get; private set; } = string.Empty;
+        public string Street { get; set; } = string.Empty;
+        public string BuildingNumber { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string PostCode { get; set; } = string.Empty;
+        public string Country { get; set; } = string.Empty;
     }
 }

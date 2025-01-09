@@ -93,19 +93,19 @@ namespace Ecommerce.Modules.Carts.Core.Services
             _logger.LogInformation("Payment: {paymentId} was set for checkout cart: {checkoutCartId}.", payment.Id, checkoutCart.Id);
         }
 
-        public async Task SetShipmentAsync(Guid checkoutCartId, ShipmentDto shipmentDto, CancellationToken cancellationToken = default)
+        public async Task FillShipmentDetailsAsync(Guid checkoutCartId, ShipmentFillDto shipmentFillDto, CancellationToken cancellationToken = default)
         {
             var checkoutCart = await GetCheckoutCartOrThrowIfNullAsync(checkoutCartId, cancellationToken);
-            checkoutCart.SetShipment(new Shipment(
-                shipmentDto.Country,
-                shipmentDto.City,
-                shipmentDto.PostalCode,
-                shipmentDto.StreetName,
-                shipmentDto.StreetNumber,
-                shipmentDto.AparmentNumber
+            checkoutCart.FillShipment(new Shipment(
+                shipmentFillDto.Country,
+                shipmentFillDto.City,
+                shipmentFillDto.PostalCode,
+                shipmentFillDto.StreetName,
+                shipmentFillDto.StreetNumber,
+                shipmentFillDto.AparmentNumber
                 ));
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Shipment: {@shipment} was set for checkout cart: {checkoutCartId}.", shipmentDto, checkoutCart.Id);
+            _logger.LogInformation("Shipment: {@shipment} was set for checkout cart: {checkoutCartId}.", shipmentFillDto, checkoutCart.Id);
         }
         public async Task SetAdditionalInformationAsync(Guid checkoutCartId, string additionalInformation, CancellationToken cancellationToken = default)
         {
@@ -117,7 +117,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
         public async Task SetCheckoutCartDetailsAsync(Guid checkoutCartId, CheckoutCartSetDetailsDto checkoutCartSetDetailsDto, CancellationToken cancellationToken = default)
         {
             var checkoutCart = await GetCheckoutCartOrThrowIfNullAsync(checkoutCartId, cancellationToken);
-            var shipmentDto = checkoutCartSetDetailsDto.ShipmentDto;
+            var shipmentFillDto = checkoutCartSetDetailsDto.ShipmentFillDto;
             var customerDto = checkoutCartSetDetailsDto.CustomerDto;
             var paymentId = checkoutCartSetDetailsDto.PaymentId;
             var additionalInformation = checkoutCartSetDetailsDto.AdditionalInformation;
@@ -128,13 +128,13 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 customerDto.PhoneNumber,
                 _contextService.Identity?.Id
                 ));
-            checkoutCart.SetShipment(new Shipment(
-                shipmentDto.Country,
-                shipmentDto.City,
-                shipmentDto.PostalCode,
-                shipmentDto.StreetName,
-                shipmentDto.StreetNumber,
-                shipmentDto.AparmentNumber
+            checkoutCart.FillShipment(new Shipment(
+                shipmentFillDto.Country,
+                shipmentFillDto.City,
+                shipmentFillDto.PostalCode,
+                shipmentFillDto.StreetName,
+                shipmentFillDto.StreetNumber,
+                shipmentFillDto.AparmentNumber
                 ));
             var payment = await _dbContext.Payments
                 .SingleOrDefaultAsync(p => p.Id == paymentId, cancellationToken) ?? throw new PaymentNotFoundException(paymentId);
@@ -203,8 +203,9 @@ namespace Ecommerce.Modules.Carts.Core.Services
             {
                 await _messageBroker.PublishAsync(new DiscountCodeRedeemed(checkoutCart.Discount.Code));
             }
-            _dbContext.CartProducts.RemoveRange(checkoutCart.Products);
-            _dbContext.CheckoutCarts.Remove(checkoutCart);
+            //_dbContext.CartProducts.RemoveRange(checkoutCart.Products);
+            //await _dbContext.SaveChangesAsync();
+            //_dbContext.CheckoutCarts.Remove(checkoutCart);
             await _dbContext.SaveChangesAsync();
             _logger.LogInformation("Handling session checkout was completed for {checkoutCartId}.", checkoutCart.Id);
         }

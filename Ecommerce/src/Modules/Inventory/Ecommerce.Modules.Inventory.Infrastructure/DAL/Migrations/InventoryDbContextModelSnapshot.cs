@@ -78,7 +78,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                         {
                             t.HasCheckConstraint("CK_Auction_Price", "\"Price\" >= 0");
 
-                            t.HasCheckConstraint("CK_Auction_Quantity", "\"Quantity\" > 0");
+                            t.HasCheckConstraint("CK_Auction_Quantity", "\"Quantity\" >= 0");
                         });
                 });
 

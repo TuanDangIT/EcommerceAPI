@@ -6,6 +6,7 @@ using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.DomainEvents;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Abstractions.Messaging;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitCompl
         }
         public async Task Handle(SubmitComplaint request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
+                query => query.Include(o => o.Customer)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
             var domainEvent = new ComplaintSubmitted(
                     order.Id,

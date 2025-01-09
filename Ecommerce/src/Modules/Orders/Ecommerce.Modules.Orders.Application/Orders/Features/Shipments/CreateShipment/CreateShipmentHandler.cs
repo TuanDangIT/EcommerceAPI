@@ -12,23 +12,22 @@ using System.Reflection.Emit;
 using Ecommerce.Modules.Orders.Application.Orders.Services;
 using Microsoft.Extensions.Logging;
 using Ecommerce.Shared.Abstractions.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateShipment
 {
     internal class CreateShipmentHandler : ICommandHandler<CreateShipment>
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly IShipmentRepository _shipmentRepository;
         private readonly IDeliveryService _deliveryService;
         private readonly TimeProvider _timeProvider;
         private readonly ILogger<CreateShipmentHandler> _logger;
         private readonly IContextService _contextService;
 
-        public CreateShipmentHandler(IOrderRepository orderRepository, IShipmentRepository shipmentRepository,
-            IDeliveryService deliveryService, TimeProvider timeProvider, ILogger<CreateShipmentHandler> logger, IContextService contextService)
+        public CreateShipmentHandler(IOrderRepository orderRepository, IDeliveryService deliveryService, 
+            TimeProvider timeProvider, ILogger<CreateShipmentHandler> logger, IContextService contextService)
         {
             _orderRepository = orderRepository;
-            _shipmentRepository = shipmentRepository;
             _deliveryService = deliveryService;
             _timeProvider = timeProvider;
             _logger = logger;
@@ -36,7 +35,9 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
         }
         public async Task Handle(CreateShipment request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
+                query => query.Include(o => o.Customer),
+                query => query.Include(o => o.Shipments)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
             var receiver = new Receiver(order.Customer.FirstName, order.Customer.LastName, order.Customer.Email, order.Customer.PhoneNumber, order.Customer.Address);
             var parcels = request.Parcels.Select(p =>
@@ -53,7 +54,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
             shipment.SetTrackingNumber(trackingNumber);
             shipment.SetLabelCreatedAt(_timeProvider.GetUtcNow().UtcDateTime);
             order.Pack();
-            await _orderRepository.UpdateAsync();
+            await _orderRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Shipment was created for order: {orderId} for {@user}.", order.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }

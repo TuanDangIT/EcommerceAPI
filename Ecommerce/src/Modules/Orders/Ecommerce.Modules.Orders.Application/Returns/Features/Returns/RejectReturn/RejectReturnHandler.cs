@@ -4,6 +4,7 @@ using Ecommerce.Modules.Orders.Domain.Returns.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Abstractions.Messaging;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,8 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.RejectRet
         }
         public async Task Handle(RejectReturn request, CancellationToken cancellationToken)
         {
-            var @return = await _returnRepository.GetAsync(request.ReturnId, cancellationToken) ?? 
+            var @return = await _returnRepository.GetAsync(request.ReturnId, cancellationToken,
+                query => query.Include(r => r.Order).ThenInclude(o => o.Customer)) ?? 
                 throw new ReturnNotFoundException(request.ReturnId);
             @return.Reject(request.RejectReason);
             await _returnRepository.UpdateAsync(cancellationToken);

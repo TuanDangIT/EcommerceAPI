@@ -21,6 +21,7 @@ using Ecommerce.Shared.Infrastructure.Stripe;
 using Ecommerce.Modules.Orders.Application.Orders.Events;
 using Microsoft.Extensions.Logging;
 using Ecommerce.Shared.Abstractions.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInvoice
 {
@@ -28,7 +29,6 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IBlobStorageService _blobStorageService;
-        private readonly IOrderInvoiceCreationPolicy _orderInvoiceCreationPolicy;
         private readonly IMessageBroker _messageBroker;
         private readonly CompanyOptions _companyOptions;
         private readonly StripeOptions _stripeOptions;
@@ -41,13 +41,12 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
         private readonly decimal _defaultDeliveryPrice = 15;
         private readonly string _contentType = "application/pdf";
 
-        public CreateInvoiceHandler(IOrderRepository orderRepository, IBlobStorageService blobStorageService, IOrderInvoiceCreationPolicy orderInvoiceCreationPolicy,
+        public CreateInvoiceHandler(IOrderRepository orderRepository, IBlobStorageService blobStorageService,
             IMessageBroker messageBroker, CompanyOptions companyOptions, StripeOptions stripeOptions, IInvoiceRepository invoiceRepository, TimeProvider timeProvider,
             ILogger<CreateInvoiceHandler> logger, IContextService contextService)
         {
             _orderRepository = orderRepository;
             _blobStorageService = blobStorageService;
-            _orderInvoiceCreationPolicy = orderInvoiceCreationPolicy;
             _messageBroker = messageBroker;
             _companyOptions = companyOptions;
             _stripeOptions = stripeOptions;
@@ -58,11 +57,12 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
         }
         public async Task<string> Handle(CreateInvoice request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
+                query => query.Include(o => o.Customer)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
-            if (!await _orderInvoiceCreationPolicy.CanCreateInvoice(order))
+            if (order.HasInvoice)
             {
-                throw new OrderInvoiceAlreadyCreatedException(order.Id);
+                throw new InvoiceAlreadyCreatedException(order.Id);
             }
             var now = _timeProvider.GetUtcNow();
             Random rand = new();
@@ -82,7 +82,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
             await _invoiceRepository.CreateAsync(new Domain.Orders.Entities.Invoice(invoiceNo, order));
             _logger.LogInformation("Invoice: {invoiceNo} was created for order: {orderId} by {@user}.", invoiceNo, order.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-            await _messageBroker.PublishAsync(new InvoiceCreated(order.Id, order.Customer.Id, order.Customer.FirstName, order.Customer.Email, invoiceNo));
+            await _messageBroker.PublishAsync(new InvoiceCreated(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, invoiceNo));
             return invoiceNo;
         }
         private string FillInvoiceDetails(string invoiceTemplate, string invoiceNo, Domain.Orders.Entities.Order order)
@@ -95,7 +95,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
             invoiceTemplate = invoiceTemplate.Replace("{companyPostCode}", _companyOptions.PostCode);
             invoiceTemplate = invoiceTemplate.Replace("{customerAddress}", order.Customer.Address.Street);
             invoiceTemplate = invoiceTemplate.Replace("{customerAddressNumber}", order.Customer.Address.BuildingNumber);
-            invoiceTemplate = invoiceTemplate.Replace("{customerCountry}", "Poland");
+            invoiceTemplate = invoiceTemplate.Replace("{customerCountry}", order.Customer.Address.Country);
             invoiceTemplate = invoiceTemplate.Replace("{customerPostCode}", order.Customer.Address.PostCode);
             invoiceTemplate = invoiceTemplate.Replace("{customerCity}", order.Customer.Address.City);
             invoiceTemplate = invoiceTemplate.Replace("{customerEmail}", order.Customer.Email);

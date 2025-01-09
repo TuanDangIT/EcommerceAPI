@@ -41,9 +41,9 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             return NoContent();
         }
         [HttpPut("{checkoutCartId:guid}/shipment")]
-        public async Task<ActionResult> SetShipment([FromRoute] Guid checkoutCartId, [FromBody]ShipmentDto shipmentDto, CancellationToken cancellationToken)
+        public async Task<ActionResult> SetShipment([FromRoute] Guid checkoutCartId, [FromBody]ShipmentFillDto shipmentFillDto, CancellationToken cancellationToken)
         {
-            await _checkoutCartService.SetShipmentAsync(checkoutCartId, shipmentDto, cancellationToken);
+            await _checkoutCartService.FillShipmentDetailsAsync(checkoutCartId, shipmentFillDto, cancellationToken);
             return NoContent();
         }
         [HttpPut("{checkoutCartId:guid}/additional-information")]

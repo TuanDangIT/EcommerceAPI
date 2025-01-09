@@ -12,6 +12,7 @@ using Ecommerce.Modules.Orders.Application.Returns.Events;
 using Ecommerce.Modules.Orders.Application.Shared.Stripe;
 using Microsoft.Extensions.Logging;
 using Ecommerce.Shared.Abstractions.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleReturn
 {
@@ -34,7 +35,8 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
         }
         public async Task Handle(HandleReturn request, CancellationToken cancellationToken)
         {
-            var @return = await _returnRepository.GetAsync(request.ReturnId, cancellationToken) ?? 
+            var @return = await _returnRepository.GetAsync(request.ReturnId, cancellationToken,
+                query => query.Include(r => r.Order).ThenInclude(o => o.Customer)) ?? 
                 throw new ReturnNotFoundException(request.ReturnId);
             if (@return.IsFullReturn)
             {

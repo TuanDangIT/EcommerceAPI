@@ -11,6 +11,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
     public class Shipment : AggregateRoot<int>
     {
         public string? TrackingNumber { get; private set; }
+        public bool HasTrackingNumber => TrackingNumber is not null;
         public string? LabelId { get; private set; }
         public DateTime? LabelCreatedAt { get; private set; }
         public Receiver Receiver { get; private set; } = new();

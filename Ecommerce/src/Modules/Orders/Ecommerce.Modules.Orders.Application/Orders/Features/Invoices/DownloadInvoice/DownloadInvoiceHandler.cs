@@ -4,6 +4,7 @@ using Ecommerce.Shared.Abstractions.BloblStorage;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -33,13 +34,14 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.DownloadI
 
         public async Task<(Stream FileStream, string MimeType, string FileName)> Handle(DownloadInvoice request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
+            var order = await _orderRepository.GetAsync(request.OrderId,cancellationToken,
+                query => query.Include(o => o.Invoice)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
-            if (order.Invoice is null)
+            if (!order.HasInvoice)
             {
                 throw new OrderCannotDownloadInvoiceException(request.OrderId);
             }
-            var dto = await _blobStorageService.DownloadAsync(order.Invoice.InvoiceNo, _containerName, cancellationToken);
+            var dto = await _blobStorageService.DownloadAsync(order.Invoice!.InvoiceNo, _containerName, cancellationToken);
             _logger.LogInformation("Invoice: {invoiceId} was downloaded by {@user}.", order.Invoice.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             return (dto.FileStream, _mimeType, $"{order.Invoice.InvoiceNo}-invoice");

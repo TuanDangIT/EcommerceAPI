@@ -22,6 +22,7 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
         public DateTime? ExpiresAt { get; private set; } 
         public string? Code { get; private set; }
         public Guid CustomerId { get; private set; }
+        public bool HasCode => Code is not null;
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public Offer(string sku, string productName, decimal offeredPrice, decimal oldPrice, string reason, Guid customerId)

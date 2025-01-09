@@ -29,9 +29,6 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CheckoutCartId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -45,9 +42,6 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CheckoutCartId")
-                        .IsUnique();
 
                     b.HasIndex("DiscountId");
 
@@ -109,6 +103,9 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<Guid>("CartId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -134,6 +131,9 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CartId")
+                        .IsUnique();
 
                     b.HasIndex("DiscountId");
 
@@ -249,21 +249,15 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         {
                             t.HasCheckConstraint("CK_Product_Price", "\"Price\" >= 0");
 
-                            t.HasCheckConstraint("CK_Product_Quantity", "\"Quantity\" > 0");
+                            t.HasCheckConstraint("CK_Product_Quantity", "\"Quantity\" >= 0");
                         });
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.Cart", b =>
                 {
-                    b.HasOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart", "CheckoutCart")
-                        .WithOne("Cart")
-                        .HasForeignKey("Ecommerce.Modules.Carts.Core.Entities.Cart", "CheckoutCartId");
-
                     b.HasOne("Ecommerce.Modules.Carts.Core.Entities.Discount", "Discount")
                         .WithMany("Carts")
                         .HasForeignKey("DiscountId");
-
-                    b.Navigation("CheckoutCart");
 
                     b.Navigation("Discount");
                 });
@@ -295,6 +289,12 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 
             modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart", b =>
                 {
+                    b.HasOne("Ecommerce.Modules.Carts.Core.Entities.Cart", "Cart")
+                        .WithOne("CheckoutCart")
+                        .HasForeignKey("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart", "CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Ecommerce.Modules.Carts.Core.Entities.Discount", "Discount")
                         .WithMany("CheckoutCarts")
                         .HasForeignKey("DiscountId");
@@ -303,7 +303,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .WithMany("CheckoutCarts")
                         .HasForeignKey("PaymentId");
 
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.ValueObjects.Customer", "Customer", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart.Customer#Ecommerce.Modules.Carts.Core.Entities.ValueObjects.Customer", "Customer", b1 =>
                         {
                             b1.Property<Guid>("CheckoutCartId")
                                 .HasColumnType("uuid");
@@ -339,7 +339,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                                 .HasForeignKey("CheckoutCartId");
                         });
 
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.ValueObjects.Shipment", "Shipment", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart.Shipment#Ecommerce.Modules.Carts.Core.Entities.ValueObjects.Shipment", "Shipment", b1 =>
                         {
                             b1.Property<Guid>("CheckoutCartId")
                                 .HasColumnType("uuid");
@@ -388,6 +388,8 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                                 .HasForeignKey("CheckoutCartId");
                         });
 
+                    b.Navigation("Cart");
+
                     b.Navigation("Customer")
                         .IsRequired();
 
@@ -400,14 +402,13 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
 
             modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.Cart", b =>
                 {
+                    b.Navigation("CheckoutCart");
+
                     b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart", b =>
                 {
-                    b.Navigation("Cart")
-                        .IsRequired();
-
                     b.Navigation("Products");
                 });
 

@@ -25,7 +25,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
             builder.ToTable(p =>
             {
                 p.HasCheckConstraint("CK_Auction_Price", "\"Price\" >= 0");
-                p.HasCheckConstraint("CK_Auction_Quantity", "\"Quantity\" > 0");
+                p.HasCheckConstraint("CK_Auction_Quantity", "\"Quantity\" >= 0");
             });
         }
     }

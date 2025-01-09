@@ -30,10 +30,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure
             services.AddScoped<IReturnRepository, ReturnRepository>();
             services.AddScoped<IComplaintRepository, ComplaintRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
-            services.AddScoped<IShipmentRepository, ShipmentRepository>();
             services.AddSingleton<IPaymentProcessorService, StripeService>();
             services.AddScoped<IDeliveryService, InpostService>();
-            //services.AddSingleton<IFilterService, FilterService>();
             services.AddHttpClient(_inPost, (sp, client) =>
             {
                 var inPostOptions = sp.GetRequiredService<InPostOptions>();

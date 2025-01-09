@@ -84,7 +84,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             offer.Reject();
             await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Offer: {offerId} was rejected by {@user}.", offer.Id, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-            if(offer.Code is null)
+            if(!offer.HasCode)
             {
                 await _messageBroker
                     .PublishAsync(new OfferRejected(offer.Id, offer.CustomerId, offer.SKU, offer.ProductName, offer.OfferedPrice, offer.OldPrice));
@@ -92,7 +92,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             else
             {
                 await _messageBroker
-                    .PublishAsync(new OfferRejected(offer.Id, offer.CustomerId, offer.Code, offer.SKU, offer.ProductName, offer.OfferedPrice, offer.OldPrice));
+                    .PublishAsync(new OfferRejected(offer.Id, offer.CustomerId, offer.Code!, offer.SKU, offer.ProductName, offer.OfferedPrice, offer.OldPrice));
             }
         }
 

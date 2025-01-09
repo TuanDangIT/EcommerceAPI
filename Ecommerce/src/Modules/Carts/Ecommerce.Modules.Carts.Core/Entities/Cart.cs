@@ -18,9 +18,9 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public Discount? Discount { get; private set; }
         public int? DiscountId { get; private set; }
         public CheckoutCart? CheckoutCart { get; private set; }
-        public Guid? CheckoutCartId { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
+        public bool HasDiscount => Discount is not null;
         public Cart()
         {
             
@@ -55,24 +55,37 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             TotalSum = CalculateTotalSum();
             CheckoutCart?.SetTotalSum(TotalSum);
         }
-        public void SetProductQuantity(Product product, int quantity)
+        public (bool? IsReservationRequired, int Diffrence) SetProductQuantity(Product product, int quantity)
         {
-            var cartProduct = _products.SingleOrDefault(cp => cp.ProductId == product.Id) ?? 
+            var cartProduct = _products.SingleOrDefault(cp => cp.ProductId == product.Id) ??
                 throw new CartProductNotFoundException(product.Id);
-            if(cartProduct.Quantity == quantity)
+            bool isReservationRequired;
+            var diffrence = Math.Abs(cartProduct.Quantity - quantity);
+            if (cartProduct.Quantity == quantity)
             {
-                return;
+                return default!;
             }
             if (quantity == 0)
             {
                 cartProduct.SetQuantity(quantity);
                 _products.Remove(cartProduct);
+                isReservationRequired = false;
             }
             else
             {
+                if(cartProduct.Quantity < quantity)
+                {
+                    isReservationRequired = true;
+                }
+                else
+                {
+                    isReservationRequired = false;
+                }
                 cartProduct.SetQuantity(quantity);
             }
             TotalSum = CalculateTotalSum();
+            CheckoutCart?.SetTotalSum(TotalSum);
+            return (isReservationRequired, diffrence);
         }
         public void Clear()
         {
@@ -82,6 +95,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             }
             _products.Clear();
             TotalSum = CalculateTotalSum();
+            CheckoutCart?.SetTotalSum(TotalSum);
         }
         public CheckoutCart Checkout(Guid? customerId)
         {

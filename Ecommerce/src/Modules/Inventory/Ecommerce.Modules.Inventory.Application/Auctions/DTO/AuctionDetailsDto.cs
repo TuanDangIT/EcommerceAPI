@@ -9,6 +9,7 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.DTO
 {
     public class AuctionDetailsDto
     {
+        public Guid Id { get; set; }
         public string SKU { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public decimal Price { get; set; }

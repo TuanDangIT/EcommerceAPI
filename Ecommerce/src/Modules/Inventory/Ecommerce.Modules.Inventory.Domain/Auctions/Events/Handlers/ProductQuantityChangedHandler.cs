@@ -20,11 +20,8 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Events.Handlers
         }
         public async Task HandleAsync(ProductQuantityChanged @event)
         {
-            var auction = await _auctionRepository.GetAsync(@event.ProductId);
-            if(auction is null)
-            {
+            var auction = await _auctionRepository.GetAsync(@event.ProductId) ?? 
                 throw new AuctionNotFoundException(@event.ProductId);
-            }
             auction.DecreaseQuantity(@event.Quantity);
             await _auctionRepository.UpdateAsync();
         }

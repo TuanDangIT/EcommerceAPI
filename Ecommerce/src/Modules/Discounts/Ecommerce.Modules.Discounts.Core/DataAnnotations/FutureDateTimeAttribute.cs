@@ -12,6 +12,10 @@ namespace Ecommerce.Modules.Discounts.Core.DataAnnotations
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
+            if(value is null)
+            {
+                return ValidationResult.Success;
+            }
             return value is DateTime date && date > TimeProvider.System.GetUtcNow().UtcDateTime
                 ? ValidationResult.Success
                 : new ValidationResult("Date must be in the future");

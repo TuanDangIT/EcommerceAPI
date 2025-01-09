@@ -142,7 +142,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                     discounts = discounts.Include(include);
                 }
             }
-            var discount = await _dbContext.Discounts
+            var discount = await discounts
                 .SingleOrDefaultAsync(d => d.Code == code, cancellationToken) ?? 
                 throw new DiscountNotFoundException(code);
             return discount;

@@ -23,11 +23,7 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Events.Handlers
         }
         public async Task HandleAsync(ComplaintSubmitted @event)
         {
-            var order = await _orderRepository.GetAsync(@event.OrderId);
-            if(order is null)
-            {
-                throw new OrderNotFoundException(@event.OrderId);
-            }
+            var order = await _orderRepository.GetAsync(@event.OrderId) ?? throw new OrderNotFoundException(@event.OrderId);
             await _complaintRepository.CreateAsync(new Entities.Complaint(Guid.NewGuid(), order!, @event.Title, @event.Description));
         }
     }

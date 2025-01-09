@@ -6,6 +6,7 @@ using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Abstractions.Messaging;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
         }
         public async Task Handle(CancelOrder request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? throw new OrderNotFoundException(request.OrderId);
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
+                query => query.Include(o => o.Products),
+                query => query.Include(o => o.Customer)) ?? 
+                throw new OrderNotFoundException(request.OrderId);
             if (!await _orderCancellationPolicy.CanCancel(order))
             {
                 throw new OrderCannotCancelException();

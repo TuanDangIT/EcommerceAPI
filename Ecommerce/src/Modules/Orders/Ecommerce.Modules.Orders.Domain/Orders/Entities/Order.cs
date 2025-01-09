@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
+﻿using Azure.Core;
+using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects;
 using Ecommerce.Modules.Orders.Domain.Orders.Exceptions;
@@ -32,7 +33,8 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public IEnumerable<Shipment> Shipments => _shipments;
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        public Invoice? Invoice { get; private set; } 
+        public Invoice? Invoice { get; private set; }
+        public bool HasInvoice => Invoice is not null;
         public Order(Guid id, Customer customer, IEnumerable<Product> products, decimal totalSum, PaymentMethod paymentMethod, 
             string shippingService, decimal shippingPrice, string? clientAdditionalInformation, Discount? discount, string stripePaymentIntentId)
         {
@@ -110,8 +112,12 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             ChangeStatus(OrderStatus.ParcelPacked);
             IncrementVersion();
         }
-        public void Return()
+        public void Return(IEnumerable<(int ProductId, int Quantity)> products)
         {
+            foreach (var product in products)
+            {
+                RemoveProduct(product.ProductId, product.Quantity);
+            }
             ChangeStatus(OrderStatus.Returned);
             IncrementVersion();
         }

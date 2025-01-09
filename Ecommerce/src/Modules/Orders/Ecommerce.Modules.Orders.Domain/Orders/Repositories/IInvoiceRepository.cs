@@ -10,7 +10,6 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Repositories
     public interface IInvoiceRepository
     {
         Task CreateAsync(Invoice invoice, CancellationToken cancellationToken = default);
-        Task<Invoice?> GetAsync(int invoiceId, CancellationToken cancellationToken = default);
         Task DeleteAsync(int invoiceId, CancellationToken cancellationToken = default);
         Task UpdateAsync(CancellationToken cancellationToken = default);
     }

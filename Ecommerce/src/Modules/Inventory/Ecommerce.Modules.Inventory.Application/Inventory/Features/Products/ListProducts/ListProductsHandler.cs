@@ -53,8 +53,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Li
                 throw new ProductNotAllFoundException(productIdsNotFound);
             }
             await _productRepository.UpdateListedFlagAsync(request.ProductIds, true, cancellationToken);
-            _logger.LogInformation("Products: {@products} were listed by {@user}.",
-                products, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            _logger.LogInformation("Products: {@productIds} were listed by {@user}.",
+                products.Select(p => p.Id), new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             var domainEvent = new ProductsListed(products, _timeProvider.GetUtcNow().UtcDateTime);
             await _domainEventDispatcher.DispatchAsync(domainEvent);
             var integrationEvent = _eventMapper.Map(domainEvent);

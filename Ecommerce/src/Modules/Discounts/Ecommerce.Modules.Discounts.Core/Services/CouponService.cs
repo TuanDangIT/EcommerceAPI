@@ -110,7 +110,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 .SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId, cancellationToken) ?? 
                 throw new CouponNotFoundException(stripeCouponId);
             await _paymentProcessorService.DeleteCouponAsync(stripeCouponId, cancellationToken);
-            if (coupon.Discounts.Any())
+            if (coupon.HasDiscounts)
             {
                 foreach(var discount in coupon.Discounts)
                 {

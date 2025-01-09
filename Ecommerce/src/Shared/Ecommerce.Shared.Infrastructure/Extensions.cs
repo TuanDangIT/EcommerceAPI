@@ -34,6 +34,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Ecommerce.Shared.Infrastructure.Sieve;
 
 [assembly: InternalsVisibleTo("Ecommerce.Bootstrapper")]
 namespace Ecommerce.Shared.Infrastructure
@@ -45,7 +46,7 @@ namespace Ecommerce.Shared.Infrastructure
             host.ConfigureSerilog();
             return host;
         }
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IList<Assembly> assemblies)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IList<Assembly> assemblies, IConfiguration configuration)
         {
             services.AddErrorHandling();
             services.AddEvents(assemblies);
@@ -60,6 +61,7 @@ namespace Ecommerce.Shared.Infrastructure
             services.AddPagination();
             services.AddStripe();
             services.AddInpost();
+            services.AddSieve(configuration);
             services.AddCompanyDetails();
             services.AddMails();
             services.AddAzureBlobStorage();

@@ -78,8 +78,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
                     reserved: request.Quantity is null ? null : 0
                 );
             await _productRepository.AddAsync(product);
-            _logger.LogInformation("Product: {@product} was created by {@user}.",
-                product, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            _logger.LogInformation("Product was created by {@user}.",
+                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             return productId;
         }
         private async Task<IEnumerable<Image>> UploadImagesToBlobStorageAsync(List<IFormFile> images)

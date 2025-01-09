@@ -14,7 +14,6 @@ namespace Ecommerce.Modules.Orders.Domain
         {
             services.AddSingleton<IOrderCancellationPolicy, OrderCancellationPolicy>();
             services.AddSingleton<IOrderReturnPolicy, OrderReturnPolicy>();
-            services.AddSingleton<IOrderInvoiceCreationPolicy, OrderInvoiceCreationPolicy>();
             return services;
         }
     }

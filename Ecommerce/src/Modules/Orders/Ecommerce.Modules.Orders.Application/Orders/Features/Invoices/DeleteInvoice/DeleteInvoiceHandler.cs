@@ -4,6 +4,7 @@ using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Shared.Abstractions.BloblStorage;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.DeleteInv
         }
         public async Task Handle(DeleteInvoice request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
+                query => query.Include(c => c.Invoice)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
             var invoice = order.Invoice ?? throw new OrderInvoiceNotFoundException(request.OrderId);
             await _blobStorageService.DeleteAsync(invoice.InvoiceNo, _containerName, cancellationToken);

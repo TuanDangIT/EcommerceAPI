@@ -6,6 +6,7 @@ using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Shared.Abstractions.DomainEvents;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Abstractions.Messaging;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -36,8 +37,14 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
         }
         public async Task Handle(ReturnOrder request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
+                query => query.Include(o => o.Products),
+                query => query.Include(o => o.Customer)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
+            if(!await _orderReturnPolicy.CanReturn(order))
+            {
+                throw new OrderCannotReturnException("Cannot return an order after 14 days of placing it.");
+            }
             var returnProducts = order.Products
                 .Where(p => request.ProductsToReturn.Select(ptr => ptr.ProductId).Contains(p.Id))
                 .Select(p =>
@@ -46,15 +53,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
                     p = new Domain.Orders.Entities.Product(p.SKU, p.Name, p.Price, returnedQuantity, p.ImagePathUrl);
                     return p;
                 }).ToList();
-            foreach(var product in request.ProductsToReturn)
-            {
-                order.RemoveProduct(product.ProductId, product.Quantity);
-            }
-            if(!await _orderReturnPolicy.CanReturn(order))
-            {
-                throw new OrderCannotReturnException("Cannot return an order after 14 days of placing it.");
-            }
-            order.Return();
+            order.Return(request.ProductsToReturn.Select(p => (p.ProductId, p.Quantity)));
             await _orderRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Order: {orderId} was returned. Products that were returned: {@productToReturn}.", order.Id, request.ProductsToReturn);
             bool isFullReturn = !order.Products.Any();

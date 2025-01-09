@@ -47,9 +47,9 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void DecreaseQuantity(int quantity)
         {
-            if(Quantity - quantity <= 0)
+            if(Quantity - quantity < 0)
             {
-                throw new PropertyValueBelowOrEqualZeroException(nameof(CartProduct));
+                throw new CartProductQuantityBelowZeroException();
             }
             if (Product.HasQuantity)
             {
@@ -60,13 +60,16 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void SetQuantity(int quantity)
         {
-            IsQuantityValid(quantity);
-            if (Quantity == quantity)
+            if(quantity < 0)
             {
-                return;
+                throw new CartProductQuantityBelowZeroException();
             }
             if (Product.HasQuantity)
             {
+                if (Quantity == quantity)
+                {
+                    return;
+                }
                 if (quantity > Quantity)
                 {
                     Product.DecreaseQuantity(quantity - Quantity);

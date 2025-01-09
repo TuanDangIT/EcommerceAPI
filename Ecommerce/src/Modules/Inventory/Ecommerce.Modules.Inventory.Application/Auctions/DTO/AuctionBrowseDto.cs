@@ -8,6 +8,7 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.DTO
 {
     public class AuctionBrowseDto
     {
+        public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public int? Quantity { get; set; }

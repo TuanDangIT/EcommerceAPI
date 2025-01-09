@@ -44,18 +44,18 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
             _logger.LogDebug("Shipment was created on InPost.");
             return (id, trackingNumber);
         }
-        public async Task<(Stream FileStream, string MimeType, string FileName)> GetLabelAsync(Shipment shipment)
+        public async Task<(Stream FileStream, string MimeType, string FileName)> GetLabelAsync(Shipment shipment, CancellationToken cancellationToken = default)
         {
             var client = _factory.CreateClient(_inPost);
-            var httpResponse = await client.GetAsync($"v1/shipments/{shipment.LabelId}/label");
+            var httpResponse = await client.GetAsync($"v1/shipments/{shipment.LabelId}/label", cancellationToken);
             if (!httpResponse.IsSuccessStatusCode)
             {
-                var json = await httpResponse.Content.ReadAsStringAsync();
+                var json = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
                 using var errorJsonDocument = JsonDocument.Parse(json);
                 var errorMessage = errorJsonDocument.RootElement.GetProperty(_inPostErrorPropertyName).GetString();
                 throw new HttpRequestException($"HTTP request failed: {errorMessage!}");
             }
-            var stream = await httpResponse.Content.ReadAsStreamAsync();
+            var stream = await httpResponse.Content.ReadAsStreamAsync(cancellationToken);
             _logger.LogDebug("Label was downloaded for shipment: {shipmentId}.", shipment.Id);
             return (stream, _pdfMimeType, $"{shipment.TrackingNumber}-inpost-label");
         }

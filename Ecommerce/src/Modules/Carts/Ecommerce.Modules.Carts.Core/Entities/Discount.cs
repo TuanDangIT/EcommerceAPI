@@ -22,6 +22,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public IEnumerable<CheckoutCart> CheckoutCarts => _checkoutCarts;
         private readonly List<Cart> _carts = [];
         public IEnumerable<Cart> Carts => _carts;
+        public bool HasCustomerId => CustomerId is not null;
         public Discount(string code, DiscountType type, decimal value, DateTime? expiresAt, string stripePromotionCodeId)
         {
             Code = code;

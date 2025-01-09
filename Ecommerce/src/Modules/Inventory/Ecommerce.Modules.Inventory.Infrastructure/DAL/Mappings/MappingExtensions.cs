@@ -16,6 +16,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
         public static ManufacturerBrowseDto AsBrowseDto(this Manufacturer manufacturer)
             => new ManufacturerBrowseDto()
             {
+                Id = manufacturer.Id,
                 Name = manufacturer.Name,
                 CreatedAt = manufacturer.CreatedAt,
                 UpdatedAt = manufacturer.UpdatedAt,
@@ -23,6 +24,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
         public static ParameterBrowseDto AsBrowseDto(this Domain.Inventory.Entities.Parameter parameter)
             => new ParameterBrowseDto()
             {
+                Id = parameter.Id,
                 Name = parameter.Name, 
                 CreatedAt = parameter.CreatedAt,
                 UpdatedAt = parameter.UpdatedAt,
@@ -30,6 +32,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
         public static CategoryBrowseDto AsBrowseDto(this Category category)
             => new CategoryBrowseDto()
             {
+                Id = category.Id,
                 Name = category.Name,
                 CreatedAt = category.CreatedAt,
                 UpdatedAt = category.UpdatedAt,
@@ -74,6 +77,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
             }
             var productDetailsDto =  new ProductDetailsDto()
             {
+                Id = product.Id,
                 SKU = product.SKU,
                 EAN = product.EAN,
                 Name = product.Name,
@@ -94,6 +98,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
         public static ProductBrowseDto AsBrowseDto(this Product product)
             => new ProductBrowseDto()
             {
+                Id = product.Id,
                 SKU = product.SKU,
                 Name = product.Name,
                 Price = product.Price,
@@ -103,6 +108,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
         public static AuctionBrowseDto AsBrowseDto(this Auction auction)
             => new AuctionBrowseDto()
             {
+                Id = auction.Id,
                 Name = auction.Name,
                 Price = auction.Price,
                 Quantity = auction.Quantity,
@@ -116,6 +122,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
             
             return new AuctionDetailsDto()
             {
+                Id = auction.Id,
                 SKU = auction.SKU,
                 Name = auction.Name,
                 Price = auction.Price,

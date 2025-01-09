@@ -76,5 +76,10 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
             Quantity += quantity;
             IncrementVersion();
         }
+        public void ChangePrice(decimal price)
+        {
+            Price = price;
+            IncrementVersion();
+        }
     }
 }

@@ -60,7 +60,8 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
                 PostalCode = shipment.PostalCode,
                 StreetName = shipment.StreetName,
                 StreetNumber = shipment.StreetNumber,
-                AparmentNumber = shipment.AparmentNumber
+                AparmentNumber = shipment.AparmentNumber,
+                ShipmentPrice = shipment.Price
             };
         public static CustomerDto AsDto(this Customer customer)
             => new()
@@ -74,6 +75,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
         public static DiscountDto AsDto(this Discount discount)
             => new()
             {
+                Id = discount.Id,
                 Code = discount.Code,
                 Type = discount.Type.ToString(),
                 Value = discount.Value,
@@ -82,6 +84,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
         public static PaymentDto AsDto(this Payment payment)
             => new()
             {
+                Id = payment.Id,
                 PaymentMethod = payment.PaymentMethod.ToString(),
                 IsActived = payment.IsActive
             };

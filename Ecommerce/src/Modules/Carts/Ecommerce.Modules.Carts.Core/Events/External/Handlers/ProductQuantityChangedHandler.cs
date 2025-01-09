@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Carts.Core.Events.External.Handlers
                 .SingleOrDefaultAsync(p => p.Id == @event.ProductId);
             if(product is null)
             {
-                _logger.LogError("Product: {productId} was not found.", @event.ProductId);
+               
                 throw new ProductNotFoundException(@event.ProductId);
             }
             product.DecreaseQuantity(@event.Quantity);

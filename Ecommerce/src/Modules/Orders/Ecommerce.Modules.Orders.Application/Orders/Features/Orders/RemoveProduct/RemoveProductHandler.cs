@@ -2,6 +2,7 @@
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Orders.RemoveProd
         }
         public async Task Handle(RemoveProduct request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ??
+            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
+                query => query.Include(o => o.Products)) ??
                 throw new OrderNotFoundException(request.OrderId);
             order.RemoveProduct(request.ProductId, request.Quantity);
             await _orderRepository.UpdateAsync(cancellationToken);

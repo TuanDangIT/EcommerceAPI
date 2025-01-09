@@ -9,10 +9,10 @@ namespace Ecommerce.Shared.Infrastructure.Stripe
 {
     internal static class Extensions
     {
-        private const string StripeOptionsSectionName = "Stripe";
+        private const string _stripeOptionsSectionName = "Stripe";
         public static IServiceCollection AddStripe(this IServiceCollection services)
         {
-            var stripeOptions = services.GetOptions<StripeOptions>(StripeOptionsSectionName);
+            var stripeOptions = services.GetOptions<StripeOptions>(_stripeOptionsSectionName);
             services.AddSingleton(stripeOptions);
             return services;
         }

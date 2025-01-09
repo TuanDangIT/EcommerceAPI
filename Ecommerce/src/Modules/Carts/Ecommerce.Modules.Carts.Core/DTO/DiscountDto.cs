@@ -8,6 +8,7 @@ namespace Ecommerce.Modules.Carts.Core.DTO
 {
     public class DiscountDto
     {
+        public int Id { get; set; }
         public string Code { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public decimal Value { get; set; }

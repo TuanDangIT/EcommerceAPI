@@ -15,7 +15,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Ch
                 .NotEmpty()
                 .NotNull();
             RuleFor(c => c.Quantity)
-                .NotEmpty()
                 .NotNull()
                 .GreaterThanOrEqualTo(0);
         }

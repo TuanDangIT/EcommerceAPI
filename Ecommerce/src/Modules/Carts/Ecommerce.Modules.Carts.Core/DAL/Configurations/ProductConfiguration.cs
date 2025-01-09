@@ -29,7 +29,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
             builder.ToTable(p =>
             {
                 p.HasCheckConstraint("CK_Product_Price", "\"Price\" >= 0");
-                p.HasCheckConstraint("CK_Product_Quantity", "\"Quantity\" > 0");
+                p.HasCheckConstraint("CK_Product_Quantity", "\"Quantity\" >= 0");
             });
         }
     }

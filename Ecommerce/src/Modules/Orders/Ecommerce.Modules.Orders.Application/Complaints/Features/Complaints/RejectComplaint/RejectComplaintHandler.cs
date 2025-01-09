@@ -5,6 +5,7 @@ using Ecommerce.Modules.Orders.Domain.Complaints.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Abstractions.Messaging;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -31,11 +32,8 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Rej
         }
         public async Task Handle(RejectComplaint request, CancellationToken cancellationToken)
         {
-            var complaint = await _complaintRepository.GetAsync(request.ComplaintId, cancellationToken);
-            if (complaint is null)
-            {
-                throw new ComplaintNotFoundException(request.ComplaintId);
-            }
+            var complaint = await _complaintRepository.GetAsync(request.ComplaintId, cancellationToken,
+                query => query.Include(c => c.Order)) ?? throw new ComplaintNotFoundException(request.ComplaintId);
             complaint.Reject(new Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation));
             await _complaintRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Complaint: {complaintId} was rejected by {@user}.", complaint.Id, 
