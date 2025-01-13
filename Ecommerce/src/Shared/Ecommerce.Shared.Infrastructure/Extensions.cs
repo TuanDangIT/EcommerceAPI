@@ -34,7 +34,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Ecommerce.Shared.Infrastructure.Sieve;
+using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination.Sieve;
 
 [assembly: InternalsVisibleTo("Ecommerce.Bootstrapper")]
 namespace Ecommerce.Shared.Infrastructure

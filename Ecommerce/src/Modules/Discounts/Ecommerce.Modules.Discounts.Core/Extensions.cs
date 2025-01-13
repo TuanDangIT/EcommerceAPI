@@ -29,7 +29,7 @@ namespace Ecommerce.Modules.Discounts.Core
             services.AddScoped<ICouponService, CouponService>();
             services.AddScoped<IPaymentProcessorService, StripeService>();    
             services.AddPostgres<DiscountsDbContext>();
-            services.Configure<SieveOptions>(configuration.GetSection(_sieveSectionName));
+            //services.Configure<SieveOptions>(configuration.GetSection(_sieveSectionName));
             services.AddScoped<ISieveProcessor, DiscountsModuleSieveProcessor>();
             return services;
         }

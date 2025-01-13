@@ -6,6 +6,8 @@ using Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Sieve.Models;
 using Sieve.Services;
 using System;
 using System.Collections.Generic;
@@ -18,16 +20,19 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
     internal class BrowseReviewsHandler : IQueryHandler<BrowseReviews, PagedResult<ReviewDto>>
     {
         private readonly InventoryDbContext _dbContext;
+        private readonly IOptions<SieveOptions> _sieveOptions;
         private readonly ISieveProcessor _sieveProcessor;
 
-        public BrowseReviewsHandler(InventoryDbContext dbContext, IEnumerable<ISieveProcessor> sieveProcessors)
+        public BrowseReviewsHandler(InventoryDbContext dbContext, IEnumerable<ISieveProcessor> sieveProcessors,
+            IOptions<SieveOptions> sieveOptions)
         {
             _dbContext = dbContext;
+            _sieveOptions = sieveOptions;
             _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(InventoryModuleSieveProcessor));
         }
         public async Task<PagedResult<ReviewDto>> Handle(BrowseReviews request, CancellationToken cancellationToken)
         {
-            if (request.PageSize is null || request.Page is null)
+            if (request.Page is null)
             {
                 throw new PaginationException();
             }
@@ -42,7 +47,12 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
             var totalCount = await _sieveProcessor
                 .Apply(request, reviews, applyPagination: false)
                 .CountAsync(cancellationToken);
-            var pagedResult = new PagedResult<ReviewDto>(dtos, totalCount, request.PageSize.Value, request.Page.Value);
+            int pageSize = _sieveOptions.Value.DefaultPageSize;
+            if (request.PageSize is not null)
+            {
+                pageSize = request.PageSize.Value;
+            }
+            var pagedResult = new PagedResult<ReviewDto>(dtos, totalCount, pageSize, request.Page.Value);
             return pagedResult;
         }
     }

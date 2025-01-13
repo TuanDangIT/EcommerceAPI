@@ -27,6 +27,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         [JsonInclude]
         public int? Quantity { get; private set; }
         public bool HasQuantity => Quantity != null;
+        public bool IsSold => Quantity == 0;
         public int? Reserved { get; private set; }
         public string? Location { get; private set; }
         public string Description { get; private set; } = string.Empty;

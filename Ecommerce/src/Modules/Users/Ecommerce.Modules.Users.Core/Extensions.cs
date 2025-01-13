@@ -34,7 +34,7 @@ namespace Ecommerce.Modules.Users.Core
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddPostgres<UsersDbContext>();
-            services.Configure<SieveOptions>(configuration.GetSection(_sieveSectionName));
+            //services.Configure<SieveOptions>(configuration.GetSection(_sieveSectionName));
             services.AddScoped<ISieveProcessor, UsersModuleSieveProcessor>();
             return services;
         }

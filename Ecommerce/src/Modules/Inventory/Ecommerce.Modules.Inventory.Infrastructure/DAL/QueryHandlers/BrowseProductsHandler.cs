@@ -7,6 +7,8 @@ using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Sieve.Models;
 using Sieve.Services;
 using System;
 using System.Collections.Generic;
@@ -19,17 +21,19 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
     internal sealed class BrowseProductsHandler : IQueryHandler<BrowseProducts, PagedResult<ProductBrowseDto>>
     {
         private readonly InventoryDbContext _dbContext;
+        private readonly IOptions<SieveOptions> _sieveOptions;
         private readonly ISieveProcessor _sieveProcessor;
 
-        public BrowseProductsHandler(InventoryDbContext dbContext/*, ISieveProcessor sieveProcessor*/, IEnumerable<ISieveProcessor> sieveProcessors)
+        public BrowseProductsHandler(InventoryDbContext dbContext, IEnumerable<ISieveProcessor> sieveProcessors,
+            IOptions<SieveOptions> sieveOptions)
         {
             _dbContext = dbContext;
-            //_sieveProcessor = sieveProcessor;
+            _sieveOptions = sieveOptions;
             _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(InventoryModuleSieveProcessor));
         }
         public async Task<PagedResult<ProductBrowseDto>> Handle(BrowseProducts request, CancellationToken cancellationToken)
         {
-            if(request.PageSize is null || request.Page is null)
+            if(request.Page is null)
             {
                 throw new PaginationException();
             }
@@ -48,7 +52,12 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
             var totalCount = await _sieveProcessor
                 .Apply(request, products, applyPagination: false)
                 .CountAsync(cancellationToken);
-            var pagedResult = new PagedResult<ProductBrowseDto>(dtos, totalCount, request.PageSize.Value, request.Page.Value);
+            int pageSize = _sieveOptions.Value.DefaultPageSize;
+            if (request.PageSize is not null)
+            {
+                pageSize = request.PageSize.Value;
+            }
+            var pagedResult = new PagedResult<ProductBrowseDto>(dtos, totalCount, pageSize, request.Page.Value);
             return pagedResult;
         }
     }

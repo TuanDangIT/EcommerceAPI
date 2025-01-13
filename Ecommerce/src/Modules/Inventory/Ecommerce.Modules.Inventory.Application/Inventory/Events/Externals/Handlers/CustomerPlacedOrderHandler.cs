@@ -52,11 +52,11 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
                     }
                 }
             }
-            if(auctionsToDelete.Count > 0)
-            {
-                await _auctionRepository.UnlistManyAsync([.. auctionsToDelete]);
-                await _productRepository.UpdateListedFlagAsync([.. auctionsToDelete], false);
-            }
+            //if(auctionsToDelete.Count > 0)
+            //{
+            //    await _auctionRepository.UnlistManyAsync([.. auctionsToDelete]);
+            //    await _productRepository.UpdateListedFlagAsync([.. auctionsToDelete], false);
+            //}
             await _productRepository.UpdateAsync();
         }
     }

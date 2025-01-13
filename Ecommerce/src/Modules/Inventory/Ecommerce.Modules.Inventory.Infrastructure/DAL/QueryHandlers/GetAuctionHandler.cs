@@ -23,7 +23,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
             => await _dbContext.Auctions
                 .AsNoTracking()
                 .Include(a => a.Reviews)
-                .Where(a => a.Id == request.AuctionId)
+                .Where(a => a.Id == request.AuctionId && a.IsSold == false)
                 .Select(a => a.AsDetailsDto())
                 .SingleOrDefaultAsync(cancellationToken);
     }

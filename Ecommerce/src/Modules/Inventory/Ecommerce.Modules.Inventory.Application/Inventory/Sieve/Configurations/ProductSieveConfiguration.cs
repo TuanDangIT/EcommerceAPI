@@ -29,6 +29,10 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Configurations
             mapper.Property<Product>(p => p.Quantity)
                 .CanFilter()
                 .CanSort();
+            mapper.Property<Product>(p => p.IsSold)
+                .CanFilter();
+            mapper.Property<Product>(p => p.HasQuantity)
+                .CanFilter();
             mapper.Property<Product>(p => p.Location)
                 .CanFilter();
             mapper.Property<Product>(p => p.Description)
