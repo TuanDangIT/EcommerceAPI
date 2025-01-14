@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Carts.Core.DAL;
+﻿using Coravel.Scheduling.Schedule.Interfaces;
+using Ecommerce.Modules.Carts.Core.DAL;
 using Ecommerce.Modules.Carts.Core.DAL.Mappings;
 using Ecommerce.Modules.Carts.Core.DTO;
 using Ecommerce.Modules.Carts.Core.Entities;
@@ -19,13 +20,16 @@ namespace Ecommerce.Modules.Carts.Core.Services
         private readonly IContextService _contextService;
         private readonly IMessageBroker _messageBroker;
         private readonly ILogger<CartService> _logger;
+        private readonly IScheduler _scheduler;
 
-        public CartService(ICartsDbContext dbContext, IContextService contextService, IMessageBroker messageBroker, ILogger<CartService> logger)
+        public CartService(ICartsDbContext dbContext, IContextService contextService, IMessageBroker messageBroker, ILogger<CartService> logger,
+            IScheduler scheduler)
         {
             _dbContext = dbContext;
             _contextService = contextService;
             _messageBroker = messageBroker;
             _logger = logger;
+            _scheduler = scheduler;
         }
 
         public async Task AddProductAsync(Guid cartId, Guid productId, int quantity, CancellationToken cancellationToken = default)

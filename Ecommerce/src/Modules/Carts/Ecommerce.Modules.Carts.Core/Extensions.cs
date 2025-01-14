@@ -1,7 +1,10 @@
-﻿using Ecommerce.Modules.Carts.Core.DAL;
+﻿using Coravel;
+using Ecommerce.Modules.Carts.Core.DAL;
+using Ecommerce.Modules.Carts.Core.Scheduler;
 using Ecommerce.Modules.Carts.Core.Services;
 using Ecommerce.Modules.Carts.Core.Services.Externals;
 using Ecommerce.Shared.Infrastructure.Postgres;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -22,11 +25,23 @@ namespace Ecommerce.Modules.Carts.Core
             {
                 return sp.GetRequiredService<CartsDbContext>();
             });
+            services.AddScheduler();
+            services.AddTransient<CleanupAbandonedCartsTask>();
             services.AddSingleton<IPaymentProcessorService, StripeService>();
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<ICheckoutCartService, CheckoutCartService>();
             services.AddScoped<IPaymentService, PaymentService>();
             return services;
+        }
+        public static WebApplication UseCore(this WebApplication app)
+        {
+            app.Services.UseScheduler(scheduler =>
+            {
+                scheduler.Schedule<CleanupAbandonedCartsTask>()
+                    .EverySeconds(5);
+                    //.Daily();
+            });
+            return app;
         }
     }
 }

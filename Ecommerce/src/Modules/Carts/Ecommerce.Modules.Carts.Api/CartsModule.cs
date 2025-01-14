@@ -30,6 +30,7 @@ namespace Ecommerce.Modules.Carts.Api
             {
                 return Results.Ok("Carts module is working...");
             });
+            app.UseCore();
         }
     }
 }

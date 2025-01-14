@@ -24,8 +24,11 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
             {
                 var product = await _productRepository.GetAsync(@event.ProductId) ?? 
                     throw new ProductNotFoundException(@event.ProductId);
-                product.Reserve(@event.Quantity);
-                await _productRepository.UpdateAsync();
+                if (product.HasQuantity)
+                {
+                    product.Reserve(@event.Quantity);
+                    await _productRepository.UpdateAsync();
+                }
                 await transaction.CommitAsync();
             }
             catch (Exception)
