@@ -8,6 +8,6 @@ namespace Ecommerce.Shared.Infrastructure.Carts
 {
     public class CartOptions
     {
-        public int LifeTime { get; set; }
+        public double LifeTime { get; set; }
     }
 }
