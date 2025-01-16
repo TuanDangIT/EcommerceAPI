@@ -4,6 +4,7 @@ using Ecommerce.Modules.Carts.Core.DAL;
 using Ecommerce.Modules.Carts.Core.Entities;
 using Ecommerce.Modules.Carts.Core.Events;
 using Ecommerce.Shared.Abstractions.Messaging;
+using Ecommerce.Shared.Infrastructure.Carts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -20,21 +21,23 @@ namespace Ecommerce.Modules.Carts.Core.Scheduler
         private readonly IMessageBroker _messageBroker;
         private readonly TimeProvider _timeProvider;
         private readonly ILogger<CleanupAbandonedCartsTask> _logger;
+        private readonly CartOptions _cartOptions;
 
         public CleanupAbandonedCartsTask(ICartsDbContext dbContext, IMessageBroker messageBroker,
-            TimeProvider timeProvider, ILogger<CleanupAbandonedCartsTask> logger)
+            TimeProvider timeProvider, ILogger<CleanupAbandonedCartsTask> logger, CartOptions cartOptions)
         {
             _dbContext = dbContext;
             _messageBroker = messageBroker;
             _timeProvider = timeProvider;
             _logger = logger;
+            _cartOptions = cartOptions;
         }
         public async Task Invoke()
         {
             var carts = await _dbContext.Carts
                 .Include(c => c.Products)
                 .ThenInclude(cp => cp.Product)
-                .Where(c => c.UpdatedAt + TimeSpan.FromDays(7) <= _timeProvider.GetUtcNow())
+                .Where(c => c.UpdatedAt + TimeSpan.FromDays(_cartOptions.LifeTime) <= _timeProvider.GetUtcNow())
                 .ToListAsync();
             if (carts.Count == 0)
             {

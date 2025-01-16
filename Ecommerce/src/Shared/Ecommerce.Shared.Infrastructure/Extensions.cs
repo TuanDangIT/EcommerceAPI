@@ -35,6 +35,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination.Sieve;
+using Ecommerce.Shared.Infrastructure.Carts;
 
 [assembly: InternalsVisibleTo("Ecommerce.Bootstrapper")]
 namespace Ecommerce.Shared.Infrastructure
@@ -61,6 +62,7 @@ namespace Ecommerce.Shared.Infrastructure
             services.AddPagination();
             services.AddStripe();
             services.AddInpost();
+            services.AddCartOptions();
             services.AddSieve(configuration);
             services.AddCompanyDetails();
             services.AddMails();
