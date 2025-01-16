@@ -10,7 +10,6 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 {
     public class Status : BaseEntity<int>
     {
-        //public int Id { get; private set; }
         public OrderStatus OrderStatus {  get; private set; }
         public Status(int id, OrderStatus orderStatus)
         {

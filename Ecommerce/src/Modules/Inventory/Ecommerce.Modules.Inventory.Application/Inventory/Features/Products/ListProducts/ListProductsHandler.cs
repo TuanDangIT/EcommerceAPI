@@ -6,6 +6,7 @@ using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.DomainEvents;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Abstractions.Messaging;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -39,8 +40,12 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Li
         }
         public async Task Handle(ListProducts request, CancellationToken cancellationToken)
         {
-            var products = await _productRepository.GetAllThatContainsInArrayAsync(request.ProductIds, cancellationToken);
-            if(products.Count() != request.ProductIds.Length)
+            var products = await _productRepository.GetAllThatContainsInArrayAsync(request.ProductIds, cancellationToken,
+                query => query.Include(p => p.Manufacturer),
+                query => query.Include(p => p.Category),
+                query => query.Include(p => p.Images.OrderBy(i => i.Order)),
+                query => query.Include(p => p.ProductParameters).ThenInclude(pp => pp.Parameter));
+            if (products.Count() != request.ProductIds.Length)
             {
                 var productIdsNotFound = new List<Guid>();
                 foreach(var productId in request.ProductIds)

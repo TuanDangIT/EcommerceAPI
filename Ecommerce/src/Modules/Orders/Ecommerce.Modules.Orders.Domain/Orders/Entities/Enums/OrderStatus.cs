@@ -13,6 +13,8 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums
         Shipped,
         Completed,
         Cancelled,
-        Returned
+        Returned,
+        ReturnRejected,
+        Complicated
     }
 }

@@ -19,7 +19,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             InvoiceNo = invoiceNo;
             Order = order;
         }
-        public Invoice()
+        private Invoice()
         {
 
         }

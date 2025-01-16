@@ -34,7 +34,7 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Events.Handlers
             await _returnRepository.CreateAsync(new Return(
                     Guid.NewGuid(),
                     order,
-                    @event.Products.Select(p => new ReturnProduct(p.SKU, p.Name, p.Price, p.Quantity, p.ImagePathUrl)),
+                    @event.Products.Select(p => new ReturnProduct(p.SKU, p.Name, p.Price, p.UnitPrice, p.Quantity, p.ImagePathUrl)),
                     @event.ReasonForReturn,
                     @event.IsFullReturn
                 ));

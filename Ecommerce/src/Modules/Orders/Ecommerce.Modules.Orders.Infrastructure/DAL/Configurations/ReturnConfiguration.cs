@@ -25,12 +25,20 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                 p.Property(p => p.Price)
                     .HasPrecision(11, 2)
                     .IsRequired();
+                p.Property(p => p.UnitPrice)
+                    .HasPrecision(11, 2)
+                    .IsRequired();
+                p.Property(p => p.Status)
+                    .IsRequired()
+                    .HasConversion<string>();
                 p.Property(p => p.ImagePathUrl)
                     .IsRequired();
                 p.ToTable("ReturnProducts", rp =>
                 {
                     rp.HasCheckConstraint("CK_ReturnProduct_Price", "\"Price\" >= 0");
                     rp.HasCheckConstraint("CK_ReturnProduct_Quantity", "\"Quantity\" > 0");
+                    rp.HasCheckConstraint("CK_ReturnProduct_UnitPrice", "\"UnitPrice\" >= 0");
+                    rp.HasCheckConstraint("CK_ReturnProduct_PriceComparison", "\"UnitPrice\" <= \"Price\"");
                 });
             });
             builder.Property(c => c.CreatedAt)

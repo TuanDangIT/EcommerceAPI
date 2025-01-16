@@ -30,7 +30,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             Address = address;
             UserId = userId ?? Guid.Empty;
         }
-        public Customer()
+        private Customer()
         {
 
         }

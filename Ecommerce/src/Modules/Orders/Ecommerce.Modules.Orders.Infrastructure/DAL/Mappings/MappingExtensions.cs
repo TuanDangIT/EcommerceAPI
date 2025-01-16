@@ -82,6 +82,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 SKU = product.SKU,
                 Name = product.Name,
                 Price = product.Price,
+                UnitPrice = product.UnitPrice,
                 Quantity = product.Quantity,
                 ImagePathUrl = product.ImagePathUrl
             };

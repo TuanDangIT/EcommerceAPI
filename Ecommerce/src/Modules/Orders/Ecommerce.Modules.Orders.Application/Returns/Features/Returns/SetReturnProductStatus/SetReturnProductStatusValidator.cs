@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
+﻿using Ecommerce.Modules.Orders.Domain.Returns.Entities;
+using Ecommerce.Modules.Orders.Domain.Returns.Entities.Enums;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -6,14 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ChangeStatus
+namespace Ecommerce.Modules.Orders.Application.Returns.Features.Returns.SetReturnProductStatus
 {
-    internal class ChangeStatusValidator : AbstractValidator<ChangeStatus>
+    internal class SetReturnProductStatusValidator : AbstractValidator<SetReturnProductStatus>
     {
-        private readonly string[] _availableStatuses = Enum.GetNames(typeof(OrderStatus)); 
-        public ChangeStatusValidator()
+        private readonly string[] _availableStatuses = Enum.GetNames(typeof(ReturnProductStatus));
+        public SetReturnProductStatusValidator()
         {
-            RuleFor(c => c.OrderId)
+            RuleFor(c => c.ReturnId)
+                .NotEmpty()
+                .NotNull();
+            RuleFor(c => c.ProductId)
                 .NotEmpty()
                 .NotNull();
             RuleFor(c => c.Status)

@@ -14,6 +14,8 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Repositories
         Task<Return?> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default);
         Task<Return?> GetAsync(Guid returnId, CancellationToken cancellationToken = default, 
             params Func<IQueryable<Return>, IQueryable<Return>>[] includeActions);
+        Task<Return?> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default, 
+            params Func<IQueryable<Return>, IQueryable<Return>>[] includeActions);
         Task UpdateAsync(CancellationToken cancellationToken = default);
     }
 }

@@ -15,10 +15,10 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Repositories
         Task AddManyAsync(IEnumerable<Product> products, CancellationToken cancellationToken = default);
         Task UpdateAsync(CancellationToken cancellationToken = default);
         Task DeleteAsync(Guid productId, CancellationToken cancellationToken = default);
-        //Task<int> DecreaseQuantityAsync(Guid productId, int ammount);
         Task DeleteManyAsync(CancellationToken cancellationToken = default, params Guid[] productIds);
         Task<IEnumerable<Guid>> GetAllIdThatContainsInArrayAsync(Guid[] productIds, CancellationToken cancellationToken = default);
-        Task<IEnumerable<Product>> GetAllThatContainsInArrayAsync(Guid[] productIds, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Product>> GetAllThatContainsInArrayAsync(Guid[] productIds, CancellationToken cancellationToken = default,
+            params Func<IQueryable<Product>, IQueryable<Product>>[] includeActions);
         Task<Product?> GetAsync(Guid productId, CancellationToken cancellationToken = default);
         Task DeleteProductParametersAndImagesRelatedToProduct(Guid productId, CancellationToken cancellationToken = default);
         Task UpdateListedFlagAsync(Guid[] productIds, bool isListed, CancellationToken cancellationToken = default);

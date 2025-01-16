@@ -20,15 +20,15 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public string Service { get; private set; } = "inpost_courier_standard";
         public Order Order { get; private set; } = new();
         public Guid OrderId { get; private set; }
-        public Shipment()
-        {
-
-        }
         public Shipment(Receiver receiver, IEnumerable<Parcel> parcels, decimal totalSum)
         {
             Receiver = receiver;
             Insurance = new Insurance(totalSum.ToString("0.00"));
             Parcels = parcels.ToList();
+        }
+        private Shipment()
+        {
+
         }
         public void SetParcels(IEnumerable<Parcel> parcels)
         {

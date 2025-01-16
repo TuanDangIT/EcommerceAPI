@@ -53,15 +53,23 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
         public async Task DeleteManyAsync(CancellationToken cancellationToken = default, params Guid[] productIds) 
             => await _dbContext.Products.Where(p => productIds.Contains(p.Id)).ExecuteDeleteAsync(cancellationToken);
 
-        public async Task<IEnumerable<Product>> GetAllThatContainsInArrayAsync(Guid[] productIds, CancellationToken cancellationToken = default)
-            => await _dbContext.Products
-                .Include(p => p.Manufacturer)
-                .Include(p => p.Category)
-                .Include(p => p.Images.OrderBy(i => i.Order))
-                .Include(p => p.ProductParameters)
-                .ThenInclude(p => p.Parameter)
+        public async Task<IEnumerable<Product>> GetAllThatContainsInArrayAsync(Guid[] productIds, CancellationToken cancellationToken = default,
+            params Func<IQueryable<Product>, IQueryable<Product>>[] includeActions)
+        {
+            var query = _dbContext.Products
+                .AsQueryable();
+            if (includeActions is not null)
+            {
+                foreach (var includeAction in includeActions)
+                {
+                    query = includeAction(query);
+                }
+            }
+            var products = await query
                 .Where(p => productIds.Contains(p.Id))
                 .ToListAsync(cancellationToken);
+            return products;
+        }
         public async Task UpdateListedFlagAsync(Guid[] productIds, bool isListed, CancellationToken cancellationToken = default)
             => await _dbContext.Products
                 .Where(p => productIds.Contains(p.Id))

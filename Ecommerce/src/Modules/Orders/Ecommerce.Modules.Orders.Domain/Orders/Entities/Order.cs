@@ -15,7 +15,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 {
     public class Order : AggregateRoot, IAuditable
     {
-        public Customer Customer { get; private set; } = new();
+        public Customer Customer { get; private set; } = default!;
         private readonly List<Product> _products = [];
         public IEnumerable<Product> Products => _products;
         public bool IsDraft { get; private set; }
@@ -114,11 +114,14 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         }
         public void Return(IEnumerable<(int ProductId, int Quantity)> products)
         {
-            foreach (var product in products)
+            foreach (var (productId, quantity) in products)
             {
-                RemoveProduct(product.ProductId, product.Quantity);
+                var product = _products.SingleOrDefault(p => p.Id == productId) ??
+                    throw new ProductNotFoundException(productId);
+                product.DecreaseQuantity(quantity);
             }
             ChangeStatus(OrderStatus.Returned);
+            CalculateTotalSum();
             IncrementVersion();
         }
         public void Complete()
@@ -136,7 +139,15 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         {
             var product = _products.SingleOrDefault(p => p.Id == productId) ??
                 throw new ProductNotFoundException(productId);
-            product.DecreaseQuantity(quantity);
+            product.IncreaseQuantity(quantity);
+            CalculateTotalSum();
+            IncrementVersion();
+        }
+        public void AddProduct(string sku, int quantity)
+        {
+            var product = _products.SingleOrDefault(p => p.SKU == sku) ??
+                throw new ProductNotFoundException(sku);
+            product.IncreaseQuantity(quantity);
             CalculateTotalSum();
             IncrementVersion();
         }
@@ -155,6 +166,14 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             CalculateTotalSum();
             IncrementVersion();
         }
+        public void DecreaseProductQuantity(string sku, int quantity)
+        {
+            var product = _products.SingleOrDefault(p => p.SKU == sku) ??
+                throw new ProductNotFoundException(sku);
+            product.DecreaseQuantity(quantity);
+            CalculateTotalSum();
+            IncrementVersion();
+        }
         public void SetCompanyAdditionalInformation(string companyAdditionalInformation)
         {
             CompanyAdditionalInformation = companyAdditionalInformation;
@@ -170,11 +189,8 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             CompanyAdditionalInformation = additionalInformation;
             IncrementVersion();
         }
-        //public void SetShippingService(decimal shippingPrice)
-        //{
-        //    ShippingPrice = shippingPrice;
-        //    IncrementVersion();
-        //}
+        public bool HasProduct(string sku)
+            => Products.SingleOrDefault(p => p.SKU == sku) is not null;
         private void CalculateTotalSum()
             => _products.Sum(p => p.Price);
     }

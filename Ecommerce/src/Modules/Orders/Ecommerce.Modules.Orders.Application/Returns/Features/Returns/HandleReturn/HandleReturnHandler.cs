@@ -13,6 +13,7 @@ using Ecommerce.Modules.Orders.Application.Shared.Stripe;
 using Microsoft.Extensions.Logging;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Ecommerce.Modules.Orders.Domain.Returns.Entities.Enums;
 
 namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleReturn
 {
@@ -36,15 +37,20 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
         public async Task Handle(HandleReturn request, CancellationToken cancellationToken)
         {
             var @return = await _returnRepository.GetAsync(request.ReturnId, cancellationToken,
-                query => query.Include(r => r.Order).ThenInclude(o => o.Customer)) ?? 
+                query => query.Include(r => r.Order).ThenInclude(o => o.Customer),
+                query => query.Include(r => r.Products)) ?? 
                 throw new ReturnNotFoundException(request.ReturnId);
+            if (!@return.AreAllProductsAccepted)
+            {
+                throw new ReturnCannotHandleException();
+            }
             if (@return.IsFullReturn)
             {
                 await _stripeService.RefundAsync(@return.Order, cancellationToken);
             }
             else
             {
-                await _stripeService.RefundAsync(@return.Order, @return.Products.Sum(p => p.Price*p.Quantity), cancellationToken);
+                await _stripeService.RefundAsync(@return.Order, @return.TotalSum, cancellationToken);
             }
             @return.Handle();
             await _returnRepository.UpdateAsync();

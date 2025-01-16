@@ -33,9 +33,9 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             {
                 throw new ProductPriceBelowZeroException();
             }
-            if(quantity <= 0)
+            if(quantity < 0)
             {
-                throw new ProductQuantityBelowOrEqualZeroException();
+                throw new ProductQuantityBelowZeroException();
             }
             SKU = sku;
             Name = name;
@@ -53,7 +53,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             Quantity = quantity;
             ImagePathUrl = imagePathUrl;
         }
-        public Product()
+        private Product()
         {
 
         }

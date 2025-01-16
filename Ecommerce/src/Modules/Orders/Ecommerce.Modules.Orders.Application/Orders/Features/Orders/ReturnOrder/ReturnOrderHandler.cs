@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.Exceptions;
 using Ecommerce.Modules.Orders.Application.Orders.Services;
+using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Orders.Events;
 using Ecommerce.Modules.Orders.Domain.Orders.Policies;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
@@ -45,6 +46,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
             {
                 throw new OrderCannotReturnException("Cannot return an order after 14 days of placing it.");
             }
+            if(order.Status == OrderStatus.ReturnRejected)
+            {
+                throw new OrderCannotReturnRejectedReturnException();
+            }
             var returnProducts = order.Products
                 .Where(p => request.ProductsToReturn.Select(ptr => ptr.ProductId).Contains(p.Id))
                 .Select(p =>
@@ -56,6 +61,11 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
             order.Return(request.ProductsToReturn.Select(p => (p.ProductId, p.Quantity)));
             await _orderRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Order: {orderId} was returned. Products that were returned: {@productToReturn}.", order.Id, request.ProductsToReturn);
+            if(order.Status == OrderStatus.Returned)
+            {
+                await _domainEventDispatcher.DispatchAsync(new OrderReturnCorrected(order.Id, returnProducts));
+                return;
+            }
             bool isFullReturn = !order.Products.Any();
             var domainEvent = new OrderReturned(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, request.ReasonForReturn, returnProducts, isFullReturn);
             await _domainEventDispatcher.DispatchAsync(domainEvent);
