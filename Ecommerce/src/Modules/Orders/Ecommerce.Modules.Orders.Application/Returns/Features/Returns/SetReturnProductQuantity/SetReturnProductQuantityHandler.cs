@@ -1,4 +1,6 @@
 ﻿using Ecommerce.Modules.Orders.Application.Returns.Exceptions;
+using Ecommerce.Modules.Orders.Domain.Returns.Entities;
+using Ecommerce.Modules.Orders.Domain.Returns.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Returns.Events;
 using Ecommerce.Modules.Orders.Domain.Returns.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
@@ -41,12 +43,22 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Returns.SetRetur
             {
                 return;
             }
+            var oldQuantity = product.Quantity;
             @return.SetProductQuantity(request.ProductId, request.Quantity);
+            if (!@return.HasProducts)
+            {
+                await _returnRepository.DeleteAsync(@return.Id, cancellationToken);
+                _logger.LogInformation("Product was deleted and the return: {returnId} was empty therefore deleted by {@user}.",
+                    @return.Id, new { _contextService.Identity!.Username, _contextService.Identity.Id });
+                await _domainEventDispatcher.DispatchAsync(new ReturnDeleted(@return.OrderId, [new ReturnProduct(product.SKU, oldQuantity)]));
+                return;
+            }
+            product.SetStatus(ReturnProductStatus.Unknown);
             await _returnRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Return's: {returnId} product: {productId} was set to new value: {newQuantity} by {@user}.",
                 @return.Id, request.ProductId, request.Quantity, new { _contextService.Identity!.Username, _contextService.Identity.Id });
             await _domainEventDispatcher.DispatchAsync(new ReturnProductQuantitySet(@return.OrderId,
-                product.SKU, product.Quantity - request.Quantity));
+                product.SKU, oldQuantity - request.Quantity));
         }
     }
 }

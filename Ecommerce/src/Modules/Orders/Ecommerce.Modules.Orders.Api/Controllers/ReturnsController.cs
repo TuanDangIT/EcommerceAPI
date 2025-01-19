@@ -5,6 +5,10 @@ using Ecommerce.Modules.Orders.Application.Returns.Features.Return.GetReturn;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleReturn;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Return.RejectReturn;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Return.SetNote;
+using Ecommerce.Modules.Orders.Application.Returns.Features.Returns.DeleteReturn;
+using Ecommerce.Modules.Orders.Application.Returns.Features.Returns.RemoveReturnProduct;
+using Ecommerce.Modules.Orders.Application.Returns.Features.Returns.SetReturnProductQuantity;
+using Ecommerce.Modules.Orders.Application.Returns.Features.Returns.SetReturnProductStatus;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
@@ -33,8 +37,14 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return Ok(new ApiResponse<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>(HttpStatusCode.OK, result));
         }
         [HttpGet("{returnId:guid}")]
-        public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> GetOrder([FromRoute] Guid returnId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> GetReturn([FromRoute] Guid returnId, CancellationToken cancellationToken = default)
             => OkOrNotFound<ReturnDetailsDto, Return>(await _mediator.Send(new GetReturn(returnId), cancellationToken));
+        [HttpDelete("{returnId:guid}")]
+        public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> DeleteReturn([FromRoute] Guid returnId, CancellationToken cancellationToken = default)
+        {
+            await _mediator.Send(new DeleteReturn(returnId), cancellationToken);
+            return NoContent();
+        }
         [HttpPost("{returnId:guid}/handle")]
         public async Task<ActionResult> HandleReturn([FromRoute]Guid returnId, CancellationToken cancellationToken = default)
         {
@@ -52,6 +62,26 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         public async Task<ActionResult> SetNote([FromRoute] Guid returnId, [FromForm]string note, CancellationToken cancellationToken = default)
         {
             await _mediator.Send(new SetNote(note, returnId), cancellationToken);
+            return NoContent();
+        }
+        [HttpDelete("{returnId:guid}/return-product/{productId:int}")]
+        public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> DeleteReturnProduct([FromRoute] Guid returnId, [FromRoute] int productId,CancellationToken cancellationToken = default)
+        {
+            await _mediator.Send(new RemoveReturnProduct(returnId, productId), cancellationToken);
+            return NoContent();
+        }
+        [HttpPut("{returnId:guid}/return-product/{productId:int}/quantity")]
+        public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> SetReturnProductQuantity([FromRoute] Guid returnId, [FromRoute] int productId,
+            [FromBody] int quantity, CancellationToken cancellationToken = default)
+        {
+            await _mediator.Send(new SetReturnProductQuantity(returnId, productId, quantity), cancellationToken);
+            return NoContent();
+        }
+        [HttpPut("{returnId:guid}/return-product/{productId:int}/status")]
+        public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> SetReturnProductStatus([FromRoute] Guid returnId, [FromRoute] int productId, 
+            [FromBody] string status, CancellationToken cancellationToken = default)
+        {
+            await _mediator.Send(new SetReturnProductStatus(returnId, productId, status), cancellationToken);
             return NoContent();
         }
     }

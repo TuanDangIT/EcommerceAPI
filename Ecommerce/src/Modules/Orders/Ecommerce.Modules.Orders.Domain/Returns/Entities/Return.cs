@@ -1,7 +1,7 @@
 ﻿using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
-
+using Ecommerce.Modules.Orders.Domain.Orders.Exceptions;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Returns.Exception;
 using Ecommerce.Shared.Abstractions.Entities;
@@ -20,7 +20,8 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Entities
         public Guid OrderId { get; private set; }
         private readonly List<ReturnProduct> _products = [];
         public IEnumerable<ReturnProduct> Products => _products;
-        public bool AreAllProductsAccepted => _products.Any(p => p.Status != ReturnProductStatus.Accepted);
+        public bool AreAllProductsAccepted => _products.All(p => p.Status == ReturnProductStatus.Accepted);
+        public bool HasProducts => _products.Count != 0;
         public string ReasonForReturn { get; private set; } = string.Empty;
         public string? AdditionalNote { get; private set; }
         public string? RejectReason { get; private set; }
@@ -90,12 +91,19 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Entities
         }
         public void SetProductQuantity(int productId, int quantity)
         {
-            var product = GetProductOrThrow(productId);
-            if(quantity == product.Quantity)
+            var returnProduct = GetProductOrThrow(productId);
+            var orderProduct = Order.Products.SingleOrDefault(p => p.SKU == returnProduct.SKU) ??
+                throw new ProductNotFoundException(returnProduct.SKU);
+            var limit = orderProduct.Quantity + returnProduct.Quantity;
+            if(quantity > limit)
+            {
+                throw new ReturnProductQuantityExceedLimitException(quantity, limit);
+            }
+            if(quantity == 0)
             {
                 RemoveProduct(productId);
             }
-            product.SetQuantity(quantity);
+            returnProduct.SetQuantity(quantity);
             IncrementVersion();
         }
         public ReturnProduct? GetReturnProduct(int productId)

@@ -23,6 +23,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
+        public async Task DeleteAsync(Guid returnId, CancellationToken cancellationToken = default)
+            => await _dbContext.Returns
+                .Where(r => r.Id == returnId)
+                .ExecuteDeleteAsync(cancellationToken);
+
         public async Task<Return?> GetAsync(Guid returnId, CancellationToken cancellationToken = default, params Func<IQueryable<Return>, IQueryable<Return>>[] includeActions)
         {
             var query = _dbContext.Returns

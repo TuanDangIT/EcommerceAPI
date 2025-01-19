@@ -84,7 +84,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Price = product.Price,
                 UnitPrice = product.UnitPrice,
                 Quantity = product.Quantity,
-                ImagePathUrl = product.ImagePathUrl
+                ImagePathUrl = product.ImagePathUrl,
+                Status = product.Status.ToString()
             };
         public static OrderShortenedDetailsDto AsShortenedDetailsDto(this Order order)
             => new()

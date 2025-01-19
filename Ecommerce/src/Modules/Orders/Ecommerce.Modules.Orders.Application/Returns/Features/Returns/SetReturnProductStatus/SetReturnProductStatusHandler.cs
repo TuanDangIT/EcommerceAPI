@@ -2,8 +2,10 @@
 using Ecommerce.Modules.Orders.Application.Returns.Exceptions;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities.Enums;
+using Ecommerce.Modules.Orders.Domain.Returns.Events;
 using Ecommerce.Modules.Orders.Domain.Returns.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
+using Ecommerce.Shared.Abstractions.DomainEvents;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -30,7 +32,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Returns.SetRetur
         }
         public async Task Handle(SetReturnProductStatus request, CancellationToken cancellationToken)
         {
-            if (Enum.TryParse(typeof(ReturnProductStatus), request.Status, true, out var status))
+            if (!Enum.TryParse(typeof(ReturnProductStatus), request.Status, true, out var status))
             {
                 throw new ReturnInvalidReturnProductStatusException(request.Status);
             }

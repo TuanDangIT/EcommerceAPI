@@ -17,8 +17,7 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Auction.Requ
             RuleFor(ro => ro.Price)
                 .PrecisionScale(11, 2, true)
                 .GreaterThanOrEqualTo(0)
-                .NotEmpty()
-                .NotNull();
+                .NotEmpty();
             RuleFor(ro => ro.Reason)
                 .MaximumLength(256)
                 .NotEmpty()

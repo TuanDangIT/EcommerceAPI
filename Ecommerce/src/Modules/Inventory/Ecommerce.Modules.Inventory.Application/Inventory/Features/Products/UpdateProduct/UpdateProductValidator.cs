@@ -24,11 +24,9 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
                 .MinimumLength(2)
                 .MaximumLength(24);
             RuleFor(c => c.Price)
-                .NotEmpty()
                 .NotNull()
                 .GreaterThanOrEqualTo(0);
             RuleFor(c => c.VAT)
-                .NotEmpty()
                 .NotNull()
                 .GreaterThanOrEqualTo(0);
             RuleFor(c => c.Location)

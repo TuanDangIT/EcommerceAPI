@@ -36,9 +36,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                 p.ToTable("ReturnProducts", rp =>
                 {
                     rp.HasCheckConstraint("CK_ReturnProduct_Price", "\"Price\" >= 0");
-                    rp.HasCheckConstraint("CK_ReturnProduct_Quantity", "\"Quantity\" > 0");
+                    rp.HasCheckConstraint("CK_ReturnProduct_Quantity", "\"Quantity\" >= 0");
                     rp.HasCheckConstraint("CK_ReturnProduct_UnitPrice", "\"UnitPrice\" >= 0");
-                    rp.HasCheckConstraint("CK_ReturnProduct_PriceComparison", "\"UnitPrice\" <= \"Price\"");
                 });
             });
             builder.Property(c => c.CreatedAt)

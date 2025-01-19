@@ -47,6 +47,15 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Entities
             Quantity = quantity;
             ImagePathUrl = imagePathUrl;
         }
+        public ReturnProduct(string sku, int quantity)
+        {
+            if (quantity <= 0)
+            {
+                throw new ReturnProductQuantityBelowZeroOrEqualException();
+            }
+            SKU = sku;
+            Quantity = quantity;
+        }
         public ReturnProduct()
         {
 

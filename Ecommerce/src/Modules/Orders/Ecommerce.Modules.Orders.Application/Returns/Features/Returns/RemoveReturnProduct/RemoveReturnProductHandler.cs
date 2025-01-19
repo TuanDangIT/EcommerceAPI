@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Application.Returns.Exceptions;
+using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using Ecommerce.Modules.Orders.Domain.Returns.Events;
 using Ecommerce.Modules.Orders.Domain.Returns.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
@@ -38,7 +39,16 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Returns.RemoveRe
                 throw new ReturnNotFoundException(request.ReturnId);
             var product = @return.GetReturnProduct(request.ProductId) ?? 
                 throw new ReturnProductNotFoundException(request.ProductId);
+            var oldQuantity = product.Quantity;
             @return.RemoveProduct(request.ProductId);
+            if (!@return.HasProducts)
+            {
+                await _returnRepository.DeleteAsync(@return.Id, cancellationToken);
+                _logger.LogInformation("Product was deleted and the return: {returnId} was empty therefore deleted by {@user}.",
+                    @return.Id, new { _contextService.Identity!.Username, _contextService.Identity.Id });
+                await _domainEventDispatcher.DispatchAsync(new ReturnDeleted(@return.OrderId, [new ReturnProduct(product.SKU, oldQuantity)]));
+                return;
+            }
             await _returnRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("An return product was deleted from return: {returnId} by {@user}.",
                 @return.Id, new { _contextService.Identity!.Username, _contextService.Identity.Id });

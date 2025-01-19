@@ -15,6 +15,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.DTO
         public decimal Price { get; set; }
         public decimal UnitPrice { get; set; }
         public int? Quantity { get; set; }
-        public string? ImagePathUrl { get; set; } 
+        public string? ImagePathUrl { get; set; }
+        public string Status { get; set; } = string.Empty;
     }
 }

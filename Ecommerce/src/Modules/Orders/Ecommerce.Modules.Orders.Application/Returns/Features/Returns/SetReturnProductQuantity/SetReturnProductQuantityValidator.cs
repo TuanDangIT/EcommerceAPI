@@ -17,7 +17,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Returns.SetRetur
             RuleFor(c => c.ProductId)
                 .NotEmpty()
                 .NotNull();
-            RuleFor(c => c.ProductId)
+            RuleFor(c => c.Quantity)
                 .NotNull()
                 .GreaterThanOrEqualTo(0);
         }

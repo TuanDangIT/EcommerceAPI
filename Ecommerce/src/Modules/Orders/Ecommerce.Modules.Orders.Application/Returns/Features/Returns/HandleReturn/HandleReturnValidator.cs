@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleReturn
 {
-    internal class HandleValidator : AbstractValidator<HandleReturn>
+    internal class HandleReturnValidator : AbstractValidator<HandleReturn>
     {
-        public HandleValidator()
+        public HandleReturnValidator()
         {
             RuleFor(r => r.ReturnId)
                 .NotNull()

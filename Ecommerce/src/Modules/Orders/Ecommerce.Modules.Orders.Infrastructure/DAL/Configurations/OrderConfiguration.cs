@@ -31,7 +31,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                     p.HasCheckConstraint("CK_Product_UnitPrice", "\"UnitPrice\" >= 0");
                     p.HasCheckConstraint("CK_Product_Price", "\"Price\" >= 0");
                     p.HasCheckConstraint("CK_Product_Quantity", "\"Quantity\" >= 0");
-                    p.HasCheckConstraint("CK_Product_PriceComparison", "\"UnitPrice\" <= \"Price\"");
                 });
             });
             builder.OwnsOne(o => o.Discount, d =>

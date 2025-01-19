@@ -20,17 +20,12 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Orders.AddProduct
                 .MinimumLength(8)
                 .MaximumLength(16);
             RuleFor(a => a.Name)
-                //.NotEmpty()
-                //.NotNull()
                 .MinimumLength(2)
                 .MaximumLength(24);
             RuleFor(a => a.Quantity)
-                .NotEmpty()
                 .NotNull()
                 .GreaterThanOrEqualTo(0);
             RuleFor(a => a.UnitPrice)
-                //.NotEmpty()
-                //.NotNull()
                 .GreaterThanOrEqualTo(0);
         }
     }

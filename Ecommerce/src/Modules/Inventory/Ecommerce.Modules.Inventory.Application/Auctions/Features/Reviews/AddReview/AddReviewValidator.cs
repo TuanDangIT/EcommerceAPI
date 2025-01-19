@@ -19,7 +19,6 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Reviews.AddR
                 .NotEmpty()
                 .NotNull();
             RuleFor(a => a.Grade)
-                .NotEmpty()
                 .NotNull()
                 .InclusiveBetween(0, 10)
                 .WithMessage("Grade must be between 0 and 10.");

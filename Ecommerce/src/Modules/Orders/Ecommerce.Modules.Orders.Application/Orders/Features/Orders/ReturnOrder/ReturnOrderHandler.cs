@@ -42,11 +42,12 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
                 query => query.Include(o => o.Products),
                 query => query.Include(o => o.Customer)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
+            var orderStatus = order.Status;
             if(!await _orderReturnPolicy.CanReturn(order))
             {
                 throw new OrderCannotReturnException("Cannot return an order after 14 days of placing it.");
             }
-            if(order.Status == OrderStatus.ReturnRejected)
+            if(orderStatus == OrderStatus.ReturnRejected)
             {
                 throw new OrderCannotReturnRejectedReturnException();
             }
@@ -55,13 +56,13 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
                 .Select(p =>
                 {
                     var returnedQuantity = request.ProductsToReturn.Single(ptr => ptr.ProductId == p.Id).Quantity;
-                    p = new Domain.Orders.Entities.Product(p.SKU, p.Name, p.Price, returnedQuantity, p.ImagePathUrl);
+                    p = new Domain.Orders.Entities.Product(p.SKU, p.Name, p.UnitPrice, returnedQuantity, p.ImagePathUrl);
                     return p;
                 }).ToList();
             order.Return(request.ProductsToReturn.Select(p => (p.ProductId, p.Quantity)));
             await _orderRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Order: {orderId} was returned. Products that were returned: {@productToReturn}.", order.Id, request.ProductsToReturn);
-            if(order.Status == OrderStatus.Returned)
+            if(orderStatus == OrderStatus.Returned)
             {
                 await _domainEventDispatcher.DispatchAsync(new OrderReturnCorrected(order.Id, returnProducts));
                 return;

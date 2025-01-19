@@ -1,4 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Domain.Orders.Exceptions;
+﻿using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
+using Ecommerce.Modules.Orders.Domain.Orders.Exceptions;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Modules.Orders.Domain.Returns.Events;
 using Ecommerce.Shared.Abstractions.DomainEvents;
@@ -11,26 +12,23 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Events.Externals
 {
-    internal class ReturnProductQuantitySetHandler : IDomainEventHandler<ReturnProductQuantitySet>
+    internal class ReturnDeletedHandler : IDomainEventHandler<ReturnDeleted>
     {
         private readonly IOrderRepository _orderRepository;
 
-        public ReturnProductQuantitySetHandler(IOrderRepository orderRepository)
+        public ReturnDeletedHandler(IOrderRepository orderRepository)
         {
             _orderRepository = orderRepository;
         }
-        public async Task HandleAsync(ReturnProductQuantitySet @event)
+        public async Task HandleAsync(ReturnDeleted @event)
         {
             var order = await _orderRepository.GetAsync(@event.OrderId, default,
                 query => query.Include(o => o.Products)) ?? throw new OrderNotFoundException(@event.OrderId);
-            if(@event.Diffrence >= 0)
+            foreach(var product in @event.Products)
             {
-                order.AddProduct(@event.SKU, @event.Diffrence);
+                order.AddProduct(product.SKU, product.Quantity);
             }
-            else
-            {
-                order.DecreaseProductQuantity(@event.SKU, Math.Abs(@event.Diffrence));
-            }
+            order.ChangeStatus(OrderStatus.Completed);
             await _orderRepository.UpdateAsync();
         }
     }
