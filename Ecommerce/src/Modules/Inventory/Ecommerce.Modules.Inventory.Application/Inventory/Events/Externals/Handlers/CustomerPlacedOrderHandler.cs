@@ -26,30 +26,32 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
         public async Task HandleAsync(CustomerPlacedOrder @event)
         {
             var products = await _productRepository.GetAllThatContainsInArrayAsync(@event.Products.Select(p => p.Id).ToArray());
-            var auctions = await _auctionRepository.GetAllThatContainsInArrayAsync(@event.Products.Select(p => p.Id).ToArray());
-            if(!products.Any() || !auctions.Any() || products.Count() != @event.Products.Count() || auctions.Count() != @event.Products.Count())
+            //var auctions = await _auctionRepository.GetAllThatContainsInArrayAsync(@event.Products.Select(p => p.Id).ToArray());
+            if(!products.Any() ||/* !auctions.Any() ||*/ products.Count() != @event.Products.Count()/* || auctions.Count() != @event.Products.Count()*/)
             {
                 throw new ArgumentException();
             }
-            var auctionsToDelete = new List<Guid>();
-            for(int i=0; i < products.Count(); i++)
+            //for(int i=0; i < products.Count(); i++)
+            //{
+            //    var product = products.ElementAt(i);
+            //    //var auction = auctions.Single(a => a.Id == product.Id);
+            //    var soldProduct = @event.Products.Single(p => p.Id == product.Id);
+            //    var soldQuantity = soldProduct.Quantity;
+            //    if (product.HasQuantity && /*auction.HasQuantity && */soldQuantity is not null)
+            //    {
+            //        product.Purchase((int)soldQuantity!);
+            //        //auction.DecreaseQuantity((int)soldQuantity);
+            //    }
+            //}
+            foreach(var product in products)
             {
-                var product = products.ElementAt(i);
-                var auction = auctions.Single(a => a.Id == product.Id);
                 var soldProduct = @event.Products.Single(p => p.Id == product.Id);
                 var soldQuantity = soldProduct.Quantity;
-                if (product.HasQuantity && auction.HasQuantity && soldQuantity is not null)
+                if (product.HasQuantity /*&& auction.HasQuantity && soldQuantity is not null*/)
                 {
                     product.Purchase((int)soldQuantity!);
-                    auction.DecreaseQuantity((int)soldQuantity);
-                    if (soldQuantity == auction.Quantity)
-                    {
-                        auctionsToDelete.Add(auction.Id);
-                    }
-                    else
-                    {
-                        auction.DecreaseQuantity((int)soldQuantity);
-                    }
+                    //product.Purchase((int)product.Quantity!);
+                    //auction.DecreaseQuantity((int)soldQuantity);
                 }
             }
             await _productRepository.UpdateAsync();

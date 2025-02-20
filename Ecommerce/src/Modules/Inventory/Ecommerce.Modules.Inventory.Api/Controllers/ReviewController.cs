@@ -9,6 +9,7 @@ using Ecommerce.Modules.Inventory.Domain.Auctions.Entities;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sieve.Models;
 using System;
@@ -20,12 +21,14 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Api.Controllers
 {
+    [Authorize(Roles = "Admin, Manager, Employee, Customer")]
     [ApiVersion(1)]
     internal class ReviewController : BaseController
     {
         public ReviewController(IMediator mediator) : base(mediator)
         {
         }
+        [AllowAnonymous]
         [HttpGet("{auctionId:guid}")]
         public async Task<ActionResult<ApiResponse<PagedResult<ReviewDto>>>> GetReviews([FromQuery]BrowseReviews query, [FromRoute] Guid auctionId,
             CancellationToken cancellationToken = default)
@@ -49,7 +52,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return NoContent();
         }
         [HttpPut("{auctionId:guid}/{reviewId:guid}")]
-        public async Task<ActionResult> DeleteReview([FromRoute] Guid auctionId, [FromRoute] Guid reviewId, [FromBody]EditReview command, 
+        public async Task<ActionResult> EditReview([FromRoute] Guid auctionId, [FromRoute] Guid reviewId, [FromBody]EditReview command, 
             CancellationToken cancellationToken = default)
         {
             await _mediator.Send(command with { AuctionId = auctionId, ReviewId = reviewId }, cancellationToken);

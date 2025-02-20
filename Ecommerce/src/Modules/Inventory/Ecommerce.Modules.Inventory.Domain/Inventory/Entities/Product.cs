@@ -93,6 +93,10 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public void Purchase(int quantity)
         {
             //DecreaseQuantity(quantity);
+            if(Reserved - quantity < 0)
+            {
+                throw new ProductReservedBelowZeroException();
+            }
             Reserved -= quantity;
             IncrementVersion();
         }

@@ -16,8 +16,11 @@ namespace Ecommerce.Modules.Users.Core.DAL
         public DbSet<Role> Roles { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         private const string _schema = "users";
-        public UsersDbContext(DbContextOptions<UsersDbContext> options) : base(options)
+        private readonly TimeProvider _timeProvider;
+
+        public UsersDbContext(DbContextOptions<UsersDbContext> options, TimeProvider timeProvider) : base(options)
         {
+            _timeProvider = timeProvider;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,11 +35,11 @@ namespace Ecommerce.Modules.Users.Core.DAL
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Property(nameof(IAuditable.CreatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                    entry.Property(nameof(IAuditable.CreatedAt)).CurrentValue = _timeProvider.GetUtcNow().UtcDateTime;
                 }
                 if (entry.State == EntityState.Modified)
                 {
-                    entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                    entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = _timeProvider.GetUtcNow().UtcDateTime;
                 }
             }
             return base.SaveChangesAsync(cancellationToken);

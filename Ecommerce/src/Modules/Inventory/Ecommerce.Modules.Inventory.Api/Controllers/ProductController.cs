@@ -16,6 +16,7 @@ using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Api.Controllers
 {
+    [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     internal class ProductController : BaseController
     {
@@ -39,7 +41,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public async Task<ActionResult> CreateProduct([FromForm] CreateProduct command)
         {
             var productId = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetProduct), new {productId}, null);
+            return CreatedAtAction(nameof(GetProduct), new {productId}, productId);
         }
         [HttpPost("import")]
         public async Task<ActionResult> ImportProducts([FromForm] ImportProducts command)

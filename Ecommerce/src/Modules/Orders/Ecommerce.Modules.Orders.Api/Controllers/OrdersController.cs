@@ -19,6 +19,7 @@ using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -30,6 +31,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Api.Controllers
 {
+    [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     internal class OrdersController : BaseController
     {
@@ -43,6 +45,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<CursorPagedResult<OrderBrowseDto, OrderCursorDto>>(HttpStatusCode.OK, result));
         }
+        [AllowAnonymous]
         [HttpGet("{orderId:guid}")]
         public async Task<ActionResult<ApiResponse<OrderDetailsDto>>> GetOrder([FromRoute]Guid orderId, CancellationToken cancellationToken = default)
             => OkOrNotFound<OrderDetailsDto, Order>(await _mediator.Send(new GetOrder(orderId), cancellationToken));
@@ -50,7 +53,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         public async Task<ActionResult> CreateDraftOrder()
         {
             var orderId = await _mediator.Send(new CreateDraftOrder());
-            return CreatedAtAction(nameof(GetOrder), new { orderId }, null);
+            return CreatedAtAction(nameof(GetOrder), new { orderId }, orderId);
         }
         [HttpPut("{orderId:guid}/submit")]
         public async Task<ActionResult> SubmitOrder([FromRoute]Guid orderId)
@@ -78,12 +81,14 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             await _mediator.Send(new EditProductUnitPrice(orderId, productId, unitPrice));
             return NoContent();
         }
+        [AllowAnonymous]
         [HttpPost("{orderId:guid}/cancel")]
         public async Task<ActionResult> CancelOrder([FromRoute] Guid orderId, CancellationToken cancellationToken = default)
         {
             await _mediator.Send(new CancelOrder(orderId), cancellationToken);
             return NoContent();
         }
+        [AllowAnonymous]
         [HttpPost("{orderId:guid}/return")]
         public async Task<ActionResult> ReturnOrder([FromRoute] Guid orderId, [FromBody]ReturnOrder command, CancellationToken cancellationToken = default)
         {
@@ -91,6 +96,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
+        [AllowAnonymous]
         [HttpPost("{orderId:guid}/submit-complaint")]
         public async Task<ActionResult> SubmitComplaint([FromRoute] Guid orderId, [FromForm]SubmitComplaint command, CancellationToken cancellationToken = default)
         {
@@ -105,6 +111,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             await _mediator.Send(new WriteAdditionalInformation(orderId, additionalInformation), cancellationToken);
             return NoContent();
         }
+        [AllowAnonymous]
         [HttpPost("/api/webhooks/v{v:apiVersion}/" + OrdersModule.BasePath + "/[controller]/order-delivered")]
         public async Task<ActionResult> InPostParcelDeliveredWebhookHandler()
         {
@@ -112,6 +119,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             await _mediator.Send(new HandleOrderDelivered(json));
             return Ok();
         }
+        [AllowAnonymous]
         [HttpPost("/api/webhooks/v{v:apiVersion}/" + OrdersModule.BasePath + "/[controller]/order-shipped")]
         public async Task<ActionResult> InPostParcelShippedWebhookHandler()
         {

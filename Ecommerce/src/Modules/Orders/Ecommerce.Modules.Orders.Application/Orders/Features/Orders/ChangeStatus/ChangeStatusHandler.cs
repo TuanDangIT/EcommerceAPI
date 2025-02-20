@@ -32,6 +32,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ChangeStatu
             }
             var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ?? 
                 throw new OrderNotFoundException(request.OrderId);
+            if (order.Status == OrderStatus.Draft)
+            {
+                throw new OrderDraftException(order.Id);
+            }
             order.ChangeStatus((OrderStatus)status!);
             await _orderRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Order: {orderId} status was changed to {status} by {@user}.", order.Id, request.Status, 

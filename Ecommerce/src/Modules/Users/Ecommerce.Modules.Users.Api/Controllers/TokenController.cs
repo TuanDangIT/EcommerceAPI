@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Api.Controllers
 {
+    [Authorize]
     [ApiVersion(1)]
     internal class TokenController : BaseController
     {

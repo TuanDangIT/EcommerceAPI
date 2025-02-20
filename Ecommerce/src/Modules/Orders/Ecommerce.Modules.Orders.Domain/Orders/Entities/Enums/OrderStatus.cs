@@ -8,6 +8,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums
 {
     public enum OrderStatus
     {
+        Draft,
         Placed,
         ParcelPacked,
         Shipped,

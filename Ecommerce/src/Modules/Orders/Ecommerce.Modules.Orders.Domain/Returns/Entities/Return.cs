@@ -16,7 +16,7 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Entities
 {
     public class Return : AggregateRoot, IAuditable
     {
-        public Order Order { get; private set; } = new();
+        public Order Order { get; private set; } = default!;
         public Guid OrderId { get; private set; }
         private readonly List<ReturnProduct> _products = [];
         public IEnumerable<ReturnProduct> Products => _products;

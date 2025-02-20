@@ -47,6 +47,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
                 .ToListAsync(cancellationToken);
             var totalCount = await _sieveProcessor
                 .Apply(request, auctions, applyPagination: false)
+                .Where(a => a.IsSold == false)
                 .CountAsync(cancellationToken);
             int pageSize = _sieveOptions.Value.DefaultPageSize;
             if (request.PageSize is not null)

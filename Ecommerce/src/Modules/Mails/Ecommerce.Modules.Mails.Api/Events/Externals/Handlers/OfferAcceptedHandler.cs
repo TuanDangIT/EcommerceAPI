@@ -44,12 +44,14 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             bodyHtml = bodyHtml.Replace("{SKU}", @event.SKU);
             bodyHtml = bodyHtml.Replace("{oldPrice}", @event.OldPrice.ToString());
             bodyHtml = bodyHtml.Replace("{offeredPrice}", @event.OfferedPrice.ToString());
+            bodyHtml = bodyHtml.Replace("{code}", @event.Code);
+            bodyHtml = bodyHtml.Replace("{expiresAt}", @event.ExpiresAt.ToString("dd/MM/yyyy"));
             await _mailService.SendAsync(new MailSendDto()
             {
                 To = customer.Email,
                 Subject = $"Offer accepted for ID: {@event.OfferId}",
                 Body = bodyHtml,
-                CustomerId = @event.CustomerId
+                CustomerId = customer.Id
             });
         }
     }

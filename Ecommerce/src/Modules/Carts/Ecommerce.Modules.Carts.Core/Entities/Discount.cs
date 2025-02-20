@@ -23,30 +23,34 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         private readonly List<Cart> _carts = [];
         public IEnumerable<Cart> Carts => _carts;
         public bool HasCustomerId => CustomerId is not null;
-        public Discount(string code, DiscountType type, decimal value, DateTime? expiresAt, string stripePromotionCodeId)
+        public Discount(string code, DiscountType type, decimal value, DateTime? expiresAt, string stripePromotionCodeId, DateTime now)
         {
+            if (value < 0)
+            {
+                throw new DiscountValueBelowZeroException();
+            }
             Code = code;
             Type = type;
             Value = value;
             StripePromotionCodeId = stripePromotionCodeId;
-            if (expiresAt is not null && expiresAt < TimeProvider.System.GetUtcNow().UtcDateTime)
+            if (expiresAt is not null && expiresAt < now)
             {
                 throw new DiscountInvalidExpiresAtDateException((DateTime)expiresAt!);
             }
             ExpiresAt = expiresAt;
         }
-        public Discount(string code, string sku, decimal value, Guid customerId, DateTime expiresAt)
+        public Discount(string code, string sku, decimal value, Guid customerId, DateTime expiresAt, DateTime now)
         {
-            if(value >= 0)
+            if(value < 0)
             {
-                throw new PropertyValueBelowOrEqualZeroException(nameof(Discount));
+                throw new DiscountValueBelowZeroException();
             }
             Code = code;
             Type = DiscountType.NominalDiscount;
             SKU = sku;
             Value = value;
             CustomerId = customerId;
-            if (expiresAt < TimeProvider.System.GetUtcNow().UtcDateTime)
+            if (expiresAt < now)
             {
                 throw new DiscountInvalidExpiresAtDateException(expiresAt!);
             }

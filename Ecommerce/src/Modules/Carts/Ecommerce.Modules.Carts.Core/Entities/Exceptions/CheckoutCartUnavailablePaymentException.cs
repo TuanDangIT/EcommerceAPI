@@ -7,10 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Entities.Exceptions
 {
-    internal class PropertyValueBelowOrEqualZeroException : EcommerceException
+    internal class CheckoutCartUnavailablePaymentException(string payment) : EcommerceException($"Given payment: {payment} is currently not active.")
     {
-        public PropertyValueBelowOrEqualZeroException(string propertyName) : base($"{propertyName}'s value must be higher than 0.")
-        {
-        }
     }
 }

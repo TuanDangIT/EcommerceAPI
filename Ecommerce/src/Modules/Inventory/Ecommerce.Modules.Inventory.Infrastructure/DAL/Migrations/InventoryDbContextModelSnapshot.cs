@@ -48,6 +48,9 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
+                    b.Property<bool>("IsSold")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Manufacturer")
                         .HasColumnType("text");
 

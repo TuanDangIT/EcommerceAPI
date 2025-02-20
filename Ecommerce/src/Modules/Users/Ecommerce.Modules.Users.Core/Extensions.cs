@@ -15,13 +15,14 @@ using Microsoft.Extensions.Configuration;
 using Sieve.Models;
 using Sieve.Services;
 using Ecommerce.Modules.Users.Core.Sieve;
+using Ecommerce.Shared.Infrastructure.BackgroundServices;
+using Ecommerce.Modules.Users.Core.BackgroundServices;
 
 [assembly: InternalsVisibleTo("Ecommerce.Modules.Users.Api")]
 namespace Ecommerce.Modules.Users.Core
 {
     internal static class Extensions
     {
-        private const string _sieveSectionName = "Sieve";
         public static IServiceCollection AddCore(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
@@ -34,7 +35,7 @@ namespace Ecommerce.Modules.Users.Core
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddPostgres<UsersDbContext>();
-            //services.Configure<SieveOptions>(configuration.GetSection(_sieveSectionName));
+            services.AddHostedService<AddAdmin>();
             services.AddScoped<ISieveProcessor, UsersModuleSieveProcessor>();
             return services;
         }

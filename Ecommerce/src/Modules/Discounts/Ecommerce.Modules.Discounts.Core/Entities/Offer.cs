@@ -38,22 +38,22 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
         {
             
         }
-        public void Accept(DateTime expiresAt)
+        public void Accept(DateTime expiresAt, DateTime now)
         {
             if(Status is OfferStatus.Accepted)
             {
                 throw new OfferCannotAcceptException(Id);
             }
             Status = OfferStatus.Accepted;
-            SetExpiresTime(expiresAt);
+            SetExpiresTime(expiresAt, now);
         }
         public void Reject()
             => Status = OfferStatus.Rejected;
         public void SetCode(string code)
             => Code = code;
-        public void SetExpiresTime(DateTime expiresAt)
+        public void SetExpiresTime(DateTime expiresAt, DateTime now)
         {
-            if(expiresAt < TimeProvider.System.GetUtcNow().UtcDateTime)
+            if(expiresAt < now)
             {
                 throw new OfferInvalidExpiresAtException(expiresAt);
             }

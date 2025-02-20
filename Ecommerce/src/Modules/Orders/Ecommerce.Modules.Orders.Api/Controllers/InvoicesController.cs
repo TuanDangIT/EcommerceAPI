@@ -7,6 +7,7 @@ using Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.DownloadInvoi
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,6 +20,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Api.Controllers
 {
+    [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     internal class InvoiceController : BaseController
     {

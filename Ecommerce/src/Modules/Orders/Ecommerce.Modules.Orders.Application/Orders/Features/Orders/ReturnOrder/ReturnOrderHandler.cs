@@ -42,14 +42,19 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
                 query => query.Include(o => o.Products),
                 query => query.Include(o => o.Customer)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
+
             var orderStatus = order.Status;
+            if (orderStatus == OrderStatus.Draft)
+            {
+                throw new OrderDraftException(order.Id);
+            }
+            if (orderStatus == OrderStatus.ReturnRejected)
+            {
+                throw new OrderCannotReturnRejectedReturnException();
+            }
             if(!await _orderReturnPolicy.CanReturn(order))
             {
                 throw new OrderCannotReturnException("Cannot return an order after 14 days of placing it.");
-            }
-            if(orderStatus == OrderStatus.ReturnRejected)
-            {
-                throw new OrderCannotReturnRejectedReturnException();
             }
             var returnProducts = order.Products
                 .Where(p => request.ProductsToReturn.Select(ptr => ptr.ProductId).Contains(p.Id))

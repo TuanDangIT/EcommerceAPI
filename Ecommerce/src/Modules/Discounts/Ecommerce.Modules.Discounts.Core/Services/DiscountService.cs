@@ -34,9 +34,10 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         private readonly IMessageBroker _messageBroker;
         private readonly ILogger<DiscountService> _logger;
         private readonly IContextService _contextService;
+        private readonly TimeProvider _timeProvider;
 
         public DiscountService(IDiscountDbContext dbContext, IPaymentProcessorService paymentProcessorService, IEnumerable<ISieveProcessor> sieveProcessors, IMessageBroker messageBroker,
-            ILogger<DiscountService> logger, IContextService contextService)
+            ILogger<DiscountService> logger, IContextService contextService, TimeProvider timeProvider)
         {
             _dbContext = dbContext;
             _paymentProcessorService = paymentProcessorService;
@@ -44,6 +45,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             _messageBroker = messageBroker;
             _logger = logger;
             _contextService = contextService;
+            _timeProvider = timeProvider;
         }
 
         public async Task<PagedResult<DiscountBrowseDto>> BrowseDiscountsAsync(string stripeCouponId, SieveModel model, CancellationToken cancellationToken = default)
@@ -84,7 +86,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             var coupon = await _dbContext.Coupons.SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId, cancellationToken) ?? 
                 throw new CouponNotFoundException(stripeCouponId);
             var stripePromotionCodeId = await _paymentProcessorService.CreateDiscountAsync(stripeCouponId, dto, cancellationToken);
-            coupon.AddDiscount(new Discount(dto.Code, stripePromotionCodeId, dto.EndingDate));
+            coupon.AddDiscount(new Discount(dto.Code, stripePromotionCodeId, dto.EndingDate, _timeProvider.GetUtcNow().DateTime));
             await _dbContext.SaveChangesAsync();
             _logger.LogInformation("Discount with given details: {@discount} was created for coupon: {coupon} by {@user}.", dto, coupon.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });

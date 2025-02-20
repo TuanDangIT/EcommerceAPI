@@ -60,6 +60,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
             var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
                 query => query.Include(o => o.Customer)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
+            if(order.Status == Domain.Orders.Entities.Enums.OrderStatus.Draft)
+            {
+                throw new OrderDraftException(order.Id);
+            }
             if (order.HasInvoice)
             {
                 throw new InvoiceAlreadyCreatedException(order.Id);

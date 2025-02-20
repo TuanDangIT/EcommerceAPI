@@ -39,6 +39,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
                 query => query.Include(o => o.Products),
                 query => query.Include(o => o.Customer)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
+            if (order.Status == Domain.Orders.Entities.Enums.OrderStatus.Draft)
+            {
+                throw new OrderDraftException(order.Id);
+            }
             if (!await _orderCancellationPolicy.CanCancel(order))
             {
                 throw new OrderCannotCancelException();

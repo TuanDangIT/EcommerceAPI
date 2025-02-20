@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities.ValueObjects
             StreetNumber = streetNumber;
             AparmentNumber = apartmentNumber;
         }
-        public Shipment()
+        private Shipment()
         {
 
         }

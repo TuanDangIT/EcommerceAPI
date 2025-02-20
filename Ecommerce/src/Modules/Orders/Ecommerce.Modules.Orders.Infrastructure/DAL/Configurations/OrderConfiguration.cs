@@ -35,7 +35,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
             });
             builder.OwnsOne(o => o.Discount, d =>
             {
-                d.Property(d => d.Type).IsRequired();
+                d.Property(d => d.Type).IsRequired().HasConversion<string>();
                 d.Property(d => d.Code).IsRequired().HasMaxLength(48);
                 d.Property(d => d.SKU).HasMaxLength(16);
             });

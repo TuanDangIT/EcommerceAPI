@@ -20,11 +20,11 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
         public int CouponId { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        public Discount(string code, string stripePromotionCodeId, DateTime? expiresAt)
+        public Discount(string code, string stripePromotionCodeId, DateTime? expiresAt, DateTime now)
         {
             Code = code;
             StripePromotionCodeId = stripePromotionCodeId;
-            if(expiresAt is not null && expiresAt < TimeProvider.System.GetUtcNow().UtcDateTime)
+            if(expiresAt is not null && expiresAt < now)
             {
                 throw new DiscountInvalidExpiresAtDateException((DateTime)expiresAt!);
             }

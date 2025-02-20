@@ -34,10 +34,12 @@ namespace Ecommerce.Modules.Carts.Core.Scheduler
         }
         public async Task Invoke()
         {
+            var now = _timeProvider.GetUtcNow();
             var carts = await _dbContext.Carts
                 .Include(c => c.Products)
                 .ThenInclude(cp => cp.Product)
-                .Where(c => c.UpdatedAt + TimeSpan.FromDays(_cartOptions.LifeTime) <= _timeProvider.GetUtcNow())
+                .Where(c => (c.UpdatedAt != null && (c.UpdatedAt + TimeSpan.FromDays(_cartOptions.LifeTime)).Value <= now) ||
+                    (c.UpdatedAt == null && (c.CreatedAt + TimeSpan.FromDays(_cartOptions.LifeTime * 2)) <= now))
                 .ToListAsync();
             if (carts.Count == 0)
             {
@@ -47,24 +49,10 @@ namespace Ecommerce.Modules.Carts.Core.Scheduler
             var products = carts.SelectMany(c => c.Products)
                 .GroupBy(cp => cp.ProductId)
                 .ToDictionary(g => g.Key, g => g.Sum(cp => cp.Quantity));
-            //foreach(var cart in carts)
-            //{
-            //    foreach(var product in cart.Products)
-            //    {
-            //        if (!product.Product.HasQuantity)
-            //        {
-            //            continue;
-            //        }
-            //        if (products.ContainsKey(product.ProductId))
-            //        {
-            //            products[product.ProductId] += product.Quantity;
-            //        }
-            //        else
-            //        {
-            //            products[product.ProductId] = product.Quantity;
-            //        }
-            //    }
-            //}
+            foreach (var cart in carts)
+            {
+                cart.Clear();
+            }
             if (products.Count > 0)
             {
                 await _messageBroker.PublishAsync(new ProductsUnreserved(products));

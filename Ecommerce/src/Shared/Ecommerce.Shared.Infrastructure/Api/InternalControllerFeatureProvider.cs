@@ -13,11 +13,6 @@ namespace Ecommerce.Shared.Infrastructure.Api
     {
         protected override bool IsController(TypeInfo typeInfo)
         {
-            //Console.WriteLine(typeInfo.Name);
-            //if (typeInfo.Name == "FirstDataController")
-            //{
-            //    Console.WriteLine("Found");
-            //}
             if (!typeInfo.IsClass)
             {
                 return false;

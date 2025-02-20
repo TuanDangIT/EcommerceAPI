@@ -13,6 +13,7 @@ using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Api.Controllers
 {
+    [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     internal class ComplaintsController : BaseController
     {
@@ -30,14 +32,15 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         {
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>>> BrowseOrders([FromQuery] BrowseComplaints query, 
+        public async Task<ActionResult<ApiResponse<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>>> BrowseComplaints([FromQuery] BrowseComplaints query, 
             CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>(HttpStatusCode.OK, result));
         }
+        [AllowAnonymous]
         [HttpGet("{complaintId:guid}")]
-        public async Task<ActionResult<ApiResponse<ComplaintDetailsDto>>> GetOrder([FromRoute] Guid complaintId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResponse<ComplaintDetailsDto>>> GetComplaint([FromRoute] Guid complaintId, CancellationToken cancellationToken = default)
             => OkOrNotFound<ComplaintDetailsDto, Complaint>(await _mediator.Send(new GetComplaint(complaintId), cancellationToken));
         [HttpPost("{complaintId:guid}/approve")]
         public async Task<ActionResult> ApproveComplaint([FromRoute] Guid complaintId, [FromForm] ApproveComplaint command, 

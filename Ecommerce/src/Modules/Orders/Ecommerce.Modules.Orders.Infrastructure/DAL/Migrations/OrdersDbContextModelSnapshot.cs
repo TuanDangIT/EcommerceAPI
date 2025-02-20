@@ -161,9 +161,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsDraft")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Payment")
                         .IsRequired()
                         .HasColumnType("text");
@@ -503,8 +500,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                 .HasMaxLength(16)
                                 .HasColumnType("character varying(16)");
 
-                            b1.Property<int>("Type")
-                                .HasColumnType("integer");
+                            b1.Property<string>("Type")
+                                .IsRequired()
+                                .HasColumnType("text");
 
                             b1.Property<decimal?>("Value")
                                 .HasColumnType("numeric");

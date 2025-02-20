@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace Ecommerce.Modules.Carts.Core.DTO
 {
     public class CustomerDto
     {
+        [SwaggerIgnore]
         public Guid? CustomerId { get; set; }
         [Required]
         [Length(2, 48)]

@@ -39,6 +39,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
                 query => query.Include(o => o.Customer),
                 query => query.Include(o => o.Shipments)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
+            if (order.Status == Domain.Orders.Entities.Enums.OrderStatus.Draft)
+            {
+                throw new OrderDraftException(order.Id);
+            }
             var receiver = new Receiver(order.Customer.FirstName, order.Customer.LastName, order.Customer.Email, order.Customer.PhoneNumber, order.Customer.Address);
             var parcels = request.Parcels.Select(p =>
             {

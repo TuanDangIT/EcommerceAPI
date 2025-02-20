@@ -13,6 +13,7 @@ using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Api.Controllers
 {
+    [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     internal class ReturnsController : BaseController
     {
@@ -30,12 +32,13 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         {
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>>> BrowseOrders([FromQuery] BrowseReturns query, 
+        public async Task<ActionResult<ApiResponse<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>>> BrowseReturns([FromQuery] BrowseReturns query, 
             CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>(HttpStatusCode.OK, result));
         }
+        [AllowAnonymous]
         [HttpGet("{returnId:guid}")]
         public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> GetReturn([FromRoute] Guid returnId, CancellationToken cancellationToken = default)
             => OkOrNotFound<ReturnDetailsDto, Return>(await _mediator.Send(new GetReturn(returnId), cancellationToken));

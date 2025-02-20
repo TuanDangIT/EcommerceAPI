@@ -18,7 +18,6 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public Customer Customer { get; private set; } = default!;
         private readonly List<Product> _products = [];
         public IEnumerable<Product> Products => _products;
-        public bool IsDraft { get; private set; }
         public decimal TotalSum { get; private set; }
         public PaymentMethod Payment { get; private set; }
         public OrderStatus Status { get; private set; } = OrderStatus.Placed;
@@ -51,7 +50,6 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
                 throw new OrderShippingPriceBelowZeroException();
             }
             Id = id;
-            IsDraft = false;
             Customer = customer;
             _products = products.ToList();
             Payment = paymentMethod;
@@ -62,7 +60,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             StripePaymentIntentId = stripePaymentIntentId;
             TotalSum = totalSum;
         }
-        public Order()
+        private Order()
         {
             
         }
@@ -70,15 +68,15 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             => new()
             {
                 Id = orderId,
-                IsDraft = true
+                Status = OrderStatus.Draft
             };
         public void Submit()
         {
-            if(IsDraft is false)
+            if(Status != OrderStatus.Draft)
             {
                 throw new OrderCannotSubmitException();
             }
-            IsDraft = false;
+            ChangeStatus(OrderStatus.Placed);
         }
         public void AddShipment(Shipment shipment)
         {

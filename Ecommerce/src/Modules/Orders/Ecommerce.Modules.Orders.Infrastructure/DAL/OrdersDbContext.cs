@@ -22,9 +22,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         private const string _schema = "orders";
-        public OrdersDbContext(DbContextOptions<OrdersDbContext> options) : base(options)
+        private readonly TimeProvider _timeProvider;
+
+        public OrdersDbContext(DbContextOptions<OrdersDbContext> options, TimeProvider timeProvider) : base(options)
         {
-            
+            _timeProvider = timeProvider;
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,11 +40,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Property(nameof(IAuditable.CreatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                    entry.Property(nameof(IAuditable.CreatedAt)).CurrentValue = _timeProvider.GetUtcNow().UtcDateTime;
                 }
                 if (entry.State == EntityState.Modified)
                 {
-                    entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                    entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = _timeProvider.GetUtcNow().UtcDateTime;
                 }
             }
             return base.SaveChangesAsync(true, cancellationToken);

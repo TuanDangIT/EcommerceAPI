@@ -4,6 +4,7 @@ using Ecommerce.Modules.Users.Core.Entities;
 using Ecommerce.Modules.Users.Core.Services;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -19,6 +20,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Api.Controllers
 {
+    [Authorize]
     [ApiVersion(1)]
     internal class CustomerController : BaseController
     {
@@ -28,12 +30,14 @@ namespace Ecommerce.Modules.Users.Api.Controllers
         {
             _customerService = customerService;
         }
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedResult<CustomerBrowseDto>>>> BrowseCustomers([FromQuery] SieveModel model)
             => PagedResult(await _customerService.BrowseAsync(model));
         [HttpGet("{customerId:guid}")]
         public async Task<ActionResult<ApiResponse<CustomerDetailsDto>>> GetCustomer([FromRoute] Guid customerId)
             => OkOrNotFound(await _customerService.GetAsync(customerId), nameof(Customer));
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [HttpDelete("{customerId:guid}")]
         public async Task<ActionResult> DeleteCustomer([FromRoute] Guid customerId)
         {
@@ -47,6 +51,7 @@ namespace Ecommerce.Modules.Users.Api.Controllers
             await _customerService.UpdateAsync(dto);
             return NoContent();
         }
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [HttpPost("{customerId:guid}/activate")]
         public async Task<ActionResult> ActivateCustomer([FromRoute] Guid customerId)
         {

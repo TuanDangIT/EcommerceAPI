@@ -16,9 +16,11 @@ namespace Ecommerce.Modules.Discounts.Core.DAL
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Coupon> Coupons { get; set; }
         private const string _schema = "discounts";
-        public DiscountsDbContext(DbContextOptions<DiscountsDbContext> options) : base(options)
+        private readonly TimeProvider _timeProvider;
+
+        public DiscountsDbContext(DbContextOptions<DiscountsDbContext> options, TimeProvider timeProvider) : base(options)
         {
-            
+            _timeProvider = timeProvider;
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,11 +35,11 @@ namespace Ecommerce.Modules.Discounts.Core.DAL
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Property(nameof(IAuditable.CreatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                    entry.Property(nameof(IAuditable.CreatedAt)).CurrentValue = _timeProvider.GetUtcNow().UtcDateTime;
                 }
                 if (entry.State == EntityState.Modified)
                 {
-                    entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                    entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = _timeProvider.GetUtcNow().UtcDateTime;
                 }
             }
             return base.SaveChangesAsync(cancellationToken);

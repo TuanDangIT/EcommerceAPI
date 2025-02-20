@@ -14,8 +14,8 @@ namespace Ecommerce.Shared.Infrastructure.Exceptions
     internal class ExceptionToResponseMapper : IExceptionToResponseMapper
     {
         private readonly IContextService _contextService;
-        private const string BadRequestTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.1";
-        private const string ServerErrorTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.6.1";
+        private const string _badRequestTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.1";
+        private const string _serverErrorTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.6.1";
         public ExceptionToResponseMapper(IContextService contextService)
         {
             _contextService = contextService;
@@ -25,7 +25,7 @@ namespace Ecommerce.Shared.Infrastructure.Exceptions
             {
                 ValidationException e => new ValidationProblemDetails()
                 {
-                    Type = BadRequestTypeUrl,
+                    Type = _badRequestTypeUrl,
                     Title = "An validation exception occured.",
                     Status = (int)HttpStatusCode.BadRequest,
                     Errors = e.Errors,
@@ -33,14 +33,14 @@ namespace Ecommerce.Shared.Infrastructure.Exceptions
                 },
                 EcommerceException e => new ProblemDetails()
                 {
-                    Type = BadRequestTypeUrl,
+                    Type = _badRequestTypeUrl,
                     Title = "An exception occured.",
                     Status = (int)HttpStatusCode.BadRequest,
                     Detail = e.Message,
                 },
                 Exception e => new ProblemDetails()
                 {
-                    Type = ServerErrorTypeUrl,
+                    Type = _serverErrorTypeUrl,
                     Title = "There was a server error",
                     Status = (int)HttpStatusCode.InternalServerError,
                     Detail = e.Message

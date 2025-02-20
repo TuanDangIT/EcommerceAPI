@@ -3,6 +3,7 @@ using Ecommerce.Modules.Carts.Core.DTO;
 using Ecommerce.Modules.Carts.Core.Entities;
 using Ecommerce.Modules.Carts.Core.Services;
 using Ecommerce.Shared.Abstractions.Api;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -28,7 +29,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         public async Task<ActionResult> CreateCart()
         {
             var cartId = await _cartService.CreateAsync();
-            return CreatedAtAction(nameof(GetCart), new { cartId }, null);
+            return CreatedAtAction(nameof(GetCart), new { cartId }, cartId);
         }
         [HttpGet("{cartId:guid}")]
         public async Task<ActionResult<ApiResponse<CartDto?>>> GetCart([FromRoute]Guid cartId, CancellationToken cancellationToken)
@@ -73,7 +74,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         public async Task<ActionResult> Checkout([FromRoute]Guid cartId, CancellationToken cancellationToken)
         {
             var checkoutCartId = await _cartService.CheckoutAsync(cartId, cancellationToken);
-            return CreatedAtAction(nameof(CheckoutCartController.GetCheckoutCart), typeof(CheckoutCart).Name, new { checkoutCartId }, null);
+            return CreatedAtAction(nameof(CheckoutCartController.GetCheckoutCart), typeof(CheckoutCart).Name, new { checkoutCartId }, checkoutCartId);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
         public string Name { get; private set; } = string.Empty;
         public decimal Price { get; private set; }
         public int? Quantity { get; private set; }
-        public bool IsSold => Quantity == 0;
+        public bool IsSold { get; set; } = false;
         public bool HasQuantity => Quantity != null;
         public string Description { get; private set; } = string.Empty;
         public string? AdditionalDescription { get; private set; }
@@ -66,6 +66,10 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
                 throw new AuctionQuantityBelowZeroException();
             }
             Quantity -= quantity;
+            if(Quantity == 0)
+            {
+                IsSold = true;
+            }
             IncrementVersion();
         }
         public void IncreaseQuantity(int quantity)
@@ -75,6 +79,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
                 throw new AuctionInvalidChangeOfQuantityException();
             }
             Quantity += quantity;
+            IsSold = false;
             IncrementVersion();
         }
         public void ChangePrice(decimal price)

@@ -16,13 +16,17 @@ namespace Ecommerce.Modules.Carts.Core.Events.External.Handlers
     {
         private readonly ICartsDbContext _dbContext;
         private readonly ILogger<DiscountActivatedHandler> _logger;
+        private readonly TimeProvider _timeProvider;
         private const string _nominalCouponType = "NominalCoupon";
         private const string _percentageCouponType = "PercentageCoupon";
+      
 
-        public DiscountActivatedHandler(ICartsDbContext dbContext, ILogger<DiscountActivatedHandler> logger)
+        public DiscountActivatedHandler(ICartsDbContext dbContext, ILogger<DiscountActivatedHandler> logger,
+            TimeProvider timeProvider)
         {
             _dbContext = dbContext;
             _logger = logger;
+            _timeProvider = timeProvider;
         }
         public async Task HandleAsync(DiscountActivated @event)
         {
@@ -36,11 +40,13 @@ namespace Ecommerce.Modules.Carts.Core.Events.External.Handlers
             {
                 case _nominalCouponType:
                     await _dbContext.Discounts
-                        .AddAsync(new Entities.Discount(@event.Code, DiscountType.NominalDiscount, @event.Value, @event.ExpiresAt, @event.StripePromotionCodeId));
+                        .AddAsync(new Entities.Discount(@event.Code, DiscountType.NominalDiscount, @event.Value, @event.ExpiresAt, 
+                        @event.StripePromotionCodeId, _timeProvider.GetUtcNow().DateTime));
                     break;
                 case _percentageCouponType:
                     await _dbContext.Discounts
-                        .AddAsync(new Entities.Discount(@event.Code, DiscountType.PercentageDiscount, @event.Value, @event.ExpiresAt, @event.StripePromotionCodeId));
+                        .AddAsync(new Entities.Discount(@event.Code, DiscountType.PercentageDiscount, @event.Value, @event.ExpiresAt,
+                        @event.StripePromotionCodeId, _timeProvider.GetUtcNow().DateTime));
                     break;
             }
             await _dbContext.SaveChangesAsync();

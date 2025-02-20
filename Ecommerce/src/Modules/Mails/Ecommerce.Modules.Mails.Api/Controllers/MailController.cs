@@ -4,6 +4,7 @@ using Ecommerce.Modules.Mails.Api.Services;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.ModelBinders;
 using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Routing;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Mails.Api.Controllers
 {
+    [Authorize(Roles = "Admin, Manager, Employee")]
     [EnableRateLimiting("fixed-by-ip")]
     [ApiVersion(1)]
     [ApiController]

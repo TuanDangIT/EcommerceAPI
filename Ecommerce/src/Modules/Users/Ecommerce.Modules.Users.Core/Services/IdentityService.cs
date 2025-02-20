@@ -43,9 +43,9 @@ namespace Ecommerce.Modules.Users.Core.Services
             _contextService = contextService;
         }
 
-        public async Task<JsonWebToken> SignInAsync(SignInDto dto)
+        public async Task<JsonWebToken> SignInAsync(SignInDto dto, CancellationToken cancellationToken = default)
         {
-            var user = await _userRepository.GetByEmailAsync(dto.Email);
+            var user = await _userRepository.GetByEmailAsync(dto.Email, cancellationToken, u => u.Role);
             var now = _timeProvider.GetUtcNow().UtcDateTime;
             if (user is null)
             {
@@ -59,7 +59,7 @@ namespace Ecommerce.Modules.Users.Core.Services
             if(passwordResult is PasswordVerificationResult.Failed)
             {
                 user.SignInFailed();
-                await _userRepository.UpdateAsync();
+                await _userRepository.UpdateAsync(cancellationToken);
                 throw new InvalidCredentialsException();
             }
             if(user.IsActive is false)
@@ -76,7 +76,7 @@ namespace Ecommerce.Modules.Users.Core.Services
             }
             var jwt = _authManager.GenerateAccessToken(user.Id.ToString(), user.Username, user.Role.Name);
             var generatedRefreshToken = _authManager.GenerateRefreshToken();
-            var refreshToken = await _userRepository.AddRefreshTokenAsync(user, generatedRefreshToken);
+            var refreshToken = await _userRepository.AddRefreshTokenAsync(user, generatedRefreshToken, cancellationToken);
             jwt.RefreshTokenExpiryTime = refreshToken.RefreshTokenExpiryTime;
             jwt.RefreshToken = refreshToken.Token;
             _logger.LogInformation("User: {@user} signed in.", dto);
@@ -107,12 +107,12 @@ namespace Ecommerce.Modules.Users.Core.Services
             string accessToken = dto.AccessToken;
             string refreshToken = dto.RefreshToken;
             var principal = _authManager.GetPrincipalFromExpiredToken(accessToken);
-            var user = await _userRepository.GetByIdAsync(Guid.Parse(principal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)!.Value), cancellationToken);
+            var user = await _userRepository.GetByIdAsync(Guid.Parse(principal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)!.Value), cancellationToken, u => u.Role);
             if (user is null || user.RefreshToken is null || user.RefreshToken.Token != refreshToken || user.RefreshToken.RefreshTokenExpiryTime <= _timeProvider.GetUtcNow().UtcDateTime)
             {
                 throw new InvalidRefreshToken();
             }
-            var jwt = _authManager.GenerateAccessToken(user.Id.ToString(), user.Username);
+            var jwt = _authManager.GenerateAccessToken(user.Id.ToString(), user.Username, user.Role.Name);
             var generatedRefreshToken = _authManager.GenerateRefreshToken();
             var newRefreshToken = await _userRepository.AddRefreshTokenAsync(user, generatedRefreshToken, cancellationToken);
             jwt.RefreshTokenExpiryTime = newRefreshToken.RefreshTokenExpiryTime;
@@ -126,7 +126,7 @@ namespace Ecommerce.Modules.Users.Core.Services
         }
         public async Task<UserDto?> GetAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var user = await _userRepository.GetByIdAsync(id, cancellationToken);
+            var user = await _userRepository.GetByIdAsync(id, cancellationToken, u => u.Role);
             return user is null ? null : new UserDto()
             {
                 Id = user.Id,

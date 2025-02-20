@@ -24,6 +24,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 .AsNoTracking()
                 .Include(o => o.Products)
                 .Include(o => o.Shipments)
+                .Include(o => o.Customer)
                 .Where(o => o.Id == request.OrderId)
                 .Select(o => o.AsDetailsDto())
                 .SingleOrDefaultAsync(cancellationToken);

@@ -4,6 +4,7 @@ using Ecommerce.Modules.Discounts.Core.Entities;
 using Ecommerce.Modules.Discounts.Core.Services;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sieve.Models;
 using System;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Api.Controllers
 {
+    [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     internal class DiscountController : BaseController
     {

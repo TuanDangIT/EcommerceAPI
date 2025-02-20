@@ -58,6 +58,10 @@ namespace Ecommerce.Modules.Carts.Core.Services
         {
             var checkoutCart = await GetCheckoutCartOrThrowIfNullAsync(checkoutCartId, cancellationToken,
                 cc => cc.Payment, cc => cc.Discount);
+            if (checkoutCart.IsPaid)
+            {
+                throw new CheckoutCartAlreadyPaidException(checkoutCartId);
+            }
             if(checkoutCart.Shipment is null || checkoutCart.Payment is null)
             {
                 throw new CheckoutCartInvalidPlaceOrderException();
@@ -197,6 +201,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 PaymentMethod = checkoutCart.Payment!.PaymentMethod.ToString(),
                 AdditionalInformation = checkoutCart.AdditionalInformation,
                 DiscountCode = checkoutCart.Discount?.Code,
+                DiscountType = checkoutCart.Discount?.Type.ToString(),
                 StripePaymentIntentId = checkoutCart.StripePaymentIntentId!
             });
             if(checkoutCart.Discount is not null)

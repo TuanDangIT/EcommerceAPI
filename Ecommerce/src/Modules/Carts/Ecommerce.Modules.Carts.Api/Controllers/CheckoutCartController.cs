@@ -65,18 +65,6 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             var checkoutUrl = await _checkoutCartService.PlaceOrderAsync(checkoutCartId, cancellationToken);
             return Ok(new ApiResponse<CheckoutStripeSessionDto>(HttpStatusCode.OK, checkoutUrl));
         }
-        //[HttpPut("{checkoutCartId:guid}/discount")]
-        //public async Task<ActionResult> AddDiscount([FromRoute] Guid checkoutCartId, [FromBody] string code, CancellationToken cancellationToken)
-        //{
-        //    await _checkoutCartService.AddDiscountAsync(checkoutCartId, code, cancellationToken);
-        //    return NoContent();
-        //}
-        //[HttpDelete("{checkoutCartId:guid}/discount")]
-        //public async Task<ActionResult> RemoveDiscount([FromRoute] Guid checkoutCartId, CancellationToken cancellationToken)
-        //{
-        //    await _checkoutCartService.RemoveDiscountAsync(checkoutCartId, cancellationToken);
-        //    return NoContent();
-        //}
         [HttpPost("/api/webhooks/v{v:apiVersion}/" + CartsModule.BasePath + "/[controller]/checkout-session-completed")]
         public async Task<ActionResult> HandleCheckoutSessionCompleted()
         {

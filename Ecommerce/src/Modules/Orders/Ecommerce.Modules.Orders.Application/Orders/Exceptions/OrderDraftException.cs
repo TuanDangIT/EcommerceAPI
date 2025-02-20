@@ -7,10 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Exceptions
 {
-    internal class InvalidDiscountTypeException : EcommerceException
+    public class OrderDraftException(Guid orderId) : EcommerceException($"This operation cannot be completed because order: {orderId} is still in draft status.")
     {
-        public InvalidDiscountTypeException() : base("Given discount type was invalid.")
-        {
-        }
     }
 }

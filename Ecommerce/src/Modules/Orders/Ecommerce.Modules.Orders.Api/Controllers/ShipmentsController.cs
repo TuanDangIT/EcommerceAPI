@@ -15,9 +15,11 @@ using Stripe.Entitlements;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.DeleteShipment;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.DownloadLabel;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateShipment;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Ecommerce.Modules.Orders.Api.Controllers
 {
+    [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     [Route("/api/v{v:apiVersion}/" + OrdersModule.BasePath + "/orders/{orderId:guid}/[controller]")]
     internal class ShipmentsController : BaseController

@@ -3,6 +3,7 @@ using Ecommerce.Modules.Carts.Core.DTO;
 using Ecommerce.Modules.Carts.Core.Entities;
 using Ecommerce.Modules.Carts.Core.Services;
 using Ecommerce.Shared.Abstractions.Api;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Api.Controllers
 {
+    [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     internal class PaymentController : BaseController
     {
@@ -28,6 +30,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             var payments = await _paymentService.BrowseAsync(cancellationToken);
             return Ok(new ApiResponse<IEnumerable<PaymentDto>>(HttpStatusCode.OK, payments));
         }
+        [AllowAnonymous]
         [HttpGet("available")]
         public async Task<ActionResult<ApiResponse<IEnumerable<PaymentDto>>>> BrowseAvailablePayments(CancellationToken cancellationToken)
         {

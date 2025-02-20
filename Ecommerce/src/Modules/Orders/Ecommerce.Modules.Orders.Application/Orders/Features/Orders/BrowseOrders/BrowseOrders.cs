@@ -21,5 +21,6 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrder
     {
         [ModelBinder(BinderType = typeof(DictionaryModelBinder))]
         public Dictionary<string, string>? Filters { get; set; }
+        public Guid? CustomerId { get; set; }
     };
 }

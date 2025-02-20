@@ -43,7 +43,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
             {
                 if (!Enum.TryParse(typeof(DiscountType), @event.DiscountType, out var discountType))
                 {
-                    throw new InvalidDiscountTypeException();
+                    throw new DiscountInvalidTypeException();
                 }
                 discount = new Discount((DiscountType)discountType, @event.DiscountCode!, @event.DiscountValue, @event.DiscountSku);
             }

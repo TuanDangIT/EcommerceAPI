@@ -31,8 +31,6 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
         public void AddDiscount(Discount discount)
             => _discounts.Add(discount);
         public void ChangeName(string name)
-        {
-            Name = name;
-        }
+            => Name = name;
     }
 }

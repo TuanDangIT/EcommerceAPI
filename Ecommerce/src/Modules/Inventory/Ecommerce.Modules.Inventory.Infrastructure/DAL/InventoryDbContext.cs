@@ -21,9 +21,11 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL
         public DbSet<Auction> Auctions { get; set; }
         public DbSet<Review> Reviews { get; set; }
         private const string _schema = "inventory";
-        public InventoryDbContext(DbContextOptions<InventoryDbContext> options) : base(options)
+        private readonly TimeProvider _timeProvider;
+
+        public InventoryDbContext(DbContextOptions<InventoryDbContext> options, TimeProvider timeProvider) : base(options)
         {
-            
+            _timeProvider = timeProvider;
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,11 +39,11 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Property(nameof(IAuditable.CreatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                    entry.Property(nameof(IAuditable.CreatedAt)).CurrentValue = _timeProvider.GetUtcNow().UtcDateTime;
                 }
                 if (entry.State == EntityState.Modified)
                 {
-                    entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                    entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = _timeProvider.GetUtcNow().UtcDateTime;
                 }
             }
             return base.SaveChangesAsync(true, cancellationToken);

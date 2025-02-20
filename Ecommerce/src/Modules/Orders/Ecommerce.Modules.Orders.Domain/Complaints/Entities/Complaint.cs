@@ -13,7 +13,7 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
 {
     public class Complaint : AggregateRoot, IAuditable
     {
-        public Order Order { get; private set; } = new();
+        public Order Order { get; private set; } = default!;
         public Guid OrderId { get; private set; }
         public string Title { get; private set; } = string.Empty;
         public string Description { get; private set; } = string.Empty;

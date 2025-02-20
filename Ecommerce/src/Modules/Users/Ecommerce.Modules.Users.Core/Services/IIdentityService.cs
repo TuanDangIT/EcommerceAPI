@@ -10,7 +10,7 @@ namespace Ecommerce.Modules.Users.Core.Services
 {
     public interface IIdentityService
     {
-        Task<JsonWebToken> SignInAsync(SignInDto dto);
+        Task<JsonWebToken> SignInAsync(SignInDto dto, CancellationToken cancellationToken = default);
         Task SignUpAsync(SignUpDto dto, CancellationToken cancellationToken = default);
         Task<UserDto?> GetAsync(Guid id, CancellationToken cancellationToken = default);
         Task<JsonWebToken> RefreshTokenAsync(TokenDto dto, CancellationToken cancellationToken = default);

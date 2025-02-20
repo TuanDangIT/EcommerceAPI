@@ -5,12 +5,14 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
+[assembly: InternalsVisibleTo("Ecommerce.Modules.Carts.Tests.Unit")]
 namespace Ecommerce.Modules.Carts.Core.DAL
 {
-    internal interface ICartsDbContext
+    public interface ICartsDbContext
     {
         DbSet<Cart> Carts { get; set; }
         DbSet<CheckoutCart> CheckoutCarts { get; set; }
@@ -18,7 +20,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL
         DbSet<Product> Products { get; set; }
         DbSet<Payment> Payments { get; set; }
         DbSet<Discount> Discounts { get; set; }
-        DatabaseFacade Database { get; }
+        Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

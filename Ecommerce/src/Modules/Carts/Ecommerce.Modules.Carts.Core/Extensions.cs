@@ -38,8 +38,8 @@ namespace Ecommerce.Modules.Carts.Core
             app.Services.UseScheduler(scheduler =>
             {
                 scheduler.Schedule<CleanupAbandonedCartsTask>()
-                    .EverySeconds(5);
-                    //.Daily();
+                    //.EverySeconds(5);
+                    .Daily();
             });
             return app;
         }

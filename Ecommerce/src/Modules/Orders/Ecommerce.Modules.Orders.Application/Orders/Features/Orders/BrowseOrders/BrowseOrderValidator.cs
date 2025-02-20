@@ -11,7 +11,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrder
     {
         private readonly string[] _availableFilters = ["Id", "TotalSum", "OrderPlacedAt", "DiscountCode", "Payment", "Status", 
             "Customer.UserId", "Customer.FirstName", "Customer.LastName", "Customer.Email", "Customer.FirstName",
-            "Shipment.TrackingNumber", "Shipment.Service", "Shipment.Id", "Shipment.LabelCreatedAt", "IsDraft"];
+            "Shipment.TrackingNumber", "Shipment.Service", "Shipment.Id", "Shipment.LabelCreatedAt"];
         public BrowseOrderValidator()
         {
             RuleForEach(b => b.Filters)

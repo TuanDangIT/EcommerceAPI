@@ -42,6 +42,10 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 Product.DecreaseQuantity(quantity);
             }
+            if(DiscountedPrice is not null)
+            {
+                DiscountedPrice += (decimal)(DiscountedPrice / Quantity);
+            }
             Quantity += quantity;
             CalculatePrice();
         }
@@ -55,6 +59,10 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 Product.IncreaseQuantity(quantity);
             }
+            if (DiscountedPrice is not null)
+            {
+                DiscountedPrice -= (decimal)(DiscountedPrice / Quantity);
+            }
             Quantity -= quantity;
             CalculatePrice();
         }
@@ -64,34 +72,42 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 throw new CartProductQuantityBelowZeroException();
             }
-            if (Product.HasQuantity)
+            if (!Product.HasQuantity)
             {
-                if (Quantity == quantity)
-                {
-                    return;
-                }
-                if (quantity > Quantity)
-                {
-                    Product.DecreaseQuantity(quantity - Quantity);
-                }
-                else if (quantity < Quantity)
-                {
-                    Product.IncreaseQuantity(Quantity - quantity);
-                }
+                return;
+            }
+            if (Quantity == quantity)
+            {
+                return;
+            }
+            if (quantity > Quantity)
+            {
+                Product.DecreaseQuantity(quantity - Quantity);
+            }
+            else if (quantity < Quantity)
+            {
+                Product.IncreaseQuantity(Quantity - quantity);
             }
             Quantity = quantity;
             CalculatePrice();
         }
-        public void ApplyDiscountedPrice()
-            => DiscountedPrice = (Product.Price * Quantity) -
-                (Cart.Discount!.Value * Quantity);
+        public void ApplyDiscountedPrice(decimal discount)
+        {
+            var discountedPrice = (Product.Price * Quantity) -
+                (discount * Quantity);
+            if(discountedPrice <= 0)
+            {
+                throw new CartProductDiscountedPriceBelowZeroException();
+            }
+            DiscountedPrice = discountedPrice;
+        }
         private void CalculatePrice()
             => Price = Product.Price * Quantity;
         private void IsQuantityValid(int quantity)
         {
             if (quantity <= 0)
             {
-                throw new PropertyValueBelowOrEqualZeroException(nameof(CartProduct));
+                throw new CartProductQuantityBelowZeroException();
             }
         }
     }

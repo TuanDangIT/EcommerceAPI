@@ -8,6 +8,7 @@ using Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.Dele
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Api.Controllers
 {
+    [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     internal class CategoryController : BaseController
     {

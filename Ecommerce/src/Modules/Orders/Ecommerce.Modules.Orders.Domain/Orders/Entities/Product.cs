@@ -53,7 +53,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             Quantity = quantity;
             ImagePathUrl = imagePathUrl;
         }
-        private Product()
+        public Product()
         {
 
         }

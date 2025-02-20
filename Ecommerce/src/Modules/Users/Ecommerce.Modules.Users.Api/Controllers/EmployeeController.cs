@@ -3,6 +3,7 @@ using Ecommerce.Modules.Users.Core.DTO;
 using Ecommerce.Modules.Users.Core.Services;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sieve.Models;
 using System;
@@ -13,11 +14,12 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Api.Controllers
 {
+    [Authorize(Roles = "Admin, Manager")]
     [ApiVersion(1)]
     internal class EmployeeController : BaseController
     {
         private readonly IEmployeeService _employeeService;
-        private const string EmployeeEntityName = "Employee";
+        private const string _employeeEntityName = "Employee";
 
         public EmployeeController(IEmployeeService employeeService)
         {
@@ -34,7 +36,7 @@ namespace Ecommerce.Modules.Users.Api.Controllers
             => PagedResult(await _employeeService.BrowseAsync(model));
         [HttpGet("{employeeId:guid}")]
         public async Task<ActionResult<ApiResponse<EmployeeDetailsDto>>> GetEmployee([FromRoute] Guid employeeId)
-            => OkOrNotFound(await _employeeService.GetAsync(employeeId), EmployeeEntityName);
+            => OkOrNotFound(await _employeeService.GetAsync(employeeId), _employeeEntityName);
         [HttpDelete("{employeeId:guid}")]
         public async Task<ActionResult> DeleteEmployee([FromRoute]Guid employeeId)
         {
@@ -49,13 +51,13 @@ namespace Ecommerce.Modules.Users.Api.Controllers
             return NoContent();
         }
         [HttpPost("{employeeId:guid}/activate")]
-        public async Task<ActionResult> ActivateCustomer([FromRoute] Guid employeeId)
+        public async Task<ActionResult> ActivateEmployee([FromRoute] Guid employeeId)
         {
             await _employeeService.SetActiveAsync(employeeId, true);
             return NoContent();
         }
         [HttpPost("{employeeId:guid}/deactivate")]
-        public async Task<ActionResult> DeactivateCustomer([FromRoute] Guid employeeId)
+        public async Task<ActionResult> DeactivateEmployee([FromRoute] Guid employeeId)
         {
             await _employeeService.SetActiveAsync(employeeId, false);
             return NoContent();

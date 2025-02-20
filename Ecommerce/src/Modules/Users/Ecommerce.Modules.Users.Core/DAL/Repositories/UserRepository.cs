@@ -1,10 +1,13 @@
 ﻿using Ecommerce.Modules.Users.Core.Entities;
+using Ecommerce.Modules.Users.Core.Entities.Enums;
 using Ecommerce.Modules.Users.Core.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Core.DAL.Repositories
@@ -50,14 +53,31 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
             }
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
+        public Task<User?> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default, params Expression<Func<User, object>>[] includes)
+        {
+            var query = _dbContext.Users
+                .AsQueryable();
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+            var user = query
+                .SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+            return user;
+        }
 
-        public Task<User?> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default)
-            => _dbContext.Users
-            .Include(u => u.Role)
-            .SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
-
-        public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default) 
-            => _dbContext.Users.SingleOrDefaultAsync(x => x.Email == email, cancellationToken);
+        public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default, params Expression<Func<User, object>>[] includes)
+        {
+            var query = _dbContext.Users
+                .AsQueryable();
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+            var user = query.
+                SingleOrDefaultAsync(x => x.Email == email, cancellationToken);
+            return user;
+        }
 
         public Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default) 
             => _dbContext.Users.SingleOrDefaultAsync(x => x.Username == username, cancellationToken);

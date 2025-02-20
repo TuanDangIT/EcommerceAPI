@@ -4,6 +4,7 @@ using Ecommerce.Modules.Discounts.Core.Entities;
 using Ecommerce.Modules.Discounts.Core.Services;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sieve.Models;
 using System;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Api.Controllers
 {
+    [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     internal class OfferController : BaseController
     {
@@ -26,6 +28,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedResult<OfferBrowseDto>>>> BrowseOffers([FromQuery]SieveModel model, CancellationToken cancellationToken)
             => PagedResult(await _offerService.BrowseAsync(model, cancellationToken));
+        [AllowAnonymous]
         [HttpGet("{offerId:int}")]
         public async Task<ActionResult<ApiResponse<OfferDetailsDto>>> GetOffer([FromRoute] int offerId, CancellationToken cancellationToken = default)
             => OkOrNotFound(await _offerService.GetAsync(offerId, cancellationToken), nameof(Offer));

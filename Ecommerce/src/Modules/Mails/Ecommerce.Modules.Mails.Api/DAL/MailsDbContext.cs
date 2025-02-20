@@ -16,9 +16,11 @@ namespace Ecommerce.Modules.Mails.Api.DAL
         public DbSet<Customer> Customers { get; set; }  
         public DbSet<Mail> Mails { get; set; }
         private const string _schema = "mails";
-        public MailsDbContext(DbContextOptions<MailsDbContext> options) : base(options)
+        private readonly TimeProvider _timeProvider;
+
+        public MailsDbContext(DbContextOptions<MailsDbContext> options, TimeProvider timeProvider) : base(options)
         {
-            
+            _timeProvider = timeProvider;
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,7 +34,7 @@ namespace Ecommerce.Modules.Mails.Api.DAL
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Property(nameof(Mail.CreatedAt)).CurrentValue = TimeProvider.System.GetUtcNow().UtcDateTime;
+                    entry.Property(nameof(Mail.CreatedAt)).CurrentValue = _timeProvider.GetUtcNow().UtcDateTime;
                 }
             }
             return base.SaveChangesAsync(cancellationToken);

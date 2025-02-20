@@ -1,4 +1,6 @@
-﻿using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
+﻿using Ecommerce.Modules.Inventory.Application.Auctions.Exceptions;
+using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
+using Ecommerce.Modules.Inventory.Domain.Auctions.Repositories;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
 using Ecommerce.Shared.Abstractions.Events;
 using System;
@@ -12,27 +14,24 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
     internal class ProductUnreservedHandler : IEventHandler<ProductUnreserved>
     {
         private readonly IProductRepository _productRepository;
+        private readonly IAuctionRepository _auctionRepository;
 
-        public ProductUnreservedHandler(IProductRepository productRepository)
+        public ProductUnreservedHandler(IProductRepository productRepository, IAuctionRepository auctionRepository)
         {
             _productRepository = productRepository;
+            _auctionRepository = auctionRepository;
         }
         public async Task HandleAsync(ProductUnreserved @event)
         {
-            await using var transaction = await _productRepository.BeginTransactionAsync();
-            try
+            var product = await _productRepository.GetAsync(@event.ProductId) ??
+                    throw new ProductNotFoundException(@event.ProductId);
+            var auction = await _auctionRepository.GetAsync(@event.ProductId) ??
+                throw new AuctionNotFoundException(@event.ProductId);
+            if (product.HasQuantity)
             {
-                var product = await _productRepository.GetAsync(@event.ProductId) ?? throw new ProductNotFoundException(@event.ProductId);
-                if (product.HasQuantity)
-                {
-                    product.Unreserve(@event.Quantity);
-                    await _productRepository.UpdateAsync();
-                }
-                await transaction.CommitAsync();
-            }
-            catch (Exception)
-            {
-                await transaction.RollbackAsync();
+                product.Unreserve(@event.Quantity);
+                auction.IncreaseQuantity(@event.Quantity);
+                await _productRepository.UpdateAsync();
             }
         }
     }

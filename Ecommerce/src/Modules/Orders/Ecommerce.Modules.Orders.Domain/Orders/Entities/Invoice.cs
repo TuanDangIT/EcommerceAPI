@@ -12,7 +12,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public string InvoiceNo { get; private set; } = string.Empty;
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        public Order Order { get; private set; } = new();
+        public Order Order { get; private set; } = default!;
         public Guid OrderId { get; private set; }
         public Invoice(string invoiceNo, Order order)
         {

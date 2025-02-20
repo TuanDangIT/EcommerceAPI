@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void AddProduct(Product product, int quantity)
         {
-            var cartProduct = _products.SingleOrDefault(p => p.ProductId == product.Id);
+            var cartProduct = _products.SingleOrDefault(p => p.Product.SKU == product.SKU);
             if (cartProduct is not null)
             {
                 cartProduct.IncreaseQuantity(quantity);
@@ -94,7 +94,8 @@ namespace Ecommerce.Modules.Carts.Core.Entities
                 cartProduct.SetQuantity(0);
             }
             _products.Clear();
-            TotalSum = CalculateTotalSum();
+            Discount = null;
+            TotalSum = 0;
             CheckoutCart?.SetTotalSum(TotalSum);
         }
         public CheckoutCart Checkout(Guid? customerId)
@@ -116,9 +117,13 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             Discount = discount;
             if (discount.SKU is not null)
             {
-                var cartProduct = _products.SingleOrDefault(p => p.Product.SKU == discount.SKU) ??
+                var cartProduct = _products.SingleOrDefault(p => p.Product.SKU == discount.SKU);
+                if (cartProduct is null)
+                {
+                    Discount = null;
                     throw new CheckoutCartCannotApplyIndividualDiscountException(discount.SKU);
-                cartProduct.ApplyDiscountedPrice();
+                }
+                cartProduct.ApplyDiscountedPrice(Discount.Value);
             }
             TotalSum = CalculateTotalSum();
             CheckoutCart?.AddDiscount(discount, TotalSum);
@@ -136,18 +141,31 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 return productsTotal;
             }
+            decimal calculatedTotal = productsTotal;
             if (Discount.Type is DiscountType.NominalDiscount)
             {
                 if (Discount.SKU is not null)
                 {
                     var discountedProductQuantity = _products
-                        .Single(p => p.Product.SKU == Discount.SKU)
-                        .Quantity;
-                    return productsTotal - Discount.Value * discountedProductQuantity;
+                        .Where(p => p.Product.SKU == Discount.SKU)
+                        .Sum(p => p.Quantity);
+                    calculatedTotal = productsTotal - Discount.Value * discountedProductQuantity;
                 }
-                return productsTotal - Discount.Value;
+                else
+                {
+                    calculatedTotal = productsTotal - Discount.Value;
+                }
             }
-            return productsTotal * Discount.Value;
+            else
+            {
+                calculatedTotal = productsTotal * Discount.Value;
+            }
+            if (calculatedTotal <= 0)
+            {
+                throw new CartCalculatedTotalBelowOrEqualZeroException();
+            }
+
+            return calculatedTotal;
         }
     }
 }

@@ -2,6 +2,7 @@
 using Ecommerce.Modules.Users.Core.DTO;
 using Ecommerce.Modules.Users.Core.Services;
 using Ecommerce.Shared.Abstractions.Api;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Api.Controllers
 {
+    [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     internal class RoleController : BaseController
     {

@@ -15,11 +15,14 @@ namespace Ecommerce.Shared.Infrastructure.Auth
 {
     internal static class Extensions
     {
-        private const string AuthenticationOptionsSectionName = "Authentication";
+        private const string _authenticationOptionsSectionName = "Authentication";
+        private const string _adminOptionsSectionName = "Admin";
         public static IServiceCollection AddAuth(this IServiceCollection services)
         {
-            var authOptions = services.GetOptions<AuthOptions>(AuthenticationOptionsSectionName);
+            var authOptions = services.GetOptions<AuthOptions>(_authenticationOptionsSectionName);
             services.AddSingleton(authOptions);
+            var adminOptions = services.GetOptions<AdminOptions>(_adminOptionsSectionName);
+            services.AddSingleton(adminOptions);
             services.AddSingleton<IAuthManager, AuthManager>();
             services
                 .AddAuthentication(o =>

@@ -50,7 +50,13 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             SetTotalSum(TotalSum);
         }
         public void SetPayment(Payment payment)
-            => Payment = payment;
+        {
+            if(payment.IsActive == false)
+            {
+                throw new CheckoutCartUnavailablePaymentException(payment.PaymentMethod.ToString());
+            };
+            Payment = payment;
+        }
         public void SetAdditionalInformation(string additionalInformation)
             => AdditionalInformation = additionalInformation;
         public void SetStripeSessionId(string sessionId)
@@ -69,7 +75,13 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             Discount = null;
             TotalSum = totalSum;
         }
-        public void SetTotalSum(decimal totalSum) 
-            => TotalSum = totalSum + (Shipment is not null ? Shipment.Price : 0);
+        public void SetTotalSum(decimal totalSum)
+        {
+            if (totalSum <= 0)
+            {
+                throw new CheckoutCartCalculatedTotalBelowOrEqualZeroException();
+            }
+            TotalSum = totalSum + (Shipment is not null ? Shipment.Price : 0);
+        }
     }
 }

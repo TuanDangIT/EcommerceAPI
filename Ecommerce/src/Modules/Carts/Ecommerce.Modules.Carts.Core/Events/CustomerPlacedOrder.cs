@@ -28,6 +28,7 @@ namespace Ecommerce.Modules.Carts.Core.Events
         public string PaymentMethod { get; set; } = string.Empty;
         public string? AdditionalInformation {  get; set; } 
         public string? DiscountCode { get; set; } 
+        public string? DiscountType { get; set; } 
         public string StripePaymentIntentId { get; set; } = string.Empty;
     };
 }
