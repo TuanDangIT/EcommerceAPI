@@ -57,7 +57,6 @@ namespace Ecommerce.Shared.Infrastructure
             services.AddContext();
             services.AddSingleton(TimeProvider.System);
             services.AddAuth();
-            services.AddContext();
             services.AddPostgres();
             services.AddPagination();
             services.AddStripe();

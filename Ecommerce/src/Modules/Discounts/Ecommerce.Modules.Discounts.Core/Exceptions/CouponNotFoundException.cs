@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Core.Exceptions
 {
-    public class CouponNotFoundException(string stripeCouponId) : EcommerceException($"Coupon with an stripe ID: {stripeCouponId} was not found.")
+    public class CouponNotFoundException(int couponId) : EcommerceException($"Coupon: {couponId} was not found.")
     {
     }
 }

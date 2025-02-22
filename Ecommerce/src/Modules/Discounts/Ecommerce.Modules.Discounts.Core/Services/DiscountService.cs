@@ -48,16 +48,16 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             _timeProvider = timeProvider;
         }
 
-        public async Task<PagedResult<DiscountBrowseDto>> BrowseDiscountsAsync(string stripeCouponId, SieveModel model, CancellationToken cancellationToken = default)
+        public async Task<PagedResult<DiscountBrowseDto>> BrowseDiscountsAsync(int couponId, SieveModel model, CancellationToken cancellationToken = default)
         {
             if (model.PageSize is null || model.Page is null)
             {
                 throw new PaginationException();
             }
             var coupon = await _dbContext.Coupons
-                .Select(c => new { c.Id, c.StripeCouponId })
-                .SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId) ?? 
-                throw new CouponNotFoundException(stripeCouponId);
+                .Select(c => new { c.Id })
+                .SingleOrDefaultAsync(c => c.Id == couponId) ?? 
+                throw new CouponNotFoundException(couponId);
             var discounts = _dbContext.Discounts
                 .AsNoTracking()
                 .AsQueryable();
@@ -74,7 +74,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             return pagedResult;
         }
 
-        public async Task CreateAsync(string stripeCouponId, DiscountCreateDto dto, CancellationToken cancellationToken = default)
+        public async Task CreateAsync(int couponId, DiscountCreateDto dto, CancellationToken cancellationToken = default)
         {
             var discount = await _dbContext.Discounts
                 .Select(d => d.Code)
@@ -83,9 +83,9 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             {
                 throw new DiscountCodeAlreadyInUseException(dto.Code);
             }
-            var coupon = await _dbContext.Coupons.SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId, cancellationToken) ?? 
-                throw new CouponNotFoundException(stripeCouponId);
-            var stripePromotionCodeId = await _paymentProcessorService.CreateDiscountAsync(stripeCouponId, dto, cancellationToken);
+            var coupon = await _dbContext.Coupons.SingleOrDefaultAsync(c => c.Id == couponId, cancellationToken) ?? 
+                throw new CouponNotFoundException(couponId);
+            var stripePromotionCodeId = await _paymentProcessorService.CreateDiscountAsync(coupon.StripeCouponId, dto, cancellationToken);
             coupon.AddDiscount(new Discount(dto.Code, stripePromotionCodeId, dto.EndingDate, _timeProvider.GetUtcNow().DateTime));
             await _dbContext.SaveChangesAsync();
             _logger.LogInformation("Discount with given details: {@discount} was created for coupon: {coupon} by {@user}.", dto, coupon.Id, 

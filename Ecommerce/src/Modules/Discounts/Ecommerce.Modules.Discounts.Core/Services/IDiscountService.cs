@@ -12,8 +12,8 @@ namespace Ecommerce.Modules.Discounts.Core.Services
 {
     public interface IDiscountService
     {
-        Task<PagedResult<DiscountBrowseDto>> BrowseDiscountsAsync(string stripeCouponId, SieveModel model, CancellationToken cancellationToken = default);
-        Task CreateAsync(string stripeCouponId, DiscountCreateDto dto, CancellationToken cancellationToken = default);
+        Task<PagedResult<DiscountBrowseDto>> BrowseDiscountsAsync(int couponId, SieveModel model, CancellationToken cancellationToken = default);
+        Task CreateAsync(int couponId, DiscountCreateDto dto, CancellationToken cancellationToken = default);
         Task ActivateAsync(string code, CancellationToken cancellationToken = default);
         Task DeactivateAsync(string code, CancellationToken cancellationToken = default);
     }

@@ -46,7 +46,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
         }
         public async Task<(Stream FileStream, string MimeType, string FileName)> GetLabelAsync(Shipment shipment, CancellationToken cancellationToken = default)
         {
-            var client = _factory.CreateClient(_inPost);
+            using var client = _factory.CreateClient(_inPost);
             var httpResponse = await client.GetAsync($"v1/shipments/{shipment.LabelId}/label", cancellationToken);
             if (!httpResponse.IsSuccessStatusCode)
             {

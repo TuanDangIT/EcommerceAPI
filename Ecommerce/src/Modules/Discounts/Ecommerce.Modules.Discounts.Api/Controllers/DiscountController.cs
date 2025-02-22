@@ -7,6 +7,7 @@ using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sieve.Models;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,13 +29,13 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
             _discountService = discountService;
         }
         [HttpGet("coupons/{stripeCouponId}")]
-        public async Task<ActionResult<ApiResponse<PagedResult<DiscountBrowseDto>>>> BrowseDiscounts([FromRoute]string stripeCouponId, [FromQuery]SieveModel model, 
+        public async Task<ActionResult<ApiResponse<PagedResult<DiscountBrowseDto>>>> BrowseDiscounts([FromRoute]int couponId, [FromQuery]SieveModel model, 
             CancellationToken cancellationToken)
-            => PagedResult(await _discountService.BrowseDiscountsAsync(stripeCouponId, model, cancellationToken));
+            => PagedResult(await _discountService.BrowseDiscountsAsync(couponId, model, cancellationToken));
         [HttpPost("coupons/{stripeCouponId}")]
-        public async Task<ActionResult> CreateDiscount([FromRoute] string stripeCouponId, [FromBody] DiscountCreateDto dto, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> CreateDiscount([FromRoute] int couponId, [FromBody] DiscountCreateDto dto, CancellationToken cancellationToken = default)
         {
-            await _discountService.CreateAsync(stripeCouponId, dto, cancellationToken);
+            await _discountService.CreateAsync(couponId, dto, cancellationToken);
             return NoContent();
         }
         [HttpPut("{code}/activate")]

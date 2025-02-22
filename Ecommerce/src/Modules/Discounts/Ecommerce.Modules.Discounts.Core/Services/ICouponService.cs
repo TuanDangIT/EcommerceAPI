@@ -13,8 +13,8 @@ namespace Ecommerce.Modules.Discounts.Core.Services
     {
         Task CreateAsync(NominalCouponCreateDto dto, CancellationToken cancellationToken = default);
         Task CreateAsync(PercentageCouponCreateDto dto, CancellationToken cancellationToken = default);
-        Task UpdateNameAsync(string stripeCouponId, CouponUpdateNameDto dto, CancellationToken cancellationToken = default);
-        Task DeleteAsync(string stripeCouponId, CancellationToken cancellationToken = default);
+        Task UpdateNameAsync(int couponId, CouponUpdateNameDto dto, CancellationToken cancellationToken = default);
+        Task DeleteAsync(int couponId, CancellationToken cancellationToken = default);
         Task<PagedResult<NominalCouponBrowseDto>> BrowseNominalCouponsAsync(SieveModel model, CancellationToken cancellationToken = default);
         Task<PagedResult<PercentageCouponBrowseDto>> BrowsePercentageCouponsAsync(SieveModel model, CancellationToken cancellationToken = default);
     }

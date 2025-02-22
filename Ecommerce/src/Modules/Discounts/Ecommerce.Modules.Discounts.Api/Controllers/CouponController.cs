@@ -48,15 +48,15 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
             return NoContent();
         }
         [HttpPut("{stripeCouponId}")]
-        public async Task<ActionResult> UpdateCouponName([FromRoute]string stripeCouponId, [FromBody]CouponUpdateNameDto dto, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> UpdateCouponName([FromRoute]int couponId, [FromBody]CouponUpdateNameDto dto, CancellationToken cancellationToken = default)
         {
-            await _couponService.UpdateNameAsync(stripeCouponId, dto, cancellationToken);
+            await _couponService.UpdateNameAsync(couponId, dto, cancellationToken);
             return NoContent();
         }
         [HttpDelete("{stripeCouponId}")]
-        public async Task<ActionResult> DeleteCoupon([FromRoute] string stripeCouponId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> DeleteCoupon([FromRoute] int couponId, CancellationToken cancellationToken = default)
         {
-            await _couponService.DeleteAsync(stripeCouponId, cancellationToken);
+            await _couponService.DeleteAsync(couponId, cancellationToken);
             return NoContent();
         }
 

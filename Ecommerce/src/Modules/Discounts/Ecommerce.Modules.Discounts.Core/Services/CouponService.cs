@@ -103,13 +103,13 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
 
-        public async Task DeleteAsync(string stripeCouponId, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync(int couponId, CancellationToken cancellationToken = default)
         {
             var coupon = await _dbContext.Coupons
                 .Include(c => c.Discounts)
-                .SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId, cancellationToken) ?? 
-                throw new CouponNotFoundException(stripeCouponId);
-            await _paymentProcessorService.DeleteCouponAsync(stripeCouponId, cancellationToken);
+                .SingleOrDefaultAsync(c => c.Id == couponId, cancellationToken) ?? 
+                throw new CouponNotFoundException(couponId);
+            await _paymentProcessorService.DeleteCouponAsync(coupon.StripeCouponId, cancellationToken);
             if (coupon.HasDiscounts)
             {
                 foreach(var discount in coupon.Discounts)
@@ -123,12 +123,12 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
 
-        public async Task UpdateNameAsync(string stripeCouponId, CouponUpdateNameDto dto, CancellationToken cancellationToken = default)
+        public async Task UpdateNameAsync(int couponId, CouponUpdateNameDto dto, CancellationToken cancellationToken = default)
         {
-            var coupon = await _dbContext.Coupons.SingleOrDefaultAsync(c => c.StripeCouponId == stripeCouponId, cancellationToken) ?? 
-                throw new CouponNotFoundException(stripeCouponId);
+            var coupon = await _dbContext.Coupons.SingleOrDefaultAsync(c => c.Id == couponId, cancellationToken) ?? 
+                throw new CouponNotFoundException(couponId);
             coupon.ChangeName(dto.Name);
-            await _paymentProcessorService.UpdateCouponName(stripeCouponId, dto.Name, cancellationToken);
+            await _paymentProcessorService.UpdateCouponName(coupon.StripeCouponId, dto.Name, cancellationToken);
             await _dbContext.SaveChangesAsync();
             _logger.LogInformation("Coupon: {couponId} was updated with new details: {@updatingDetails} by {@user}.", coupon.Id, dto,
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });

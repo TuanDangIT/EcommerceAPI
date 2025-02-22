@@ -11,9 +11,7 @@ namespace Ecommerce.Shared.Infrastructure.Contexts
     internal class ContextService : IContextService
     {
         public string RequestId => $"{Guid.NewGuid()}";
-
         public string TraceId { get; } = string.Empty;
-
         public IIdentityContext? Identity { get; }
         internal ContextService()
         {
