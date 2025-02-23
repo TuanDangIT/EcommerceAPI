@@ -21,7 +21,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
     {
         private readonly ICartService _cartService;
 
-        public CartController(ICartService cartService)
+        public CartsController(ICartService cartService)
         {
             _cartService = cartService;
         }
