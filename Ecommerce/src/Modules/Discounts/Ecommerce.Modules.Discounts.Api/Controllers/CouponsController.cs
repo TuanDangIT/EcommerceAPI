@@ -18,11 +18,11 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
 {
     [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
-    internal class CouponController : BaseController
+    internal class CouponsController : BaseController
     {
         private readonly ICouponService _couponService;
 
-        public CouponController(ICouponService couponService)
+        public CouponsController(ICouponService couponService)
         {
             _couponService = couponService;
         }

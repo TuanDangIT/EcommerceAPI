@@ -21,9 +21,9 @@ using System.Threading.Tasks;
 namespace Ecommerce.Modules.Inventory.Api.Controllers
 {
     [ApiVersion(1)]
-    internal class AuctionController : BaseController
+    internal class AuctionsController : BaseController
     {
-        public AuctionController(IMediator mediator) : base(mediator)
+        public AuctionsController(IMediator mediator) : base(mediator)
         {
         }
         [HttpGet]

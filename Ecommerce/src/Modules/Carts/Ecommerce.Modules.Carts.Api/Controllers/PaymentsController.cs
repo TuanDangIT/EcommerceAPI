@@ -16,11 +16,11 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
 {
     [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
-    internal class PaymentController : BaseController
+    internal class PaymentsController : BaseController
     {
         private readonly IPaymentService _paymentService;
 
-        public PaymentController(IPaymentService paymentService)
+        public PaymentsController(IPaymentService paymentService)
         {
             _paymentService = paymentService;
         }

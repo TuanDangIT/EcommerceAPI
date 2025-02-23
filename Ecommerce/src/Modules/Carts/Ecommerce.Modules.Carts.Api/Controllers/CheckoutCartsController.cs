@@ -17,11 +17,11 @@ using System.Threading.Tasks;
 namespace Ecommerce.Modules.Carts.Api.Controllers
 {
     [ApiVersion(1)]
-    internal class CheckoutCartController : BaseController
+    internal class CheckoutCartsController : BaseController
     {
         private readonly ICheckoutCartService _checkoutCartService;
 
-        public CheckoutCartController(ICheckoutCartService checkoutCartService)
+        public CheckoutCartsController(ICheckoutCartService checkoutCartService)
         {
             _checkoutCartService = checkoutCartService;
         }

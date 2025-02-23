@@ -21,9 +21,9 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
 {
     [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
-    internal class CategoryController : BaseController
+    internal class CategoriesController : BaseController
     {
-        public CategoryController(IMediator mediator) : base(mediator)
+        public CategoriesController(IMediator mediator) : base(mediator)
         {
         }
         [HttpPost]

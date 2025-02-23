@@ -20,11 +20,11 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
 {
     [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
-    internal class DiscountController : BaseController
+    internal class DiscountsController : BaseController
     {
         private readonly IDiscountService _discountService;
 
-        public DiscountController(IDiscountService discountService)
+        public DiscountsController(IDiscountService discountService)
         {
             _discountService = discountService;
         }

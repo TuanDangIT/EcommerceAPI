@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 namespace Ecommerce.Modules.Carts.Api.Controllers
 {
     [ApiVersion(1)]
-    internal class CartController : BaseController
+    internal class CartsController : BaseController
     {
         private readonly ICartService _cartService;
 
@@ -74,7 +74,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         public async Task<ActionResult> Checkout([FromRoute]Guid cartId, CancellationToken cancellationToken)
         {
             var checkoutCartId = await _cartService.CheckoutAsync(cartId, cancellationToken);
-            return CreatedAtAction(nameof(CheckoutCartController.GetCheckoutCart), typeof(CheckoutCart).Name, new { checkoutCartId }, checkoutCartId);
+            return CreatedAtAction(nameof(CheckoutCartsController.GetCheckoutCart), typeof(CheckoutCart).Name, new { checkoutCartId }, checkoutCartId);
         }
     }
 }

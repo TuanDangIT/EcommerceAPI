@@ -17,11 +17,11 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
 {
     [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
-    internal class OfferController : BaseController
+    internal class OffersController : BaseController
     {
         private readonly IOfferService _offerService;
 
-        public OfferController(IOfferService offerService)
+        public OffersController(IOfferService offerService)
         {
             _offerService = offerService;
         }
