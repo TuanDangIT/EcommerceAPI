@@ -27,8 +27,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Im
             Map(p => p.Manufacturer);
             Map(p => p.Category);
             Map(p => p.Images).Convert(args =>
-                args.Row.GetField(nameof(ProductCsvRecordDto.Images))?.Split(valueSeperator).Select(url => url.Trim()).ToList() ??
-                throw new ProductCannotHaveNoImagesException()
+                args.Row.GetField(nameof(ProductCsvRecordDto.Images))?.Split(valueSeperator).Select(url => url.Trim()).ToList() ?? []
             );
             Map(p => p.Parameters).Convert(args =>
             {

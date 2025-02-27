@@ -28,7 +28,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedResult<OfferBrowseDto>>>> BrowseOffers([FromQuery]SieveModel model, CancellationToken cancellationToken)
             => PagedResult(await _offerService.BrowseAsync(model, cancellationToken));
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin, Manager, Employee, Customer")]
         [HttpGet("{offerId:int}")]
         public async Task<ActionResult<ApiResponse<OfferDetailsDto>>> GetOffer([FromRoute] int offerId, CancellationToken cancellationToken = default)
             => OkOrNotFound(await _offerService.GetAsync(offerId, cancellationToken), nameof(Offer));
@@ -42,6 +42,13 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         public async Task<ActionResult> RejectOffer([FromRoute]int offerId, CancellationToken cancellationToken = default)
         {
             await _offerService.RejectAsync(offerId, cancellationToken);
+            return NoContent();
+        }
+        [Authorize(Roles = "Admin, Manager, Employee, Customer")]
+        [HttpDelete("{offerId:int}")]
+        public async Task<ActionResult> DeleteOffer([FromRoute]int offerId, CancellationToken cancellationToken = default)
+        {
+            await _offerService.DeleteAsync(offerId, cancellationToken);
             return NoContent();
         }
     }

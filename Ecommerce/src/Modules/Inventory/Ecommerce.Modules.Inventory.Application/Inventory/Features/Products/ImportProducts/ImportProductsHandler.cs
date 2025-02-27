@@ -31,7 +31,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Im
         private readonly ILogger<ImportProductsHandler> _logger;
         private readonly IContextService _contextService;
 
-        public ImportProductsHandler(ICategoryRepository categoryRepository, IParameterRepository parameterRepository, 
+        public ImportProductsHandler(ICategoryRepository categoryRepository, IParameterRepository parameterRepository,
             IProductRepository productRepository, IManufacturerRepository manufacturerRepository, IInventoryUnitOfWork inventoryUnitOfWork,
             ILogger<ImportProductsHandler> logger, IContextService contextService)
         {
@@ -45,20 +45,62 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Im
         }
         public async Task Handle(ImportProducts request, CancellationToken cancellationToken)
         {
-            if (request.ImportFile.ContentType != MediaTypeNames.Text.Csv)
-            {
-                throw new ImportFileNotSupportedException(request.ImportFile.ContentType);
-            }
+            ValidateImportFile(request);
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 Encoding = Encoding.UTF8,
                 HasHeaderRecord = true,
                 Delimiter = request.Delimiter.ToString()
             };
+            var productRecords = ParseCsvFile(request, cancellationToken);
+            if (productRecords.Count == 0)
+            {
+                _logger.LogInformation("No products found in the import file by user {@user}.", new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+                return;
+            }
+            await ProcessImportData(productRecords, cancellationToken);
+        }
+        private void ValidateImportFile(ImportProducts request)
+        {
+            if (request.ImportFile == null)
+            {
+                throw new ArgumentNullException(nameof(request.ImportFile), "Import file is required");
+            }
+
+            if (request.ImportFile.ContentType != MediaTypeNames.Text.Csv)
+            {
+                throw new ImportFileNotSupportedException(request.ImportFile.ContentType);
+            }
+        }
+        private List<ProductCsvRecordDto> ParseCsvFile(ImportProducts request, CancellationToken cancellationToken)
+        {
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                Encoding = Encoding.UTF8,
+                HasHeaderRecord = true,
+                Delimiter = request.Delimiter.ToString(),
+                BadDataFound = null 
+            };
+
             using var reader = new StreamReader(request.ImportFile.OpenReadStream());
             using var csv = new CsvReader(reader, config);
+
             csv.Context.RegisterClassMap(new ProductCsvClassMap(request.Delimiter is ',' ? ';' : ','));
-            var productRecords = csv.GetRecords<ProductCsvRecordDto>().ToList();
+            return csv.GetRecords<ProductCsvRecordDto>().ToList();
+        }
+        private T GetOrCreate<T>(string key, Dictionary<string, T> existing, Dictionary<string, T> newItems, Func<string, T> factory)
+        {
+            if (existing.TryGetValue(key, out var item) || newItems.TryGetValue(key, out item))
+            {
+                return item;
+            }
+
+            item = factory(key);
+            newItems[key] = item;
+            return item;
+        }
+        private async Task ProcessImportData(List<ProductCsvRecordDto> productRecords, CancellationToken cancellationToken)
+        {
             var existingParameters = (await _parameterRepository.GetAllAsync(cancellationToken)).ToDictionary(p => p.Name);
             var existingCategories = (await _categoryRepository.GetAllAsync(cancellationToken)).ToDictionary(c => c.Name);
             var existingManufacturers = (await _manufacturerRepository.GetAllAsync(cancellationToken)).ToDictionary(m => m.Name);
@@ -66,41 +108,46 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Im
             var newCategories = new Dictionary<string, Category>();
             var newParameters = new Dictionary<string, Parameter>();
             var products = new List<Product>();
+
             foreach (var record in productRecords)
             {
-                if (!existingManufacturers.TryGetValue(record.Manufacturer, out var manufacturer))
-                {
-                    if (!newManufacturers.TryGetValue(record.Manufacturer, out manufacturer))
-                    {
-                        manufacturer = new Manufacturer(record.Manufacturer);
-                        newManufacturers[record.Manufacturer] = manufacturer;
-                    }
-                }
-                if (!existingCategories.TryGetValue(record.Category, out var category))
-                {
-                    if (!newCategories.TryGetValue(record.Category, out category))
-                    {
-                        category = new Category(record.Category);
-                        newCategories[record.Category] = category;
-                    }
-                }
+                var manufacturer = GetOrCreate(
+                            record.Manufacturer,
+                            existingManufacturers,
+                            newManufacturers,
+                            name => new Manufacturer(name)
+                        );
+
+                var category = GetOrCreate(
+                    record.Category,
+                    existingCategories,
+                    newCategories,
+                    name => new Category(name)
+                );
+
                 var productParameters = new List<ProductParameter>();
                 foreach (var (paramName, value) in record.Parameters)
                 {
-                    if (!existingParameters.TryGetValue(paramName, out var parameter))
-                    {
-                        if (!newParameters.TryGetValue(paramName, out parameter))
-                        {
-                            parameter = new Parameter(paramName);
-                            newParameters[paramName] = parameter;
-                        }
-                    }
+                    if (string.IsNullOrWhiteSpace(paramName))
+                        continue;
+
+                    var parameter = GetOrCreate(
+                        paramName,
+                        existingParameters,
+                        newParameters,
+                        name => new Parameter(name)
+                    );
+
                     productParameters.Add(new ProductParameter
                     {
                         Parameter = parameter,
                         Value = value
                     });
                 }
+
+                var images = record.Images
+                    .Select((url, index) => new Image(Guid.NewGuid(), url, index))
+                    .ToList();
 
                 var product = new Product(
                     record.SKU,
@@ -111,36 +158,49 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Im
                     productParameters,
                     manufacturer,
                     category,
-                    record.Images.Select((url, index) => new Image(Guid.NewGuid(), url, index)).ToList(),
+                    images,
                     record.EAN,
                     record.Quantity,
                     record.Location,
                     record.AdditionalDescription,
                     record.Quantity is null ? null : 0
                 );
+
                 products.Add(product);
             }
+
+            if (products.Count == 0)
+            {
+                _logger.LogInformation("No products found in the import file by user {@user}.", new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+                return;
+            }
+
             using var transaction = _inventoryUnitOfWork.BeginTransaction();
             try
             {
-                if (newManufacturers.Count != 0)
+                var saveTasks = new List<Task>();
+
+                if (newManufacturers.Count > 0)
                     await _manufacturerRepository.AddManyAsync(newManufacturers.Values, cancellationToken);
 
-                if (newCategories.Count != 0)
+                if (newCategories.Count > 0)
                     await _categoryRepository.AddManyAsync(newCategories.Values, cancellationToken);
 
-                if (newParameters.Count != 0)
+                if (newParameters.Count > 0)
                     await _parameterRepository.AddManyAsync(newParameters.Values, cancellationToken);
+
                 await _productRepository.AddManyAsync(products, cancellationToken);
+
                 transaction.Commit();
-                _logger.LogInformation("Producs were imported by {@user}.", 
-                    new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+
+                _logger.LogInformation("Products were imported by {@user}.",
+                    new { _contextService.Identity?.Username, _contextService.Identity?.Id });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 transaction.Rollback();
-                _logger.LogError("Import products operation that was called by {@user} failed. Exception: {@exception}.", 
-                    new { _contextService.Identity!.Username, _contextService.Identity!.Id }, e);
+                _logger.LogInformation(e, "Import products operation that was called by {@user} failed.",
+                    new { _contextService.Identity?.Username, _contextService.Identity?.Id });
                 throw;
             }
         }

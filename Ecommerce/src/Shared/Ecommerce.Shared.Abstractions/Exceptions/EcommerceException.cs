@@ -12,5 +12,9 @@ namespace Ecommerce.Shared.Abstractions.Exceptions
         {
             
         }
+        public EcommerceException(string message, Exception innerException) : base(message, innerException)
+        {
+
+        }
     }
 }
