@@ -71,19 +71,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Inventory", "Inventory", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{63D0FB43-1848-4621-9C7D-0982F07F67EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Shared.Infrastructure.Tests.Unit", "tests\Shared\Ecommerce.Shared.Infrastructure.Tests.Unit\Ecommerce.Shared.Infrastructure.Tests.Unit.csproj", "{EA117D85-A05A-4A53-B7E7-75016FA7099E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce.Shared.Infrastructure.Tests.Unit", "tests\Shared\Ecommerce.Shared.Infrastructure.Tests.Unit\Ecommerce.Shared.Infrastructure.Tests.Unit.csproj", "{EA117D85-A05A-4A53-B7E7-75016FA7099E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Modules.Carts.Tests.Integration", "tests\Modules\Carts\Ecommerce.Modules.Carts.Tests.Integration\Ecommerce.Modules.Carts.Tests.Integration.csproj", "{2AF8674F-B98E-4328-84B1-4EEC45904FA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce.Modules.Carts.Tests.Integration", "tests\Modules\Carts\Ecommerce.Modules.Carts.Tests.Integration\Ecommerce.Modules.Carts.Tests.Integration.csproj", "{2AF8674F-B98E-4328-84B1-4EEC45904FA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Modules.Carts.Tests.Unit", "tests\Modules\Carts\Ecommerce.Modules.Carts.Tests.Unit\Ecommerce.Modules.Carts.Tests.Unit.csproj", "{B8F83C59-3B47-480D-B198-9411F3FD9244}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce.Modules.Carts.Tests.Unit", "tests\Modules\Carts\Ecommerce.Modules.Carts.Tests.Unit\Ecommerce.Modules.Carts.Tests.Unit.csproj", "{B8F83C59-3B47-480D-B198-9411F3FD9244}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Modules.Discounts.Tests.Unit", "tests\Modules\Discounts\Ecommerce.Modules.Discounts.Tests.Unit\Ecommerce.Modules.Discounts.Tests.Unit.csproj", "{16D5DCC3-CBA6-419B-8495-251CA93823D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce.Modules.Discounts.Tests.Unit", "tests\Modules\Discounts\Ecommerce.Modules.Discounts.Tests.Unit\Ecommerce.Modules.Discounts.Tests.Unit.csproj", "{16D5DCC3-CBA6-419B-8495-251CA93823D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Modules.Inventory.Tests.Unit", "tests\Modules\Inventory\Ecommerce.Modules.Inventory.Tests.Unit\Ecommerce.Modules.Inventory.Tests.Unit.csproj", "{8A7D4D60-8417-425D-88E7-114CA49A97CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce.Modules.Inventory.Tests.Unit", "tests\Modules\Inventory\Ecommerce.Modules.Inventory.Tests.Unit\Ecommerce.Modules.Inventory.Tests.Unit.csproj", "{8A7D4D60-8417-425D-88E7-114CA49A97CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Modules.Inventory.Tests.Integration", "tests\Modules\Inventory\Ecommerce.Modules.Inventory.Tests.Integration\Ecommerce.Modules.Inventory.Tests.Integration.csproj", "{A2B641EA-85F9-49E7-80DD-994A40211BD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce.Modules.Inventory.Tests.Integration", "tests\Modules\Inventory\Ecommerce.Modules.Inventory.Tests.Integration\Ecommerce.Modules.Inventory.Tests.Integration.csproj", "{A2B641EA-85F9-49E7-80DD-994A40211BD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Modules.Discounts.Tests.Integration", "tests\Modules\Discounts\Ecommerce.Modules.Discounts.Tests.Integration\Ecommerce.Modules.Discounts.Tests.Integration.csproj", "{DDA5CDAE-2168-4E7C-AF71-66B4F32D8BFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce.Modules.Discounts.Tests.Integration", "tests\Modules\Discounts\Ecommerce.Modules.Discounts.Tests.Integration\Ecommerce.Modules.Discounts.Tests.Integration.csproj", "{DDA5CDAE-2168-4E7C-AF71-66B4F32D8BFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

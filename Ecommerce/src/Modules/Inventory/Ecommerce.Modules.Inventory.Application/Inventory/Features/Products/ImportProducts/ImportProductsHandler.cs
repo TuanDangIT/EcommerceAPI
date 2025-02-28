@@ -3,6 +3,7 @@ using CsvHelper.Configuration;
 using Ecommerce.Modules.Inventory.Application.DAL;
 using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
 using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
+using Ecommerce.Modules.Inventory.Application.Shared.Abstractions;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
 using Ecommerce.Shared.Abstractions.BloblStorage;
@@ -30,10 +31,11 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Im
         private readonly IInventoryUnitOfWork _inventoryUnitOfWork;
         private readonly ILogger<ImportProductsHandler> _logger;
         private readonly IContextService _contextService;
+        private readonly ICsvService _csvService;
 
         public ImportProductsHandler(ICategoryRepository categoryRepository, IParameterRepository parameterRepository,
             IProductRepository productRepository, IManufacturerRepository manufacturerRepository, IInventoryUnitOfWork inventoryUnitOfWork,
-            ILogger<ImportProductsHandler> logger, IContextService contextService)
+            ILogger<ImportProductsHandler> logger, IContextService contextService, ICsvService csvService)
         {
             _categoryRepository = categoryRepository;
             _parameterRepository = parameterRepository;
@@ -42,18 +44,13 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Im
             _inventoryUnitOfWork = inventoryUnitOfWork;
             _logger = logger;
             _contextService = contextService;
+            _csvService = csvService;
         }
         public async Task Handle(ImportProducts request, CancellationToken cancellationToken)
         {
             ValidateImportFile(request);
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                Encoding = Encoding.UTF8,
-                HasHeaderRecord = true,
-                Delimiter = request.Delimiter.ToString()
-            };
-            var productRecords = ParseCsvFile(request, cancellationToken);
-            if (productRecords.Count == 0)
+            var productRecords = _csvService.ParseCsvFile(request.ImportFile, request.Delimiter);
+            if (!productRecords.Any())
             {
                 _logger.LogInformation("No products found in the import file by user {@user}.", new { _contextService.Identity!.Username, _contextService.Identity!.Id });
                 return;
@@ -72,22 +69,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Im
                 throw new ImportFileNotSupportedException(request.ImportFile.ContentType);
             }
         }
-        private List<ProductCsvRecordDto> ParseCsvFile(ImportProducts request, CancellationToken cancellationToken)
-        {
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                Encoding = Encoding.UTF8,
-                HasHeaderRecord = true,
-                Delimiter = request.Delimiter.ToString(),
-                BadDataFound = null 
-            };
-
-            using var reader = new StreamReader(request.ImportFile.OpenReadStream());
-            using var csv = new CsvReader(reader, config);
-
-            csv.Context.RegisterClassMap(new ProductCsvClassMap(request.Delimiter is ',' ? ';' : ','));
-            return csv.GetRecords<ProductCsvRecordDto>().ToList();
-        }
         private T GetOrCreate<T>(string key, Dictionary<string, T> existing, Dictionary<string, T> newItems, Func<string, T> factory)
         {
             if (existing.TryGetValue(key, out var item) || newItems.TryGetValue(key, out item))
@@ -99,7 +80,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Im
             newItems[key] = item;
             return item;
         }
-        private async Task ProcessImportData(List<ProductCsvRecordDto> productRecords, CancellationToken cancellationToken)
+        private async Task ProcessImportData(IEnumerable<ProductCsvRecordDto> productRecords, CancellationToken cancellationToken)
         {
             var existingParameters = (await _parameterRepository.GetAllAsync(cancellationToken)).ToDictionary(p => p.Name);
             var existingCategories = (await _categoryRepository.GetAllAsync(cancellationToken)).ToDictionary(c => c.Name);

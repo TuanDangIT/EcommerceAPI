@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Core.BackgroundServices
 {
-    internal class AddAdmin : IHostedService
+    internal class AdminAccountAdder : IHostedService
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly AdminOptions _adminOptions;
 
-        public AddAdmin(IServiceProvider serviceProvider, IPasswordHasher<User> passwordHasher, AdminOptions adminOptions)
+        public AdminAccountAdder(IServiceProvider serviceProvider, IPasswordHasher<User> passwordHasher, AdminOptions adminOptions)
         {
             _serviceProvider = serviceProvider;
             _passwordHasher = passwordHasher;

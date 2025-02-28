@@ -1,0 +1,52 @@
+version: "5.0"
+
+networks:
+  dev:
+
+services:
+  ecommerce_api:
+    depends_on:
+      - "ecommerce_db"
+      - "ecommerce_azurite"
+      - "ecommerce_seq"
+    container_name: ecommerce_api
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    build:
+      context: ./Ecommerce/src/
+      # dockerfile: ./src/Dockerfile
+    # environment:
+    #   - ConnectionStrings__Postgres=Host=localhost;User ID=postgres;Password=mysecretpassword;Server=ecommerce_db;Port=5432;Database=EcommerceDb
+    networks:
+      - dev
+  ecommerce_db:
+    image: postgres:latest
+    container_name: ecommerce_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mysecretpassword
+    ports:
+      - "5432:5432"
+    networks:
+      - dev
+
+  ecommerce_azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: ecommerce_azurite
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    networks:
+      - dev
+
+  ecommerce_seq:
+    image: datalust/seq:latest
+    container_name: ecommerce_seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5341:5341"
+    networks:
+      - dev
