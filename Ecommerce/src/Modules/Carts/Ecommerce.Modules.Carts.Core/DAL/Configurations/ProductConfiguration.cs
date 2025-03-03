@@ -21,8 +21,6 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
             builder.Property(p => p.Price)
                 .HasPrecision(11, 2)
                 .IsRequired();
-            builder.Property(p => p.ImagePathUrl)
-                .IsRequired();
             builder.HasMany(p => p.CartProducts)
                 .WithOne(cp => cp.Product)
                 .HasForeignKey(cp => cp.ProductId);

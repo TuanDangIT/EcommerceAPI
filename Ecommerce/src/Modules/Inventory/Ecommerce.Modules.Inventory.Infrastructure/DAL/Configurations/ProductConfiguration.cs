@@ -20,7 +20,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
             builder.Property(p => p.EAN)
                 .HasMaxLength(13);
             builder.Property(p => p.Name)
-                .HasMaxLength(24)
+                .HasMaxLength(64)
                 .IsRequired();
             builder.Property(p => p.Price)
                 .HasPrecision(11, 2)
@@ -50,6 +50,9 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
             builder.HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId);
+            builder.HasOne(p => p.Manufacturer)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.ManufacturerId);
             builder.Property(p => p.Version)
                 .IsConcurrencyToken();
             builder.ToTable(p =>

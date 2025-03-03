@@ -24,8 +24,18 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
         }
         public async Task AddManyAsync(IEnumerable<Category> categories, CancellationToken cancellationToken = default)
         {
-            await _dbContext.AddRangeAsync(categories, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            var existingCategoryNames = await _dbContext.Categories
+                                                        .Where(c => categories.Select(x => x.Name).Contains(c.Name))
+                                                        .Select(c => c.Name)
+                                                        .ToListAsync(cancellationToken);
+
+            var categoriesToAdd = categories.Where(c => !existingCategoryNames.Contains(c.Name)).ToList();
+
+            if (categoriesToAdd.Any())
+            {
+                await _dbContext.AddRangeAsync(categoriesToAdd, cancellationToken);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
         }
 
         public async Task DeleteAsync(Guid categoryId, CancellationToken cancellationToken = default) 

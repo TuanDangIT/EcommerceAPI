@@ -38,22 +38,32 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Un
         }
         public async Task Handle(UnlistProducts request, CancellationToken cancellationToken)
         {
-            var productIds = await _productRepository.GetAllIdThatContainsInArrayAsync(request.ProductIds, cancellationToken);
-            if (productIds.Count() != request.ProductIds.Length)
+            var products = await _productRepository.GetAllThatContainsInArrayAsync(request.ProductIds, cancellationToken);
+            var productIds = products.Select(p => p.Id);
+            if (products.Count() != request.ProductIds.Length)
             {
                 var productIdsNotFound = new List<Guid>();
                 foreach (var productId in request.ProductIds)
                 {
-                    if (productIds.Contains(productId))
+                    if (!productIds.Contains(productId))
                     {
                         productIdsNotFound.Add(productId);
                     }
                 }
                 throw new ProductNotAllFoundException(productIdsNotFound);
             }
+            var productsToUnlist = products.ToList();
+            foreach (var product in products)
+            {
+                if(product.IsListed == false)
+                {
+                    _logger.LogWarning("Product: {productId} was not unlisted, because it isListed flag is false.", product.Id);
+                    productsToUnlist.Remove(product);
+                }
+            }
             await _productRepository.UpdateListedFlagAsync(request.ProductIds, false, cancellationToken);
             _logger.LogInformation("Products: {@productsIds} were listed by {@user}.",
-                string.Join(", ", productIds), new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+                string.Join(", ", products.Select(p => p.Id)), new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             var domainEvent = new ProductsUnlisted(productIds);
             await _domainEventDispatcher.DispatchAsync(domainEvent);
             var integrationEvent = _eventMapper.Map(domainEvent);

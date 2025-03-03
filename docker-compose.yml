@@ -10,6 +10,9 @@ services:
       - "ecommerce_azurite"
       - "ecommerce_seq"
     container_name: ecommerce_api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Postgres__ConnectionString=Host=localhost;User ID=postgres;Password=mysecretpassword;Server=ecommerce_db;Port=5432;Database=EcommerceDb
     ports:
       - "8080:8080"
       - "8081:8081"
@@ -30,6 +33,8 @@ services:
       - "5432:5432"
     networks:
       - dev
+    volumes:
+      - "C:/Studia/Docker/EcommerceAPI/Postgres:/var/lib/postgresql/data"
 
   ecommerce_azurite:
     image: mcr.microsoft.com/azure-storage/azurite
@@ -40,6 +45,8 @@ services:
       - "10002:10002"
     networks:
       - dev
+    volumes:
+      - "C:/Studia/Docker/EcommerceAPI/Azurite:/data"
 
   ecommerce_seq:
     image: datalust/seq:latest
@@ -47,6 +54,6 @@ services:
     environment:
       - ACCEPT_EULA=Y
     ports:
-      - "5341:5341"
+      - "5341:80"
     networks:
       - dev

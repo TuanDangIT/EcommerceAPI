@@ -17,7 +17,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
                 .MinimumLength(8)
                 .MaximumLength(16);
             RuleFor(c => c.EAN)
-                .Length(13);
+                .Must(e => e?.Length == 8 || e?.Length == 13 || e == null)
+                .WithMessage("EAN must be either 8 or 13 characters long.");
             RuleFor(c => c.Name)
                 .NotEmpty()
                 .NotNull()
@@ -36,15 +37,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
             RuleFor(c => c.Quantity)
                 .GreaterThanOrEqualTo(0);
             RuleFor(c => c.Description)
-                .NotEmpty()
-                .NotNull();
-            RuleFor(c => c.ManufacturerId)
-                .NotEmpty()
-                .NotNull();
-            RuleFor(c => c.CategoryId)
-                .NotEmpty()
-                .NotNull();
-            RuleFor(c => c.Images)
                 .NotEmpty()
                 .NotNull();
             RuleForEach(c => c.ProductParameters)

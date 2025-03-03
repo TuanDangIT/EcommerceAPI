@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
 using Ecommerce.Modules.Inventory.Application.Inventory.Services;
+using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Events;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
@@ -58,9 +59,21 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Li
                 throw new ProductNotAllFoundException(productIdsNotFound);
             }
             await _productRepository.UpdateListedFlagAsync(request.ProductIds, true, cancellationToken);
+            var productsToAdd = new List<Product>();
+            foreach(var product in products)
+            {
+                if(product.IsListed == false)
+                {
+                    productsToAdd.Add(product);
+                }
+                else
+                {
+                    _logger.LogWarning("Product: {productId} was not listed, because it's been already listed.", product.Id);
+                }
+            }
             _logger.LogInformation("Products: {@productIds} were listed by {@user}.",
                 products.Select(p => p.Id), new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-            var domainEvent = new ProductsListed(products, _timeProvider.GetUtcNow().UtcDateTime);
+            var domainEvent = new ProductsListed(productsToAdd, _timeProvider.GetUtcNow().UtcDateTime);
             await _domainEventDispatcher.DispatchAsync(domainEvent);
             var integrationEvent = _eventMapper.Map(domainEvent);
             await _messageBroker.PublishAsync(integrationEvent);
