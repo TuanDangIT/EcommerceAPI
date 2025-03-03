@@ -26,8 +26,18 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
 
         public async Task AddManyAsync(IEnumerable<Manufacturer> manufacturers, CancellationToken cancellationToken = default)
         {
-            await _dbContext.AddRangeAsync(manufacturers, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            var existingManufacturers = await _dbContext.Manufacturers
+                                                        .Where(c => manufacturers.Select(x => x.Name).Contains(c.Name))
+                                                        .Select(c => c.Name)
+                                                        .ToListAsync(cancellationToken);
+
+            var manufacturersToAdd = manufacturers.Where(c => !existingManufacturers.Contains(c.Name)).ToList();
+
+            if (manufacturersToAdd.Any())
+            {
+                await _dbContext.AddRangeAsync(manufacturersToAdd, cancellationToken);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
         }
 
         public async Task DeleteAsync(Guid manufacturerId, CancellationToken cancellationToken = default) 

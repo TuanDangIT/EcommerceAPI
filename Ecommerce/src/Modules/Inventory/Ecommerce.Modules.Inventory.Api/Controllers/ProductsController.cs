@@ -41,7 +41,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public async Task<ActionResult> CreateProduct([FromForm] CreateProduct command)
         {
             var productId = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetProduct), new {productId}, productId);
+            return CreatedAtAction(nameof(GetProduct), new { id = productId }, productId);
         }
         [HttpPost("import")]
         public async Task<ActionResult> ImportProducts([FromForm] ImportProducts command)
@@ -57,8 +57,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return Ok(new ApiResponse<PagedResult<ProductBrowseDto>>(HttpStatusCode.OK, result));
         }
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ApiResponse<ProductDetailsDto>>> GetProduct([FromRoute]Guid id, 
-            CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResponse<ProductDetailsDto>>> GetProduct([FromRoute]Guid id, CancellationToken cancellationToken = default)
             => OkOrNotFound<ProductDetailsDto, Product>(await _mediator.Send(new GetProduct(id), cancellationToken));
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteProduct([FromRoute] Guid id, CancellationToken cancellationToken = default)
@@ -74,9 +73,10 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return NoContent();
         }
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult> UpdateProduct([FromForm] UpdateProduct command, 
+        public async Task<ActionResult> UpdateProduct([FromForm] UpdateProduct command, [FromRoute] Guid id,
             CancellationToken cancellationToken = default)
         {
+            command = command with { Id = id };
             await _mediator.Send(command, cancellationToken);
             return NoContent();
         }

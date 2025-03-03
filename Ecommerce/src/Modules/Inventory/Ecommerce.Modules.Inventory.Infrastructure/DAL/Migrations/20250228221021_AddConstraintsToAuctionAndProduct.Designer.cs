@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    partial class InventoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250228221021_AddConstraintsToAuctionAndProduct")]
+    partial class AddConstraintsToAuctionAndProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -234,7 +237,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                     b.Property<string>("AdditionalDescription")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("CategoryId")
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -255,7 +258,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
-                    b.Property<Guid?>("ManufacturerId")
+                    b.Property<Guid>("ManufacturerId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
@@ -395,11 +398,15 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                 {
                     b.HasOne("Ecommerce.Modules.Inventory.Domain.Inventory.Entities.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Ecommerce.Modules.Inventory.Domain.Inventory.Entities.Manufacturer", "Manufacturer")
                         .WithMany("Products")
-                        .HasForeignKey("ManufacturerId");
+                        .HasForeignKey("ManufacturerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
 

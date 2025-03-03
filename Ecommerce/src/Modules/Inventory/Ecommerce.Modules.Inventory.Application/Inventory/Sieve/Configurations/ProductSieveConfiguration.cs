@@ -29,10 +29,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Configurations
             mapper.Property<Product>(p => p.Quantity)
                 .CanFilter()
                 .CanSort();
-            mapper.Property<Product>(p => p.IsSold)
-                .CanFilter();
-            mapper.Property<Product>(p => p.HasQuantity)
-                .CanFilter();
             mapper.Property<Product>(p => p.Location)
                 .CanFilter();
             mapper.Property<Product>(p => p.Description)
@@ -41,9 +37,9 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Configurations
                 .CanFilter();
             mapper.Property<Product>(p => p.IsListed)
                 .CanFilter();
-            mapper.Property<Product>(p => p.Manufacturer.Name)
+            mapper.Property<Product>(p => p.Manufacturer!.Name)
                 .CanFilter();
-            mapper.Property<Product>(p => p.Category.Name)
+            mapper.Property<Product>(p => p.Category!.Name)
                 .CanFilter();
             mapper.Property<Product>(p => p.CreatedAt)
                 .CanFilter()

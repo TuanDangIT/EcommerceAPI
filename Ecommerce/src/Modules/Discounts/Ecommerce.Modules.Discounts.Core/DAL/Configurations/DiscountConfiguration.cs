@@ -27,8 +27,8 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
                 .IsRequired();
             builder.Property(d => d.StripePromotionCodeId)
                 .IsRequired();
-            builder.HasIndex(d => d.StripePromotionCodeId)
-                .IsUnique();
+            builder.Property(d => d.CouponId)
+                .IsRequired();
             builder.ToTable(d =>
             {
                 d.HasCheckConstraint("CK_Discount_Redemptions", "\"Redemptions\" >= 0");

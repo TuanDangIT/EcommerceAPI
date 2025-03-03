@@ -13,10 +13,16 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<Auction> builder)
         {
-            builder.Property(p => p.SKU).IsRequired();
+            builder.Property(p => p.SKU)
+                .HasMaxLength(16)
+                .IsRequired();
             //builder.HasIndex(p => p.SKU).IsUnique();
-            builder.Property(p => p.Name).IsRequired();
-            builder.Property(p => p.Price).IsRequired();
+            builder.Property(p => p.Name)
+                .HasMaxLength(64)
+                .IsRequired();
+            builder.Property(p => p.Price)
+                .HasPrecision(11, 2)
+                .IsRequired();
             builder.Property(p => p.Description).IsRequired();
             builder.Property(p => p.Category).IsRequired();
             builder.OwnsMany(p => p.Parameters);

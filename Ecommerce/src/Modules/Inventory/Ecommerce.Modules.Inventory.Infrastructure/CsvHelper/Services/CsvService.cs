@@ -23,7 +23,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.CsvHelper.Services
                 Encoding = Encoding.UTF8,
                 HasHeaderRecord = true,
                 Delimiter = delimiter.ToString(),
-                BadDataFound = null
+                BadDataFound = _ => throw new CsvHelperBadDataException()
             };
 
             using var reader = new StreamReader(file.OpenReadStream());

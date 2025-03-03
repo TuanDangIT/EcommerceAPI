@@ -5,6 +5,7 @@ using Azure.Storage.Blobs.Specialized;
 using Ecommerce.Shared.Abstractions.BloblStorage;
 using Ecommerce.Shared.Infrastructure.Storage.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Azure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +18,13 @@ namespace Ecommerce.Shared.Infrastructure.Storage
     internal class BlobStorageService : IBlobStorageService
     {
         private readonly BlobServiceClient _blobServiceClient;
+        private readonly IAzureClientFactory<BlobServiceClient> _factory;
+        private const string _clientName = "Blob";
 
-        public BlobStorageService(BlobServiceClient blobServiceClient)
+        public BlobStorageService(IAzureClientFactory<BlobServiceClient> factory)
         {
-            _blobServiceClient = blobServiceClient;
+            _factory = factory;
+            _blobServiceClient = _factory.CreateClient(_clientName);
         }
         public async Task DeleteAsync(string fileName, string containerName, CancellationToken cancellationToken = default)
         {
