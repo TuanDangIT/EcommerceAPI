@@ -339,7 +339,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 
             modelBuilder.Entity("Ecommerce.Modules.Inventory.Domain.Auctions.Entities.Auction", b =>
                 {
-                    b.OwnsMany("Ecommerce.Modules.Inventory.Domain.Auctions.Entities.AuctionParameter", "Parameters", b1 =>
+                    b.OwnsMany("Ecommerce.Modules.Inventory.Domain.Auctions.Entities.Auction.Parameters#Ecommerce.Modules.Inventory.Domain.Auctions.Entities.AuctionParameter", "Parameters", b1 =>
                         {
                             b1.Property<Guid>("AuctionId")
                                 .HasColumnType("uuid");

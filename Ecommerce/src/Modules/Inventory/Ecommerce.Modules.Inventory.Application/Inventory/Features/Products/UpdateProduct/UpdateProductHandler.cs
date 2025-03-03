@@ -62,18 +62,10 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
                     additionalDescription: request.AdditionalDescription,
                     reserved: request.Reserved
                 );
-            if (request.ManufacturerId is not null)
-            {
-                var manufacturer = await _manufacturerRepository.GetAsync(request.ManufacturerId.Value, cancellationToken) ??
-                    throw new ManufacturerNotFoundException(request.ManufacturerId.Value);
-                product.ChangeManufacturer(manufacturer);
-            }
-            if (request.CategoryId is not null)
-            {
-                var category = await _categoryRepository.GetAsync(request.CategoryId.Value, cancellationToken) ??
-                    throw new CategoryNotFoundException(request.CategoryId.Value);
-                product.ChangeCategory(category);
-            }
+            var manufacturer = await GetManufacturerIfSpecifiedAsync(request.ManufacturerId, cancellationToken);
+            var category = await GetCategoryIfSpecifiedAsync(request.CategoryId, cancellationToken);
+            product.ChangeManufacturer(manufacturer);
+            product.ChangeCategory(category);
             var productParameters = await ChangeProductParametersAsync(request.ProductParameters, cancellationToken);
             product.ChangeParameters(productParameters);
             await _productRepository.DeleteProductParametersAndImagesRelatedToProduct(request.Id, cancellationToken);
@@ -81,6 +73,24 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
             await UploadImagesToBlobStorageAsync(request.Images, product);
             _logger.LogInformation("Product: {productId} was updated with new details {@request} by {@user}.",
                 product.Id, request, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+        }
+        private async Task<Manufacturer?> GetManufacturerIfSpecifiedAsync(Guid? manufacturerId, CancellationToken cancellationToken)
+        {
+            if (manufacturerId is null)
+                return null;
+
+            var manufacturer = await _manufacturerRepository.GetAsync(manufacturerId.Value, cancellationToken) ??
+                throw new ManufacturerNotFoundException(manufacturerId.Value);
+            return manufacturer;
+        }
+        private async Task<Category?> GetCategoryIfSpecifiedAsync(Guid? categoryId, CancellationToken cancellationToken)
+        {
+            if (categoryId is null)
+                return null;
+
+            var category = await _categoryRepository.GetAsync(categoryId.Value, cancellationToken) ??
+                throw new CategoryNotFoundException(categoryId.Value);
+            return category;
         }
         private async Task<List<ProductParameter>> ChangeProductParametersAsync(
             IEnumerable<ProductParameterDto>? productParameterDtos,

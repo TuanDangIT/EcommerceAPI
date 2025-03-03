@@ -39,9 +39,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
             RuleFor(c => c.Description)
                 .NotEmpty()
                 .NotNull();
-            RuleFor(c => c.CategoryId)
-                .NotEmpty()
-                .NotNull();
             RuleForEach(c => c.ProductParameters)
                 .ChildRules(p =>
                 {

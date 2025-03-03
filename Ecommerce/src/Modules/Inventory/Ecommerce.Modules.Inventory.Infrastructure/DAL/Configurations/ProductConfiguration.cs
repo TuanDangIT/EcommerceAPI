@@ -49,10 +49,12 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
                 .HasForeignKey(i => i.ProductId);
             builder.HasOne(p => p.Category)
                 .WithMany(c => c.Products)
-                .HasForeignKey(p => p.CategoryId);
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(p => p.Manufacturer)
                 .WithMany(c => c.Products)
-                .HasForeignKey(p => p.ManufacturerId);
+                .HasForeignKey(p => p.ManufacturerId)
+                .OnDelete(DeleteBehavior.NoAction);
             builder.Property(p => p.Version)
                 .IsConcurrencyToken();
             builder.ToTable(p =>

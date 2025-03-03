@@ -37,11 +37,11 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public IEnumerable<Parameter> Parameters => _parameters;
         private List<ProductParameter> _productParameters = [];
         public IEnumerable<ProductParameter> ProductParameters => _productParameters;
-        public Manufacturer? Manufacturer { get; private set; } = new();
+        public Manufacturer? Manufacturer { get; private set; } 
         public Guid? ManufacturerId { get; private set; }
         public List<Image> _images = [];
         public IEnumerable<Image> Images => _images;
-        public Category? Category { get; private set; } = new();
+        public Category? Category { get; private set; }
         public Guid? CategoryId { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
@@ -163,13 +163,21 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             Reserved = reserved;
             IncrementVersion();
         }
-        public void ChangeManufacturer(Manufacturer manufacturer)
+        public void ChangeManufacturer(Manufacturer? manufacturer)
         {
+            if(manufacturer is null)
+            {
+                ManufacturerId = null;
+            }
             Manufacturer = manufacturer;
             IncrementVersion();
         }
-        public void ChangeCategory(Category category)
+        public void ChangeCategory(Category? category)
         {
+            if(category is null)
+            {
+                CategoryId = null;
+            }
             Category = category;
             IncrementVersion();
         }
