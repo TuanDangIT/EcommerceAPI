@@ -104,6 +104,9 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Migrations
 
                     b.HasIndex("CouponId");
 
+                    b.HasIndex("StripePromotionCodeId")
+                        .IsUnique();
+
                     b.ToTable("Discounts", "discounts", t =>
                         {
                             t.HasCheckConstraint("CK_Discount_ExpiresAt", "\"ExpiresAt\" > NOW()");

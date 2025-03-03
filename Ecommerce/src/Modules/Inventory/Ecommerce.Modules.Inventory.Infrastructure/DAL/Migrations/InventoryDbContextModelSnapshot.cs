@@ -56,20 +56,17 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(11, 2)
-                        .HasColumnType("numeric(11,2)");
+                        .HasColumnType("numeric");
 
                     b.Property<int?>("Quantity")
                         .HasColumnType("integer");
 
                     b.Property<string>("SKU")
                         .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -234,7 +231,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                     b.Property<string>("AdditionalDescription")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("CategoryId")
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -255,13 +252,13 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
-                    b.Property<Guid?>("ManufacturerId")
+                    b.Property<Guid>("ManufacturerId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasMaxLength(24)
+                        .HasColumnType("character varying(24)");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(11, 2)
@@ -395,11 +392,15 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Migrations
                 {
                     b.HasOne("Ecommerce.Modules.Inventory.Domain.Inventory.Entities.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Ecommerce.Modules.Inventory.Domain.Inventory.Entities.Manufacturer", "Manufacturer")
                         .WithMany("Products")
-                        .HasForeignKey("ManufacturerId");
+                        .HasForeignKey("ManufacturerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
 

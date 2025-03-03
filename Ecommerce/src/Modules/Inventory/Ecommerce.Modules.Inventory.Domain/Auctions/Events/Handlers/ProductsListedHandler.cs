@@ -24,7 +24,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Events.Handlers
         {
             var products = @event.Products;
             var auctions = (await _auctionRepository.GetAllThatContainsInArrayAsync(products.Select(p => p.Id).ToArray())).ToList();
-            if (auctions.Count != 0)
+            if(auctions.Count != 0)
             {
                 throw new ProductsCannotBeRelistedException(auctions.Select(a => a.Id).ToArray());
             }
@@ -37,11 +37,11 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Events.Handlers
                     price: product.Price,
                     description: product.Description,
                     imagePathUrls: product.Images.Select(i => i.ImageUrlPath).ToList(),
-                    category: product.Category?.Name!,
+                    category: product.Category.Name,
                     quantity: product.Quantity,
                     additionalDescription: product.AdditionalDescription,
                     parameters: product.ProductParameters?.Select(pp => new AuctionParameter(pp.Parameter.Name, pp.Value)).ToList(),
-                    manufacturer: product.Manufacturer?.Name
+                    manufacturer: product.Manufacturer.Name
                 ));
             }
             await _auctionRepository.ListManyAsync(auctions);

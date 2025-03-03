@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Carts.Core.Events.External.Handlers
             {
                 if (product is null)
                 {
-                    continue;
+                    throw new ArgumentNullException(nameof(@event));
                 }
                 products.Add(product);
             }

@@ -25,7 +25,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Events.Handlers
             var auctions = await _auctionRepository.GetAllThatContainsInArrayAsync(productIds);
             if (!auctions.Any())
             {
-                throw new ProductsCannotBeUnlistedMoreThanOnceOrNotFoundException(auctions.Select(a => a.Id).ToArray());
+                throw new ProductsCannotBeUnlistedMoreThanOnceException(auctions.Select(a => a.Id).ToArray());
             }
             await _auctionRepository.UnlistManyAsync(productIds);
         }

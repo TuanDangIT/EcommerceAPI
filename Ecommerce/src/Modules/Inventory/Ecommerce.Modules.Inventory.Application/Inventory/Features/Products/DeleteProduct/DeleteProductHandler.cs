@@ -34,10 +34,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.De
         {
             var imagesIds = await _imageRepository.GetAllImagesForProductAsync(request.ProductId, cancellationToken);
             await _productRepository.DeleteAsync(request.ProductId, cancellationToken);
-            if(imagesIds.Any())
-            {
-                await _blobStorageService.DeleteManyAsync(imagesIds.Select(i => i.ToString()), _containerName);
-            }
+            await _blobStorageService.DeleteManyAsync(imagesIds.Select(i => i.ToString()), _containerName);
             _logger.LogInformation("Product: {productId} was deleted by {@user}.",
                 request.ProductId, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }

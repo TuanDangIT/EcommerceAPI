@@ -21,7 +21,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
         public List<AuctionParameter>? Parameters { get; private set; } 
         public string? Manufacturer { get; private set; }
         public List<string> ImagePathUrls { get; private set; } = [];
-        public string? Category { get; private set; } = string.Empty;
+        public string Category { get; private set; } = string.Empty;
         private readonly List<Review> _review = [];
         public IEnumerable<Review> Reviews => _review;
         public DateTime CreatedAt { get; private set; }

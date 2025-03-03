@@ -22,8 +22,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
         public string Description { get; set; } = string.Empty;
         public string? AdditionalDescription { get; set; }
         public List<ProductParameterDto>? ProductParameters { get; set; }
-        public Guid? ManufacturerId { get; set; }
-        public Guid? CategoryId { get; set; }
+        public Guid ManufacturerId { get; set; }
+        public Guid CategoryId { get; set; }
         public List<IFormFile> Images { get; set; } = [];
     };
 }

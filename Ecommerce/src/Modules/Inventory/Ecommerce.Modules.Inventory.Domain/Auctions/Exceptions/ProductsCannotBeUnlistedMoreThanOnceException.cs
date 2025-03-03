@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Domain.Auctions.Exceptions
 {
-    internal class ProductsCannotBeUnlistedMoreThanOnceOrNotFoundException : EcommerceException
+    internal class ProductsCannotBeUnlistedMoreThanOnceException : EcommerceException
     {
         public Guid[] Ids { get; set; }
-        public ProductsCannotBeUnlistedMoreThanOnceOrNotFoundException(Guid[] ids) : base($"Auction: {string.Join(", ", ids)} cannot be unlisted more than once or were not found.")
+        public ProductsCannotBeUnlistedMoreThanOnceException(Guid[] ids) : base($"Auction: {string.Join(", ", ids)} cannot be unlisted more than once.")
         {
             Ids = ids;
         }

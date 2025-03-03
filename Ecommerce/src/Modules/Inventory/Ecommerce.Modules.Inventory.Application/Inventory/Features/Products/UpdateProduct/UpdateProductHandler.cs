@@ -1,5 +1,4 @@
 ﻿using Azure.Core;
-using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
 using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
@@ -49,6 +48,24 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
             {
                 throw new CannotUpdateListedProductException(request.Id);
             }
+            var manufacturer = await _manufacturerRepository.GetAsync(request.ManufacturerId, cancellationToken) ?? 
+                throw new ManufacturerNotFoundException(request.ManufacturerId);
+            var category = await _categoryRepository.GetAsync(request.CategoryId, cancellationToken) ?? 
+                throw new CategoryNotFoundException(request.CategoryId);
+            var productParameters = new List<ProductParameter>();
+            if (request.ProductParameters is not null)
+            {
+                foreach (var productParameter in request.ProductParameters)
+                {
+                    var parameter = await _parameterRepository.GetAsync(productParameter.ParameterId, cancellationToken) ?? 
+                        throw new ParameterNotFoundException(productParameter.ParameterId);
+                    productParameters.Add(new ProductParameter()
+                    {
+                        Parameter = parameter,
+                        Value = productParameter.Value,
+                    });
+                }
+            }
             product.ChangeBaseDetails
                 (
                     sku: request.SKU,
@@ -62,44 +79,14 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
                     additionalDescription: request.AdditionalDescription,
                     reserved: request.Reserved
                 );
-            if (request.ManufacturerId is not null)
-            {
-                var manufacturer = await _manufacturerRepository.GetAsync(request.ManufacturerId.Value, cancellationToken) ??
-                    throw new ManufacturerNotFoundException(request.ManufacturerId.Value);
-                product.ChangeManufacturer(manufacturer);
-            }
-            if (request.CategoryId is not null)
-            {
-                var category = await _categoryRepository.GetAsync(request.CategoryId.Value, cancellationToken) ??
-                    throw new CategoryNotFoundException(request.CategoryId.Value);
-                product.ChangeCategory(category);
-            }
-            var productParameters = await ChangeProductParametersAsync(request.ProductParameters, cancellationToken);
-            product.ChangeParameters(productParameters);
+            product.ChangeManufacturer(manufacturer);
+            product.ChangeCategory(category);
             await _productRepository.DeleteProductParametersAndImagesRelatedToProduct(request.Id, cancellationToken);
+            product.ChangeParameters(productParameters);
             await _productRepository.UpdateAsync();
             await UploadImagesToBlobStorageAsync(request.Images, product);
             _logger.LogInformation("Product: {productId} was updated with new details {@request} by {@user}.",
                 product.Id, request, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-        }
-        private async Task<List<ProductParameter>> ChangeProductParametersAsync(
-            IEnumerable<ProductParameterDto>? productParameterDtos,
-            CancellationToken cancellationToken)
-        {
-            var productParameters = new List<ProductParameter>();
-            if (productParameterDtos is null)
-                return productParameters;
-            foreach (var dto in productParameterDtos)
-            {
-                var parameter = await _parameterRepository.GetAsync(dto.ParameterId, cancellationToken) ??
-                    throw new ParameterNotFoundException(dto.ParameterId);
-                productParameters.Add(new ProductParameter
-                {
-                    Parameter = parameter,
-                    Value = dto.Value
-                });
-            }
-            return productParameters;
         }
         private async Task UploadImagesToBlobStorageAsync(List<IFormFile> images, Product product)
         {

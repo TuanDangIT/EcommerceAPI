@@ -22,7 +22,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         [JsonInclude]
         public int? Quantity { get; private set; }
         [JsonInclude]
-        public string? ImagePathUrl { get; private set; } = string.Empty;
+        public string ImagePathUrl { get; private set; } = string.Empty;
         public bool HasQuantity => Quantity != null;
         private readonly List<CartProduct> _cartProducts = [];
         public IEnumerable<CartProduct> CartProducts => _cartProducts;

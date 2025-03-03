@@ -224,6 +224,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("ImagePathUrl")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -302,7 +303,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .WithMany("CheckoutCarts")
                         .HasForeignKey("PaymentId");
 
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.ValueObjects.Customer", "Customer", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart.Customer#Ecommerce.Modules.Carts.Core.Entities.ValueObjects.Customer", "Customer", b1 =>
                         {
                             b1.Property<Guid>("CheckoutCartId")
                                 .HasColumnType("uuid");
@@ -338,7 +339,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                                 .HasForeignKey("CheckoutCartId");
                         });
 
-                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.ValueObjects.Shipment", "Shipment", b1 =>
+                    b.OwnsOne("Ecommerce.Modules.Carts.Core.Entities.CheckoutCart.Shipment#Ecommerce.Modules.Carts.Core.Entities.ValueObjects.Shipment", "Shipment", b1 =>
                         {
                             b1.Property<Guid>("CheckoutCartId")
                                 .HasColumnType("uuid");

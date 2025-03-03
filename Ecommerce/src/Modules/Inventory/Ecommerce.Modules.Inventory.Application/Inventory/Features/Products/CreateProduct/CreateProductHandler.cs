@@ -1,5 +1,4 @@
 ﻿using Azure.Core;
-using Ecommerce.Modules.Inventory.Application.Inventory.DTO;
 using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Repositories;
@@ -40,9 +39,24 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
         }
         public async Task<Guid> Handle(CreateProduct request, CancellationToken cancellationToken)
         {
-            var manufacturer = await GetManufacturerIfSpecifiedAsync(request.ManufacturerId, cancellationToken);
-            var category = await GetCategoryIfSpecifiedAsync(request.CategoryId, cancellationToken);
-            var productParameters = await CreateProductParametersAsync(request.ProductParameters, cancellationToken);
+            var manufacturer = await _manufacturerRepository.GetAsync(request.ManufacturerId, cancellationToken) ?? 
+                throw new ManufacturerNotFoundException(request.ManufacturerId);
+            var category = await _categoryRepository.GetAsync(request.CategoryId, cancellationToken) ?? 
+                throw new CategoryNotFoundException(request.CategoryId);
+            var productParameters = new List<ProductParameter>();
+            if (request.ProductParameters is not null)
+            {
+                foreach (var productParameter in request.ProductParameters)
+                {
+                    var parameter = await _parameterRepository.GetAsync(productParameter.ParameterId, cancellationToken) ?? 
+                        throw new ParameterNotFoundException(productParameter.ParameterId);
+                    productParameters.Add(new ProductParameter()
+                    {
+                        Parameter = parameter,
+                        Value = productParameter.Value
+                    });
+                }
+            }
             var imageList = await UploadImagesToBlobStorageAsync(request.Images);
             var productId = Guid.NewGuid();
             var product = new Product
@@ -67,44 +81,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
             _logger.LogInformation("Product was created by {@user}.",
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             return productId;
-        }
-        private async Task<Manufacturer?> GetManufacturerIfSpecifiedAsync(Guid? manufacturerId, CancellationToken cancellationToken)
-        {
-            if (manufacturerId is null)
-                return null;
-
-            var manufacturer = await _manufacturerRepository.GetAsync(manufacturerId.Value, cancellationToken) ?? 
-                throw new ManufacturerNotFoundException(manufacturerId.Value);
-            return manufacturer;
-        }
-
-        private async Task<Category?> GetCategoryIfSpecifiedAsync(Guid? categoryId, CancellationToken cancellationToken)
-        {
-            if (categoryId is null)
-                return null;
-
-            var category = await _categoryRepository.GetAsync(categoryId.Value, cancellationToken) ?? 
-                throw new CategoryNotFoundException(categoryId.Value);
-            return category;
-        }
-        private async Task<List<ProductParameter>> CreateProductParametersAsync(
-            IEnumerable<ProductParameterDto>? productParameterDtos,
-            CancellationToken cancellationToken)
-        {
-            var productParameters = new List<ProductParameter>();
-            if (productParameterDtos is null)
-                return productParameters;
-            foreach (var dto in productParameterDtos)
-            {
-                var parameter = await _parameterRepository.GetAsync(dto.ParameterId, cancellationToken)
-                    ?? throw new ParameterNotFoundException(dto.ParameterId);
-                productParameters.Add(new ProductParameter
-                {
-                    Parameter = parameter,
-                    Value = dto.Value
-                });
-            }
-            return productParameters;
         }
         private async Task<IEnumerable<Image>> UploadImagesToBlobStorageAsync(List<IFormFile> images)
         {
