@@ -14,6 +14,7 @@ using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Sieve.Models;
 using Sieve.Services;
 using System;
@@ -35,9 +36,10 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         private readonly ILogger<DiscountService> _logger;
         private readonly IContextService _contextService;
         private readonly TimeProvider _timeProvider;
+        private readonly IOptions<SieveOptions> _sieveOptions;
 
         public DiscountService(IDiscountDbContext dbContext, IPaymentProcessorService paymentProcessorService, IEnumerable<ISieveProcessor> sieveProcessors, IMessageBroker messageBroker,
-            ILogger<DiscountService> logger, IContextService contextService, TimeProvider timeProvider)
+            ILogger<DiscountService> logger, IContextService contextService, TimeProvider timeProvider, IOptions<SieveOptions> sieveOptions)
         {
             _dbContext = dbContext;
             _paymentProcessorService = paymentProcessorService;
@@ -46,11 +48,12 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             _logger = logger;
             _contextService = contextService;
             _timeProvider = timeProvider;
+            _sieveOptions = sieveOptions;
         }
 
         public async Task<PagedResult<DiscountBrowseDto>> BrowseDiscountsAsync(int couponId, SieveModel model, CancellationToken cancellationToken = default)
         {
-            if (model.PageSize is null || model.Page is null)
+            if (model.Page is null)
             {
                 throw new PaginationException();
             }
@@ -70,7 +73,12 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 .Apply(model, discounts, applyPagination: false, applySorting: false)
                 .Where(d => d.CouponId == coupon.Id)
                 .CountAsync(cancellationToken);
-            var pagedResult = new PagedResult<DiscountBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
+            int pageSize = _sieveOptions.Value.DefaultPageSize;
+            if (model.PageSize is not null)
+            {
+                pageSize = model.PageSize.Value;
+            }
+            var pagedResult = new PagedResult<DiscountBrowseDto>(dtos, totalCount, pageSize, model.Page.Value);
             return pagedResult;
         }
 

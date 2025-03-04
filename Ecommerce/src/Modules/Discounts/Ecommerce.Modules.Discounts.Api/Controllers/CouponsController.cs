@@ -47,13 +47,13 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
             await _couponService.CreateAsync(dto);
             return NoContent();
         }
-        [HttpPut("{stripeCouponId}")]
+        [HttpPut("{couponId:int}")]
         public async Task<ActionResult> UpdateCouponName([FromRoute]int couponId, [FromBody]CouponUpdateNameDto dto, CancellationToken cancellationToken = default)
         {
             await _couponService.UpdateNameAsync(couponId, dto, cancellationToken);
             return NoContent();
         }
-        [HttpDelete("{stripeCouponId}")]
+        [HttpDelete("{couponId:int}")]
         public async Task<ActionResult> DeleteCoupon([FromRoute] int couponId, CancellationToken cancellationToken = default)
         {
             await _couponService.DeleteAsync(couponId, cancellationToken);

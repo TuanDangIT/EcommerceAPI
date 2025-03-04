@@ -6,6 +6,7 @@ using Ecommerce.Modules.Users.Core.Sieve;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Sieve.Models;
 using Sieve.Services;
 using System;
@@ -19,11 +20,13 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
     internal class EmployeeRepository : IEmployeeRepository
     {
         private readonly UsersDbContext _dbContext;
+        private readonly IOptions<SieveOptions> _sieveOptions;
         private readonly ISieveProcessor _sieveProcessor;
 
-        public EmployeeRepository(UsersDbContext dbContext, IEnumerable<ISieveProcessor> sieveProcessors)
+        public EmployeeRepository(UsersDbContext dbContext, IEnumerable<ISieveProcessor> sieveProcessors, IOptions<SieveOptions> sieveOptions)
         {
             _dbContext = dbContext;
+            _sieveOptions = sieveOptions;
             _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(UsersModuleSieveProcessor));
         }
         public async Task AddAsync(Employee employee, CancellationToken cancellationToken = default)
@@ -34,7 +37,7 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
 
         public async Task<PagedResult<EmployeeBrowseDto>> GetAllAsync(SieveModel model, CancellationToken cancellationToken = default)
         {
-            if (model.PageSize is null || model.Page is null)
+            if (model.Page is null)
             {
                 throw new PaginationException();
             }
@@ -51,6 +54,11 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
                 .Apply(model, coupons, applyPagination: false, applySorting: false)
                 .Where(u => u.Type == UserType.Employee)
                 .CountAsync(cancellationToken);
+            int pageSize = _sieveOptions.Value.DefaultPageSize;
+            if (model.PageSize is not null)
+            {
+                pageSize = model.PageSize.Value;
+            }
             var pagedResult = new PagedResult<EmployeeBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
             return pagedResult;
         }

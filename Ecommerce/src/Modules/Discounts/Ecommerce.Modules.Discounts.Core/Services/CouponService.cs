@@ -12,6 +12,7 @@ using Ecommerce.Shared.Abstractions.Messaging;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Sieve.Models;
 using Sieve.Services;
 using System;
@@ -29,21 +30,23 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         private readonly IMessageBroker _messageBroker;
         private readonly ILogger<CouponService> _logger;
         private readonly IContextService _contextService;
+        private readonly IOptions<SieveOptions> _sieveOptions;
         private readonly ISieveProcessor _sieveProcessor;
 
         public CouponService(IDiscountDbContext dbContext, IPaymentProcessorService paymentProcessorService, IMessageBroker messageBroker, IEnumerable<ISieveProcessor> sieveProcessors,
-            ILogger<CouponService> logger, IContextService contextService)
+            ILogger<CouponService> logger, IContextService contextService, IOptions<SieveOptions> sieveOptions)
         {
             _dbContext = dbContext;
             _paymentProcessorService = paymentProcessorService;
             _messageBroker = messageBroker;
             _logger = logger;
             _contextService = contextService;
+            _sieveOptions = sieveOptions;
             _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(DiscountsModuleSieveProcessor));
         }
         public async Task<PagedResult<NominalCouponBrowseDto>> BrowseNominalCouponsAsync(SieveModel model, CancellationToken cancellationToken = default)
         {
-            if (model.PageSize is null || model.Page is null)
+            if (model.Page is null)
             {
                 throw new PaginationException();
             }
@@ -59,13 +62,18 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 .Apply(model, coupons, applyPagination: false, applySorting: false)
                 .OfType<NominalCoupon>()
                 .CountAsync(cancellationToken);
-            var pagedResult = new PagedResult<NominalCouponBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
+            int pageSize = _sieveOptions.Value.DefaultPageSize;
+            if (model.PageSize is not null)
+            {
+                pageSize = model.PageSize.Value;
+            }
+            var pagedResult = new PagedResult<NominalCouponBrowseDto>(dtos, totalCount, pageSize, model.Page.Value);
             return pagedResult;
         }
 
         public async Task<PagedResult<PercentageCouponBrowseDto>> BrowsePercentageCouponsAsync(SieveModel model, CancellationToken cancellationToken = default)
         {
-            if (model.PageSize is null || model.Page is null)
+            if (model.Page is null)
             {
                 throw new PaginationException();
             }
@@ -81,7 +89,12 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 .Apply(model, coupons, applyPagination: false, applySorting: false)
                 .OfType<PercentageCoupon>()
                 .CountAsync(cancellationToken);
-            var pagedResult = new PagedResult<PercentageCouponBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
+            int pageSize = _sieveOptions.Value.DefaultPageSize;
+            if (model.PageSize is not null)
+            {
+                pageSize = model.PageSize.Value;
+            }
+            var pagedResult = new PagedResult<PercentageCouponBrowseDto>(dtos, totalCount, pageSize, model.Page.Value);
             return pagedResult;
         }
 
