@@ -51,5 +51,12 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
             await _offerService.DeleteAsync(offerId, cancellationToken);
             return NoContent();
         }
+        [Authorize(Roles = "Admin, Manager, Employee, Customer")]
+        [HttpDelete]
+        public async Task<ActionResult> DeleteOffers([FromBody] IEnumerable<int> offerIds, CancellationToken cancellationToken = default)
+        {
+            await _offerService.DeleteManyAsync(offerIds, cancellationToken);
+            return NoContent();
+        }
     }
 }

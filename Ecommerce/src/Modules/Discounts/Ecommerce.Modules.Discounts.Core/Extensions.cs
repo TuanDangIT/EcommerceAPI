@@ -2,7 +2,6 @@
 using Ecommerce.Modules.Discounts.Core.Services;
 using Ecommerce.Modules.Discounts.Core.Services.Externals;
 using Ecommerce.Modules.Discounts.Core.Sieve;
-using Ecommerce.Modules.Discounts.Core.Sieve.Filters;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,7 +31,6 @@ namespace Ecommerce.Modules.Discounts.Core
             services.AddPostgres<DiscountsDbContext>();
             //services.Configure<SieveOptions>(configuration.GetSection(_sieveSectionName));
             services.AddKeyedScoped<ISieveProcessor, DiscountsModuleSieveProcessor>("discounts-sieve-processor");
-            services.AddKeyedScoped<ISieveCustomFilterMethods, SieveCustomFilterMethods>("discounts-sieve-custom-filters");
             return services;
         }
     }

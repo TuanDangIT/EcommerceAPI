@@ -110,7 +110,13 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             await _dbContext.Offers.Where(o => o.Id == offerId).ExecuteDeleteAsync(cancellationToken);
             _logger.LogInformation("Offer: {offerId} was deleted by {@user}.", offerId, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
-
+        public async Task DeleteManyAsync(IEnumerable<int> offerIds, CancellationToken cancellationToken = default)
+        {
+            await _dbContext.Offers
+                .Where(o => offerIds.Contains(o.Id))
+                .ExecuteDeleteAsync(cancellationToken);
+            _logger.LogInformation("Offers: {offerIds} were deleted by {@user}.", offerIds, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+        }
         public async Task<OfferDetailsDto> GetAsync(int offerId, CancellationToken cancellationToken = default)
             => await _dbContext.Offers
                 .Where(o => o.Id == offerId)

@@ -17,5 +17,6 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         Task DeleteAsync(int offerId, CancellationToken cancellationToken = default);
         Task<PagedResult<OfferBrowseDto>> BrowseAsync(SieveModel model, CancellationToken cancellationToken = default);
         Task<OfferDetailsDto> GetAsync(int offerId, CancellationToken cancellationToken = default);
+        Task DeleteManyAsync(IEnumerable<int> offerIds, CancellationToken cancellationToken = default);
     }
 }
