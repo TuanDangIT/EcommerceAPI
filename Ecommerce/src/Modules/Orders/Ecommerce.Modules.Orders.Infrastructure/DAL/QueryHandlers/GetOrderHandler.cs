@@ -27,6 +27,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 .Include(o => o.Customer)
                 .Where(o => o.Id == request.OrderId)
                 .Select(o => o.AsDetailsDto())
-                .SingleOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken);
     }
 }

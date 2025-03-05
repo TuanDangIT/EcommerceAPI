@@ -10,6 +10,7 @@ using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.Messaging;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sieve.Models;
@@ -32,11 +33,11 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         private readonly IContextService _contextService;
         private readonly IOptions<SieveOptions> _sieveOptions;
 
-        public OfferService(IDiscountDbContext dbContext, IEnumerable<ISieveProcessor> sieveProcessors, IMessageBroker messageBroker, TimeProvider timeProvider,
+        public OfferService(IDiscountDbContext dbContext, [FromKeyedServices("discounts-sieve-processor")] ISieveProcessor sieveProcessor, IMessageBroker messageBroker, TimeProvider timeProvider,
             ILogger<OfferService> logger, IContextService contextService, IOptions<SieveOptions> sieveOptions)
         {
             _dbContext = dbContext;
-            _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(DiscountsModuleSieveProcessor));
+            _sieveProcessor = sieveProcessor;
             _messageBroker = messageBroker;
             _timeProvider = timeProvider;
             _logger = logger;
@@ -72,7 +73,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         public async Task AcceptAsync(int offerId, CancellationToken cancellationToken = default)
         {
             var offer = await _dbContext.Offers
-                .SingleOrDefaultAsync(o => o.Id == offerId, cancellationToken) ??
+                .FirstOrDefaultAsync(o => o.Id == offerId, cancellationToken) ??
                 throw new OfferNotFoundException(offerId);
             var expiresAt = _timeProvider.GetUtcNow().UtcDateTime + TimeSpan.FromDays(7);
             offer.Accept(expiresAt, _timeProvider.GetUtcNow().DateTime);
@@ -87,7 +88,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         public async Task RejectAsync(int offerId, CancellationToken cancellationToken = default)
         {
             var offer = await _dbContext.Offers
-                .SingleOrDefaultAsync(o => o.Id == offerId, cancellationToken) ??
+                .FirstOrDefaultAsync(o => o.Id == offerId, cancellationToken) ??
                 throw new OfferNotFoundException(offerId);
             offer.Reject();
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -114,7 +115,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             => await _dbContext.Offers
                 .Where(o => o.Id == offerId)
                 .Select(o => o.AsDetailsDto())
-                .SingleOrDefaultAsync(cancellationToken) ??
+                .FirstOrDefaultAsync(cancellationToken) ??
                 throw new OfferNotFoundException(offerId);
         private static string GenerateRandomCode()
             => Guid.NewGuid().ToString();

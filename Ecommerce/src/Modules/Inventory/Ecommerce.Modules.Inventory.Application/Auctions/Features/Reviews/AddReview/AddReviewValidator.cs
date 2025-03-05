@@ -12,9 +12,6 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Reviews.AddR
     {
         public AddReviewValidator()
         {
-            RuleFor(a => a.Username)
-                .NotEmpty()
-                .NotNull();
             RuleFor(a => a.Text)
                 .NotEmpty()
                 .NotNull();

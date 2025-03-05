@@ -188,7 +188,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             IncrementVersion();
         }
         public bool HasProduct(string sku)
-            => Products.SingleOrDefault(p => p.SKU == sku) is not null;
+            => Products.FirstOrDefault(p => p.SKU == sku) is not null;
         private void CalculateTotalSum()
             => _products.Sum(p => p.Price);
     }

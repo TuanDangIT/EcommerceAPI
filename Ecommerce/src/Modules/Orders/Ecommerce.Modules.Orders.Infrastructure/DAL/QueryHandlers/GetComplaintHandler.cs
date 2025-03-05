@@ -27,6 +27,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 .ThenInclude(o => o.Customer)
                 .Where(c => c.Id == request.ComplaintId)
                 .Select(c => c.AsDetailsDto())
-                .SingleOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken);
     }
 }

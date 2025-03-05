@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Shared.Abstractions.MediatR;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,9 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.AddRe
 {
     public sealed record class AddReview : ICommand
     {
-        public string Username { get; set; } = string.Empty;
         public string Text { get; set; } = string.Empty;
         public int Grade { get; set; }
+        [SwaggerIgnore]
         public Guid AuctionId { get; set; }
     }
 }

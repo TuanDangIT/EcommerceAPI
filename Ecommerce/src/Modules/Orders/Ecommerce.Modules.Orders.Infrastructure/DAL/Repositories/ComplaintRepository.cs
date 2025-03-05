@@ -36,7 +36,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
                 }
             }
             var complaint = await query
-                .SingleOrDefaultAsync(r => r.Id == complaintId, cancellationToken);
+                .FirstOrDefaultAsync(r => r.Id == complaintId, cancellationToken);
             return complaint;
         }
         public async Task UpdateAsync(CancellationToken cancellationToken = default)

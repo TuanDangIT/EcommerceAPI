@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Sieve.Models;
 using Sieve.Services;
 using System;
@@ -12,8 +13,9 @@ namespace Ecommerce.Modules.Discounts.Core.Sieve
 {
     internal class DiscountsModuleSieveProcessor : SieveProcessor
     {
-        public DiscountsModuleSieveProcessor(IOptions<SieveOptions> options) : base(options)
+        public DiscountsModuleSieveProcessor(IOptions<SieveOptions> options, [FromKeyedServices("discounts")] ISieveCustomFilterMethods sieveCustomFilterMethods) : base(options, sieveCustomFilterMethods)
         {
+            
         }
         protected override SievePropertyMapper MapProperties(SievePropertyMapper mapper)
         {

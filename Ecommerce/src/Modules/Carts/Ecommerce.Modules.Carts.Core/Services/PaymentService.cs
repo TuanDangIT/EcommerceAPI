@@ -29,7 +29,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
         public async Task SetActiveAsync(Guid paymentId, bool isActive, CancellationToken cancellationToken = default)
         {
             var payment = await _dbContext.Payments
-                .SingleOrDefaultAsync(p => p.Id == paymentId, cancellationToken) ?? throw new PaymentNotFoundException(paymentId);
+                .FirstOrDefaultAsync(p => p.Id == paymentId, cancellationToken) ?? throw new PaymentNotFoundException(paymentId);
             payment.SetActive(isActive);
             await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Payment: {paymentId} was set to {isActive} by {@user}.", 

@@ -23,12 +23,12 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
         private readonly IOptions<SieveOptions> _sieveOptions;
         private readonly ISieveProcessor _sieveProcessor;
 
-        public BrowseParametersHandler(InventoryDbContext dbContext, IEnumerable<ISieveProcessor> sieveProcessors,
+        public BrowseParametersHandler(InventoryDbContext dbContext, [FromKeyedServices("inventory-sieve-processor")] ISieveProcessor sieveProcessor,
             IOptions<SieveOptions> sieveOptions)
         {
             _dbContext = dbContext;
             _sieveOptions = sieveOptions;
-            _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(InventoryModuleSieveProcessor));
+            _sieveProcessor = sieveProcessor;
         }
         public async Task<PagedResult<ParameterBrowseDto>> Handle(BrowseParameters request, CancellationToken cancellationToken)
         {

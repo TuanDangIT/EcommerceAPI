@@ -29,7 +29,7 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.AddRe
         }
         public async Task Handle(AddReview request, CancellationToken cancellationToken)
         {
-            var auction = await _auctionRepository.GetAsync(request.AuctionId, cancellationToken) ?? 
+            var auction = await _auctionRepository.GetAsync(request.AuctionId, cancellationToken, a => a.Reviews) ?? 
                 throw new AuctionNotFoundException(request.AuctionId);
             var username = _contextService.Identity is not null &&
                 _contextService.Identity.IsAuthenticated ?

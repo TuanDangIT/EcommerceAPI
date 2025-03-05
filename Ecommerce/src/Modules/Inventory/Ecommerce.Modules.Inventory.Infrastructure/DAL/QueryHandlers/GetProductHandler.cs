@@ -29,6 +29,6 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
                 .ThenInclude(pp => pp.Parameter)
                 .Where(p => p.Id == request.ProductId)
                 .Select(p => p.AsDetailsDto())
-                .SingleOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken);
     }
 }

@@ -43,7 +43,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 //    .FromSqlInterpolated($"SELECT * FROM carts.\"Products\" WHERE \"Id\" = {productId} FOR UPDATE NOWAIT")
                 //    .SingleOrDefaultAsync(cancellationToken) ?? throw new ProductNotFoundException(productId);
                 var product = await _dbContext.Products
-                    .SingleOrDefaultAsync(p => p.Id == productId, cancellationToken) 
+                    .FirstOrDefaultAsync(p => p.Id == productId, cancellationToken) 
                     ?? throw new ProductNotFoundException(productId);
                 cart.AddProduct(product, quantity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
@@ -106,7 +106,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 .Include(c => c.Discount)
                 .Where(c => c.Id == cartId)
                 .Select(c => c.AsDto())
-                .SingleOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken);
 
         public async Task RemoveProductAsync(Guid cartId, Guid productId, int quantity, CancellationToken cancellationToken = default)
         {
@@ -116,7 +116,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 query => query.Include(c => c.CheckoutCart).ThenInclude(cc => cc!.Discount));
             var cartProduct = await _dbContext.CartProducts
                 .Include(cp => cp.Product)
-                .SingleOrDefaultAsync(cp => cp.Product.Id == productId && cp.Cart.Id == cartId, cancellationToken) ??
+                .FirstOrDefaultAsync(cp => cp.Product.Id == productId && cp.Cart.Id == cartId, cancellationToken) ??
                 throw new ProductNotFoundException(productId);
             var product = cartProduct.Product;
             cart.RemoveProduct(product, quantity);
@@ -130,7 +130,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 query => query.Include(c => c.Products).ThenInclude(cp => cp.Product),
                 query => query.Include(c => c.Discount), 
                 query => query.Include(c => c.CheckoutCart).ThenInclude(cc => cc!.Discount));
-            var product = cart.Products.SingleOrDefault(p => p.Product.Id == productId)?.Product ??
+            var product = cart.Products.FirstOrDefault(p => p.Product.Id == productId)?.Product ??
                 throw new ProductNotFoundException(productId);
             var (isReservationRequired, diffrence) = cart.SetProductQuantity(product, quantity);
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -152,7 +152,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 query => query.Include(c => c.Products).ThenInclude(cp => cp.Product),
                 query => query.Include(c => c.CheckoutCart).ThenInclude(cc => cc!.Discount));
             var discount = await _dbContext.Discounts
-                .SingleOrDefaultAsync(d => d.Code == code, cancellationToken) ??
+                .FirstOrDefaultAsync(d => d.Code == code, cancellationToken) ??
                 throw new DiscountNotFoundException(code);
             if (discount.HasCustomerId)
             {
@@ -198,7 +198,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 }
             }
             var cart = await query
-                .SingleOrDefaultAsync(c => c.Id == cartId, cancellationToken) ??
+                .FirstOrDefaultAsync(c => c.Id == cartId, cancellationToken) ??
                 throw new CartNotFoundException(cartId);
             return cart;
         }

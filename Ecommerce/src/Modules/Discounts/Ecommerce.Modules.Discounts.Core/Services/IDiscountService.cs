@@ -14,7 +14,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
     {
         Task<PagedResult<DiscountBrowseDto>> BrowseDiscountsAsync(int couponId, SieveModel model, CancellationToken cancellationToken = default);
         Task CreateAsync(int couponId, DiscountCreateDto dto, CancellationToken cancellationToken = default);
-        Task ActivateAsync(string code, CancellationToken cancellationToken = default);
-        Task DeactivateAsync(string code, CancellationToken cancellationToken = default);
+        Task ActivateAsync(int discountId, CancellationToken cancellationToken = default);
+        Task DeactivateAsync(int discountId, CancellationToken cancellationToken = default);
     }
 }

@@ -6,6 +6,7 @@ using Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Sieve.Models;
 using Sieve.Services;
@@ -23,12 +24,12 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
         private readonly IOptions<SieveOptions> _sieveOptions;
         private readonly ISieveProcessor _sieveProcessor;
 
-        public BrowseManufacturersHandler(InventoryDbContext dbContext, IEnumerable<ISieveProcessor> sieveProcessors,
+        public BrowseManufacturersHandler(InventoryDbContext dbContext, [FromKeyedServices("inventory-sieve-processor")] ISieveProcessor sieveProcessor,
             IOptions<SieveOptions> sieveOptions)
         {
             _dbContext = dbContext;
             _sieveOptions = sieveOptions;
-            _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(InventoryModuleSieveProcessor));
+            _sieveProcessor = sieveProcessor;
         }
         public async Task<PagedResult<ManufacturerBrowseDto>> Handle(BrowseManufacturers request, CancellationToken cancellationToken)
         {

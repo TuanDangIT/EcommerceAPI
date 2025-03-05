@@ -13,6 +13,7 @@ using Ecommerce.Shared.Abstractions.Messaging;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sieve.Models;
@@ -38,12 +39,12 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         private readonly TimeProvider _timeProvider;
         private readonly IOptions<SieveOptions> _sieveOptions;
 
-        public DiscountService(IDiscountDbContext dbContext, IPaymentProcessorService paymentProcessorService, IEnumerable<ISieveProcessor> sieveProcessors, IMessageBroker messageBroker,
-            ILogger<DiscountService> logger, IContextService contextService, TimeProvider timeProvider, IOptions<SieveOptions> sieveOptions)
+        public DiscountService(IDiscountDbContext dbContext, IPaymentProcessorService paymentProcessorService, [FromKeyedServices("discounts-sieve-processor")]ISieveProcessor sieveProcessor, 
+            IMessageBroker messageBroker, ILogger<DiscountService> logger, IContextService contextService, TimeProvider timeProvider, IOptions<SieveOptions> sieveOptions)
         {
             _dbContext = dbContext;
             _paymentProcessorService = paymentProcessorService;
-            _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(DiscountsModuleSieveProcessor));
+            _sieveProcessor = sieveProcessor;
             _messageBroker = messageBroker;
             _logger = logger;
             _contextService = contextService;
@@ -59,7 +60,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             }
             var coupon = await _dbContext.Coupons
                 .Select(c => new { c.Id })
-                .SingleOrDefaultAsync(c => c.Id == couponId) ?? 
+                .FirstOrDefaultAsync(c => c.Id == couponId) ?? 
                 throw new CouponNotFoundException(couponId);
             var discounts = _dbContext.Discounts
                 .AsNoTracking()
@@ -86,12 +87,12 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         {
             var discount = await _dbContext.Discounts
                 .Select(d => d.Code)
-                .SingleOrDefaultAsync(code => code == dto.Code, cancellationToken);
+                .FirstOrDefaultAsync(code => code == dto.Code, cancellationToken);
             if (discount is not null)
             {
                 throw new DiscountCodeAlreadyInUseException(dto.Code);
             }
-            var coupon = await _dbContext.Coupons.SingleOrDefaultAsync(c => c.Id == couponId, cancellationToken) ?? 
+            var coupon = await _dbContext.Coupons.FirstOrDefaultAsync(c => c.Id == couponId, cancellationToken) ?? 
                 throw new CouponNotFoundException(couponId);
             var stripePromotionCodeId = await _paymentProcessorService.CreateDiscountAsync(coupon.StripeCouponId, dto, cancellationToken);
             coupon.AddDiscount(new Discount(dto.Code, stripePromotionCodeId, dto.EndingDate, _timeProvider.GetUtcNow().DateTime));
@@ -100,12 +101,16 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
 
-        public async Task ActivateAsync(string code, CancellationToken cancellationToken = default)
+        public async Task ActivateAsync(int discountId, CancellationToken cancellationToken = default)
         {
-            var discount = await GetDiscountOrThrowIfNullAsync(code, cancellationToken, d => d.Coupon);
+            var discount = await GetDiscountOrThrowIfNullAsync(discountId, cancellationToken, d => d.Coupon);
+            if(discount.ExpiresAt < _timeProvider.GetUtcNow().DateTime)
+            {
+                throw new CannotActivateExpiredDiscountException(discount.Code);
+            }
             if(discount.IsActive is true)
             {
-                throw new DiscountAlreadyActivated(code);
+                throw new DiscountAlreadyActivated(discount.Code);
             }
             await _paymentProcessorService.ActivateDiscountAsync(discount.StripePromotionCodeId, cancellationToken);
             discount.Activate();
@@ -126,12 +131,12 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             }
         }
 
-        public async Task DeactivateAsync(string code, CancellationToken cancellationToken = default)
+        public async Task DeactivateAsync(int discountId, CancellationToken cancellationToken = default)
         {
-            var discount = await GetDiscountOrThrowIfNullAsync(code, cancellationToken);
+            var discount = await GetDiscountOrThrowIfNullAsync(discountId, cancellationToken);
             if(discount.IsActive is false)
             {
-                throw new DiscountAlreadyDeactivated(code); 
+                throw new DiscountAlreadyDeactivated(discount.Code); 
             }
             await _paymentProcessorService.DeactivateDiscountAsync(discount.StripePromotionCodeId, cancellationToken);
             discount.Deactive();
@@ -140,7 +145,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new DiscountDeactivated(discount.Code));
         }
-        private async Task<Discount> GetDiscountOrThrowIfNullAsync(string code, CancellationToken cancellationToken = default,
+        private async Task<Discount> GetDiscountOrThrowIfNullAsync(int discountId, CancellationToken cancellationToken = default,
             params Expression<Func<Discount, object?>>[] includes)
         {
             var discounts = _dbContext.Discounts
@@ -153,8 +158,8 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 }
             }
             var discount = await discounts
-                .SingleOrDefaultAsync(d => d.Code == code, cancellationToken) ?? 
-                throw new DiscountNotFoundException(code);
+                .FirstOrDefaultAsync(d => d.Id == discountId, cancellationToken) ??
+                throw new DiscountNotFoundException(discountId);
             return discount;
         }
     }

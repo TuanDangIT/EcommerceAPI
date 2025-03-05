@@ -35,14 +35,14 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
                 }
             }
             var order = await query
-                .SingleOrDefaultAsync(o => o.Id ==  orderId, cancellationToken);
+                .FirstOrDefaultAsync(o => o.Id ==  orderId, cancellationToken);
             return order;
         }
 
         public async Task<Order?> GetAsync(string trackingNumber, CancellationToken cancellationToken = default)
             => await _dbContext.Orders
                 .Include(o => o.Shipments)
-                .SingleOrDefaultAsync(o => o.Shipments.Select(s => s.TrackingNumber).Contains(trackingNumber), cancellationToken);
+                .FirstOrDefaultAsync(o => o.Shipments.Select(s => s.TrackingNumber).Contains(trackingNumber), cancellationToken);
 
         public async Task UpdateAsync(CancellationToken cancellationToken = default)
             => await _dbContext.SaveChangesAsync(cancellationToken);

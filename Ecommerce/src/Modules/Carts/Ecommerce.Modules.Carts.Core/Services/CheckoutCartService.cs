@@ -52,7 +52,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 .AsNoTracking()
                 .Where(cc => cc.Id == checkoutCartId)
                 .Select(cc => cc.AsDto())
-                .SingleOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken);
 
         public async Task<CheckoutStripeSessionDto> PlaceOrderAsync(Guid checkoutCartId, CancellationToken cancellationToken = default)
         {
@@ -90,7 +90,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
         {
             var checkoutCart = await GetCheckoutCartOrThrowIfNullAsync(checkoutCartId, cancellationToken, cc => cc.Payment);
             var payment = await _dbContext.Payments
-                .SingleOrDefaultAsync(p => p.Id == paymentId, cancellationToken) ?? 
+                .FirstOrDefaultAsync(p => p.Id == paymentId, cancellationToken) ?? 
                 throw new PaymentNotFoundException(paymentId);
             checkoutCart.SetPayment(payment);
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -141,7 +141,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 shipmentFillDto.AparmentNumber
                 ));
             var payment = await _dbContext.Payments
-                .SingleOrDefaultAsync(p => p.Id == paymentId, cancellationToken) ?? throw new PaymentNotFoundException(paymentId);
+                .FirstOrDefaultAsync(p => p.Id == paymentId, cancellationToken) ?? throw new PaymentNotFoundException(paymentId);
             checkoutCart.SetPayment(payment);
             if(additionalInformation is not null)
             {
@@ -169,7 +169,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 .ThenInclude(cp => cp.Product)
                 .Include(cc => cc.Payment)
                 .Include(cc => cc.Discount)
-                .SingleOrDefaultAsync(cc => cc.StripeSessionId == sessionId) ?? throw new CheckoutCartNotFoundException(sessionId);
+                .FirstOrDefaultAsync(cc => cc.StripeSessionId == sessionId) ?? throw new CheckoutCartNotFoundException(sessionId);
             checkoutCart.SetStripePaymentIntentId(session.PaymentIntentId);
             checkoutCart.SetPaid();
             await _messageBroker.PublishAsync(new CustomerPlacedOrder()
@@ -229,7 +229,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 }
             }
             var checkoutCart = await query
-                .SingleOrDefaultAsync(cc => cc.Id == checkoutCartId, cancellationToken) ?? 
+                .FirstOrDefaultAsync(cc => cc.Id == checkoutCartId, cancellationToken) ?? 
                 throw new CheckoutCartNotFoundException(checkoutCartId);
             return checkoutCart;
         }

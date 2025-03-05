@@ -48,7 +48,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
             => await _dbContext.Categories.ToListAsync(cancellationToken);
 
         public async Task<Category?> GetAsync(Guid categoryId, CancellationToken cancellationToken = default) 
-            => await _dbContext.Categories.SingleOrDefaultAsync(c => c.Id == categoryId, cancellationToken);
+            => await _dbContext.Categories.FirstOrDefaultAsync(c => c.Id == categoryId, cancellationToken);
 
         public async Task UpdateAsync(CancellationToken cancellationToken = default)
             => await _dbContext.SaveChangesAsync(cancellationToken);

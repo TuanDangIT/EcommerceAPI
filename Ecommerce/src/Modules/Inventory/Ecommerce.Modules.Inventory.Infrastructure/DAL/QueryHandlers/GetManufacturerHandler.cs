@@ -24,6 +24,6 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
                 .AsNoTracking()
                 .Where(m => m.Id == request.ManufacturerId)
                 .Select(m => m.AsBrowseDto())
-                .SingleOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken);
     }
 }

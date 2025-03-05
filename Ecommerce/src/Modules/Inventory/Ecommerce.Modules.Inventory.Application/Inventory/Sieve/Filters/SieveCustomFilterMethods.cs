@@ -21,11 +21,11 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Filters
                 case ("==", 1):
                     return source.Where(p => p.Parameters.Any(p => values.Any(v => v.ToLower() == p.Name.ToLower())));
                 case ("==", 2):
-                    return source.Where(p => p.Parameters.Any(pa => values[0].ToLower() == pa.Name.ToLower() && p.ProductParameters.Single(pp => pp.ParameterId == pa.Id).Value.ToLower() == values[1].ToLower()));
+                    return source.Where(p => p.Parameters.Any(pa => values[0].ToLower() == pa.Name.ToLower() && p.ProductParameters.First(pp => pp.ParameterId == pa.Id).Value.ToLower() == values[1].ToLower()));
                 case ("@=", 1):
                     return source.Where(p => p.Parameters.Any(p => values.Any(v => p.Name.ToLower().Contains(v.ToLower()))));
                 case ("@=", 2):
-                    return source.Where(p => p.Parameters.Any(pa => pa.Name.ToLower().Contains(values[0].ToLower()) && p.ProductParameters.Single(pp => pp.ParameterId == pa.Id).Value.ToLower().Contains(values[1].ToLower())));
+                    return source.Where(p => p.Parameters.Any(pa => pa.Name.ToLower().Contains(values[0].ToLower()) && p.ProductParameters.First(pp => pp.ParameterId == pa.Id).Value.ToLower().Contains(values[1].ToLower())));
                 default:
                     break;
             }

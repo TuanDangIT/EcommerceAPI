@@ -6,6 +6,7 @@ using Ecommerce.Modules.Users.Core.Sieve;
 using Ecommerce.Shared.Infrastructure.Pagination;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Sieve.Models;
 using Sieve.Services;
@@ -23,11 +24,11 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
         private readonly IOptions<SieveOptions> _sieveOptions;
         private readonly ISieveProcessor _sieveProcessor;
 
-        public CustomerRepository(UsersDbContext dbContext, IEnumerable<ISieveProcessor> sieveProcessors, IOptions<SieveOptions> sieveOptions)
+        public CustomerRepository(UsersDbContext dbContext, [FromKeyedServices("users-sieve-processor")] ISieveProcessor sieveProcessor, IOptions<SieveOptions> sieveOptions)
         {
             _dbContext = dbContext;
             _sieveOptions = sieveOptions;
-            _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(UsersModuleSieveProcessor));
+            _sieveProcessor = sieveProcessor;
         }
         public async Task<PagedResult<CustomerBrowseDto>> GetAllAsync(SieveModel model, CancellationToken cancellationToken = default)
         {
@@ -53,7 +54,7 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
             {
                 pageSize = model.PageSize.Value;
             }
-            var pagedResult = new PagedResult<CustomerBrowseDto>(dtos, totalCount, model.PageSize.Value, model.Page.Value);
+            var pagedResult = new PagedResult<CustomerBrowseDto>(dtos, totalCount, pageSize, model.Page.Value);
             return pagedResult;
         }
 
@@ -68,7 +69,7 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
                 query.AsNoTracking();
             }
             return await query
-                .SingleOrDefaultAsync(u => u.Id == customerId, cancellationToken);
+                .FirstOrDefaultAsync(u => u.Id == customerId, cancellationToken);
         }
     }
 }

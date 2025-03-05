@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void AddProduct(Product product, int quantity)
         {
-            var cartProduct = _products.SingleOrDefault(p => p.Product.SKU == product.SKU);
+            var cartProduct = _products.SingleOrDefault(p => p.ProductId == product.Id);
             if (cartProduct is not null)
             {
                 cartProduct.IncreaseQuantity(quantity);

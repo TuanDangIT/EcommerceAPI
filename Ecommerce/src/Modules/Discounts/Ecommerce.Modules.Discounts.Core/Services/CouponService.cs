@@ -11,6 +11,7 @@ using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.Messaging;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sieve.Models;
@@ -33,7 +34,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         private readonly IOptions<SieveOptions> _sieveOptions;
         private readonly ISieveProcessor _sieveProcessor;
 
-        public CouponService(IDiscountDbContext dbContext, IPaymentProcessorService paymentProcessorService, IMessageBroker messageBroker, IEnumerable<ISieveProcessor> sieveProcessors,
+        public CouponService(IDiscountDbContext dbContext, IPaymentProcessorService paymentProcessorService, IMessageBroker messageBroker, [FromKeyedServices("discounts-sieve-processor")] ISieveProcessor sieveProcessor,
             ILogger<CouponService> logger, IContextService contextService, IOptions<SieveOptions> sieveOptions)
         {
             _dbContext = dbContext;
@@ -42,7 +43,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             _logger = logger;
             _contextService = contextService;
             _sieveOptions = sieveOptions;
-            _sieveProcessor = sieveProcessors.First(s => s.GetType() == typeof(DiscountsModuleSieveProcessor));
+            _sieveProcessor = sieveProcessor;
         }
         public async Task<PagedResult<NominalCouponBrowseDto>> BrowseNominalCouponsAsync(SieveModel model, CancellationToken cancellationToken = default)
         {
@@ -120,7 +121,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
         {
             var coupon = await _dbContext.Coupons
                 .Include(c => c.Discounts)
-                .SingleOrDefaultAsync(c => c.Id == couponId, cancellationToken) ?? 
+                .FirstOrDefaultAsync(c => c.Id == couponId, cancellationToken) ?? 
                 throw new CouponNotFoundException(couponId);
             await _paymentProcessorService.DeleteCouponAsync(coupon.StripeCouponId, cancellationToken);
             if (coupon.HasDiscounts)
@@ -138,7 +139,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
 
         public async Task UpdateNameAsync(int couponId, CouponUpdateNameDto dto, CancellationToken cancellationToken = default)
         {
-            var coupon = await _dbContext.Coupons.SingleOrDefaultAsync(c => c.Id == couponId, cancellationToken) ?? 
+            var coupon = await _dbContext.Coupons.FirstOrDefaultAsync(c => c.Id == couponId, cancellationToken) ?? 
                 throw new CouponNotFoundException(couponId);
             coupon.ChangeName(dto.Name);
             await _paymentProcessorService.UpdateCouponName(coupon.StripeCouponId, dto.Name, cancellationToken);

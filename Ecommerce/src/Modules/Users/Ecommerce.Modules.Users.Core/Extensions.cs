@@ -36,7 +36,7 @@ namespace Ecommerce.Modules.Users.Core
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddPostgres<UsersDbContext>();
             services.AddHostedService<AdminAccountAdder>();
-            services.AddScoped<ISieveProcessor, UsersModuleSieveProcessor>();
+            services.AddKeyedScoped<ISieveProcessor, UsersModuleSieveProcessor>("users-sieve-processor");
             return services;
         }
     }

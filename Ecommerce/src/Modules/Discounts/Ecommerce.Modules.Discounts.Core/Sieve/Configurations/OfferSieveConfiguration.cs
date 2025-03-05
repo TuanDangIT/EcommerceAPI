@@ -17,8 +17,8 @@ namespace Ecommerce.Modules.Discounts.Core.Sieve.Configurations
             mapper.Property<Offer>(o => o.CreatedAt)
                 .CanFilter()
                 .CanSort();
-            mapper.Property<Offer>(o => o.Status)
-                .CanFilter();
+            //mapper.Property<Offer>(o => o.Status)
+            //    .CanFilter();
             mapper.Property<Offer>(o => o.CustomerId)
                 .CanFilter();
             mapper.Property<Offer>(o => o.OfferedPrice)

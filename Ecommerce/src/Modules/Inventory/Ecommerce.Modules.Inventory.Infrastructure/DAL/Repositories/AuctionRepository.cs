@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,8 +33,19 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
                 .Where(p => auctionIds.Contains(p.Id))
                 .ToListAsync(cancellationToken);
 
-        public async Task<Auction?> GetAsync(Guid auctionId, CancellationToken cancellationToken = default)
-            => await _dbContext.Auctions.SingleOrDefaultAsync(a => a.Id == auctionId, cancellationToken);
+        public async Task<Auction?> GetAsync(Guid auctionId, CancellationToken cancellationToken = default,
+            params Expression<Func<Auction, object>>[] includes)
+        {
+            var query = _dbContext.Auctions
+                .AsQueryable();
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+            var auction = await query
+                .FirstOrDefaultAsync(a => a.Id == auctionId, cancellationToken);
+            return auction;
+        }
 
         public async Task UpdateAsync(CancellationToken cancellationToken = default)
             => await _dbContext.SaveChangesAsync(cancellationToken);

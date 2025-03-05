@@ -117,7 +117,7 @@ namespace Ecommerce.Modules.Mails.Api.Services
             => await _dbContext.Mails
                 .Where(m => m.Id == mailId)
                 .Select(m => m.AsDetailsDto())
-                .SingleOrDefaultAsync(cancellationToken) ??
+                .FirstOrDefaultAsync(cancellationToken) ??
                 throw new MailNotFoundException(mailId);
 
         public async Task SendAsync(MailSendDto dto)
@@ -190,7 +190,7 @@ namespace Ecommerce.Modules.Mails.Api.Services
         {
             if(customerId is null || customerId == Guid.Empty) return null;
             var customer = await _dbContext.Customers
-                .SingleOrDefaultAsync(c => c.Id == customerId);
+                .FirstOrDefaultAsync(c => c.Id == customerId);
             return customer;
         }
     }

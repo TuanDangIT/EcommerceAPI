@@ -28,26 +28,26 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         {
             _discountService = discountService;
         }
-        [HttpGet("coupons/{stripeCouponId}")]
+        [HttpGet("coupons/{couponId:int}")]
         public async Task<ActionResult<ApiResponse<PagedResult<DiscountBrowseDto>>>> BrowseDiscounts([FromRoute]int couponId, [FromQuery]SieveModel model, 
             CancellationToken cancellationToken)
             => PagedResult(await _discountService.BrowseDiscountsAsync(couponId, model, cancellationToken));
-        [HttpPost("coupons/{stripeCouponId}")]
+        [HttpPost("coupons/{couponId:int}")]
         public async Task<ActionResult> CreateDiscount([FromRoute] int couponId, [FromBody] DiscountCreateDto dto, CancellationToken cancellationToken = default)
         {
             await _discountService.CreateAsync(couponId, dto, cancellationToken);
             return NoContent();
         }
-        [HttpPut("{code}/activate")]
-        public async Task<ActionResult> ActivateDiscount([FromRoute] string code, CancellationToken cancellationToken = default)
+        [HttpPut("{discountId:int}/activate")]
+        public async Task<ActionResult> ActivateDiscount([FromRoute] int discountId, CancellationToken cancellationToken = default)
         {
-            await _discountService.ActivateAsync(code, cancellationToken);
+            await _discountService.ActivateAsync(discountId, cancellationToken);
             return NoContent();
         }
-        [HttpPut("{code}/deactivate")]
-        public async Task<ActionResult> DeactivateDiscount([FromRoute] string code, CancellationToken cancellationToken = default)
+        [HttpPut("{discountId:int}/deactivate")]
+        public async Task<ActionResult> DeactivateDiscount([FromRoute] int discountId, CancellationToken cancellationToken = default)
         {
-            await _discountService.DeactivateAsync(code, cancellationToken);
+            await _discountService.DeactivateAsync(discountId, cancellationToken);
             return NoContent();
         }
     }

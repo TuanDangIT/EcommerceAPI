@@ -50,7 +50,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
             => await _dbContext.Manufacturers.ToListAsync(cancellationToken);
 
         public Task<Manufacturer?> GetAsync(Guid id, CancellationToken cancellationToken = default) 
-            => _dbContext.Manufacturers.SingleOrDefaultAsync(m => m.Id == id, cancellationToken); 
+            => _dbContext.Manufacturers.FirstOrDefaultAsync(m => m.Id == id, cancellationToken); 
 
         public async Task UpdateAsync(CancellationToken cancellationToken = default)
             => await _dbContext.SaveChangesAsync(cancellationToken);

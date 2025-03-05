@@ -28,9 +28,9 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.Delet
         }
         public async Task Handle(DeleteReview request, CancellationToken cancellationToken)
         {
-            var auction = await _auctionRepository.GetAsync(request.AuctionId, cancellationToken) ?? 
+            var auction = await _auctionRepository.GetAsync(request.AuctionId, cancellationToken, a => a.Reviews) ?? 
                 throw new AuctionNotFoundException(request.AuctionId);
-            var review = auction.Reviews.SingleOrDefault(r => r.Id == request.ReviewId) ?? 
+            var review = auction.Reviews.FirstOrDefault(r => r.Id == request.ReviewId) ?? 
                 throw new ReviewNotFoundException(request.ReviewId);
             await _reviewRepository.DeleteAsync(review.Id, cancellationToken);
             _logger.LogInformation("Review: {reviewId} was deleted by {@user}.", review.Id,

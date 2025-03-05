@@ -34,7 +34,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
             => await _dbContext.Products.Where(p => p.Id == productId).ExecuteDeleteAsync(cancellationToken);
 
         public Task<Product?> GetAsync(Guid productId, CancellationToken cancellationToken = default) 
-            => _dbContext.Products.SingleOrDefaultAsync(p => p.Id == productId, cancellationToken);
+            => _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId, cancellationToken);
 
         public async Task UpdateAsync(CancellationToken cancellationToken = default)
             => await _dbContext.SaveChangesAsync(cancellationToken);

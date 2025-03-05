@@ -28,9 +28,9 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.EditR
         }
         public async Task Handle(EditReview request, CancellationToken cancellationToken)
         {
-            var auction = await _auctionRepository.GetAsync(request.AuctionId, cancellationToken) ?? 
+            var auction = await _auctionRepository.GetAsync(request.AuctionId, cancellationToken, a => a.Reviews) ?? 
                 throw new AuctionNotFoundException(request.AuctionId);
-            var review = auction.Reviews.SingleOrDefault(r => r.Id == request.ReviewId) ?? 
+            var review = auction.Reviews.FirstOrDefault(r => r.Id == request.ReviewId) ?? 
                 throw new ReviewNotFoundException(request.ReviewId);
             review.Edit(request.Text, request.Grade);
             await _reviewRepository.UpdateAsync(cancellationToken);

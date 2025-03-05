@@ -21,7 +21,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
             => await _dbContext.Reviews.Where(r => r.Id == reviewId).ExecuteDeleteAsync(cancellationToken);
 
         public async Task<Review?> GetAsync(Guid reviewId, CancellationToken cancellationToken = default)
-            => await _dbContext.Reviews.SingleOrDefaultAsync(r => r.Id == reviewId, cancellationToken);
+            => await _dbContext.Reviews.FirstOrDefaultAsync(r => r.Id == reviewId, cancellationToken);
 
         public async Task UpdateAsync(CancellationToken cancellationToken = default)
             => await _dbContext.SaveChangesAsync(cancellationToken);

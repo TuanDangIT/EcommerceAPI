@@ -33,7 +33,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         {
             var customer = await _dbContext.Customers
                 .AsNoTracking()
-                .SingleOrDefaultAsync(c => c.Id == @event.CustomerId) ?? throw new CustomerNotFoundException(@event.CustomerId);
+                .FirstOrDefaultAsync(c => c.Id == @event.CustomerId) ?? throw new CustomerNotFoundException(@event.CustomerId);
             var bodyHtml = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _mailTemplatePath));
             bodyHtml = bodyHtml.Replace("{title}", $"Offer accepted for ID: {@event.OfferId}");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);

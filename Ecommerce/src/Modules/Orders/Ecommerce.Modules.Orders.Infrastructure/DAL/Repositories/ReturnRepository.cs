@@ -40,7 +40,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
                 }
             }
             var @return = await query
-                .SingleOrDefaultAsync(r => r.Id == returnId, cancellationToken);
+                .FirstOrDefaultAsync(r => r.Id == returnId, cancellationToken);
             return @return;
         }
         public async Task<Return?> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default, params Func<IQueryable<Return>, IQueryable<Return>>[] includeActions)
@@ -56,14 +56,14 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
                 }
             }
             var @return = await query
-                .SingleOrDefaultAsync(r => r.OrderId == orderId, cancellationToken);
+                .FirstOrDefaultAsync(r => r.OrderId == orderId, cancellationToken);
             return @return;
         }
 
         public async Task<Return?> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default)
             => await _dbContext.Returns
                 .Include(r => r.Order)
-                .SingleOrDefaultAsync(r => r.Order.Id == orderId, cancellationToken);
+                .FirstOrDefaultAsync(r => r.Order.Id == orderId, cancellationToken);
 
         public async Task UpdateAsync(CancellationToken cancellationToken = default)
             => await _dbContext.SaveChangesAsync(cancellationToken);

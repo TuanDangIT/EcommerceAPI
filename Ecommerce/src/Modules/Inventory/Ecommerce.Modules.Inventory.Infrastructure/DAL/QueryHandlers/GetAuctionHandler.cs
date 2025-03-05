@@ -25,6 +25,6 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
                 .Include(a => a.Reviews)
                 .Where(a => a.Id == request.AuctionId && a.IsSold == false)
                 .Select(a => a.AsDetailsDto())
-                .SingleOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken);
     }
 }

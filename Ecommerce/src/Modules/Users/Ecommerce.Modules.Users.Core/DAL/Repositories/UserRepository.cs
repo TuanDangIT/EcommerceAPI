@@ -62,7 +62,7 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
                 query = query.Include(include);
             }
             var user = query
-                .SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+                .FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
             return user;
         }
 
@@ -75,12 +75,12 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
                 query = query.Include(include);
             }
             var user = query.
-                SingleOrDefaultAsync(x => x.Email == email, cancellationToken);
+                FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
             return user;
         }
 
         public Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default) 
-            => _dbContext.Users.SingleOrDefaultAsync(x => x.Username == username, cancellationToken);
+            => _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username, cancellationToken);
 
         public async Task UpdateAsync(CancellationToken cancellationToken = default)
             => await _dbContext.SaveChangesAsync(cancellationToken);
