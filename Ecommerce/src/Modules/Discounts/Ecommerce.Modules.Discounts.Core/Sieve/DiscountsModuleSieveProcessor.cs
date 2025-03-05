@@ -13,7 +13,7 @@ namespace Ecommerce.Modules.Discounts.Core.Sieve
 {
     internal class DiscountsModuleSieveProcessor : SieveProcessor
     {
-        public DiscountsModuleSieveProcessor(IOptions<SieveOptions> options, [FromKeyedServices("discounts")] ISieveCustomFilterMethods sieveCustomFilterMethods) : base(options, sieveCustomFilterMethods)
+        public DiscountsModuleSieveProcessor(IOptions<SieveOptions> options, [FromKeyedServices("discounts-sieve-custom-filters")] ISieveCustomFilterMethods sieveCustomFilterMethods) : base(options, sieveCustomFilterMethods)
         {
             
         }
