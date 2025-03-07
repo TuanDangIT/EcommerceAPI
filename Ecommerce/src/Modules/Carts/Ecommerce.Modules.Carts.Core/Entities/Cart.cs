@@ -27,6 +27,10 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void AddProduct(Product product, int quantity)
         {
+            if(product.Quantity < quantity)
+            {
+                throw new ProductOutOfStockException(product.Id);
+            }
             var cartProduct = _products.SingleOrDefault(p => p.ProductId == product.Id);
             if (cartProduct is not null)
             {
@@ -34,7 +38,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             }
             else
             {
-                _products.Add(new CartProduct(product, quantity));
+                _products.Add(new CartProduct(product, quantity, CheckoutCart));
             }
             TotalSum = CalculateTotalSum();
             CheckoutCart?.SetTotalSum(TotalSum);
@@ -58,7 +62,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public (bool? IsReservationRequired, int Diffrence) SetProductQuantity(Product product, int quantity)
         {
             var cartProduct = _products.SingleOrDefault(cp => cp.ProductId == product.Id) ??
-                throw new CartProductNotFoundException(product.Id);
+                throw new CartProductNotFoundException(product.Id, Id);
             bool isReservationRequired;
             var diffrence = Math.Abs(cartProduct.Quantity - quantity);
             if (cartProduct.Quantity == quantity)
@@ -115,6 +119,14 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public void AddDiscount(Discount discount)
         {
             Discount = discount;
+            if(_products.Count == 0)
+            {
+                throw new AddDiscountToEmptyCartException();
+            }
+            if(discount.Type == DiscountType.NominalDiscount && discount.Value >= TotalSum)
+            {
+                throw new AddDiscountHigherThanTotalValueException();
+            }
             if (discount.SKU is not null)
             {
                 var cartProduct = _products.SingleOrDefault(p => p.Product.SKU == discount.SKU);
@@ -139,6 +151,12 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             var productsTotal = _products.Sum(cp => cp.Product.Price * cp.Quantity);
             if (Discount is null)
             {
+                return productsTotal;
+            }
+            if (productsTotal == 0)
+            {
+                Discount = null;
+                CheckoutCart?.RemoveDiscount(productsTotal);
                 return productsTotal;
             }
             decimal calculatedTotal = productsTotal;

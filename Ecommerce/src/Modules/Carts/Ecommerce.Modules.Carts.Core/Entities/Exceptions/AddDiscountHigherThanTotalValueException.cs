@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Entities.Exceptions
 {
-    public class CheckoutCartCalculatedTotalBelowOrEqualZeroException : EcommerceException
+    internal class AddDiscountHigherThanTotalValueException : EcommerceException
     {
-        public CheckoutCartCalculatedTotalBelowOrEqualZeroException() : base("Checkout cart's total sum must be higher than 0.")
+        public AddDiscountHigherThanTotalValueException() : base("Cannot add discount that is higher than total value of a cart.")
         {
         }
     }

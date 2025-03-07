@@ -21,11 +21,12 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public int Quantity { get; private set; }
         public decimal Price {  get; private set; }
         public decimal? DiscountedPrice { get; private set; }
-        public CartProduct(Product product, int quantity)
+        public CartProduct(Product product, int quantity, CheckoutCart? checkoutCart)
         {
             IsQuantityValid(quantity);
             Product = product;
             Quantity = quantity;
+            CheckoutCart = checkoutCart;    
             if (product.HasQuantity)
             {
                 product.DecreaseQuantity(quantity);

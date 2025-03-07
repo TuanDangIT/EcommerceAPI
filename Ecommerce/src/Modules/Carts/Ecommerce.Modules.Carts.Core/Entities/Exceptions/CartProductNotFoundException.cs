@@ -9,10 +9,11 @@ namespace Ecommerce.Modules.Carts.Core.Entities.Exceptions
 {
     internal class CartProductNotFoundException : EcommerceException
     {
-        public Guid Id { get; set; }
-        public CartProductNotFoundException(Guid id) : base($"Product: {id} was not found.")
+        public CartProductNotFoundException(Guid productId) : base($"Product: {productId} was not found.")
         {
-            Id = id;
+        }
+        public CartProductNotFoundException(Guid productId, Guid cartId) : base($"Product: {productId} was not found in cart: {cartId}.")
+        {
         }
     }
 }

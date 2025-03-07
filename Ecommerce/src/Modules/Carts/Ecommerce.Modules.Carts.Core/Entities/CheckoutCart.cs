@@ -47,7 +47,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public void FillShipment(Shipment shipment)
         {
             Shipment = shipment;
-            SetTotalSum(TotalSum);
+            SetTotalSum(TotalSum + shipment.Price);
         }
         public void SetPayment(Payment payment)
         {
@@ -67,6 +67,14 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             => IsPaid = true;
         public void AddDiscount(Discount discount, decimal totalSum)
         {
+            if (_products.Count == 0)
+            {
+                throw new AddDiscountToEmptyCartException();
+            }
+            if (discount.Type == DiscountType.NominalDiscount && discount.Value >= TotalSum)
+            {
+                throw new AddDiscountHigherThanTotalValueException();
+            }
             Discount = discount;
             TotalSum = totalSum;
         }
@@ -77,11 +85,15 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void SetTotalSum(decimal totalSum)
         {
-            if (totalSum <= 0)
+            if (totalSum < 0)
             {
-                throw new CheckoutCartCalculatedTotalBelowOrEqualZeroException();
+                throw new CheckoutCartCalculatedTotalBelowZeroException();
             }
-            TotalSum = totalSum + (Shipment is not null ? Shipment.Price : 0);
+            if(totalSum == 0)
+            {
+                Discount = null;
+            }
+            TotalSum = totalSum + (Shipment is not null && totalSum != 0 ? Shipment.Price : 0);
         }
     }
 }

@@ -85,6 +85,10 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 .GroupBy(cp => cp.ProductId)
                 .ToDictionary(g => g.Key, g => g.Sum(cp => cp.Quantity));
             cart.Clear();
+            //if(cart.CheckoutCart is not null)
+            //{
+            //    _dbContext.CheckoutCarts.Remove(cart.CheckoutCart);
+            //}
             await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Cart: {cartId} was cleared.", cart.Id);
             await _messageBroker.PublishAsync(new ProductsUnreserved(products));
