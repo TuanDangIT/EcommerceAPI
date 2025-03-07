@@ -118,6 +118,19 @@ namespace Ecommerce.Modules.Carts.Core.Services
             await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Additional information: {additionalInformation} was set for checkout cart: {checkoutCartId}.", additionalInformation, checkoutCart.Id);
         }
+        public async Task SetCustomerIdAsync(Guid checkoutCartId, Guid? customerId, CancellationToken cancellationToken = default)
+        {
+            var checkoutCart = await _dbContext.CheckoutCarts
+                .FirstOrDefaultAsync(cc => cc.Id == checkoutCartId, cancellationToken) ?? throw new CheckoutCartNotFoundException(checkoutCartId);
+            var customerIdToSet = customerId ?? _contextService.Identity?.Id;
+            if(customerIdToSet is null)
+            {
+                throw new CustomerIdNullException();
+            }
+            checkoutCart.SetCustomerId((Guid)customerIdToSet);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Customer id: {customerId} was set for checkout cart: {checkoutCartId}", customerIdToSet, checkoutCart.Id);
+        }
         public async Task SetCheckoutCartDetailsAsync(Guid checkoutCartId, CheckoutCartSetDetailsDto checkoutCartSetDetailsDto, CancellationToken cancellationToken = default)
         {
             var checkoutCart = await GetCheckoutCartOrThrowIfNullAsync(checkoutCartId, cancellationToken);

@@ -14,6 +14,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
         Task<CheckoutCartDto?> GetAsync(Guid checkoutCartId, CancellationToken cancellationToken = default);
         Task SetCustomerAsync(Guid checkoutCartId, CustomerDto customerDto, CancellationToken cancellationToken = default);
         Task SetPaymentAsync(Guid checkoutCartId, Guid paymentId, CancellationToken cancellationToken = default);
+        Task SetCustomerIdAsync(Guid checkoutCartId, Guid? customerId, CancellationToken cancellationToken = default);
         Task FillShipmentDetailsAsync(Guid checkoutCartId, ShipmentFillDto shipmentFillDto, CancellationToken cancellationToken = default);
         Task SetAdditionalInformationAsync(Guid checkoutCartId, string additionalInformation, CancellationToken cancellationToken = default);
         Task<CheckoutStripeSessionDto> PlaceOrderAsync(Guid checkoutCartId, CancellationToken cancellationToken = default);

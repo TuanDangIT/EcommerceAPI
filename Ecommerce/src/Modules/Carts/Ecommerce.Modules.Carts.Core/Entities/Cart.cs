@@ -47,10 +47,14 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         {
             var cartProduct = _products.SingleOrDefault(cp => cp.ProductId == product.Id) ?? 
                 throw new CartProductNotFoundException(product.Id);
-            if (cartProduct.Quantity == quantity || cartProduct.Quantity == 1)
+            if (cartProduct.Quantity <= quantity)
             {
                 cartProduct.DecreaseQuantity(quantity);
                 _products.Remove(cartProduct);
+                if(Discount?.SKU is not null)
+                {
+                    Discount = null;
+                }
             }
             else
             {
@@ -61,30 +65,27 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public (bool? IsReservationRequired, int Diffrence) SetProductQuantity(Product product, int quantity)
         {
+            if (quantity < 0)
+            {
+                throw new SetQuantityBelowZeroException();
+            }
             var cartProduct = _products.SingleOrDefault(cp => cp.ProductId == product.Id) ??
                 throw new CartProductNotFoundException(product.Id, Id);
-            bool isReservationRequired;
-            var diffrence = Math.Abs(cartProduct.Quantity - quantity);
             if (cartProduct.Quantity == quantity)
             {
                 return default!;
             }
+            var diffrence = Math.Abs(cartProduct.Quantity - quantity);
+            bool? isReservationRequired = null;
             if (quantity == 0)
             {
-                cartProduct.SetQuantity(quantity);
+                cartProduct.SetQuantity(0);
                 _products.Remove(cartProduct);
                 isReservationRequired = false;
             }
             else
             {
-                if(cartProduct.Quantity < quantity)
-                {
-                    isReservationRequired = true;
-                }
-                else
-                {
-                    isReservationRequired = false;
-                }
+                isReservationRequired = cartProduct.Quantity < quantity;
                 cartProduct.SetQuantity(quantity);
             }
             TotalSum = CalculateTotalSum();
@@ -112,13 +113,17 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 return CheckoutCart;
             }
-            var checkoutCart = new CheckoutCart(this, customerId);
-            CheckoutCart = checkoutCart;
-            return checkoutCart;
+            return CheckoutCart ??= new CheckoutCart(this, customerId);
+            //var checkoutCart = new CheckoutCart(this, customerId);
+            //CheckoutCart = checkoutCart;
+            //return checkoutCart;
         }
         public void AddDiscount(Discount discount)
         {
-            Discount = discount;
+            if(Discount is not null)
+            {
+                throw new CartCannotHaveMoreThanOneDiscountException(Id);
+            }
             if(_products.Count == 0)
             {
                 throw new AddDiscountToEmptyCartException();
@@ -133,14 +138,11 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             }
             if (discount.SKU is not null)
             {
-                var cartProduct = _products.SingleOrDefault(p => p.Product.SKU == discount.SKU);
-                if (cartProduct is null)
-                {
-                    Discount = null;
-                    throw new CheckoutCartCannotApplyIndividualDiscountException(discount.SKU);
-                }
-                cartProduct.ApplyDiscountedPrice(Discount.Value);
+                var cartProduct = _products.SingleOrDefault(p => p.Product.SKU == discount.SKU) 
+                    ?? throw new CheckoutCartCannotApplyIndividualDiscountException(discount.SKU);
+                cartProduct.ApplyDiscountedPrice(discount.Value);
             }
+            Discount = discount;
             TotalSum = CalculateTotalSum();
             CheckoutCart?.AddDiscount(discount, TotalSum);
         }

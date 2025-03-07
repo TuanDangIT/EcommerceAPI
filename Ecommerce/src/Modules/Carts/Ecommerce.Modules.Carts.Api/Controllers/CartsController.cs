@@ -33,7 +33,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         }
         [HttpGet("{cartId:guid}")]
         public async Task<ActionResult<ApiResponse<CartDto?>>> GetCart([FromRoute]Guid cartId, CancellationToken cancellationToken)
-            => OkOrNotFound<CartDto?>(await _cartService.GetAsync(cartId, cancellationToken), "Cart");
+            => OkOrNotFound<CartDto?>(await _cartService.GetAsync(cartId, cancellationToken), "Cart", cartId.ToString());
         [HttpPost("{cartId:guid}")]
         public async Task<ActionResult> AddProduct([FromRoute]Guid cartId, [FromBody]CartAddProductDto dto, CancellationToken cancellationToken)
         {

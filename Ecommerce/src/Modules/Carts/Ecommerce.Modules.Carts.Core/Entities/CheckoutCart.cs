@@ -44,10 +44,12 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void SetCustomer(Customer customer)
             => Customer.SetDetails(customer.FirstName, customer.LastName, customer.Email, customer.PhoneNumber);
+        public void SetCustomerId(Guid customerId)
+            => Customer.SetCustomerId(customerId);
         public void FillShipment(Shipment shipment)
         {
             Shipment = shipment;
-            SetTotalSum(TotalSum + shipment.Price);
+            SetTotalSum(TotalSum);
         }
         public void SetPayment(Payment payment)
         {
@@ -80,20 +82,26 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void RemoveDiscount(decimal totalSum)
         {
-            Discount = null;
-            TotalSum = totalSum;
+            RemoveDiscount();
+            SetTotalSum(totalSum);
         }
-        public void SetTotalSum(decimal totalSum)
+        public void RemoveDiscount()
+            => Discount = null;
+        public void SetTotalSum(decimal baseTotal)
         {
-            if (totalSum < 0)
+            if (baseTotal < 0)
             {
                 throw new CheckoutCartCalculatedTotalBelowZeroException();
             }
-            if(totalSum == 0)
+            if(baseTotal == 0)
             {
                 Discount = null;
+                TotalSum = 0;
+                return;
             }
-            TotalSum = totalSum + (Shipment is not null && totalSum != 0 ? Shipment.Price : 0);
+            decimal shipmentCost = Shipment?.Price ?? 0;
+            TotalSum = baseTotal + shipmentCost;
+            //TotalSum = totalSum + (Shipment is not null && totalSum != 0 ? Shipment.Price : 0);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         }
         [HttpGet("{checkoutCartId:guid}")]
         public async Task<ActionResult<ApiResponse<CheckoutCartDto?>>> GetCheckoutCart([FromRoute]Guid checkoutCartId, CancellationToken cancellationToken)
-            => OkOrNotFound<CheckoutCartDto?>(await _checkoutCartService.GetAsync(checkoutCartId, cancellationToken), "Checkout cart");
+            => OkOrNotFound<CheckoutCartDto?>(await _checkoutCartService.GetAsync(checkoutCartId, cancellationToken), "Checkout cart", checkoutCartId.ToString());
         [HttpPut("{checkoutCartId:guid}/customer")]
         public async Task<ActionResult> SetCustomer([FromRoute] Guid checkoutCartId, [FromBody]CustomerDto customerDto, CancellationToken cancellationToken)
         {
@@ -50,6 +50,12 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         public async Task<ActionResult> SetAdditionalInformation([FromRoute] Guid checkoutCartId, [FromBody] string additionalInformation, CancellationToken cancellationToken)
         {
             await _checkoutCartService.SetAdditionalInformationAsync(checkoutCartId, additionalInformation, cancellationToken);
+            return NoContent();
+        }
+        [HttpPut("{checkoutCartId:guid}/customer-id")]
+        public async Task<ActionResult> SetCustomerId([FromRoute] Guid checkoutCartId, [FromBody] Guid? customerId, CancellationToken cancellationToken)
+        {
+            await _checkoutCartService.SetCustomerIdAsync(checkoutCartId, customerId, cancellationToken);
             return NoContent();
         }
         [HttpPut("{checkoutCartId:guid}/checkoutcart-details")]
