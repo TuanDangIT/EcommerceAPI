@@ -40,12 +40,12 @@ namespace Ecommerce.Modules.Carts.Core.Events.External.Handlers
             {
                 case _nominalCouponType:
                     await _dbContext.Discounts
-                        .AddAsync(new Entities.Discount(@event.Code, DiscountType.NominalDiscount, @event.Value, @event.ExpiresAt, 
+                        .AddAsync(new Entities.Discount(@event.Code, DiscountType.NominalDiscount, @event.Value, @event.RequiredCartTotalValue, @event.ExpiresAt, 
                         @event.StripePromotionCodeId, _timeProvider.GetUtcNow().DateTime));
                     break;
                 case _percentageCouponType:
                     await _dbContext.Discounts
-                        .AddAsync(new Entities.Discount(@event.Code, DiscountType.PercentageDiscount, @event.Value, @event.ExpiresAt,
+                        .AddAsync(new Entities.Discount(@event.Code, DiscountType.PercentageDiscount, @event.Value, @event.RequiredCartTotalValue, @event.ExpiresAt,
                         @event.StripePromotionCodeId, _timeProvider.GetUtcNow().DateTime));
                     break;
             }

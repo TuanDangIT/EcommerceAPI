@@ -35,6 +35,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
             {
                 d.HasCheckConstraint("CK_Discount_Value", "\"Value\" >= 0");
                 d.HasCheckConstraint("CK_Discount_ExpiresAt", "\"ExpiresAt\" > NOW()");
+                d.HasCheckConstraint("CK_Discount_RequiredCartTotalValue", "\"RequiredCartTotalValue\" >= 0");
             });
         }
     }

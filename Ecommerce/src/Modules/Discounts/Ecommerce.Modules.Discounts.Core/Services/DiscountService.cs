@@ -95,7 +95,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             var coupon = await _dbContext.Coupons.FirstOrDefaultAsync(c => c.Id == couponId, cancellationToken) ?? 
                 throw new CouponNotFoundException(couponId);
             var stripePromotionCodeId = await _paymentProcessorService.CreateDiscountAsync(coupon.StripeCouponId, dto, cancellationToken);
-            coupon.AddDiscount(new Discount(dto.Code, stripePromotionCodeId, dto.EndingDate, _timeProvider.GetUtcNow().DateTime));
+            coupon.AddDiscount(new Discount(dto.Code, stripePromotionCodeId, dto.RequiredCartTotalValue ?? 0, dto.EndingDate, _timeProvider.GetUtcNow().DateTime));
             await _dbContext.SaveChangesAsync();
             _logger.LogInformation("Discount with given details: {@discount} was created for coupon: {coupon} by {@user}.", dto, coupon.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
@@ -122,11 +122,11 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             {
                 case NominalCoupon nominalCoupon:
                     await _messageBroker.PublishAsync(
-                        new DiscountActivated(discount.Code, nominalCoupon.Type.ToString(), discount.StripePromotionCodeId, nominalCoupon.NominalValue, discount.ExpiresAt));
+                        new DiscountActivated(discount.Code, nominalCoupon.Type.ToString(), discount.StripePromotionCodeId, nominalCoupon.NominalValue, discount.RequiredCartTotalValue, discount.ExpiresAt));
                     break;
                 case PercentageCoupon percentageCoupon:
                     await _messageBroker.PublishAsync(
-                        new DiscountActivated(discount.Code, percentageCoupon.Type.ToString(), discount.StripePromotionCodeId, percentageCoupon.Percent, discount.ExpiresAt));
+                        new DiscountActivated(discount.Code, percentageCoupon.Type.ToString(), discount.StripePromotionCodeId, percentageCoupon.Percent, discount.RequiredCartTotalValue, discount.ExpiresAt));
                     break;
             }
         }

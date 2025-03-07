@@ -162,12 +162,12 @@ namespace Ecommerce.Modules.Carts.Core.Services
             {
                 if (_contextService.Identity is null || _contextService.Identity.Id == Guid.Empty)
                 {
-                    throw new IndividualDiscountCannotBeAppliedException("Cannot use individual discount without registering.");
+                    throw new IndividualDiscountCannotBeAppliedException($"Cannot use individual discount: {discount.Id} without registering.");
                 }
                 if (discount.CustomerId != _contextService.Identity.Id ||
                     !cart.Products.Any(p => p.Product.SKU == discount.SKU))
                 {
-                    throw new IndividualDiscountCannotBeAppliedException("Discount cannot be applied because of wrong user or SKU of a product.");
+                    throw new IndividualDiscountCannotBeAppliedException($"Discount: {discount.Id} cannot be applied because of wrong user or SKU of a product.");
                 }
             }
             cart.AddDiscount(discount);

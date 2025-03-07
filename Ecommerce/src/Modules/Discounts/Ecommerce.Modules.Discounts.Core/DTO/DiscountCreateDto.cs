@@ -15,5 +15,7 @@ namespace Ecommerce.Modules.Discounts.Core.DTO
         public string Code { get; set; } = string.Empty;
         [FutureDateTime]
         public DateTime? EndingDate { get; set; }
+        [Range(0, double.MaxValue)]
+        public decimal? RequiredCartTotalValue { get; set; }
     }
 }

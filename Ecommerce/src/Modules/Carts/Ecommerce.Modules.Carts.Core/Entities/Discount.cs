@@ -15,7 +15,8 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public DiscountType Type { get; private set; }
         public string? SKU { get; private set; }
         public Guid? CustomerId { get; private set; }
-        public string? StripePromotionCodeId { get; private set; } 
+        public string? StripePromotionCodeId { get; private set; }
+        public decimal RequiredCartTotalValue { get; private set; } = 0;
         public decimal Value { get; private set; }
         public DateTime? ExpiresAt { get; private set; }
         private readonly List<CheckoutCart> _checkoutCarts = [];
@@ -23,7 +24,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         private readonly List<Cart> _carts = [];
         public IEnumerable<Cart> Carts => _carts;
         public bool HasCustomerId => CustomerId is not null;
-        public Discount(string code, DiscountType type, decimal value, DateTime? expiresAt, string stripePromotionCodeId, DateTime now)
+        public Discount(string code, DiscountType type, decimal value, decimal requiredCartTotalValue, DateTime? expiresAt, string stripePromotionCodeId, DateTime now)
         {
             if (value < 0)
             {
@@ -32,6 +33,11 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             Code = code;
             Type = type;
             Value = value;
+            if(requiredCartTotalValue < 0)
+            {
+                throw new DiscountRequiredCartTotalValueBelowZeroException();
+            }
+            RequiredCartTotalValue = requiredCartTotalValue;
             StripePromotionCodeId = stripePromotionCodeId;
             if (expiresAt is not null && expiresAt < now)
             {

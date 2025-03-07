@@ -29,10 +29,13 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
                 .IsRequired();
             builder.Property(d => d.CouponId)
                 .IsRequired();
+            builder.Property(d => d.RequiredCartTotalValue)
+                .IsRequired();
             builder.ToTable(d =>
             {
                 d.HasCheckConstraint("CK_Discount_Redemptions", "\"Redemptions\" >= 0");
                 d.HasCheckConstraint("CK_Discount_ExpiresAt", "\"ExpiresAt\" > NOW()");
+                d.HasCheckConstraint("CK_Discount_RequiredTotalValue", "\"RequiredCartTotalValue\" >= 0");
             });
             //builder.Property(d => d.Coupon)
             //    .IsRequired();

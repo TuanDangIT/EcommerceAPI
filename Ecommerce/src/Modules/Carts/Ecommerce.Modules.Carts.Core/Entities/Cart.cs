@@ -123,6 +123,10 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 throw new AddDiscountToEmptyCartException();
             }
+            if(discount.RequiredCartTotalValue > TotalSum)
+            {
+                throw new InsufficientCartTotalForDiscountException(discount.RequiredCartTotalValue, TotalSum);
+            }
             if(discount.Type == DiscountType.NominalDiscount && discount.Value >= TotalSum)
             {
                 throw new AddDiscountHigherThanTotalValueException();

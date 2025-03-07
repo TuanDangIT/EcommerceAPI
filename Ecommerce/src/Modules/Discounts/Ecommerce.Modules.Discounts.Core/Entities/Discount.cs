@@ -14,17 +14,23 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
         public string Code { get; private set; } = string.Empty;
         public bool IsActive { get; private set; } = false;
         public int Redemptions { get; private set; } = 0;
+        public decimal RequiredCartTotalValue { get; private set; } = 0;
         public string StripePromotionCodeId { get; private set; } = string.Empty;
         public DateTime? ExpiresAt { get; private set; }
         public Coupon Coupon { get; private set; } = default!;
         public int CouponId { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        public Discount(string code, string stripePromotionCodeId, DateTime? expiresAt, DateTime now)
+        public Discount(string code, string stripePromotionCodeId, decimal requiredCartTotalValue, DateTime? expiresAt, DateTime now)
         {
             Code = code;
             StripePromotionCodeId = stripePromotionCodeId;
-            if(expiresAt is not null && expiresAt < now)
+            if(requiredCartTotalValue < 0)
+            {
+                throw new DiscountRequiredCartTotalValueBelowZeroException();
+            }
+            RequiredCartTotalValue = requiredCartTotalValue;
+            if (expiresAt is not null && expiresAt < now)
             {
                 throw new DiscountInvalidExpiresAtDateException((DateTime)expiresAt!);
             }

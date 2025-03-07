@@ -6,16 +6,9 @@ using Ecommerce.Modules.Inventory.Infrastructure.CsvHelper.Services;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL.UnitOfWork;
-using Ecommerce.Shared.Abstractions.Postgres;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Microsoft.Extensions.DependencyInjection;
-using Sieve.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Infrastructure
 {
