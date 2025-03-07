@@ -129,7 +129,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             }
             if(discount.Type == DiscountType.NominalDiscount && discount.Value >= TotalSum)
             {
-                throw new AddDiscountHigherThanTotalValueException();
+                throw new AddDiscountHigherThanTotalValueException(discount.Id, TotalSum);
             }
             if (discount.SKU is not null)
             {
