@@ -39,32 +39,41 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Un
         public async Task Handle(UnlistProducts request, CancellationToken cancellationToken)
         {
             var products = await _productRepository.GetAllThatContainsInArrayAsync(request.ProductIds, cancellationToken);
-            var productIds = products.Select(p => p.Id);
-            if (products.Count() != request.ProductIds.Length)
+            //var productIds = products.Select(p => p.Id);
+            //if (products.Count() != request.ProductIds.Length)
+            //{
+            //    var productIdsNotFound = new List<Guid>();
+            //    foreach (var productId in request.ProductIds)
+            //    {
+            //        if (!productIds.Contains(productId))
+            //        {
+            //            productIdsNotFound.Add(productId);
+            //        }
+            //    }
+            //    throw new ProductNotAllFoundException(productIdsNotFound);
+            //}
+            var productIds = products.Select(p => p.Id).ToHashSet();
+            var missingIds = request.ProductIds.Where(id => !productIds.Contains(id)).ToList();
+
+            if (missingIds.Any())
             {
-                var productIdsNotFound = new List<Guid>();
-                foreach (var productId in request.ProductIds)
-                {
-                    if (!productIds.Contains(productId))
-                    {
-                        productIdsNotFound.Add(productId);
-                    }
-                }
-                throw new ProductNotAllFoundException(productIdsNotFound);
+                throw new ProductNotAllFoundException(missingIds);
             }
-            var productsToUnlist = products.ToList();
-            foreach (var product in products)
+            var productsToUnlist = products.Where(p => p.IsListed).ToList();
+            foreach (var product in products.Where(p => !p.IsListed))
             {
-                if(product.IsListed == false)
-                {
-                    _logger.LogWarning("Product: {productId} was not unlisted, because it isListed flag is false.", product.Id);
-                    productsToUnlist.Remove(product);
-                }
+                _logger.LogWarning("Product: {ProductId} was not unlisted, because it isListed flag is already false.", product.Id);
             }
-            await _productRepository.UpdateListedFlagAsync(request.ProductIds, false, cancellationToken);
+            if (!productsToUnlist.Any())
+            {
+                _logger.LogWarning("No products needed to be unlisted.");
+                return;
+            }
+            var productIdsToUnlist = productsToUnlist.Select(p => p.Id).ToArray();
+            await _productRepository.UpdateListedFlagAsync(productIdsToUnlist, false, cancellationToken);
             _logger.LogInformation("Products: {@productsIds} were listed by {@user}.",
-                string.Join(", ", products.Select(p => p.Id)), new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-            var domainEvent = new ProductsUnlisted(productIds);
+                string.Join(", ", productIdsToUnlist), new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            var domainEvent = new ProductsUnlisted(productIdsToUnlist);
             await _domainEventDispatcher.DispatchAsync(domainEvent);
             var integrationEvent = _eventMapper.Map(domainEvent);
             await _messageBroker.PublishAsync(integrationEvent);

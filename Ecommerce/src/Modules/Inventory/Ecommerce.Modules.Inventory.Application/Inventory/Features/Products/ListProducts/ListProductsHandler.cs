@@ -46,34 +46,47 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Li
                 query => query.Include(p => p.Category),
                 query => query.Include(p => p.Images.OrderBy(i => i.Order)),
                 query => query.Include(p => p.ProductParameters).ThenInclude(pp => pp.Parameter));
-            if (products.Count() != request.ProductIds.Length)
+            //if (products.Count() != request.ProductIds.Length)
+            //{
+            //    var productIdsNotFound = new List<Guid>();
+            //    foreach(var productId in request.ProductIds)
+            //    {
+            //        if(products.Select(p => p.Id).Contains(productId))
+            //        {
+            //            productIdsNotFound.Add(productId);
+            //        }
+            //    }
+            //    throw new ProductNotAllFoundException(productIdsNotFound);
+            //}
+            var foundProductIds = products.Select(p => p.Id).ToHashSet();
+            var missingProductIds = request.ProductIds.Where(id => !foundProductIds.Contains(id)).ToList();
+
+            if (missingProductIds.Any())
             {
-                var productIdsNotFound = new List<Guid>();
-                foreach(var productId in request.ProductIds)
-                {
-                    if(products.Select(p => p.Id).Contains(productId))
-                    {
-                        productIdsNotFound.Add(productId);
-                    }
-                }
-                throw new ProductNotAllFoundException(productIdsNotFound);
+                throw new ProductNotAllFoundException(missingProductIds);
             }
-            await _productRepository.UpdateListedFlagAsync(request.ProductIds, true, cancellationToken);
-            var productsToAdd = new List<Product>();
+            var productsToList = new List<Product>();
             foreach(var product in products)
             {
                 if(product.IsListed == false)
                 {
-                    productsToAdd.Add(product);
+                    productsToList.Add(product);
                 }
                 else
                 {
                     _logger.LogWarning("Product: {productId} was not listed, because it's been already listed.", product.Id);
                 }
             }
+            if (!productsToList.Any())
+            {
+                _logger.LogWarning("No products needed to be listed.");
+                return;
+            }
+            var productIdsToList = productsToList.Select(p => p.Id).ToArray();
+            await _productRepository.UpdateListedFlagAsync(productIdsToList, true, cancellationToken);
             _logger.LogInformation("Products: {@productIds} were listed by {@user}.",
-                products.Select(p => p.Id), new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-            var domainEvent = new ProductsListed(productsToAdd, _timeProvider.GetUtcNow().UtcDateTime);
+                productIdsToList, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            var domainEvent = new ProductsListed(productsToList, _timeProvider.GetUtcNow().UtcDateTime);
             await _domainEventDispatcher.DispatchAsync(domainEvent);
             var integrationEvent = _eventMapper.Map(domainEvent);
             await _messageBroker.PublishAsync(integrationEvent);
