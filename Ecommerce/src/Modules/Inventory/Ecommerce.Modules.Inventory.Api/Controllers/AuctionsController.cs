@@ -10,7 +10,9 @@ using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,10 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         public AuctionsController(IMediator mediator) : base(mediator)
         {
         }
+
+        [SwaggerOperation("Gets offset paginated auctions")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Returns offset paginated result for auctions.", typeof(ApiResponse<PagedResult<AuctionBrowseDto>>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedResult<AuctionBrowseDto>>>> BrowseAuctions([FromQuery]BrowseAuctions query, 
             CancellationToken cancellationToken = default)
@@ -33,12 +39,20 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<PagedResult<AuctionBrowseDto>>(HttpStatusCode.OK, result));
         }
+
+        [SwaggerOperation("Get a specific auction")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Returns a specific auction by id.", typeof(ApiResponse<AuctionDetailsDto>))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Auction was not found")]
         [HttpGet("{auctionId:guid}")]
         public async Task<ActionResult<ApiResponse<AuctionDetailsDto>>> GetAuction([FromRoute] Guid auctionId, 
             CancellationToken cancellationToken = default)
             => OkOrNotFound<AuctionDetailsDto, Auction>(await _mediator.Send(new GetAuction(auctionId), cancellationToken));
+
+        [SwaggerOperation("Sends request offer")]
+        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [Authorize]
-        [HttpPost("{auctionId:guid}/offer")]
+        [HttpPost("{auctionId:guid}/offers")]
         public async Task<ActionResult> RequestOffer([FromRoute]Guid auctionId, [FromForm]RequestOffer command, 
             CancellationToken cancellationToken = default)
         {

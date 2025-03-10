@@ -30,6 +30,7 @@ namespace Ecommerce.Modules.Users.Core.DAL.Repositories
             _sieveOptions = sieveOptions;
             _sieveProcessor = sieveProcessor;
         }
+
         public async Task AddAsync(Employee employee, CancellationToken cancellationToken = default)
         {
             await _dbContext.Users.AddAsync(employee, cancellationToken);

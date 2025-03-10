@@ -30,6 +30,14 @@ namespace Ecommerce.Modules.Carts.Core.Services
             _logger = logger;
         }
 
+        public async Task<Guid> CreateAsync(CancellationToken cancellationToken = default)
+        {
+            var entry = await _dbContext.Carts.AddAsync(new Cart(), cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Cart: {cartId} was created.", entry.Entity.Id);
+            return entry.Entity.Id;
+        }
+
         public async Task AddProductAsync(Guid cartId, Guid productId, int quantity, CancellationToken cancellationToken = default)
         {
             await using var transaction = await _dbContext.BeginTransactionAsync(cancellationToken);
@@ -92,14 +100,6 @@ namespace Ecommerce.Modules.Carts.Core.Services
             await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Cart: {cartId} was cleared.", cart.Id);
             await _messageBroker.PublishAsync(new ProductsUnreserved(products));
-        }
-
-        public async Task<Guid> CreateAsync(CancellationToken cancellationToken = default)
-        {
-            var entry = await _dbContext.Carts.AddAsync(new Cart(), cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Cart: {cartId} was created.", entry.Entity.Id);
-            return entry.Entity.Id;
         }
 
         public async Task<CartDto?> GetAsync(Guid cartId, CancellationToken cancellationToken = default)

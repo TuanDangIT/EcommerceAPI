@@ -5,9 +5,11 @@ using Ecommerce.Modules.Discounts.Core.Services;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sieve.Models;
 using Stripe;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +22,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
 {
     [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
+    [Route("api/v{v:apiVersion}/" + DiscountsModule.BasePath + "/coupons/{couponId:int}/[controller]")]
     internal class DiscountsController : BaseController
     {
         private readonly IDiscountService _discountService;
@@ -28,26 +31,42 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         {
             _discountService = discountService;
         }
-        [HttpGet("coupons/{couponId:int}")]
+
+        [SwaggerOperation("Gets offset paginated discounts")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Returns offset paginated result for discounts for certain coupon.", typeof(ApiResponse<PagedResult<DiscountBrowseDto>>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedResult<DiscountBrowseDto>>>> BrowseDiscounts([FromRoute]int couponId, [FromQuery]SieveModel model, 
             CancellationToken cancellationToken)
             => PagedResult(await _discountService.BrowseDiscountsAsync(couponId, model, cancellationToken));
-        [HttpPost("coupons/{couponId:int}")]
+
+        [SwaggerOperation("Creates discount")]
+        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [HttpPost]
         public async Task<ActionResult> CreateDiscount([FromRoute] int couponId, [FromBody] DiscountCreateDto dto, CancellationToken cancellationToken = default)
         {
             await _discountService.CreateAsync(couponId, dto, cancellationToken);
             return NoContent();
         }
+
+        [SwaggerOperation("Activates a discount", "Activate a discount to able to use it in a cart.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("{discountId:int}/activate")]
-        public async Task<ActionResult> ActivateDiscount([FromRoute] int discountId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> ActivateDiscount([FromRoute] int couponId, [FromRoute] int discountId, CancellationToken cancellationToken = default)
         {
-            await _discountService.ActivateAsync(discountId, cancellationToken);
+            await _discountService.ActivateAsync(couponId, discountId, cancellationToken);
             return NoContent();
         }
+
+        [SwaggerOperation("Deactivates a discount")]
+        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("{discountId:int}/deactivate")]
-        public async Task<ActionResult> DeactivateDiscount([FromRoute] int discountId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> DeactivateDiscount([FromRoute] int couponId, [FromRoute] int discountId, CancellationToken cancellationToken = default)
         {
-            await _discountService.DeactivateAsync(discountId, cancellationToken);
+            await _discountService.DeactivateAsync(couponId, discountId, cancellationToken);
             return NoContent();
         }
     }

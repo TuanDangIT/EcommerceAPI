@@ -32,7 +32,6 @@ namespace Ecommerce.Shared.Infrastructure.Swagger
                 //});
                 foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
                 {
-                    Console.WriteLine("1");
                     options.SwaggerDoc(description.GroupName, new OpenApiInfo()
                     {
                         Title = "EcommerceAPI",
@@ -63,6 +62,7 @@ namespace Ecommerce.Shared.Infrastructure.Swagger
                         new string[]{}
                     }
                 });
+                options.EnableAnnotations();
             });
             return services;
         }

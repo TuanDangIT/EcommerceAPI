@@ -75,6 +75,10 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             var offer = await _dbContext.Offers
                 .FirstOrDefaultAsync(o => o.Id == offerId, cancellationToken) ??
                 throw new OfferNotFoundException(offerId);
+            if(offer.Status  == OfferStatus.Accepted)
+            {
+                throw new OfferAlreadyAcceptedException(offerId);
+            }
             var expiresAt = _timeProvider.GetUtcNow().UtcDateTime + TimeSpan.FromDays(7);
             offer.Accept(expiresAt, _timeProvider.GetUtcNow().DateTime);
             var code = GenerateRandomCode();
