@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Azure;
 using Ecommerce.Modules.Discounts.Core.DTO;
 using Ecommerce.Modules.Discounts.Core.Entities;
 using Ecommerce.Modules.Discounts.Core.Services;
@@ -32,13 +33,12 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
             _discountService = discountService;
         }
 
-        [SwaggerOperation("Gets offset paginated discounts")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Returns offset paginated result for discounts for certain coupon.", typeof(ApiResponse<PagedResult<DiscountBrowseDto>>))]
+        [SwaggerOperation("Gets all discounts")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Returns all discounts for certain coupon.", typeof(ApiResponse<IEnumerable<DiscountBrowseDto>>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<PagedResult<DiscountBrowseDto>>>> BrowseDiscounts([FromRoute]int couponId, [FromQuery]SieveModel model, 
-            CancellationToken cancellationToken)
-            => PagedResult(await _discountService.BrowseDiscountsAsync(couponId, model, cancellationToken));
+        public async Task<ActionResult<ApiResponse<IEnumerable<DiscountBrowseDto>>>> BrowseDiscounts([FromRoute]int couponId, CancellationToken cancellationToken)
+            => new ApiResponse<IEnumerable<DiscountBrowseDto>>(HttpStatusCode.OK, await _discountService.BrowseDiscountsAsync(couponId, cancellationToken));
 
         [SwaggerOperation("Creates discount")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]

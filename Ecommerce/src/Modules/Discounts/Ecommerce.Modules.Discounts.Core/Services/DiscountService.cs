@@ -53,36 +53,12 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             _sieveOptions = sieveOptions;
         }
 
-        public async Task<PagedResult<DiscountBrowseDto>> BrowseDiscountsAsync(int couponId, SieveModel model, CancellationToken cancellationToken = default)
-        {
-            if (model.Page is null)
-            {
-                throw new PaginationException();
-            }
-            var coupon = await _dbContext.Coupons
-                .Select(c => new { c.Id })
-                .FirstOrDefaultAsync(c => c.Id == couponId) ?? 
-                throw new CouponNotFoundException(couponId);
-            var discounts = _dbContext.Discounts
-                .AsNoTracking()
-                .AsQueryable();
-            var dtos = await _sieveProcessor
-                .Apply(model, discounts)
-                .Where(d => d.CouponId == coupon.Id)
+        public async Task<IEnumerable<DiscountBrowseDto>> BrowseDiscountsAsync(int couponId, CancellationToken cancellationToken = default)
+            => await _dbContext.Discounts
+                .Where(d => d.CouponId == couponId)
                 .Select(d => d.AsBrowseDto())
+                .AsNoTracking()
                 .ToListAsync(cancellationToken);
-            var totalCount = await _sieveProcessor
-                .Apply(model, discounts, applyPagination: false, applySorting: false)
-                .Where(d => d.CouponId == coupon.Id)
-                .CountAsync(cancellationToken);
-            int pageSize = _sieveOptions.Value.DefaultPageSize;
-            if (model.PageSize is not null)
-            {
-                pageSize = model.PageSize.Value;
-            }
-            var pagedResult = new PagedResult<DiscountBrowseDto>(dtos, totalCount, pageSize, model.Page.Value);
-            return pagedResult;
-        }
 
         public async Task CreateAsync(int couponId, DiscountCreateDto dto, CancellationToken cancellationToken = default)
         {
