@@ -20,7 +20,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                     .HasMaxLength(16)
                     .IsRequired();
                 p.Property(p => p.Name)
-                    .HasMaxLength(24)
+                    .HasMaxLength(64)
                     .IsRequired();
                 p.Property(p => p.Price)
                     .HasPrecision(11, 2)
@@ -31,8 +31,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                 p.Property(p => p.Status)
                     .IsRequired()
                     .HasConversion<string>();
-                p.Property(p => p.ImagePathUrl)
-                    .IsRequired();
                 p.ToTable("ReturnProducts", rp =>
                 {
                     rp.HasCheckConstraint("CK_ReturnProduct_Price", "\"Price\" >= 0");

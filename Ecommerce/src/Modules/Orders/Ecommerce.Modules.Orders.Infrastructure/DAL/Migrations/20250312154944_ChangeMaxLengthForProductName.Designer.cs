@@ -3,6 +3,7 @@ using System;
 using Ecommerce.Modules.Orders.Infrastructure.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 {
     [DbContext(typeof(OrdersDbContext))]
-    partial class OrdersDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250312154944_ChangeMaxLengthForProductName")]
+    partial class ChangeMaxLengthForProductName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -448,6 +451,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                             NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("ImagePathUrl")
+                                .IsRequired()
                                 .HasColumnType("text");
 
                             b1.Property<string>("Name")
@@ -731,6 +735,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                             NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
 
                             b1.Property<string>("ImagePathUrl")
+                                .IsRequired()
                                 .HasColumnType("text");
 
                             b1.Property<string>("Name")

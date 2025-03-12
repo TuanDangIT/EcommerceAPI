@@ -20,7 +20,7 @@ namespace Ecommerce.Modules.Carts.Core.DTO
         public string LastName { get; set; } = string.Empty;
         [Required]
         [Length(2, 64)]
-        [EmailAddress]
+        [RegularExpression("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", ErrorMessage = "Invalid email.")]
         public string Email { get; set; } = string.Empty;
         [Required]
         [Length(2, 16)]

@@ -227,9 +227,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
             {
                 await _messageBroker.PublishAsync(new DiscountCodeRedeemed(checkoutCart.Discount.Code));
             }
-            //_dbContext.CartProducts.RemoveRange(checkoutCart.Products);
-            //await _dbContext.SaveChangesAsync();
-            //_dbContext.CheckoutCarts.Remove(checkoutCart);
+            _dbContext.Carts.Remove(checkoutCart.Cart);
             await _dbContext.SaveChangesAsync();
             _logger.LogInformation("Handling session checkout was completed for {checkoutCartId}.", checkoutCart.Id);
         }
