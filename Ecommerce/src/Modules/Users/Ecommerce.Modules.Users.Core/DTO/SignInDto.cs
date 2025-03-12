@@ -9,7 +9,7 @@ namespace Ecommerce.Modules.Users.Core.DTO
 {
     public class SignInDto
     {
-        [EmailAddress]
+        [RegularExpression("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", ErrorMessage = "Invalid email.")]
         [Required]
         public string Email { get; set; } = string.Empty;
 

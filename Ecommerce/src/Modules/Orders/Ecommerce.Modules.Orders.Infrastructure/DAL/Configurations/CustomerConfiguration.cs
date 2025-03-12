@@ -21,7 +21,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                 .HasMaxLength(48);
             builder.Property(c => c.Email)
                 .IsRequired()
-                .HasMaxLength(64);
+                .HasMaxLength(254);
             builder.Property(c => c.PhoneNumber)
                 .IsRequired()
                 .HasMaxLength(16);

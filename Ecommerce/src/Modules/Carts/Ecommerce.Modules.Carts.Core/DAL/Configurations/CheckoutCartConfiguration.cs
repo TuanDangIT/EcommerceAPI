@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
             {
                 c.Property(c => c.FirstName).IsRequired().HasMaxLength(48);
                 c.Property(c => c.LastName).IsRequired().HasMaxLength(48);
-                c.Property(c => c.Email).IsRequired().HasMaxLength(64);
+                c.Property(c => c.Email).IsRequired().HasMaxLength(254);
                 c.Property(c => c.PhoneNumber).IsRequired().HasMaxLength(16);
             });
             builder.Property(cc => cc.IsPaid)

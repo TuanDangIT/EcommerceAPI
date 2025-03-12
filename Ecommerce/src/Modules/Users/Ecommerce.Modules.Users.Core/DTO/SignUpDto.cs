@@ -13,7 +13,7 @@ namespace Ecommerce.Modules.Users.Core.DTO
         public string FirstName { get; set; } = string.Empty;
         [Required]
         public string LastName { get; set; } = string.Empty;
-        [EmailAddress]
+        [RegularExpression("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", ErrorMessage = "Invalid email.")]
         [Length(2, 64)]
         [Required]
         public string Email { get; set; } = string.Empty;
