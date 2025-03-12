@@ -21,13 +21,16 @@ namespace Ecommerce.Modules.Carts.Core.Services
         private readonly IContextService _contextService;
         private readonly IMessageBroker _messageBroker;
         private readonly ILogger<CartService> _logger;
+        private readonly TimeProvider _timeProvider;
 
-        public CartService(ICartsDbContext dbContext, IContextService contextService, IMessageBroker messageBroker, ILogger<CartService> logger)
+        public CartService(ICartsDbContext dbContext, IContextService contextService, IMessageBroker messageBroker, ILogger<CartService> logger,
+            TimeProvider timeProvider)
         {
             _dbContext = dbContext;
             _contextService = contextService;
             _messageBroker = messageBroker;
             _logger = logger;
+            _timeProvider = timeProvider;
         }
 
         public async Task<Guid> CreateAsync(CancellationToken cancellationToken = default)
@@ -93,10 +96,6 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 .GroupBy(cp => cp.ProductId)
                 .ToDictionary(g => g.Key, g => g.Sum(cp => cp.Quantity));
             cart.Clear();
-            //if(cart.CheckoutCart is not null)
-            //{
-            //    _dbContext.CheckoutCarts.Remove(cart.CheckoutCart);
-            //}
             await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Cart: {cartId} was cleared.", cart.Id);
             await _messageBroker.PublishAsync(new ProductsUnreserved(products));
@@ -136,16 +135,16 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 query => query.Include(c => c.CheckoutCart).ThenInclude(cc => cc!.Discount));
             var product = cart.Products.FirstOrDefault(p => p.Product.Id == productId)?.Product ??
                 throw new ProductNotFoundException(productId);
-            var (isReservationRequired, diffrence) = cart.SetProductQuantity(product, quantity);
+            var (isReservationRequired, difference) = cart.SetProductQuantity(product, quantity);
             await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Product quantity: {quantity} was set for product: {productId} in cart: {cartId}.", quantity, product.Id, cart.Id);
             switch (isReservationRequired)
             {
                 case false:
-                    await _messageBroker.PublishAsync(new ProductUnreserved(productId, diffrence));
+                    await _messageBroker.PublishAsync(new ProductUnreserved(productId, difference));
                     break;
                 case true:
-                    await _messageBroker.PublishAsync(new ProductReserved(productId, diffrence));
+                    await _messageBroker.PublishAsync(new ProductReserved(productId, difference));
                     break;
             }
         }
@@ -158,6 +157,11 @@ namespace Ecommerce.Modules.Carts.Core.Services
             var discount = await _dbContext.Discounts
                 .FirstOrDefaultAsync(d => d.Code == code, cancellationToken) ??
                 throw new DiscountNotFoundException(code);
+            
+            if(discount.ExpiresAt is not null && discount.ExpiresAt < _timeProvider.GetUtcNow().UtcDateTime)
+            {
+                throw new DiscountExpiredException();
+            }
             if (discount.HasCustomerId)
             {
                 if (_contextService.Identity is null || _contextService.Identity.Id == Guid.Empty)

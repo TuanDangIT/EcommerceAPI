@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Carts.Core.Exceptions
 {
-    internal class CheckoutCartInvalidPlaceOrderException : EcommerceException
+    internal class DiscountExpiredException : EcommerceException
     {
-        public CheckoutCartInvalidPlaceOrderException() : base("Cannot place order because of empty shipment or payment details.")
+        public DiscountExpiredException() : base("Discount has expired.")
         {
         }
     }

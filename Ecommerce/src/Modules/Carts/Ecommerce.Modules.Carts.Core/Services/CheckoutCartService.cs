@@ -27,16 +27,18 @@ namespace Ecommerce.Modules.Carts.Core.Services
     {
         private readonly ICartsDbContext _dbContext;
         private readonly IPaymentProcessorService _paymentProcessorService;
+        private readonly TimeProvider _timeProvider;
         private readonly IMessageBroker _messageBroker;
         private readonly IContextService _contextService;
         private readonly ILogger<CheckoutCartService> _logger;
         private readonly StripeOptions _stripeOptions;
 
-        public CheckoutCartService(ICartsDbContext dbContext, IPaymentProcessorService paymentProcessorService, 
+        public CheckoutCartService(ICartsDbContext dbContext, IPaymentProcessorService paymentProcessorService, TimeProvider timeProvider,
             IMessageBroker messageBroker, IContextService contextService, ILogger<CheckoutCartService> logger, StripeOptions stripeOptions)
         {
             _dbContext = dbContext;
             _paymentProcessorService = paymentProcessorService;
+            _timeProvider = timeProvider;
             _messageBroker = messageBroker;
             _contextService = contextService;
             _logger = logger;
@@ -58,6 +60,10 @@ namespace Ecommerce.Modules.Carts.Core.Services
         {
             var checkoutCart = await GetCheckoutCartOrThrowIfNullAsync(checkoutCartId, cancellationToken,
                 cc => cc.Payment, cc => cc.Discount);
+            if (checkoutCart.Discount?.ExpiresAt is not null && checkoutCart.Discount?.ExpiresAt < _timeProvider.GetUtcNow().UtcDateTime)
+            {
+                throw new DiscountExpiredException();
+            }
             if (checkoutCart.IsPaid)
             {
                 throw new CheckoutCartAlreadyPaidException(checkoutCartId);

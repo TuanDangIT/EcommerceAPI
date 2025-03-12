@@ -20,7 +20,6 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
         private readonly StripeOptions _stripeOptions;
         private readonly ILogger<StripeService> _logger;
         private readonly RequestOptions _requestOptions;
-        //private readonly decimal _defaultDeliveryPrice = 3;
 
         public StripeService(StripeOptions stripeOptions, ILogger<StripeService> logger)
         {
@@ -33,80 +32,105 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
         }
         public async Task<CheckoutStripeSessionDto> CheckoutAsync(CheckoutCart checkoutCart, CancellationToken cancellationToken = default)
         {
+            if(checkoutCart.Payment is null)
+            {
+                throw new PaymentNotSetException();
+            }
+            if(checkoutCart.Shipment is null)
+            {
+                throw new ShipmentNotSetException();
+            }
+            var lineItems = CreateLineItems(checkoutCart);
+            var sessionOptions = CreateSessionOptions(checkoutCart, lineItems);
+            var sessionService = new SessionService();
+            var session = await sessionService.CreateAsync(sessionOptions, _requestOptions, cancellationToken);
+            if(session.StripeResponse.StatusCode != HttpStatusCode.OK)
+            {
+                throw new StripeFailedRequestException(session.StripeResponse.Content);
+            }
+            _logger.LogDebug("Stripe session was created: {@session} for checkout cart: {checkoutCartId}.", session, checkoutCart.Id);
+            return session.AsDto();
+        }
+        private List<SessionLineItemOptions> CreateLineItems(CheckoutCart checkoutCart)
+        {
             var lineItems = new List<SessionLineItemOptions>();
+
             foreach (var product in checkoutCart.Products)
             {
-                var discount = checkoutCart.Discount;
-                var productPrice = product.Product.Price;
-                if(discount?.SKU == product.Product.SKU)
+                var productPrice = CalculateProductPrice(product, checkoutCart.Discount);
+
+                var lineItem = new SessionLineItemOptions
                 {
-                    productPrice = product.Product.Price - discount.Value;
-                }
-                lineItems.Add(new SessionLineItemOptions()
-                {
-                    PriceData = new SessionLineItemPriceDataOptions()
+                    PriceData = new SessionLineItemPriceDataOptions
                     {
                         UnitAmountDecimal = productPrice * 100,
                         Currency = _stripeOptions.Currency,
-                        ProductData = new SessionLineItemPriceDataProductDataOptions()
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
                             Name = product.Product.Name,
-                            Images = [_stripeOptions.BlobStorageUrl + product.Product.ImagePathUrl],
-                            Metadata = new Dictionary<string, string>()
+                            Metadata = new Dictionary<string, string>
                             {
                                 { "SKU", product.Product.SKU }
                             }
                         }
                     },
                     Quantity = product.Quantity,
-                });
+                };
+
+                if (!string.IsNullOrEmpty(product.Product.ImagePathUrl))
+                {
+                    lineItem.PriceData.ProductData.Images = [_stripeOptions.BlobStorageUrl + product.Product.ImagePathUrl];
+                }
+
+                lineItems.Add(lineItem);
             }
-            var sessionOptions = new SessionCreateOptions()
+            return lineItems;
+        }
+        private decimal CalculateProductPrice(CartProduct product, Entities.Discount? discount)
+        {
+            if (discount?.SKU == product.Product.SKU)
             {
-                //Given links below are just temporary.
-                SuccessUrl = "https://localhost:7089/api",
+                return product.Product.Price - discount.Value;
+            }
+            return product.Product.Price;
+        }
+        private SessionCreateOptions CreateSessionOptions(CheckoutCart checkoutCart, List<SessionLineItemOptions> lineItems)
+        {
+            var sessionOptions = new SessionCreateOptions
+            {
+                SuccessUrl = "https://localhost:7089/api", // TODO: Replace with configurable URLs
                 CancelUrl = "https://localhost:7089/api",
-                PaymentMethodTypes =
-                [
-                    checkoutCart.Payment is not null ? checkoutCart.Payment.PaymentMethod.ToString() : throw new PaymentNotSetException(),
-                ],
+                PaymentMethodTypes = [checkoutCart.Payment!.PaymentMethod.ToString() ?? throw new NullReferenceException()],
                 LineItems = lineItems,
                 Mode = _stripeOptions.Mode,
-                ShippingOptions =
-                [
-                    new SessionShippingOptionOptions()
-                    {
-                        ShippingRateData = new SessionShippingOptionShippingRateDataOptions()
-                        {
-                            DisplayName = "Kurier InPost",
-                            FixedAmount = new SessionShippingOptionShippingRateDataFixedAmountOptions()
-                            {
-                                Amount = (long)(checkoutCart.Shipment!.Price * 100),
-                                Currency = _stripeOptions.Currency,
-                            },
-                            Type = "fixed_amount"
-                        }
-                    }
-                ]
+                ShippingOptions = [CreateShippingOption(checkoutCart)]
             };
-            if (checkoutCart.Discount is not null && checkoutCart.Discount.StripePromotionCodeId is not null)
+            var discount = checkoutCart.Discount;
+            if (discount is not null && !string.IsNullOrEmpty(discount.StripePromotionCodeId))
             {
-                sessionOptions.Discounts =
-                [
-                    new()
+                sessionOptions.Discounts = [new SessionDiscountOptions
+                {
+                    PromotionCode = discount?.StripePromotionCodeId
+                }];
+            }
+            return sessionOptions;
+        }
+
+        private SessionShippingOptionOptions CreateShippingOption(CheckoutCart checkoutCart)
+        {
+            return new SessionShippingOptionOptions
+            {
+                ShippingRateData = new SessionShippingOptionShippingRateDataOptions
+                {
+                    DisplayName = "Kurier InPost", // TODO: Make configurable
+                    FixedAmount = new SessionShippingOptionShippingRateDataFixedAmountOptions
                     {
-                        PromotionCode = checkoutCart.Discount.StripePromotionCodeId
-                    }
-                ];
-            }
-            var sessionService = new SessionService();
-            var session = await sessionService.CreateAsync(sessionOptions, _requestOptions, cancellationToken);
-            if(session.StripeResponse.StatusCode != HttpStatusCode.OK)
-            {
-                throw new StripeFailedRequestException();
-            }
-            _logger.LogDebug("Stripe session was created: {@session} for checkout cart: {checkoutCartId}.", session, checkoutCart.Id);
-            return session.AsDto();
+                        Amount = (long)(checkoutCart.Shipment!.Price * 100),
+                        Currency = _stripeOptions.Currency,
+                    },
+                    Type = "fixed_amount"
+                }
+            };
         }
     }
 }

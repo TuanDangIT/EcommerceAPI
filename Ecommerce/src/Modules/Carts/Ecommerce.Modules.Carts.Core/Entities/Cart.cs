@@ -63,7 +63,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             TotalSum = CalculateTotalSum();
             CheckoutCart?.SetTotalSum(TotalSum);
         }
-        public (bool? IsReservationRequired, int Diffrence) SetProductQuantity(Product product, int quantity)
+        public (bool? IsReservationRequired, int Difference) SetProductQuantity(Product product, int quantity)
         {
             if (quantity < 0)
             {

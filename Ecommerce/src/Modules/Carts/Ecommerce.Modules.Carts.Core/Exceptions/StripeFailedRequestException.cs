@@ -13,5 +13,9 @@ namespace Ecommerce.Modules.Carts.Core.Exceptions
         {
             
         }
+        public StripeFailedRequestException(string stripeMessage) : base($"Failed to process Stripe request. Message: {stripeMessage}")
+        {
+            
+        }
     }
 }
