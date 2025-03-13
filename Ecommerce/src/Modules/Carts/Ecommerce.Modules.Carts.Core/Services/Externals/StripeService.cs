@@ -48,7 +48,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
             {
                 throw new StripeFailedRequestException(session.StripeResponse.Content);
             }
-            _logger.LogDebug("Stripe session was created: {@session} for checkout cart: {checkoutCartId}.", session, checkoutCart.Id);
+            _logger.LogDebug("Stripe session was created for checkout cart: {checkoutCartId}.", checkoutCart.Id);
             return session.AsDto();
         }
         private List<SessionLineItemOptions> CreateLineItems(CheckoutCart checkoutCart)

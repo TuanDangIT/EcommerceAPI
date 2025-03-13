@@ -26,6 +26,7 @@ namespace Ecommerce.Modules.Carts.Core
                 return sp.GetRequiredService<CartsDbContext>();
             });
             services.AddScheduler();
+            //services.AddTransient<DeleteCartAfterSuccessfulPaymentTask>();
             services.AddTransient<CleanupAbandonedCartsTask>();
             services.AddSingleton<IPaymentProcessorService, StripeService>();
             services.AddScoped<ICartService, CartService>();
