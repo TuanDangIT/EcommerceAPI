@@ -35,7 +35,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Returns.SetRetur
         {
             var @return = await _returnRepository.GetAsync(request.ReturnId, cancellationToken,
                 query => query.Include(r => r.Products),
-                query => query.Include(r => r.Order)) ??
+                query => query.Include(r => r.Order).ThenInclude(o => o.Products)) ??
                 throw new ReturnNotFoundException(request.ReturnId);
             var product = @return.GetReturnProduct(request.ProductId) ??
                 throw new ReturnProductNotFoundException(request.ProductId);

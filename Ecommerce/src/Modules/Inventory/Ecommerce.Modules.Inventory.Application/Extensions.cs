@@ -31,7 +31,7 @@ namespace Ecommerce.Modules.Inventory.Application
                 .AddClasses(c => c.AssignableTo(typeof(IValidator<>)))
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
-            services.Configure<SieveOptions>(configuration.GetSection(_sieveSectionName));
+            //services.Configure<SieveOptions>(configuration.GetSection(_sieveSectionName));
             services.AddKeyedScoped<ISieveProcessor, InventoryModuleSieveProcessor>("inventory-sieve-processor");
             services.AddKeyedScoped<ISieveCustomFilterMethods, SieveCustomFilterMethods>("inventory-sieve-custom-filters");
             return services;

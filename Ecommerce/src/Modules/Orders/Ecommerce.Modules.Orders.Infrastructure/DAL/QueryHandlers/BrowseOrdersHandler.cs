@@ -40,9 +40,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
             {
                 ordersAsQueryable = ordersAsQueryable.Where(o => o.Customer.UserId == request.CustomerId);
             }
-            if (request.Filters is not null && request.Filters.Count != 0)
+            if (request.Filters?.Count != 0)
             {
-                foreach (var filter in request.Filters)
+                foreach (var filter in request.Filters!)
                 {
                     ordersAsQueryable = _filterService.ApplyFilter(ordersAsQueryable, filter.Key, filter.Value);
                 }
@@ -69,9 +69,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 .Select(o => o.AsBrowseDto())
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
+
             bool isFirstPage = request.CursorDto is null
                 || (request.CursorDto is not null && orders.First().Id == _dbContext.Orders.OrderByDescending(o => o.CreatedAt)
                     .ThenBy(o => o.Id).AsNoTracking().First().Id);
+
             bool hasNextPage = orders.Count > request.PageSize 
                 || (request.CursorDto is not null && request.IsNextPage == false);
             if (orders.Count > request.PageSize)
@@ -92,6 +94,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                     CursorOrderPlacedAt = orders.First().PlacedAt
                 }
                 : new();
+
             return new CursorPagedResult<OrderBrowseDto, OrderCursorDto>(orders, nextCursor, previousCursor, isFirstPage);
         }
     }

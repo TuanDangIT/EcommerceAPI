@@ -8,7 +8,17 @@
 
   <ItemGroup>
     <Content Remove="C:\Users\shock\.nuget\packages\select.htmltopdf.netcore\24.1.0\contentFiles\any\any\Select.Html.dep" />
-    <Content Remove="C:\Users\shock\.nuget\packages\select.htmltopdf\24.1.0\contentFiles\any\any\Select.Html.dep" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\..\..\..\..\..\..\Users\shock\.nuget\packages\select.htmltopdf\24.1.0\contentFiles\any\any\Select.Html.dep" TargetPath="Select.Html.dep" Link="Shared\Select.Html.dep">
+      <Private>True</Private>
+      <NuGetPackageVersion>24.1.0</NuGetPackageVersion>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <NuGetItemType>Content</NuGetItemType>
+      <NuGetPackageId>Select.HtmlToPdf</NuGetPackageId>
+      <Pack>false</Pack>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

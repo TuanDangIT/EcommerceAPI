@@ -48,9 +48,13 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
             {
                 throw new OrderDraftException(order.Id);
             }
-            if (orderStatus == OrderStatus.ReturnRejected)
+            //if (orderStatus == OrderStatus.ReturnRejected)
+            //{
+            //    throw new OrderCannotReturnRejectedReturnException(order.Id);
+            //}
+            if (orderStatus == OrderStatus.Cancelled)
             {
-                throw new OrderCannotReturnRejectedReturnException();
+                throw new OrderInvalidStatusChangeException($"Order: {order.Id} cannot be cancelled.");
             }
             if(!await _orderReturnPolicy.CanReturn(order))
             {
@@ -60,11 +64,11 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
                 .Where(p => request.ProductsToReturn.Select(ptr => ptr.ProductId).Contains(p.Id))
                 .Select(p =>
                 {
-                    var returnedQuantity = request.ProductsToReturn.Single(ptr => ptr.ProductId == p.Id).Quantity;
-                    p = new Domain.Orders.Entities.Product(p.SKU, p.Name, p.UnitPrice, returnedQuantity, p.ImagePathUrl);
+                    var returnQuantity = request.ProductsToReturn.Single(ptr => ptr.ProductId == p.Id).Quantity;
+                    p = new Domain.Orders.Entities.Product(p.SKU, p.Name, p.UnitPrice, returnQuantity, p.ImagePathUrl);
                     return p;
                 }).ToList();
-            order.Return(request.ProductsToReturn.Select(p => (p.ProductId, p.Quantity)));
+            order.ReturnProducts(request.ProductsToReturn.Select(p => (p.ProductId, p.Quantity)));
             await _orderRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Order: {orderId} was returned. Products that were returned: {@productToReturn}.", order.Id, request.ProductsToReturn);
             if(orderStatus == OrderStatus.Returned)

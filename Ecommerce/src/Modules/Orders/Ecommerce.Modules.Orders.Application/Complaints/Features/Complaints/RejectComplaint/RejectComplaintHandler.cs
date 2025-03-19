@@ -33,7 +33,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Rej
         public async Task Handle(RejectComplaint request, CancellationToken cancellationToken)
         {
             var complaint = await _complaintRepository.GetAsync(request.ComplaintId, cancellationToken,
-                query => query.Include(c => c.Order)) ?? throw new ComplaintNotFoundException(request.ComplaintId);
+                query => query.Include(c => c.Order).ThenInclude(o => o.Customer)) ?? throw new ComplaintNotFoundException(request.ComplaintId);
             complaint.Reject(new Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation));
             await _complaintRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Complaint: {complaintId} was rejected by {@user}.", complaint.Id, 

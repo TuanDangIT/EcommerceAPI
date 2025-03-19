@@ -24,7 +24,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         public async Task HandleAsync(OrderShipped @event)
         {
             var bodyHtml = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _mailTemplatePath));
-            bodyHtml = bodyHtml.Replace("{title}", $"Order returned: {@event.OrderId}");
+            bodyHtml = bodyHtml.Replace("{title}", $"Order has been shipped");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
             bodyHtml = bodyHtml.Replace("{orderId}", @event.OrderId.ToString());
@@ -32,7 +32,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             await _mailService.SendAsync(new MailSendDto()
             {
                 To = @event.Email,
-                Subject = $"Order confirmation ID: {@event.OrderId}",
+                Subject = $"Order has been shipped for ID: {@event.OrderId}",
                 Body = bodyHtml,
                 OrderId = @event.OrderId,
                 CustomerId = @event.CustomerId

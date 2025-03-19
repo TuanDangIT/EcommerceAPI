@@ -14,7 +14,7 @@ namespace Ecommerce.Modules.Carts.Core.DTO
         public string Name { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public decimal? DiscountedPrice { get; set; }
-        public string ImagePathUrl { get; set; } = string.Empty;
+        public string? ImagePathUrl { get; set; } = string.Empty;
         public int? Quantity { get; set; }
     }
 }

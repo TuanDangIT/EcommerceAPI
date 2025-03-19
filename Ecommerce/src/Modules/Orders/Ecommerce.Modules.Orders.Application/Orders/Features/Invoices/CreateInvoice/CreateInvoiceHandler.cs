@@ -22,6 +22,7 @@ using Ecommerce.Modules.Orders.Application.Orders.Events;
 using Microsoft.Extensions.Logging;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInvoice
 {
@@ -38,7 +39,6 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
         private readonly IContextService _contextService;
         private const string _invoiceTemplatePath = "Orders\\InvoiceTemplates\\Invoice.html";
         private const string _containerName = "invoices";
-        private readonly decimal _defaultDeliveryPrice = 15;
         private readonly string _contentType = "application/pdf";
 
         public CreateInvoiceHandler(IOrderRepository orderRepository, IBlobStorageService blobStorageService,
@@ -58,11 +58,16 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
         public async Task<string> Handle(CreateInvoice request, CancellationToken cancellationToken)
         {
             var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
+                query => query.Include(o => o.Invoice),
                 query => query.Include(o => o.Customer)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
-            if(order.Status == Domain.Orders.Entities.Enums.OrderStatus.Draft)
+            if(order.Status == OrderStatus.Draft)
             {
                 throw new OrderDraftException(order.Id);
+            }
+            if(order.Status != OrderStatus.Placed && order.Status != OrderStatus.ParcelPacked)
+            {
+                throw new InvoiceCannotCreateInvoiceException(order.Id, order.Status.ToString());
             }
             if (order.HasInvoice)
             {
@@ -106,8 +111,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
             invoiceTemplate = invoiceTemplate.Replace("{customerPhoneNumber}", order.Customer.PhoneNumber);
             invoiceTemplate = invoiceTemplate.Replace("{customerName}", order.Customer.FirstName + " " + order.Customer.LastName);
             invoiceTemplate = invoiceTemplate.Replace("{additionalInformation}", order.CompanyAdditionalInformation ?? "");
-            invoiceTemplate = invoiceTemplate.Replace("{totalPrice}", order.TotalSum.ToString() + " " + _stripeOptions.Currency);
-            invoiceTemplate = invoiceTemplate.Replace("{shipPrice}", _defaultDeliveryPrice + " " + _stripeOptions.Currency);
+            invoiceTemplate = invoiceTemplate.Replace("{totalPrice}", order.TotalSum.ToString("0.00") + " " + _stripeOptions.Currency);
+            invoiceTemplate = invoiceTemplate.Replace("{shipPrice}", order.ShippingPrice.ToString("0.00"));
             StringBuilder productsHtml = new StringBuilder();
             foreach (var product in order.Products)
             {
@@ -116,7 +121,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
                         <tr>
                             <td>{product.Name}</td>
                             <td>{product.SKU}</td>
-                            <td>{product.Price}</td>
+                            <td>{product.Price.ToString("0.00")}</td>
                             <td>{product.Quantity}</td>
                         </tr>
                     """

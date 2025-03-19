@@ -7,14 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Returns.Exception
 {
-    internal class ReturnProductNotFoundException : EcommerceException
+    internal class ReturnProductNotFoundException(int productId, Guid returnId) : EcommerceException($"Return product: {productId} was not found for return: {returnId}.")
     {
-        public ReturnProductNotFoundException(int productId) : base($"Return product: {productId} was not found.")
-        {
-        }
-        public ReturnProductNotFoundException(string sku) : base($"Return product: {sku} was not found.")
-        {
-            
-        }
     }
 }

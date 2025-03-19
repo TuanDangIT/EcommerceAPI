@@ -11,6 +11,6 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Auction.Requ
     public sealed record class RequestOffer(decimal Price, string Reason) : ICommand
     {
         [SwaggerIgnore]
-        public Guid AuctionId { get; set; }
+        public Guid AuctionId { get; init; }
     }
 }

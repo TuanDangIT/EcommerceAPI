@@ -24,7 +24,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         public async Task HandleAsync(OrderCancelled @event)
         {
             var bodyHtml = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _mailTemplatePath));
-            bodyHtml = bodyHtml.Replace("{title}", $"Order cancelled ID: {@event.OrderId}");
+            bodyHtml = bodyHtml.Replace("{title}", $"Order has been cancelled");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
             bodyHtml = bodyHtml.Replace("{orderId}", @event.OrderId.ToString());
@@ -32,7 +32,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             await _mailService.SendAsync(new MailSendDto()
             {
                 To = @event.Email,
-                Subject = $"Order cancelled ID: {@event.OrderId}",
+                Subject = $"Order has been cancelled ID: {@event.OrderId}",
                 Body = bodyHtml,
                 OrderId = @event.OrderId,
                 CustomerId = @event.CustomerId,

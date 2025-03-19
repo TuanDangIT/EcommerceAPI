@@ -30,6 +30,9 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public decimal ShippingPrice { get; private set; }
         private readonly List<Shipment> _shipments = [];
         public IEnumerable<Shipment> Shipments => _shipments;
+        public Return? Return { get; private set; }
+        private readonly List<Complaint>? _complaints = [];
+        public IEnumerable<Complaint>? Complaints => _complaints;
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public Invoice? Invoice { get; private set; }
@@ -83,10 +86,8 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             _shipments.Add(shipment);
             IncrementVersion();
         }
-        public void DeleteShipment(int shipmentId)
+        public void DeleteShipment(Shipment shipment)
         {
-            var shipment = _shipments.SingleOrDefault(s => s.Id == shipmentId) ??
-                throw new ShipmentNotFoundException(shipmentId);
             _shipments.Remove(shipment);
             IncrementVersion();
         }
@@ -110,12 +111,15 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             ChangeStatus(OrderStatus.ParcelPacked);
             IncrementVersion();
         }
-        public void Return(IEnumerable<(int ProductId, int Quantity)> products)
+        public void ReturnProducts(IEnumerable<(int ProductId, int Quantity)> products)
         {
             foreach (var (productId, quantity) in products)
             {
-                var product = _products.SingleOrDefault(p => p.Id == productId) ??
-                    throw new ProductNotFoundException(productId);
+                var product = FindProductById(productId);
+                if (product.Quantity < quantity)
+                {
+                    throw new CannotReturnMoreProductsThanBoughtException(productId, product.Quantity, quantity);
+                }
                 product.DecreaseQuantity(quantity);
             }
             ChangeStatus(OrderStatus.Returned);
@@ -135,39 +139,44 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         }
         public void AddProduct(int productId, int quantity)
         {
-            var product = _products.SingleOrDefault(p => p.Id == productId) ??
-                throw new ProductNotFoundException(productId);
+            var product = FindProductById(productId);
             product.IncreaseQuantity(quantity);
             CalculateTotalSum();
             IncrementVersion();
         }
         public void AddProduct(string sku, int quantity)
         {
-            var product = _products.SingleOrDefault(p => p.SKU == sku) ??
-                throw new ProductNotFoundException(sku);
+            var product = FindProductBySku(sku);
             product.IncreaseQuantity(quantity);
             CalculateTotalSum();
             IncrementVersion();
         }
         public void RemoveProduct(int productId, int? quantity)
         {
-            var product = _products.SingleOrDefault(p => p.Id == productId) ??
-                throw new ProductNotFoundException(productId);
+            var product = FindProductById(productId);
+            RemoveProduct(product, quantity);
+        }
+        //public void RemoveProduct(string sku, int quantity)
+        //{
+        //    var product = FindProductBySku(sku);
+        //    product.DecreaseQuantity(quantity);
+        //}
+        public void RemoveProduct(Product product, int? quantity)
+        {
             if (quantity is null || product.Quantity == quantity || product.Quantity == 1)
             {
                 _products.Remove(product);
             }
             else
             {
-                product.DecreaseQuantity((int)quantity); 
+                product.DecreaseQuantity((int)quantity);
             }
             CalculateTotalSum();
             IncrementVersion();
         }
         public void DecreaseProductQuantity(string sku, int quantity)
         {
-            var product = _products.SingleOrDefault(p => p.SKU == sku) ??
-                throw new ProductNotFoundException(sku);
+            var product = FindProductBySku(sku);
             product.DecreaseQuantity(quantity);
             CalculateTotalSum();
             IncrementVersion();
@@ -189,7 +198,47 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         }
         public bool HasProduct(string sku)
             => Products.FirstOrDefault(p => p.SKU == sku) is not null;
+
         private void CalculateTotalSum()
-            => _products.Sum(p => p.Price);
+        {
+            var productsTotal = _products.Sum(p => p.Price) + ShippingPrice;
+            if (Discount is null)
+            {
+                TotalSum = productsTotal;
+                return;
+            }
+            decimal calculatedTotal = productsTotal;
+            if (Discount.Type is DiscountType.NominalDiscount)
+            {
+                if (Discount.SKU is not null)
+                {
+                    var discountedProduct = _products
+                        .SingleOrDefault(p => p.SKU == Discount.SKU) ?? throw new ProductNotFoundException(Discount.SKU);
+                    var discountedProductQuantity = discountedProduct.Quantity;
+                    calculatedTotal = productsTotal - Discount.Value * discountedProductQuantity;
+                }
+                else
+                {
+                    calculatedTotal = productsTotal - Discount.Value;
+                }
+            }
+            else
+            {
+                calculatedTotal = productsTotal * Discount.Value;
+            }
+            if (calculatedTotal <= 0)
+            {
+                TotalSum = 0 + ShippingPrice;
+                return;
+            }
+            TotalSum = calculatedTotal;
+        }
+        private Product FindProductById(int productId) =>
+            _products.FirstOrDefault(p => p.Id == productId) ??
+            throw new ProductNotFoundException(productId);
+
+        private Product FindProductBySku(string sku) =>
+            _products.SingleOrDefault(p => p.SKU == sku) ??
+            throw new ProductNotFoundException(sku);
     }
 }

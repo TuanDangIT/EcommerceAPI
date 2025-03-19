@@ -45,7 +45,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
                 {
                     throw new DiscountInvalidTypeException();
                 }
-                discount = new Discount((DiscountType)discountType, @event.DiscountCode!, @event.DiscountValue, @event.DiscountSku);
+                discount = new Discount((DiscountType)discountType, @event.DiscountCode!, (decimal)@event.DiscountValue!, @event.DiscountSku);
             }
             var order = new Order(
                 newGuid,

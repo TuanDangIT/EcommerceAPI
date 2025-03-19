@@ -46,5 +46,10 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
 
         public async Task UpdateAsync(CancellationToken cancellationToken = default)
             => await _dbContext.SaveChangesAsync(cancellationToken);
+
+        public async Task DeleteAsync(Guid orderId, CancellationToken cancellationToken = default)
+            => await _dbContext.Orders
+                .Where(o => o.Id == orderId)
+                .ExecuteDeleteAsync(cancellationToken);
     }
 }

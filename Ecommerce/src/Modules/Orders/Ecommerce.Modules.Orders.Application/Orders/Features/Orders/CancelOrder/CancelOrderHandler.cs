@@ -43,6 +43,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder
             {
                 throw new OrderDraftException(order.Id);
             }
+            if(order.Status != Domain.Orders.Entities.Enums.OrderStatus.Placed)
+            {
+                throw new OrderInvalidStatusChangeException($"Order: {order.Id} cannot be cancelled. Only orders with the 'Placed' status can be canceled.");
+            }
             if (!await _orderCancellationPolicy.CanCancel(order))
             {
                 throw new OrderCannotCancelException();

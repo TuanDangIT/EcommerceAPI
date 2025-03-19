@@ -1,31 +1,18 @@
-﻿using Azure.Core;
-using Ecommerce.Modules.Discounts.Core.DAL;
+﻿using Ecommerce.Modules.Discounts.Core.DAL;
 using Ecommerce.Modules.Discounts.Core.DAL.Mappings;
 using Ecommerce.Modules.Discounts.Core.DTO;
 using Ecommerce.Modules.Discounts.Core.Entities;
-using Ecommerce.Modules.Discounts.Core.Entities.Enums;
 using Ecommerce.Modules.Discounts.Core.Events;
 using Ecommerce.Modules.Discounts.Core.Exceptions;
 using Ecommerce.Modules.Discounts.Core.Services.Externals;
-using Ecommerce.Modules.Discounts.Core.Sieve;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.Messaging;
-using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sieve.Models;
 using Sieve.Services;
-using Stripe;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using static Sieve.Extensions.MethodInfoExtended;
 
 namespace Ecommerce.Modules.Discounts.Core.Services
 {
@@ -72,7 +59,8 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             var coupon = await _dbContext.Coupons.FirstOrDefaultAsync(c => c.Id == couponId, cancellationToken) ?? 
                 throw new CouponNotFoundException(couponId);
             var stripePromotionCodeId = await _paymentProcessorService.CreateDiscountAsync(coupon.StripeCouponId, dto, cancellationToken);
-            coupon.AddDiscount(new Entities.Discount(dto.Code, stripePromotionCodeId, dto.RequiredCartTotalValue ?? 0, dto.EndingDate, _timeProvider.GetUtcNow().DateTime));
+            var expiresDate = dto.ExpiresDate is null ? dto.ExpiresDate :  DateTime.SpecifyKind((DateTime)dto.ExpiresDate, DateTimeKind.Utc);
+            coupon.AddDiscount(new Entities.Discount(dto.Code, stripePromotionCodeId, dto.RequiredCartTotalValue ?? 0, expiresDate, _timeProvider.GetUtcNow().DateTime));
             await _dbContext.SaveChangesAsync();
             _logger.LogInformation("Discount with given details: {@discount} was created for coupon: {coupon} by {@user}.", dto, coupon.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });

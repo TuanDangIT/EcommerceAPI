@@ -1,11 +1,13 @@
 ﻿using Asp.Versioning;
 using Ecommerce.Modules.Orders.Application.Complaints.DTO;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.AddProduct;
 using Ecommerce.Modules.Orders.Application.Returns.DTO;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Return.BrowseReturns;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Return.GetReturn;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleReturn;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Return.RejectReturn;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Return.SetNote;
+using Ecommerce.Modules.Orders.Application.Returns.Features.Returns.AddProductToReturn;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Returns.DeleteReturn;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Returns.RemoveReturnProduct;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Returns.SetReturnProductQuantity;
@@ -39,7 +41,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, "Returns cursor paginated result for returns.", typeof(ApiResponse<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>))]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>>> BrowseReturns([FromQuery] BrowseReturns query, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>(HttpStatusCode.OK, result));
@@ -50,14 +52,14 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status404NotFound, "Return was not found")]
         [AllowAnonymous]
         [HttpGet("{returnId:guid}")]
-        public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> GetReturn([FromRoute] Guid returnId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> GetReturn([FromRoute] Guid returnId, CancellationToken cancellationToken)
             => OkOrNotFound<ReturnDetailsDto, Return>(await _mediator.Send(new GetReturn(returnId), cancellationToken));
 
         [SwaggerOperation("Deletes a return")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [HttpDelete("{returnId:guid}")]
-        public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> DeleteReturn([FromRoute] Guid returnId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> DeleteReturn([FromRoute] Guid returnId, CancellationToken cancellationToken)
         {
             await _mediator.Send(new DeleteReturn(returnId), cancellationToken);
             return NoContent();
@@ -67,7 +69,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("{returnId:guid}/handle")]
-        public async Task<ActionResult> HandleReturn([FromRoute]Guid returnId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> HandleReturn([FromRoute]Guid returnId, CancellationToken cancellationToken)
         {
             await _mediator.Send(new HandleReturn(returnId), cancellationToken);
             return NoContent();
@@ -77,7 +79,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("{returnId:guid}/reject")]
-        public async Task<ActionResult> RejectReturn([FromRoute] Guid returnId, [FromBody] RejectReturn command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> RejectReturn([FromRoute] Guid returnId, [FromBody] RejectReturn command, CancellationToken cancellationToken)
         {
             command = command with { ReturnId = returnId };
             await _mediator.Send(command, cancellationToken);
@@ -87,8 +89,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Updates a return's note")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{returnId:guid}/note")]
-        public async Task<ActionResult> SetNote([FromRoute] Guid returnId, [FromForm]string note, CancellationToken cancellationToken = default)
+        [HttpPatch("{returnId:guid}/note")]
+        public async Task<ActionResult> SetNote([FromRoute] Guid returnId, [FromForm]string note, CancellationToken cancellationToken)
         {
             await _mediator.Send(new SetNote(note, returnId), cancellationToken);
             return NoContent();
@@ -98,18 +100,29 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [HttpDelete("{returnId:guid}/return-products/{productId:int}")]
-        public async Task<ActionResult> DeleteReturnProduct([FromRoute] Guid returnId, [FromRoute] int productId,CancellationToken cancellationToken = default)
+        public async Task<ActionResult> DeleteReturnProduct([FromRoute] Guid returnId, [FromRoute] int productId,CancellationToken cancellationToken)
         {
             await _mediator.Send(new RemoveReturnProduct(returnId, productId), cancellationToken);
+            return NoContent();
+        }
+
+        [SwaggerOperation("Adds a product to a specified return")]
+        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
+        [HttpPatch("{returnId:guid}/return-products")]
+        public async Task<ActionResult> AddReturnProduct([FromRoute] Guid returnId, [FromBody] AddProductToReturn command, CancellationToken cancellationToken)
+        {
+            command = command with { ReturnId = returnId };
+            await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
 
         [SwaggerOperation("Updates a product's quantity for a specified return")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{returnId:guid}/return-products/{productId:int}/quantity")]
+        [HttpPatch("{returnId:guid}/return-products/{productId:int}/quantity")]
         public async Task<ActionResult> SetReturnProductQuantity([FromRoute] Guid returnId, [FromRoute] int productId,
-            [FromBody] int quantity, CancellationToken cancellationToken = default)
+            [FromBody] int quantity, CancellationToken cancellationToken)
         {
             await _mediator.Send(new SetReturnProductQuantity(returnId, productId, quantity), cancellationToken);
             return NoContent();
@@ -118,9 +131,9 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Updates a product's status for a specified return", "Checks product status if it's correct.")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{returnId:guid}/return-products/{productId:int}/status")]
+        [HttpPatch("{returnId:guid}/return-products/{productId:int}/status")]
         public async Task<ActionResult> SetReturnProductStatus([FromRoute] Guid returnId, [FromRoute] int productId, 
-            [FromBody] string status, CancellationToken cancellationToken = default)
+            [FromBody] string status, CancellationToken cancellationToken)
         {
             await _mediator.Send(new SetReturnProductStatus(returnId, productId, status), cancellationToken);
             return NoContent();

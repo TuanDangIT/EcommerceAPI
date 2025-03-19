@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.BrowseComplaints
 {
-    public sealed record class BrowseComplaints(ComplaintCursorDto CursorDto, bool? IsNextPage, int PageSize) : IQuery<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>
+    public sealed record class BrowseComplaints(ComplaintCursorDto? CursorDto, bool? IsNextPage, int PageSize) : IQuery<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>
     {
         [ModelBinder(BinderType = typeof(DictionaryModelBinder))]
         public Dictionary<string, string>? Filters { get; set; }

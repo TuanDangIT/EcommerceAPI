@@ -44,7 +44,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPost]
-        public async Task<ActionResult> CreateDiscount([FromRoute] int couponId, [FromBody] DiscountCreateDto dto, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> CreateDiscount([FromRoute] int couponId, [FromBody] DiscountCreateDto dto, CancellationToken cancellationToken)
         {
             await _discountService.CreateAsync(couponId, dto, cancellationToken);
             return NoContent();
@@ -54,7 +54,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("{discountId:int}/activate")]
-        public async Task<ActionResult> ActivateDiscount([FromRoute] int couponId, [FromRoute] int discountId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> ActivateDiscount([FromRoute] int couponId, [FromRoute] int discountId, CancellationToken cancellationToken)
         {
             await _discountService.ActivateAsync(couponId, discountId, cancellationToken);
             return NoContent();
@@ -64,7 +64,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("{discountId:int}/deactivate")]
-        public async Task<ActionResult> DeactivateDiscount([FromRoute] int couponId, [FromRoute] int discountId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> DeactivateDiscount([FromRoute] int couponId, [FromRoute] int discountId, CancellationToken cancellationToken)
         {
             await _discountService.DeactivateAsync(couponId, discountId, cancellationToken);
             return NoContent();

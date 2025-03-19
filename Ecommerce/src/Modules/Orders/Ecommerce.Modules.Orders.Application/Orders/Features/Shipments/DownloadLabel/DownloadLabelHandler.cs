@@ -34,10 +34,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.Download
                 query => query.Include(o => o.Shipments)) ??
                 throw new OrderNotFoundException(request.OrderId);
             var shipment = order.Shipments.SingleOrDefault(s => s.Id == request.ShipmentId) ??
-                throw new ShipmentNotFoundException(request.ShipmentId);
+                throw new ShipmentNotFoundException(request.OrderId, request.ShipmentId);
             if (!shipment.HasTrackingNumber)
             {
-                throw new LabelNotCreatedException(request.ShipmentId);
+                throw new LabelNotCreatedException(request.OrderId, request.ShipmentId);
             }
             var file = await _deliveryService.GetLabelAsync(shipment, cancellationToken);
             _logger.LogInformation("Label: {trackingNumber} was downloaded for order: {orderId} by {@user}.", shipment.TrackingNumber,

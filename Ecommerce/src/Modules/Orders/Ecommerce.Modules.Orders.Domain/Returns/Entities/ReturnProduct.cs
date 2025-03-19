@@ -55,6 +55,7 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Entities
             }
             SKU = sku;
             Quantity = quantity;
+            CalculatePrice();
         }
         public ReturnProduct()
         {
@@ -72,7 +73,7 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Entities
             Quantity += quantity;
             CalculatePrice();
         }
-        private void CalculatePrice()
+        public void CalculatePrice()
             => Price = UnitPrice * Quantity;
     }
 }

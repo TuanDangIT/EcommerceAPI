@@ -6,6 +6,7 @@ using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.EditDec
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.GetComplaint;
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.RejectComplaint;
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.SetNote;
+using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaints.DeleteComplaint;
 using Ecommerce.Modules.Orders.Application.Orders.DTO;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrders;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.GetOrder;
@@ -39,7 +40,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, "Returns cursor paginated result for complaints.", typeof(ApiResponse<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>))]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>>> BrowseComplaints([FromQuery] BrowseComplaints query, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>(HttpStatusCode.OK, result));
@@ -50,7 +51,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status404NotFound, "Complaint was not found")]
         [AllowAnonymous]
         [HttpGet("{complaintId:guid}")]
-        public async Task<ActionResult<ApiResponse<ComplaintDetailsDto>>> GetComplaint([FromRoute] Guid complaintId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResponse<ComplaintDetailsDto>>> GetComplaint([FromRoute] Guid complaintId, CancellationToken cancellationToken)
             => OkOrNotFound<ComplaintDetailsDto, Complaint>(await _mediator.Send(new GetComplaint(complaintId), cancellationToken));
 
         [SwaggerOperation("Approves a complaint")]
@@ -58,7 +59,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("{complaintId:guid}/approve")]
         public async Task<ActionResult> ApproveComplaint([FromRoute] Guid complaintId, [FromForm] ApproveComplaint command, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             command = command with { ComplaintId = complaintId };
             await _mediator.Send(command, cancellationToken);
@@ -70,7 +71,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("{complaintId:guid}/reject")]
         public async Task<ActionResult> RejectComplaint([FromRoute] Guid complaintId, [FromForm] DecisionRejectDto decision, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             await _mediator.Send(new RejectComplaint(complaintId, decision), cancellationToken);
             return NoContent();
@@ -79,23 +80,32 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Updates a complaint's note")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{complaintId:guid}/note")]
-        public async Task<ActionResult> SetNote([FromRoute] Guid complaintId, [FromForm] string note, CancellationToken cancellationToken = default)
+        [HttpPatch("{complaintId:guid}/note")]
+        public async Task<ActionResult> SetNote([FromRoute] Guid complaintId, [FromForm] string note, CancellationToken cancellationToken)
         {
             await _mediator.Send(new SetNote(complaintId, note), cancellationToken);
             return NoContent();
         }
 
-        [SwaggerOperation("Edits a complaint's decision")]
+        [SwaggerOperation("Deletes a specified complaint")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{complaintId:guid}/decision")]
-        public async Task<ActionResult> EditDecision([FromRoute]Guid complaintId, [FromForm] EditDecision command, 
-            CancellationToken cancellationToken = default)
+        [HttpDelete("{complaintId:guid}")]
+        public async Task<ActionResult> DeleteComplaint([FromRoute]Guid complaintId, CancellationToken cancellationToken)
         {
-            command = command with { ComplaintId=complaintId };
-            await _mediator.Send(command, cancellationToken);
+            await _mediator.Send(new DeleteComplaint(complaintId), cancellationToken);
             return NoContent();
         }
+        //Method is not ready yet. 
+        //[SwaggerOperation("Edits a complaint's decision")]
+        //[SwaggerResponse(StatusCodes.Status204NoContent)]
+        //[SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        //[HttpPut("{complaintId:guid}/decision")]
+        //public async Task<ActionResult> EditDecision([FromRoute]Guid complaintId, [FromForm] EditDecision command, 
+        //    CancellationToken cancellationToken = default)
+        //{
+        //    command = command with { ComplaintId=complaintId };
+        //    await _mediator.Send(command, cancellationToken);
+        //    return NoContent();
+        //}
     }
 }

@@ -22,6 +22,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
                 .HasConversion<string>()
                 .IsRequired();
             builder.Property(d => d.Value)
+                .HasPrecision(11, 2)
                 .IsRequired();
             builder.HasMany(d => d.CheckoutCarts)
                 .WithOne(cc => cc.Discount)

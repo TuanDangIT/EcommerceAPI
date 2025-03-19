@@ -33,9 +33,9 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerOperation("Creates a category")]
         [SwaggerResponse(StatusCodes.Status201Created)]
         [HttpPost]
-        public async Task<ActionResult> CreateCategory([FromBody] CreateCategory command)
+        public async Task<ActionResult> CreateCategory([FromBody] CreateCategory command, CancellationToken cancellationToken)
         {
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return Created();
         }
 
@@ -44,7 +44,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedResult<CategoryBrowseDto>>>> BrowseCategories([FromQuery] BrowseCategories query, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<PagedResult<CategoryBrowseDto>>(HttpStatusCode.OK, result));
@@ -53,7 +53,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerOperation("Deletes a category")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> DeleteCategory([FromRoute] Guid id, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> DeleteCategory([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             await _mediator.Send(new DeleteCategory(id), cancellationToken);
             return NoContent();
@@ -62,9 +62,9 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerOperation("Updates a category's name")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{id:guid}")]
+        [HttpPatch("{id:guid}")]
         public async Task<ActionResult> ChangeCategoryName([FromRoute] Guid id, [FromBody] ChangeCategoryName command,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             await _mediator.Send(command with
             {
@@ -76,7 +76,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerOperation("Deletes many categories")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [HttpDelete]
-        public async Task<ActionResult> DeleteSelectedCategories([FromBody] DeleteSelectedCategories command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> DeleteSelectedCategories([FromBody] DeleteSelectedCategories command, CancellationToken cancellationToken)
         {
             await _mediator.Send(command, cancellationToken);
             return NoContent();

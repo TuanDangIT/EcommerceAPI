@@ -14,5 +14,6 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Repositories
         Task<Complaint?> GetAsync(Guid complaintId, CancellationToken cancellationToken = default, 
             params Func<IQueryable<Complaint>, IQueryable<Complaint>>[] includeActions);
         Task UpdateAsync(CancellationToken cancellationToken = default);
+        Task DeleteAsync(Guid complaintId, CancellationToken cancellationToken = default);
     }
 }

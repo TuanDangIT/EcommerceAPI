@@ -2,6 +2,7 @@
 using Ecommerce.Shared.Abstractions.MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,20 +13,21 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
 {
     public sealed record class UpdateProduct : ICommand
     {
-        public Guid Id { get; set; }
-        public string SKU { get; set; } = string.Empty;
-        public string? EAN { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public decimal Price { get; set; }
-        public int VAT { get; set; }
-        public int? Quantity { get; set; }
-        public int? Reserved { get; set; }
-        public string? Location { get; set; }
-        public string Description { get; set; } = string.Empty;
-        public string? AdditionalDescription { get; set; }
-        public List<ProductParameterDto>? ProductParameters { get; set; }
-        public Guid? ManufacturerId { get; set; }
-        public Guid? CategoryId { get; set; }
-        public List<IFormFile> Images { get; set; } = [];
+        [SwaggerIgnore]
+        public Guid Id { get; init; }
+        public string SKU { get; init; } = string.Empty;
+        public string? EAN { get; init; }
+        public string Name { get; init; } = string.Empty;
+        public decimal Price { get; init; }
+        public int VAT { get; init; }
+        public int? Quantity { get; init; }
+        public int? Reserved { get; init; }
+        public string? Location { get; init; }
+        public string Description { get; init; } = string.Empty;
+        public string? AdditionalDescription { get; init; }
+        public List<ProductParameterDto>? ProductParameters { get; init; }
+        public Guid? ManufacturerId { get; init; }
+        public Guid? CategoryId { get; init; }
+        public List<IFormFile> Images { get; init; } = [];
     }
 }

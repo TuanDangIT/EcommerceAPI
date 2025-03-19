@@ -338,7 +338,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Complaints.Entities.Complaint", b =>
                 {
                     b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", "Order")
-                        .WithMany()
+                        .WithMany("Complaints")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -503,8 +503,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                 .IsRequired()
                                 .HasColumnType("text");
 
-                            b1.Property<decimal?>("Value")
-                                .HasColumnType("numeric");
+                            b1.Property<decimal>("Value")
+                                .HasPrecision(11, 2)
+                                .HasColumnType("numeric(11,2)");
 
                             b1.HasKey("OrderId");
 
@@ -714,7 +715,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Returns.Entities.Return", b =>
                 {
                     b.HasOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", "Order")
-                        .WithOne()
+                        .WithOne("Return")
                         .HasForeignKey("Ecommerce.Modules.Orders.Domain.Returns.Entities.Return", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -780,10 +781,14 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", b =>
                 {
+                    b.Navigation("Complaints");
+
                     b.Navigation("Customer")
                         .IsRequired();
 
                     b.Navigation("Invoice");
+
+                    b.Navigation("Return");
 
                     b.Navigation("Shipments");
                 });

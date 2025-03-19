@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Ecommerce.Modules.Carts.Core.DTO
 {
     public class CartSetProductQuantityDto
     {
-        [Required]
+        [SwaggerIgnore]
         public Guid ProductId { get; set; }
         [Required]
         [Range(0, int.MaxValue)]

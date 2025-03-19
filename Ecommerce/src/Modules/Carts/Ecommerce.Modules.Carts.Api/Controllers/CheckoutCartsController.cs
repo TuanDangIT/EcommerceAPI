@@ -39,7 +39,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [SwaggerOperation("Sets customer details for a cart")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{checkoutCartId:guid}/customer")]
+        [HttpPatch("{checkoutCartId:guid}/customer")]
         public async Task<ActionResult> SetCustomer([FromRoute] Guid checkoutCartId, [FromBody]CustomerDto customerDto, CancellationToken cancellationToken)
         {
             await _checkoutCartService.SetCustomerAsync(checkoutCartId, customerDto, cancellationToken);
@@ -49,7 +49,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [SwaggerOperation("Sets payment for a cart")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{checkoutCartId:guid}/payment")]
+        [HttpPatch("{checkoutCartId:guid}/payment")]
         public async Task<ActionResult> SetPayment([FromRoute]Guid checkoutCartId, [FromBody]Guid paymentId, CancellationToken cancellationToken)
         {
             await _checkoutCartService.SetPaymentAsync(checkoutCartId, paymentId, cancellationToken);
@@ -59,7 +59,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [SwaggerOperation("Sets shipment details for a cart")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{checkoutCartId:guid}/shipment")]
+        [HttpPatch("{checkoutCartId:guid}/shipment")]
         public async Task<ActionResult> SetShipment([FromRoute] Guid checkoutCartId, [FromBody]ShipmentFillDto shipmentFillDto, CancellationToken cancellationToken)
         {
             await _checkoutCartService.FillShipmentDetailsAsync(checkoutCartId, shipmentFillDto, cancellationToken);
@@ -69,7 +69,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [SwaggerOperation("Sets additional information for a cart")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{checkoutCartId:guid}/additional-information")]
+        [HttpPatch("{checkoutCartId:guid}/additional-information")]
         public async Task<ActionResult> SetAdditionalInformation([FromRoute] Guid checkoutCartId, [FromBody] string additionalInformation, CancellationToken cancellationToken)
         {
             await _checkoutCartService.SetAdditionalInformationAsync(checkoutCartId, additionalInformation, cancellationToken);
@@ -79,7 +79,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [SwaggerOperation("Sets customer id for a cart if user is logged in")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{checkoutCartId:guid}/customer-id")]
+        [HttpPatch("{checkoutCartId:guid}/customer-id")]
         public async Task<ActionResult> SetCustomerId([FromRoute] Guid checkoutCartId, [FromBody] Guid? customerId, CancellationToken cancellationToken)
         {
             await _checkoutCartService.SetCustomerIdAsync(checkoutCartId, customerId, cancellationToken);

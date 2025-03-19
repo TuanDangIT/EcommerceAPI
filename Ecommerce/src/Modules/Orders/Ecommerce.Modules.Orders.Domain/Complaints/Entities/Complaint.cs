@@ -45,12 +45,24 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
         }
         public void Approve(Decision decision)
         {
+            if(Status == ComplainStatus.Approved)
+            {
+                throw new ComplaintAlreadyApprovedException(Id);
+            }
             WriteDecision(decision);
             ChangeStatus(ComplainStatus.Approved);
             IncrementVersion();
         }
         public void Reject(Decision decision)
         {
+            if(Status == ComplainStatus.Rejected)
+            {
+                throw new ComplaintAlreadyRejectedException(Id);
+            }
+            if(Status == ComplainStatus.Approved)
+            {
+                throw new CannotApproveRejectedComplaintException(Id);
+            }
             WriteDecision(decision);
             ChangeStatus(ComplainStatus.Rejected);
             IncrementVersion();

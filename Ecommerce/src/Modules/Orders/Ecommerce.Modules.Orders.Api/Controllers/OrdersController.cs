@@ -11,6 +11,7 @@ using Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitComplaint;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.AddProduct;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.CreateDraftOrder;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.DeleteOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.EditProductUnitPrice;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.RemoveProduct;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.SubmitOrder;
@@ -45,7 +46,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, "Returns cursor paginated result for orders.", typeof(ApiResponse<CursorPagedResult<OrderBrowseDto, OrderCursorDto>>))]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<CursorPagedResult<OrderBrowseDto, OrderCursorDto>>>> BrowseOrders([FromQuery] BrowseOrders query, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<CursorPagedResult<OrderBrowseDto, OrderCursorDto>>(HttpStatusCode.OK, result));
@@ -56,53 +57,53 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status404NotFound, "Order was not found")]
         [AllowAnonymous]
         [HttpGet("{orderId:guid}")]
-        public async Task<ActionResult<ApiResponse<OrderDetailsDto>>> GetOrder([FromRoute]Guid orderId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResponse<OrderDetailsDto>>> GetOrder([FromRoute]Guid orderId, CancellationToken cancellationToken)
             => OkOrNotFound<OrderDetailsDto, Order>(await _mediator.Send(new GetOrder(orderId), cancellationToken));
 
         [SwaggerOperation("Creates an order")]
         [SwaggerResponse(StatusCodes.Status201Created, "Creates an order and returns it's identifier", typeof(Guid))]
         [HttpPost]
-        public async Task<ActionResult> CreateDraftOrder()
+        public async Task<ActionResult> CreateDraftOrder(CancellationToken cancellationToken)
         {
-            var orderId = await _mediator.Send(new CreateDraftOrder());
+            var orderId = await _mediator.Send(new CreateDraftOrder(), cancellationToken);
             return CreatedAtAction(nameof(GetOrder), new { orderId }, orderId);
         }
 
-        [SwaggerOperation("Submits order")]
+        [SwaggerOperation("Submits an order")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("{orderId:guid}/submit-order")]
-        public async Task<ActionResult> SubmitOrder([FromRoute]Guid orderId)
+        public async Task<ActionResult> SubmitOrder([FromRoute] Guid orderId, CancellationToken cancellationToken)
         {
-            await _mediator.Send(new SubmitOrder(orderId));
+            await _mediator.Send(new SubmitOrder(orderId), cancellationToken);
             return NoContent();
         }
 
-        [SwaggerOperation("Adds product to specified order")]
+        [SwaggerOperation("Adds product to a specified order")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPost("{orderId:guid}/products")]
-        public async Task<ActionResult> AddProduct([FromRoute]Guid orderId, [FromBody]AddProduct command)
+        [HttpPatch("{orderId:guid}/products")]
+        public async Task<ActionResult> AddProduct([FromRoute]Guid orderId, [FromBody]AddProduct command, CancellationToken cancellationToken)
         {
             command = command with { OrderId = orderId };
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
 
-        [SwaggerOperation("Deletes an order")]
+        [SwaggerOperation("Deletes product from a specified order")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [HttpDelete("{orderId:guid}/products")]
-        public async Task<ActionResult> RemoveProduct([FromRoute] Guid orderId, [FromBody] RemoveProduct command)
+        public async Task<ActionResult> RemoveProduct([FromRoute] Guid orderId, [FromBody] RemoveProduct command, CancellationToken cancellationToken)
         {
             command = command with { OrderId = orderId };
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return NoContent();
         }
 
         [SwaggerOperation("Updates a products's price for specified order")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{orderId:guid}/products/{productId:int}/unit-price")]
+        [HttpPatch("{orderId:guid}/products/{productId:int}/unit-price")]
         public async Task<ActionResult> EditProductUnitPrice([FromRoute]Guid orderId, [FromRoute]int productId, [FromBody]decimal unitPrice)
         {
             await _mediator.Send(new EditProductUnitPrice(orderId, productId, unitPrice));
@@ -114,18 +115,28 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [AllowAnonymous]
         [HttpPut("{orderId:guid}/cancel")]
-        public async Task<ActionResult> CancelOrder([FromRoute] Guid orderId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> CancelOrder([FromRoute] Guid orderId, CancellationToken cancellationToken)
         {
             await _mediator.Send(new CancelOrder(orderId), cancellationToken);
             return NoContent();
         }
 
-        [SwaggerOperation("Returns a order")]
+        [SwaggerOperation("Deletes an order")]
+        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [HttpDelete("{orderId:guid}")]
+        public async Task<ActionResult> DeleteOrder([FromRoute]Guid orderId, CancellationToken cancellationToken)
+        {
+            await _mediator.Send(new DeleteOrder(orderId));
+            return NoContent();
+        }
+
+        [SwaggerOperation("Returns an order")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [AllowAnonymous]
         [HttpPost("{orderId:guid}/return")]
-        public async Task<ActionResult> ReturnOrder([FromRoute] Guid orderId, [FromBody]ReturnOrder command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> ReturnOrder([FromRoute] Guid orderId, [FromBody]ReturnOrder command, CancellationToken cancellationToken)
         {
             command = command with { OrderId = orderId };
             await _mediator.Send(command, cancellationToken);
@@ -137,7 +148,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [AllowAnonymous]
         [HttpPost("{orderId:guid}/submit-complaint")]
-        public async Task<ActionResult> SubmitComplaint([FromRoute] Guid orderId, [FromForm]SubmitComplaint command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> SubmitComplaint([FromRoute] Guid orderId, [FromForm]SubmitComplaint command, CancellationToken cancellationToken)
         {
             command = command with { OrderId = orderId };
             await _mediator.Send(command, cancellationToken);
@@ -147,9 +158,9 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Updates a order's additional information")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{orderId:guid}/additional-information")]
+        [HttpPatch("{orderId:guid}/additional-information")]
         public async Task<ActionResult> WriteAdditionalInformation([FromRoute]Guid orderId, [FromBody]string additionalInformation, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             await _mediator.Send(new WriteAdditionalInformation(orderId, additionalInformation), cancellationToken);
             return NoContent();

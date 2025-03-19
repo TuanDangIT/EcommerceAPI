@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         public async Task HandleAsync(ReturnRejected @event)
         {
             var bodyHtml = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _mailTemplatePath));
-            bodyHtml = bodyHtml.Replace("{title}", $"Return rejected for ID: {@event.ReturnId}");
+            bodyHtml = bodyHtml.Replace("{title}", $"Return has been rejected");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
             bodyHtml = bodyHtml.Replace("{returnId}", @event.ReturnId.ToString());
@@ -38,7 +38,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             await _mailService.SendAsync(new MailSendDto()
             {
                 To = @event.Email,
-                Subject = $"Order confirmation ID: {@event.OrderId}",
+                Subject = $"Return has been rejected for ID: {@event.ReturnId}",
                 Body = bodyHtml,
                 OrderId = @event.OrderId,
                 CustomerId = @event.CustomerId

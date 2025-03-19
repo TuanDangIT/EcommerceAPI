@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Carts.Core.Entities.Enums;
 using Ecommerce.Modules.Carts.Core.Entities.Exceptions;
+using Ecommerce.Modules.Carts.Core.Exceptions;
 using Ecommerce.Shared.Abstractions.Entities;
 using System;
 using System.Collections.Generic;
@@ -170,9 +171,9 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 if (Discount.SKU is not null)
                 {
-                    var discountedProductQuantity = _products
-                        .Where(p => p.Product.SKU == Discount.SKU)
-                        .Sum(p => p.Quantity);
+                    var discountedProduct = _products
+                        .SingleOrDefault(p => p.Product.SKU == Discount.SKU) ?? throw new ProductNotFoundException(Discount.SKU);
+                    var discountedProductQuantity =  discountedProduct.Quantity;
                     calculatedTotal = productsTotal - Discount.Value * discountedProductQuantity;
                 }
                 else

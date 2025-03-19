@@ -41,5 +41,10 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories
         }
         public async Task UpdateAsync(CancellationToken cancellationToken = default)
             => await _dbContext.SaveChangesAsync(cancellationToken);
+
+        public async Task DeleteAsync(Guid complaintId, CancellationToken cancellationToken = default)
+            => await _dbContext.Complaints
+                .Where(c => c.Id == complaintId)
+                .ExecuteDeleteAsync(cancellationToken);
     }
 }

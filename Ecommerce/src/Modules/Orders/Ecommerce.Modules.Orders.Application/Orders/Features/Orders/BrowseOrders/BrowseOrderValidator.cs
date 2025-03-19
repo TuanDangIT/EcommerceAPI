@@ -9,9 +9,9 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrder
 {
     public class BrowseOrderValidator : AbstractValidator<BrowseOrders>
     {
-        private readonly string[] _availableFilters = ["Id", "TotalSum", "OrderPlacedAt", "DiscountCode", "Payment", "Status", 
+        private readonly string[] _availableFilters = ["Id", "TotalSum", "CreatedAt", "Discount.Code", "Discount.Type", "Payment", "Status", 
             "Customer.UserId", "Customer.FirstName", "Customer.LastName", "Customer.Email", "Customer.FirstName",
-            "Shipment.TrackingNumber", "Shipment.Service", "Shipment.Id", "Shipment.LabelCreatedAt"];
+            "Shipments.TrackingNumber", "Shipments.Service", "Shipments.Id", "Shipments.LabelCreatedAt", "Products.SKU", "Products.Name"];
         public BrowseOrderValidator()
         {
             RuleForEach(b => b.Filters)

@@ -5,6 +5,7 @@ using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities;
+using System.Runtime.CompilerServices;
 
 namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
 {
@@ -34,9 +35,33 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 ClientAdditionalInformation = order.ClientAdditionalInformation,
                 CompanyAdditionalInformation = order.CompanyAdditionalInformation,
                 Discount = order.Discount?.AsDto(),
+                Return = order.Return?.AsOrderReturnDto(),
+                Complaints = order.Complaints?.Select(c => c.AsOrderComplaintDto()),
                 PlacedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt
             };
+
+        public static OrderComplaintDto AsOrderComplaintDto(this Complaint complaint)
+            => new()
+            {
+                Id = complaint.Id,
+                Title = complaint.Title,
+                Status = complaint.Status.ToString(),
+                CreatedAt = complaint.CreatedAt,
+                UpdatedAt = complaint.UpdatedAt,
+            };
+
+        public static OrderReturnDto AsOrderReturnDto(this Return @return)
+            => new()
+            {
+                Id = @return.Id,
+                Status = @return.Status.ToString(),
+                NumberOfProductsReturned = @return.Products.Count(),
+                TotalSum = @return.TotalSum,
+                CreatedAt = @return.CreatedAt,
+                UpdatedAt = @return.UpdatedAt,
+            };
+
         public static DiscountDto AsDto(this Discount discount)
             => new()
             {
@@ -101,7 +126,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
             {
                 Id = complaint.Id,
                 CustomerFullName = complaint.Order.Customer.FirstName + " " + complaint.Order.Customer.LastName,
-                OrderId = complaint.Order.Id,
+                OrderId = complaint.OrderId,
                 Title = complaint.Title,
                 Status = complaint.Status.ToString(),
                 CreatedAt = complaint.CreatedAt,
@@ -130,7 +155,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
             => new()
             {
                 Id = @return.Id,
-                OrderId = @return.Order.Id,
+                OrderId = @return.OrderId,
                 ReasonForReturn = @return.ReasonForReturn,
                 Status = @return.Status.ToString(),
                 CreatedAt = @return.CreatedAt,
@@ -142,6 +167,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Id = @return.Id,
                 Order = @return.Order.AsShortenedDetailsDto(),
                 Products = @return.Products.Select(p => p.AsDto()),
+                TotalSum = @return.TotalSum,
+                TotalSumLeftToReturn = @return.TotalSumLeftToReturn,
                 ReasonForReturn = @return.ReasonForReturn,
                 AdditionalNote = @return.AdditionalNote,
                 RejectReason = @return.RejectReason,
@@ -149,14 +176,17 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 CreatedAt = @return.CreatedAt,
                 UpdatedAt = @return.UpdatedAt
             };
+
         public static InvoiceBrowseDto AsBrowseDto(this Invoice invoice)
             => new()
             {
                 Id = invoice.Id,
+                OrderId = invoice.OrderId,
                 CustomerFullName = invoice.Order.Customer.FirstName + " " + invoice.Order.Customer.LastName,
                 InvoiceNo = invoice.InvoiceNo,
                 CreatedAt = invoice.CreatedAt
             };
+
         public static ShipmentBrowseDto AsBrowseDto(this Shipment shipment)
             => new()
             {
@@ -166,6 +196,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 ShippingService = shipment.Service,
                 TrackingNumber = shipment.TrackingNumber!
             };
+
         public static ShipmentDetailsDto AsDetailsDto(this Shipment shipping)
             => new()
             {

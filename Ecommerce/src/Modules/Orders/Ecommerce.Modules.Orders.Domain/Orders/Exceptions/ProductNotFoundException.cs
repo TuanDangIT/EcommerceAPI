@@ -12,7 +12,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Exceptions
         public ProductNotFoundException(int productId) : base($"Product: {productId} was not found.")
         {
         }
-        public ProductNotFoundException(string sku) : base($"Product: {sku} was not found.")
+        public ProductNotFoundException(string sku) : base($"Product with SKU: {sku} was not found.")
         {
         }
     }

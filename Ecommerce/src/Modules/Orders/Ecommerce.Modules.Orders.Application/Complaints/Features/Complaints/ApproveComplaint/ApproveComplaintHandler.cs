@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Modules.Orders.Application.Complaints.Events;
 using Ecommerce.Modules.Orders.Application.Complaints.Exceptions;
 using Ecommerce.Modules.Orders.Application.Shared.Stripe;
+using Ecommerce.Modules.Orders.Domain.Complaints.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Complaints.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
@@ -35,7 +36,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
         public async Task Handle(ApproveComplaint request, CancellationToken cancellationToken)
         {
             var complaint = await _complaintRepository.GetAsync(request.ComplaintId, cancellationToken,
-                query => query.Include(c => c.Order)) ?? 
+                query => query.Include(c => c.Order).ThenInclude(o => o.Customer)) ?? 
                 throw new ComplaintNotFoundException(request.ComplaintId);
             if (request.Decision.RefundAmount is not null)
             {
@@ -58,7 +59,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
                 {
                     throw new ComplaintInvalidAmountToReturnException();
                 }
-                await _paymentProcessorService.RefundAsync(complaint.Order, (decimal)request.Decision.RefundAmount);
+                await _paymentProcessorService.RefundAsync(complaint.Order, (decimal)request.Decision.RefundAmount + complaint.Order.ShippingPrice);
             }
             _logger.LogInformation("Complaint: {complaintId} was approved by {@user}.", complaint.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });

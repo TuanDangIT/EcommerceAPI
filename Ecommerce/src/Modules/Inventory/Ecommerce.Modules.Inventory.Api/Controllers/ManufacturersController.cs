@@ -39,7 +39,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerOperation("Creates a manufacturer")]
         [SwaggerResponse(StatusCodes.Status201Created)]
         [HttpPost()]
-        public async Task<ActionResult> CreateManufacturer([FromBody]CreateManufacturer command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> CreateManufacturer([FromBody]CreateManufacturer command, CancellationToken cancellationToken)
         {
             await _mediator.Send(command, cancellationToken);
             return Created();
@@ -50,7 +50,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpGet()]
         public async Task<ActionResult<ApiResponse<PagedResult<ManufacturerBrowseDto>>>> BrowseManufacturers([FromQuery] BrowseManufacturers query,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<PagedResult<ManufacturerBrowseDto>>(HttpStatusCode.OK, result));
@@ -59,7 +59,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerOperation("Deletes a manufacturer")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> DeleteManufacturer([FromRoute]Guid id, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> DeleteManufacturer([FromRoute]Guid id, CancellationToken cancellationToken)
         {
             await _mediator.Send(new DeleteManufacturer(id), cancellationToken);
             return NoContent();
@@ -68,14 +68,14 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerOperation("Updates a manufacturer's name")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{id:guid}")]
+        [HttpPatch("{id:guid}")]
         public async Task<ActionResult> ChangeManufacturerName([FromRoute]Guid id, [FromBody]ChangeManufacturerName command, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             await _mediator.Send(command with
             {
                 ManufaturerId = id
-            });
+            }, cancellationToken);
             return NoContent();
         }
 
@@ -83,7 +83,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [HttpDelete]
         public async Task<ActionResult> DeleteSelectedManufacturers([FromBody]DeleteSelectedManufacturers command, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             await _mediator.Send(command, cancellationToken);
             return NoContent();

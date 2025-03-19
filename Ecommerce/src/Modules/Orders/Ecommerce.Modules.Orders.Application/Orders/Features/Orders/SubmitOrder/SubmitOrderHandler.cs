@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.Exceptions;
+using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
@@ -28,6 +29,10 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Orders.SubmitOrde
         {
             var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken) ??
                 throw new OrderNotFoundException(request.OrderId);
+            if(order.Status != OrderStatus.Placed)
+            {
+                throw new OrderCannotSubmitOrderException();
+            }
             order.Submit();
             await _orderRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Order: {orderId} was submitted by {@user}.", order.Id,

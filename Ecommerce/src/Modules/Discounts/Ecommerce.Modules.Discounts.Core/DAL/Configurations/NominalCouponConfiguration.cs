@@ -14,7 +14,7 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
         public void Configure(EntityTypeBuilder<NominalCoupon> builder)
         {
             builder.Property(nd => nd.NominalValue)
-                .HasPrecision(8, 2)
+                .HasPrecision(11, 2)
                 .IsRequired();
             builder.ToTable(nd =>
             {

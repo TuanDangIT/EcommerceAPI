@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.Exceptions;
 using Ecommerce.Modules.Orders.Application.Orders.Services;
+using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Orders.Events;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
@@ -42,9 +43,13 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitCompl
             var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
                 query => query.Include(o => o.Customer)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
-            if (order.Status == Domain.Orders.Entities.Enums.OrderStatus.Draft)
+            if (order.Status == OrderStatus.Draft)
             {
                 throw new OrderDraftException(order.Id);
+            }
+            if(order.Status == OrderStatus.Placed || order.Status == OrderStatus.ParcelPacked)
+            {
+                throw new OrderCannotSubmitComplaintException(order.Id, order.Status.ToString());
             }
             var domainEvent = new ComplaintSubmitted(
                     order.Id,

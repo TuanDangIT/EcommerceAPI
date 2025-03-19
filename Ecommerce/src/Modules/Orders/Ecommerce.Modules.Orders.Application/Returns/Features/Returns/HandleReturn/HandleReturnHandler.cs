@@ -40,7 +40,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
                 query => query.Include(r => r.Order).ThenInclude(o => o.Customer),
                 query => query.Include(r => r.Products)) ?? 
                 throw new ReturnNotFoundException(request.ReturnId);
-            if (!@return.AreAllProductsAccepted)
+            if (!@return.AreAllProductsAcceptedOrReturned)
             {
                 throw new ReturnCannotHandleException();
             }
@@ -50,14 +50,15 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
             }
             else
             {
-                await _stripeService.RefundAsync(@return.Order, @return.TotalSum, cancellationToken);
+                bool includeShippingPrice = !@return.HasReturned;
+                await _stripeService.RefundAsync(@return.Order, @return.TotalSumLeftToReturn + (includeShippingPrice ? @return.Order.ShippingPrice : 0), cancellationToken);
             }
             @return.Handle();
             await _returnRepository.UpdateAsync();
             _logger.LogInformation("Return: {returnId} was handled by {@user}.", @return.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new ReturnHandled(@return.Id, @return.OrderId, @return.Order.Customer.UserId, 
-                @return.Order.Customer.FirstName, @return.Order.Customer.Email, @return.Products.Select(p => new { p.SKU, p.Quantity }), @return.CreatedAt));
+                @return.Order.Customer.FirstName, @return.Order.Customer.Email, @return.Products.Where(p => p.Status != ReturnProductStatus.Returned).Select(p => new { p.SKU, p.Quantity }), @return.CreatedAt));
         }
     }
 }

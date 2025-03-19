@@ -43,9 +43,9 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status201Created, "Creates a product and returns it's identifier", typeof(Guid))]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [HttpPost]
-        public async Task<ActionResult> CreateProduct([FromForm] CreateProduct command)
+        public async Task<ActionResult> CreateProduct([FromForm] CreateProduct command, CancellationToken cancellationToken)
         {
-            var productId = await _mediator.Send(command);
+            var productId = await _mediator.Send(command, cancellationToken);
             return CreatedAtAction(nameof(GetProduct), new { id = productId }, productId);
         }
 
@@ -53,9 +53,9 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status201Created)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [HttpPost("import")]
-        public async Task<ActionResult> ImportProducts([FromForm] ImportProducts command)
+        public async Task<ActionResult> ImportProducts([FromForm] ImportProducts command, CancellationToken cancellationToken)
         {
-            await _mediator.Send(command);
+            await _mediator.Send(command, cancellationToken);
             return Created();
         }
 
@@ -64,7 +64,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedResult<ProductBrowseDto>>>> BrowseProducts([FromQuery] BrowseProducts query, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<PagedResult<ProductBrowseDto>>(HttpStatusCode.OK, result));
@@ -74,13 +74,13 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, "Returns a specific product by id.", typeof(ApiResponse<ProductDetailsDto>))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "Product was not found")]
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ApiResponse<ProductDetailsDto>>> GetProduct([FromRoute]Guid id, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResponse<ProductDetailsDto>>> GetProduct([FromRoute]Guid id, CancellationToken cancellationToken)
             => OkOrNotFound<ProductDetailsDto, Product>(await _mediator.Send(new GetProduct(id), cancellationToken));
 
         [SwaggerOperation("Deletes a product")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> DeleteProduct([FromRoute] Guid id, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> DeleteProduct([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             await _mediator.Send(new DeleteProduct(id), cancellationToken);
             return NoContent();
@@ -90,7 +90,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [HttpDelete]
         public async Task<ActionResult> DeleteSelectedProducts([FromBody] DeleteSelectedProducts command, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             await _mediator.Send(command, cancellationToken);
             return NoContent();
@@ -101,7 +101,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("{id:guid}")]
         public async Task<ActionResult> UpdateProduct([FromForm] UpdateProduct command, [FromRoute] Guid id,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             command = command with { Id = id };
             await _mediator.Send(command, cancellationToken);
@@ -112,7 +112,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("list")]
-        public async Task<ActionResult> ListProduct([FromBody]Guid[] ids, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> ListProduct([FromBody]Guid[] ids, CancellationToken cancellationToken)
         {
             await _mediator.Send(new ListProducts(ids), cancellationToken);
             return NoContent();
@@ -122,7 +122,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("unlist")]
-        public async Task<ActionResult> UnlistProduct([FromBody] Guid[] ids, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> UnlistProduct([FromBody] Guid[] ids, CancellationToken cancellationToken)
         {
             await _mediator.Send(new UnlistProducts(ids), cancellationToken);
             return NoContent();
@@ -131,9 +131,9 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerOperation("Changes a products's quantity")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{productId:guid}/quantity")]
+        [HttpPatch("{productId:guid}/quantity")]
         public async Task<ActionResult> ChangeProductQuantity([FromRoute]Guid productId, [FromBody]int quantity, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             await _mediator.Send(new ChangeProductQuantity(productId, quantity), cancellationToken);
             return NoContent();
@@ -142,9 +142,9 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerOperation("Changes a products's price")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{productId:guid}/price")]
+        [HttpPatch("{productId:guid}/price")]
         public async Task<ActionResult> ChangeProductPrice([FromRoute] Guid productId, [FromBody] decimal price, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             await _mediator.Send(new ChangeProductPrice(productId, price), cancellationToken);
             return NoContent();
@@ -153,9 +153,9 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerOperation("Changes a products's reserved quantity")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{productId:guid}/reserved")]
+        [HttpPatch("{productId:guid}/reserved")]
         public async Task<ActionResult> ChangeProductReservedQuantity([FromRoute] Guid productId, [FromBody] int reserved, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             await _mediator.Send(new ChangeProductReservedQuantity(productId, reserved), cancellationToken);
             return NoContent();

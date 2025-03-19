@@ -30,9 +30,9 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [SwaggerOperation("Creates a cart")]
         [SwaggerResponse(StatusCodes.Status201Created, "Creates a cart and returns it's id.", typeof(Guid))]
         [HttpPost]
-        public async Task<ActionResult> CreateCart()
+        public async Task<ActionResult> CreateCart(CancellationToken cancellationToken)
         {
-            var cartId = await _cartService.CreateAsync();
+            var cartId = await _cartService.CreateAsync(cancellationToken);
             return CreatedAtAction(nameof(GetCart), new { cartId }, cartId);
         }
 
@@ -46,29 +46,41 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [SwaggerOperation("Adds a product to a cart")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
-        [HttpPost("{cartId:guid}/products")]
-        public async Task<ActionResult> AddProduct([FromRoute]Guid cartId, [FromBody]CartAddProductDto dto, CancellationToken cancellationToken)
+        [HttpPatch("{cartId:guid}/products/{productId:guid}")]
+        public async Task<ActionResult> AddProduct(
+            [FromRoute]Guid cartId, 
+            [FromRoute]Guid productId,
+            [FromQuery][Range(1, int.MaxValue)][Required] int quantity, 
+            CancellationToken cancellationToken)
         {
-            await _cartService.AddProductAsync(cartId, dto.ProductId, dto.Quantity, cancellationToken);
+            await _cartService.AddProductAsync(cartId, productId, quantity, cancellationToken);
             return NoContent();
         }
 
         [SwaggerOperation("Removes a product from cart")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
-        [HttpDelete("{cartId:guid}/products")]
-        public async Task<ActionResult> RemoveProduct([FromRoute]Guid cartId, [FromBody]CartRemoveProductDto dto, CancellationToken cancellationToken)
+        [HttpDelete("{cartId:guid}/products/{productId:guid}")]
+        public async Task<ActionResult> RemoveProduct(
+            [FromRoute]Guid cartId, 
+            [FromRoute]Guid productId,
+            [FromQuery][Required][Range(0, int.MaxValue)]int quantity, 
+            CancellationToken cancellationToken)
         {
-            await _cartService.RemoveProductAsync(cartId, dto.ProductId, dto.Quantity, cancellationToken);
+            await _cartService.RemoveProductAsync(cartId, productId, quantity, cancellationToken);
             return NoContent();
         }
         [SwaggerOperation("Sets product' quantity in a cart")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
-        [HttpPut("{cartId:guid}/products")]
-        public async Task<ActionResult> SetProductQuantity([FromRoute]Guid cartId, [FromBody]CartSetProductQuantityDto dto, CancellationToken cancellationToken)
+        [HttpPatch("{cartId:guid}/products/{productId:guid}/quantity")]
+        public async Task<ActionResult> SetProductQuantity(
+            [FromRoute]Guid cartId, 
+            [FromRoute]Guid productId, 
+            [FromQuery][Required][Range(0, int.MaxValue)]int quantity, 
+            CancellationToken cancellationToken)
         {
-            await _cartService.SetProductQuantityAsync(cartId, dto.ProductId, dto.Quantity, cancellationToken);
+            await _cartService.SetProductQuantityAsync(cartId, productId, quantity, cancellationToken);
             return NoContent();
         }
 
@@ -85,7 +97,7 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [SwaggerOperation("Adds a discount to a cart")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
-        [HttpPut("{cartId:guid}/discounts/{code}")]
+        [HttpPatch("{cartId:guid}/discounts/{code}")]
         public async Task<ActionResult> AddDiscount([FromRoute] Guid cartId, [FromRoute] string code, CancellationToken cancellationToken)
         {
             await _cartService.AddDiscountAsync(cartId, code, cancellationToken);

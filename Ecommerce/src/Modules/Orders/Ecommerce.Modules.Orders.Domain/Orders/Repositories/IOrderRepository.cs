@@ -13,5 +13,6 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Repositories
         Task<Order?> GetAsync(Guid orderId, CancellationToken cancellationToken = default, params Func<IQueryable<Order>, IQueryable<Order>>[] includeActions);
         Task<Order?> GetAsync(string trackingNumber, CancellationToken cancellationToken = default);
         Task UpdateAsync(CancellationToken cancellationToken = default);
+        Task DeleteAsync(Guid orderId, CancellationToken cancellationToken= default);
     }
 }

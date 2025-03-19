@@ -34,7 +34,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedResult<AuctionBrowseDto>>>> BrowseAuctions([FromQuery]BrowseAuctions query, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(new ApiResponse<PagedResult<AuctionBrowseDto>>(HttpStatusCode.OK, result));
@@ -45,7 +45,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status404NotFound, "Auction was not found")]
         [HttpGet("{auctionId:guid}")]
         public async Task<ActionResult<ApiResponse<AuctionDetailsDto>>> GetAuction([FromRoute] Guid auctionId, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
             => OkOrNotFound<AuctionDetailsDto, Auction>(await _mediator.Send(new GetAuction(auctionId), cancellationToken));
 
         [SwaggerOperation("Sends request offer")]
@@ -54,7 +54,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [Authorize]
         [HttpPost("{auctionId:guid}/offers")]
         public async Task<ActionResult> RequestOffer([FromRoute]Guid auctionId, [FromForm]RequestOffer command, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             command = command with { AuctionId = auctionId };
             await _mediator.Send(command, cancellationToken);

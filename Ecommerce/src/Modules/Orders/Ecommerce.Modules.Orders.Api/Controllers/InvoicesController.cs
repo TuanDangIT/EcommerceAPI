@@ -36,14 +36,14 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [Route("/api/v{v:apiVersion}/" + OrdersModule.BasePath + "/[controller]")]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<CursorPagedResult<InvoiceBrowseDto, InvoiceCursorDto>>>> BrowseInvoices([FromQuery] BrowseInvoices query, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
             => CursorPagedResult(await _mediator.Send(query, cancellationToken));
 
         [SwaggerOperation("Creates an invoice")]
         [SwaggerResponse(StatusCodes.Status200OK, "Creates a manufacturer and returns it's invoice number.", typeof(string))]
         [HttpPost]
         public async Task<ActionResult<string>> CreateInvoice([FromRoute] Guid orderId, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new CreateInvoice(orderId), cancellationToken);
             return Ok(result);
@@ -54,7 +54,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<InvoiceDetailsDto>>> DownloadInvoice([FromRoute]Guid orderId, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new DownloadInvoice(orderId), cancellationToken);
             return File(result.FileStream, result.MimeType, result.FileName);
@@ -63,7 +63,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Deletes an invoice")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [HttpDelete]
-        public async Task<ActionResult> DeleteInvoice([FromRoute]Guid orderId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> DeleteInvoice([FromRoute]Guid orderId, CancellationToken cancellationToken)
         {
             await _mediator.Send(new DeleteInvoice(orderId), cancellationToken);
             return NoContent();

@@ -31,7 +31,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                  .IsRequired()
                  .HasConversion<string>();
             builder.HasOne(c => c.Order)
-                .WithMany()
+                .WithMany(o => o.Complaints)
                 .HasForeignKey(c => c.OrderId);
             builder
                 .HasIndex(c => new { c.Id, c.CreatedAt });

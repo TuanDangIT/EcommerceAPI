@@ -17,7 +17,7 @@ namespace Ecommerce.Modules.Mails.Api.DAL.Configuration
             builder.Property(m => m.From).IsRequired();
             builder.Property(m => m.To).IsRequired();
             builder.Property(m => m.Subject)
-                .HasMaxLength(64)
+                .HasMaxLength(256)
                 .IsRequired();
             builder.Property(m => m.Body).IsRequired();
             builder.Property(m => m.AttachmentFileNames)

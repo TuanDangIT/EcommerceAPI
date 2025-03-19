@@ -14,6 +14,6 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.BrowseSh
     public sealed record class BrowseShipments(ShipmentCursorDto? CursorDto, bool? IsNextPage, int PageSize) : IQuery<CursorPagedResult<ShipmentBrowseDto, ShipmentCursorDto>>
     {
         [ModelBinder(BinderType = typeof(DictionaryModelBinder))]
-        public Dictionary<string, string>? Filters { get; private set; }
+        public Dictionary<string, string>? Filters { get; set; }
     }
 }

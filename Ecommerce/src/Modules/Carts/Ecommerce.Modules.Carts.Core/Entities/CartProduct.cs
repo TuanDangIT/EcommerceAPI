@@ -19,14 +19,14 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         public CheckoutCart? CheckoutCart { get; private set; }
         public Guid? CheckoutCartId { get; private set; }
         public int Quantity { get; private set; }
-        public decimal Price {  get; private set; }
+        public decimal Price { get; private set; }
         public decimal? DiscountedPrice { get; private set; }
         public CartProduct(Product product, int quantity, CheckoutCart? checkoutCart)
         {
             IsQuantityValid(quantity);
             Product = product;
             Quantity = quantity;
-            CheckoutCart = checkoutCart;    
+            CheckoutCart = checkoutCart;
             if (product.HasQuantity)
             {
                 product.DecreaseQuantity(quantity);
@@ -35,7 +35,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         private CartProduct()
         {
-            
+
         }
         public void IncreaseQuantity(int quantity)
         {
@@ -43,7 +43,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 Product.DecreaseQuantity(quantity);
             }
-            if(DiscountedPrice is not null)
+            if (DiscountedPrice is not null)
             {
                 DiscountedPrice += (decimal)(DiscountedPrice / Quantity);
             }
@@ -52,7 +52,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void DecreaseQuantity(int quantity)
         {
-            if(Quantity - quantity < 0)
+            if (Quantity - quantity < 0)
             {
                 throw new CartProductQuantityBelowZeroException();
             }
@@ -69,7 +69,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         }
         public void SetQuantity(int quantity)
         {
-            if(quantity < 0)
+            if (quantity < 0)
             {
                 throw new CartProductQuantityBelowZeroException();
             }
@@ -96,7 +96,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
         {
             var discountedPrice = (Product.Price * Quantity) -
                 (discount * Quantity);
-            if(discountedPrice <= 0)
+            if (discountedPrice <= 0)
             {
                 throw new CartProductDiscountedPriceBelowZeroException();
             }

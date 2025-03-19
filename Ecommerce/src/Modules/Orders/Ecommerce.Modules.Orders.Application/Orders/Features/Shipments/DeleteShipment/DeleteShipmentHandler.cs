@@ -29,7 +29,9 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.DeleteSh
             var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
                 query => query.Include(o => o.Shipments)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
-            order.DeleteShipment(request.ShipmentId);
+            var shipment = order.Shipments.FirstOrDefault(s => s.Id == request.ShipmentId) ??
+                throw new ShipmentNotFoundException(request.OrderId, request.ShipmentId);
+            order.DeleteShipment(shipment);
             await _orderRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Shipment: {shipmentId} was deleted for {orderId} by {@user}.", request.ShipmentId, order.Id,
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });

@@ -35,6 +35,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
             {
                 d.Property(d => d.Type).IsRequired().HasConversion<string>();
                 d.Property(d => d.Code).IsRequired().HasMaxLength(48);
+                d.Property(d => d.Value).IsRequired().HasPrecision(11, 2);
                 d.Property(d => d.SKU).HasMaxLength(16);
             });
             builder.HasOne(o => o.Customer)

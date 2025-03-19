@@ -10,6 +10,7 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Entities.Enums
     {
         Unknown,
         Accepted,
-        Damaged
+        Damaged,
+        Returned
     }
 }

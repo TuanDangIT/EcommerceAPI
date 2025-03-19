@@ -49,26 +49,26 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         [SwaggerOperation("Creates a nominal coupon")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [HttpPost("nominal-coupons")]
-        public async Task<ActionResult> CreateNominalCoupon([FromBody]NominalCouponCreateDto dto)
+        public async Task<ActionResult> CreateNominalCoupon([FromBody]NominalCouponCreateDto dto, CancellationToken cancellationToken)
         {
-            await _couponService.CreateAsync(dto);
+            await _couponService.CreateAsync(dto, cancellationToken);
             return NoContent();
         }
 
         [SwaggerOperation("Creates a percentage coupon")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [HttpPost("percentage-coupons")]
-        public async Task<ActionResult> CreatePercentageCoupon([FromBody] PercentageCouponCreateDto dto)
+        public async Task<ActionResult> CreatePercentageCoupon([FromBody] PercentageCouponCreateDto dto, CancellationToken cancellationToken)
         {
-            await _couponService.CreateAsync(dto);
+            await _couponService.CreateAsync(dto, cancellationToken);
             return NoContent();
         }
 
         [SwaggerOperation("Updates a coupon's name")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        [HttpPut("{couponId:int}")]
-        public async Task<ActionResult> UpdateCouponName([FromRoute]int couponId, [FromBody]CouponUpdateNameDto dto, CancellationToken cancellationToken = default)
+        [HttpPatch("{couponId:int}")]
+        public async Task<ActionResult> UpdateCouponName([FromRoute]int couponId, [FromBody]CouponUpdateNameDto dto, CancellationToken cancellationToken)
         {
             await _couponService.UpdateNameAsync(couponId, dto, cancellationToken);
             return NoContent();
@@ -78,7 +78,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpDelete("{couponId:int}")]
-        public async Task<ActionResult> DeleteCoupon([FromRoute] int couponId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> DeleteCoupon([FromRoute] int couponId, CancellationToken cancellationToken)
         {
             await _couponService.DeleteAsync(couponId, cancellationToken);
             return NoContent();

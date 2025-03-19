@@ -35,7 +35,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
                 .AsNoTracking()
                 .SingleOrDefaultAsync(c => c.Id == @event.CustomerId) ?? throw new CustomerNotFoundException(@event.CustomerId);
             var bodyHtml = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _mailTemplatePath));
-            bodyHtml = bodyHtml.Replace("{title}", $"Offer rejected for ID: {@event.OfferId}");
+            bodyHtml = bodyHtml.Replace("{title}", $"Offer has been rejected");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", customer.FirstName);
             bodyHtml = bodyHtml.Replace("{offerId}", @event.OfferId.ToString());
@@ -47,7 +47,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             await _mailService.SendAsync(new MailSendDto()
             {
                 To = customer.Email,
-                Subject = $"Offer rejected for ID: {@event.OfferId}",
+                Subject = $"Offer has been rejected for ID: {@event.OfferId}",
                 Body = bodyHtml,
                 CustomerId = @event.CustomerId
             });

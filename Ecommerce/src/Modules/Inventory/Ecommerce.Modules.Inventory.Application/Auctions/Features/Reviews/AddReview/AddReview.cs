@@ -10,9 +10,9 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.AddRe
 {
     public sealed record class AddReview : ICommand
     {
-        public string Text { get; set; } = string.Empty;
-        public int Grade { get; set; }
+        public string Text { get; init; } = string.Empty;
+        public int Grade { get; init; }
         [SwaggerIgnore]
-        public Guid AuctionId { get; set; }
+        public Guid AuctionId { get; init; }
     }
 }

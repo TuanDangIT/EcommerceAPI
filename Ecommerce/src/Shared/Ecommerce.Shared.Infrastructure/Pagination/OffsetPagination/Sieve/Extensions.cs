@@ -15,7 +15,7 @@ namespace Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination.Sieve
         private const string _sieveOptionsSectionName = "Sieve";
         public static IServiceCollection AddSieve(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<StripeOptions>(configuration.GetSection(_sieveOptionsSectionName));
+            services.Configure<SieveOptions>(configuration.GetSection(_sieveOptionsSectionName));
             return services;
         }
     }

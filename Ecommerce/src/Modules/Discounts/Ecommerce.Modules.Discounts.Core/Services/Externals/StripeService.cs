@@ -98,7 +98,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services.Externals
             {
                 Active = false,
                 Code = dto.Code,
-                ExpiresAt = dto.EndingDate,
+                ExpiresAt = dto.ExpiresDate,
                 Coupon = stripeCouponId
             };
             var promotionCodeService = new PromotionCodeService();

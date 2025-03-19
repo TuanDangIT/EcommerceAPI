@@ -40,14 +40,14 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         [SwaggerResponse(StatusCodes.Status404NotFound, "Offer was not found")]
         [Authorize(Roles = "Admin, Manager, Employee, Customer")]
         [HttpGet("{offerId:int}")]
-        public async Task<ActionResult<ApiResponse<OfferDetailsDto>>> GetOffer([FromRoute] int offerId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResponse<OfferDetailsDto>>> GetOffer([FromRoute] int offerId, CancellationToken cancellationToken)
             => OkOrNotFound(await _offerService.GetAsync(offerId, cancellationToken), nameof(Offer));
 
         [SwaggerOperation("Accepts an offer", "Accept an offer for a user to able to use it in a cart.")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("{offerId:int}/accept")]
-        public async Task<ActionResult> AcceptOffer([FromRoute]int offerId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> AcceptOffer([FromRoute]int offerId, CancellationToken cancellationToken)
         {
             await _offerService.AcceptAsync(offerId, cancellationToken);
             return NoContent();
@@ -57,7 +57,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("{offerId:int}/reject")]
-        public async Task<ActionResult> RejectOffer([FromRoute]int offerId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> RejectOffer([FromRoute]int offerId, CancellationToken cancellationToken)
         {
             await _offerService.RejectAsync(offerId, cancellationToken);
             return NoContent();
@@ -67,7 +67,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [Authorize(Roles = "Admin, Manager, Employee, Customer")]
         [HttpDelete("{offerId:int}")]
-        public async Task<ActionResult> DeleteOffer([FromRoute]int offerId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> DeleteOffer([FromRoute]int offerId, CancellationToken cancellationToken)
         {
             await _offerService.DeleteAsync(offerId, cancellationToken);
             return NoContent();
@@ -77,7 +77,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [Authorize(Roles = "Admin, Manager, Employee, Customer")]
         [HttpDelete]
-        public async Task<ActionResult> DeleteOffers([FromBody] IEnumerable<int> offerIds, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> DeleteOffers([FromBody] IEnumerable<int> offerIds, CancellationToken cancellationToken)
         {
             await _offerService.DeleteManyAsync(offerIds, cancellationToken);
             return NoContent();

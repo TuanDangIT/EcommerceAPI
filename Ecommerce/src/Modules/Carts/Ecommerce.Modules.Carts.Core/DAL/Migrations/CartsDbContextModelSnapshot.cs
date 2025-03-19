@@ -179,7 +179,8 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Migrations
                         .HasColumnType("text");
 
                     b.Property<decimal>("Value")
-                        .HasColumnType("numeric");
+                        .HasPrecision(11, 2)
+                        .HasColumnType("numeric(11,2)");
 
                     b.HasKey("Id");
 

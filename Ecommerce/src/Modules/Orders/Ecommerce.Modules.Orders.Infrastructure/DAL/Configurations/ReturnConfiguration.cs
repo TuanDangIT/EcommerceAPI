@@ -47,7 +47,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                  .IsRequired()
                  .HasConversion<string>();
             builder.HasOne(r => r.Order)
-                .WithOne()
+                .WithOne(o => o.Return)
                 .HasForeignKey<Return>(r => r.OrderId);
             builder
                 .HasIndex(r => new { r.Id, r.CreatedAt });

@@ -58,11 +58,10 @@ namespace Ecommerce.Shared.Infrastructure
             services.AddSingleton(TimeProvider.System);
             services.AddAuth();
             services.AddPostgres();
-            services.AddPagination();
+            services.AddPagination(configuration);
             services.AddStripe();
             services.AddInpost();
             services.AddCartOptions();
-            services.AddSieve(configuration);
             services.AddCompanyDetails();
             services.AddMails();
             services.AddAzureBlobStorage();

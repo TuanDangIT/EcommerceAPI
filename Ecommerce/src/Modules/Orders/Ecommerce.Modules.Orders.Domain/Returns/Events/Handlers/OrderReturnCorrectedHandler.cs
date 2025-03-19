@@ -29,6 +29,7 @@ namespace Ecommerce.Modules.Orders.Domain.Returns.Events.Handlers
                 @return.AddProduct(new Entities.ReturnProduct(product.SKU, product.Name, product.Price, 
                     product.UnitPrice, product.Quantity, product.ImagePathUrl));
             }
+            @return.ChangeStatus(ReturnStatus.Handled);
             await _returnRepository.UpdateAsync();
         }
     }

@@ -19,14 +19,20 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
     {
         private readonly OrdersDbContext _dbContext;
         private readonly IFilterService _filterService;
+        private readonly CursorPaginationOptions _cursorPaginationOptions;
 
-        public BrowseShipmentsHandler(OrdersDbContext dbContext, IFilterService filterService)
+        public BrowseShipmentsHandler(OrdersDbContext dbContext, IFilterService filterService, CursorPaginationOptions cursorPaginationOptions)
         {
             _dbContext = dbContext;
             _filterService = filterService;
+            _cursorPaginationOptions = cursorPaginationOptions;
         }
         public async Task<CursorPagedResult<ShipmentBrowseDto, ShipmentCursorDto>> Handle(BrowseShipments request, CancellationToken cancellationToken)
         {
+            if(request.PageSize <= 0)
+            {
+                request = request with { PageSize = _cursorPaginationOptions.DefaultPageSize };
+            }
             var shipmentsAsQueryable = _dbContext.Shipments
                 .OrderByDescending(s => s.LabelCreatedAt)
                 .ThenBy(s => s.Id)

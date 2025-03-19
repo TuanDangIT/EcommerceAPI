@@ -181,8 +181,8 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Migrations
                     b.HasBaseType("Ecommerce.Modules.Discounts.Core.Entities.Coupon");
 
                     b.Property<decimal>("NominalValue")
-                        .HasPrecision(8, 2)
-                        .HasColumnType("numeric(8,2)");
+                        .HasPrecision(11, 2)
+                        .HasColumnType("numeric(11,2)");
 
                     b.ToTable("Coupons", "discounts", t =>
                         {

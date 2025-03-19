@@ -39,7 +39,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedResult<ReviewDto>>>> GetReviews([FromQuery]BrowseReviews query, [FromRoute] Guid auctionId,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             query.AuctionId = auctionId;
             var result = await _mediator.Send(query, cancellationToken);
@@ -51,7 +51,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [HttpPost]
         public async Task<ActionResult> AddReview([FromRoute] Guid auctionId, [FromForm]AddReview command, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             await _mediator.Send(command with { AuctionId = auctionId }, cancellationToken);
             return NoContent();
@@ -61,7 +61,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [HttpDelete("{reviewId:guid}")]
         public async Task<ActionResult> DeleteReview([FromRoute]Guid auctionId, [FromRoute] Guid reviewId, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             await _mediator.Send(new DeleteReview(auctionId, reviewId), cancellationToken);
             return NoContent();
@@ -72,10 +72,10 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPut("{reviewId:guid}")]
         public async Task<ActionResult> EditReview([FromRoute] Guid auctionId, [FromRoute] Guid reviewId, [FromBody]EditReview command, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             await _mediator.Send(command with { AuctionId = auctionId, ReviewId = reviewId }, cancellationToken);
-            return NoContent();
+            return NoContent(); 
         }
     }
 }

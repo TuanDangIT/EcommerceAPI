@@ -55,6 +55,7 @@ namespace Ecommerce.Shared.Infrastructure.Storage
         public async Task<string> UploadAsync(IFormFile blob, string fileName, string containerName, CancellationToken cancellationToken = default)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+            await containerClient.CreateIfNotExistsAsync(publicAccessType: PublicAccessType.Blob, cancellationToken: cancellationToken);
             var blobClient = containerClient.GetBlobClient(fileName);
             await using(Stream data = blob.OpenReadStream())
             {

@@ -9,14 +9,14 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.BrowseRet
 {
     internal class BrowseReturnsValidator : AbstractValidator<BrowseReturns>
     {
-        private readonly string[] _availableFilters = ["Id", "OrderId", "ReasonForReturn", "AdditionalNote", "IsFullReturn", "CreatedAt",
-            "Order.TotalSum", "Order.Payment", "Order.Status"];
+        private readonly string[] _availableFilters = ["Id", "OrderId", "ReasonForReturn", "AdditionalNote", "IsFullReturn", "CreatedAt", "Status",
+            "Order.TotalSum", "Order.Payment", "Order.Status", "Products.SKU", "Products.Name"];
         public BrowseReturnsValidator()
         {
             RuleForEach(b => b.Filters)
                 .Custom((keyValuePair, context) =>
                 {
-                    if (!_availableFilters.Contains(keyValuePair.Key))
+                    if (!_availableFilters.Select(a => a.ToLower()).Contains(keyValuePair.Key.ToLower()))
                     {
                         context.AddFailure($"Provided filter is not supported. Please use the following ones: {string.Join(", ", _availableFilters)}.");
                     }

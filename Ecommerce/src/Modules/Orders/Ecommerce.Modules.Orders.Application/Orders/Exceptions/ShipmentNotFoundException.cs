@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Exceptions
 {
-    internal class ShipmentNotFoundException(int shipmentId) : EcommerceException($"Shipment: {shipmentId} was not found.")
+    internal class ShipmentNotFoundException(Guid orderId, int shipmentId) : EcommerceException($"Shipment: {shipmentId} was not found in order: {orderId}.")
     {
     }
 }

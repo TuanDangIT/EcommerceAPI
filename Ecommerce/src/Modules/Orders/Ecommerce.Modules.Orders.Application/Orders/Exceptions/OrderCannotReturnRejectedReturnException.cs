@@ -7,10 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Exceptions
 {
-    internal class OrderCannotReturnRejectedReturnException : EcommerceException
+    internal class OrderCannotReturnRejectedReturnException(Guid orderId) : EcommerceException($"Cannot process a return for order: {orderId} that has already been rejected and returned")
     {
-        public OrderCannotReturnRejectedReturnException() : base("Cannot return for order which has been already returned, but rejected.")
-        {
-        }
     }
 }

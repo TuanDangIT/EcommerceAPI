@@ -11,9 +11,9 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects
     {
         public DiscountType Type { get; private set; }
         public string Code { get; private set; } = string.Empty;
-        public decimal? Value { get; private set; }
+        public decimal Value { get; private set; }
         public string? SKU { get; private set; }
-        public Discount(DiscountType type, string code, decimal? value, string? sku)
+        public Discount(DiscountType type, string code, decimal value, string? sku)
         {
             Type = type;
             Code = code;

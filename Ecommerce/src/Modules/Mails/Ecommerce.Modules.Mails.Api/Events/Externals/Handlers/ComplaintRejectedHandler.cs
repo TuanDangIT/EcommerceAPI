@@ -24,7 +24,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         public async Task HandleAsync(ComplaintRejected @event)
         {
             var bodyHtml = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _mailTemplatePath));
-            bodyHtml = bodyHtml.Replace("{title}", $"Complaint rejected for ID: {@event.ComplaintId}");
+            bodyHtml = bodyHtml.Replace("{title}", $"Complaint has been rejected");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);
             bodyHtml = bodyHtml.Replace("{customerFirstName}", @event.FirstName);
             bodyHtml = bodyHtml.Replace("{complaintId}", @event.ComplaintId.ToString());
@@ -35,7 +35,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
             await _mailService.SendAsync(new MailSendDto()
             {
                 To = @event.Email,
-                Subject = $"Order confirmation ID: {@event.OrderId}",
+                Subject = $"Complaint has been rejected for order ID: {@event.ComplaintId}",
                 Body = bodyHtml,
                 OrderId = @event.OrderId,
                 CustomerId = @event.CustomerId

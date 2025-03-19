@@ -34,13 +34,13 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, "Returns cursor paginated result for shipments.", typeof(ApiResponse<CursorPagedResult<ShipmentBrowseDto, ShipmentCursorDto>>))]
         [HttpGet("/api/v{v:apiVersion}/" + OrdersModule.BasePath + "/[controller]")]
         public async Task<ActionResult<ApiResponse<CursorPagedResult<ShipmentBrowseDto, ShipmentCursorDto>>>> BrowseShipments([FromQuery] BrowseShipments query, 
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
             => CursorPagedResult(await _mediator.Send(query, cancellationToken));
 
         [SwaggerOperation("Creates an shipment for a specified order")]
         [SwaggerResponse(StatusCodes.Status201Created, "Creates a manufacturer for specified order and returns it's identifier.", typeof(int))]
         [HttpPost]
-        public async Task<ActionResult> CreateShipment([FromRoute] Guid orderId, [FromBody] CreateShipment command, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> CreateShipment([FromRoute] Guid orderId, [FromBody] CreateShipment command, CancellationToken cancellationToken)
         {
             command = command with { OrderId = orderId };
             await _mediator.Send(command, cancellationToken);
@@ -51,7 +51,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, "Downloads an label for a specified order.", typeof(ApiResponse<IFormFile>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [HttpGet("{shipmentId:int}")]
-        public async Task<ActionResult<IFormFile>> DownloadLabel([FromRoute] Guid orderId, [FromRoute] int shipmentId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<IFormFile>> DownloadLabel([FromRoute] Guid orderId, [FromRoute] int shipmentId, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new DownloadLabel(orderId, shipmentId), cancellationToken);
             return File(result.FileStream, result.MimeType, result.FileName);
@@ -61,7 +61,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [HttpDelete("{shipmentId:int}")]
-        public async Task<ActionResult> DeleteShipment([FromRoute] Guid orderId, [FromRoute] int shipmentId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> DeleteShipment([FromRoute] Guid orderId, [FromRoute] int shipmentId, CancellationToken cancellationToken)
         {
             await _mediator.Send(new DeleteShipment(orderId, shipmentId), cancellationToken);
             return NoContent();
