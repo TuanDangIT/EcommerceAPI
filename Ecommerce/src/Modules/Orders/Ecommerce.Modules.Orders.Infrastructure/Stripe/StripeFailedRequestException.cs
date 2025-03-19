@@ -9,7 +9,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Stripe
 {
     internal class StripeFailedRequestException : StripeException
     {
-        public StripeFailedRequestException() : base("Failed to process Stripe request.")
+        public StripeFailedRequestException(string stripeMessage) : base($"Failed to process Stripe request. Message: {stripeMessage}")
         {
 
         }

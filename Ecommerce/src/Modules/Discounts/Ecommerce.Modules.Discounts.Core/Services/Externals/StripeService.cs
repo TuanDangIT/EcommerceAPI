@@ -45,7 +45,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services.Externals
             var coupon = await couponService.CreateAsync(options, _requestOptions, cancellationToken);
             if(coupon.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
-                throw new StripeFailedRequestException();
+                throw new StripeFailedRequestException(coupon.StripeResponse.Content);
             }
             _logger.LogDebug("Stripe nominal coupon was created: {@coupon}.", dto);
             return coupon.Id;
@@ -63,7 +63,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services.Externals
             var coupon = await couponService.CreateAsync(options, _requestOptions, cancellationToken);
             if (coupon.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
-                throw new StripeFailedRequestException();
+                throw new StripeFailedRequestException(coupon.StripeResponse.Content);
             }
             _logger.LogDebug("Stripe percentage coupon was created: {@coupon}.", dto);
             return coupon.Id;
@@ -74,7 +74,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services.Externals
             var coupon = await couponService.DeleteAsync(stripeCouponId, requestOptions: _requestOptions, cancellationToken: cancellationToken);
             if (coupon.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
-                throw new StripeFailedRequestException();
+                throw new StripeFailedRequestException(coupon.StripeResponse.Content);
             }
             _logger.LogDebug("Stripe coupon was deleted: {stripeCouponId}.", stripeCouponId);
         }
@@ -88,7 +88,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services.Externals
             var coupon = await couponService.UpdateAsync(stripeCouponId, options, _requestOptions, cancellationToken);
             if (coupon.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
-                throw new StripeFailedRequestException();
+                throw new StripeFailedRequestException(coupon.StripeResponse.Content);
             }
             _logger.LogDebug("Stripe coupon name was updated: {stripeCouponId} to {name}.", stripeCouponId, name);
         }
@@ -105,7 +105,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services.Externals
             var promotionCode = await promotionCodeService.CreateAsync(options, _requestOptions, cancellationToken);
             if (promotionCode.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
-                throw new StripeFailedRequestException();
+                throw new StripeFailedRequestException(promotionCode.StripeResponse.Content);
             }
             _logger.LogDebug("Stripe discount: {@discount} was created for coupon: {stripeCouponId}.", dto, stripeCouponId);
             return promotionCode.Id;
@@ -125,7 +125,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services.Externals
             var promotionCode = await promotionCodeService.UpdateAsync(stripePromotionCodeId, options, _requestOptions, cancellationToken);
             if (promotionCode.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
-                throw new StripeFailedRequestException();
+                throw new StripeFailedRequestException(promotionCode.StripeResponse.Content);
             }
             _logger.LogDebug("Stripe discount: {stripePromotionCodeId} status: {status} was updated.", stripePromotionCodeId, isActive);
         }

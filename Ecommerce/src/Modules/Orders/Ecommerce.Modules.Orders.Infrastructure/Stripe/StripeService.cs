@@ -37,7 +37,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Stripe
             var refund = await refundService.CreateAsync(refundOptions, _requestOptions, cancellationToken);
             if(refund.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
-                throw new StripeFailedRequestException();
+                throw new StripeFailedRequestException(refund.StripeResponse.Content);
             }
             _logger.LogDebug("Money was refunded for order: {orderId} on stripe.", order.Id);
         }
@@ -53,7 +53,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Stripe
             var refund = await refundService.CreateAsync(refundOptions, _requestOptions, cancellationToken);
             if (refund.StripeResponse.StatusCode != HttpStatusCode.OK)
             {
-                throw new StripeFailedRequestException();
+                throw new StripeFailedRequestException(refund.StripeResponse.Content);
             }
             _logger.LogDebug("Money was refunded for order: {orderId} on stripe.", order.Id);
         }
