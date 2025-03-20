@@ -9,7 +9,7 @@ namespace Ecommerce.Shared.Abstractions.Postgres
 {
     public interface IUnitOfWork
     {
-        Task SaveChangesAsync(CancellationToken cancellationToken = default);
+        //Task SaveChangesAsync(CancellationToken cancellationToken = default);
         IDbTransaction BeginTransaction();
     }
 }

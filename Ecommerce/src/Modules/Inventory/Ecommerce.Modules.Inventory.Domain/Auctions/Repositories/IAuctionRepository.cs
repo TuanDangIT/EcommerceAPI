@@ -14,6 +14,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Repositories
         Task<Auction?> GetAsync(Guid auctionId, CancellationToken cancellationToken = default,
             params Expression<Func<Auction, object>>[] includes);
         Task<IEnumerable<Auction>> GetAllThatContainsInArrayAsync(Guid[] auctionIds, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Auction>> GetAllThatContainsInArrayAsync(string[] skus, CancellationToken cancellationToken = default);
         Task UnlistManyAsync(Guid[] auctionIds, CancellationToken cancellationToken = default);
         Task UpdateAsync(CancellationToken cancellationToken = default);
     }

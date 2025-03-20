@@ -24,6 +24,7 @@ namespace Ecommerce.Modules.Inventory.Application
             services.AddMediatR(cfg =>
             {
                 cfg.AddOpenBehavior(typeof(InventoryValidationBehavior<,>));
+                cfg.AddOpenBehavior(typeof(InventoryUnitOfWorkBehavior<,>));
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
             services.AddSingleton<IInventoryEventMapper, InventoryEventMapper>();

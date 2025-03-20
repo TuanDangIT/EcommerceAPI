@@ -23,8 +23,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
         }
         public async Task HandleAsync(ReturnHandled @event)
         {
-            var products = await _productRepository.GetAllThatContainsInArrayAsync(@event.Products.Select(p => p.Id).ToArray());
-            var auctions = await _auctionRepository.GetAllThatContainsInArrayAsync(@event.Products.Select(p => p.Id).ToArray());
+            var products = await _productRepository.GetAllThatContainsInArrayAsync(@event.Products.Select(p => p.SKU).ToArray());
+            var auctions = await _auctionRepository.GetAllThatContainsInArrayAsync(@event.Products.Select(p => p.SKU).ToArray());
             if (!products.Any())
             {
                 return;
@@ -33,7 +33,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
             {
                 var product = products.ElementAt(i);
                 var auction = auctions.SingleOrDefault(a => a.Id == product.Id);
-                var soldProduct = @event.Products.Single(p => p.Id == product.Id);
+                var soldProduct = @event.Products.Single(p => p.SKU == product.SKU);
                 var soldQuantity = soldProduct.Quantity;
                 if (product.HasQuantity && soldQuantity is not null)
                 {
@@ -44,6 +44,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals.Han
                     auction.IncreaseQuantity((int)soldQuantity);
                 }
             }
+            await _productRepository.UpdateAsync();
         }
     }
 }

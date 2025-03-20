@@ -18,6 +18,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Repositories
         Task DeleteManyAsync(CancellationToken cancellationToken = default, params Guid[] productIds);
         Task<IEnumerable<Product>> GetAllThatContainsInArrayAsync(Guid[] productIds, CancellationToken cancellationToken = default,
             params Func<IQueryable<Product>, IQueryable<Product>>[] includeActions);
+        Task<IEnumerable<Product>> GetAllThatContainsInArrayAsync(string[] skus, CancellationToken cancellationToken = default);
         Task<Product?> GetAsync(Guid productId, CancellationToken cancellationToken = default);
         Task DeleteProductParametersAndImagesRelatedToProduct(Guid productId, CancellationToken cancellationToken = default);
         Task UpdateListedFlagAsync(Guid[] productIds, bool isListed, CancellationToken cancellationToken = default);

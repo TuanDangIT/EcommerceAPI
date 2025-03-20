@@ -33,6 +33,11 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
                 .Where(p => auctionIds.Contains(p.Id))
                 .ToListAsync(cancellationToken);
 
+        public async Task<IEnumerable<Auction>> GetAllThatContainsInArrayAsync(string[] skus, CancellationToken cancellationToken = default)
+            => await _dbContext.Auctions
+                .Where(p => skus.Contains(p.SKU))
+                .ToListAsync(cancellationToken);
+
         public async Task<Auction?> GetAsync(Guid auctionId, CancellationToken cancellationToken = default,
             params Expression<Func<Auction, object>>[] includes)
         {

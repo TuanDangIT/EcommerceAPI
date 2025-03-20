@@ -22,7 +22,7 @@ namespace Ecommerce.Shared.Infrastructure.Postgres
         public IDbTransaction BeginTransaction()
             => _dbContext.Database.BeginTransaction().GetDbTransaction();
 
-        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-            => await _dbContext.SaveChangesAsync(cancellationToken);
+        //public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+        //    => await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

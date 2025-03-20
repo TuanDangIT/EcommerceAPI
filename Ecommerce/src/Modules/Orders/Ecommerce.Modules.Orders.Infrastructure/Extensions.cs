@@ -1,10 +1,12 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.Services;
 using Ecommerce.Modules.Orders.Application.Shared.Stripe;
+using Ecommerce.Modules.Orders.Application.Shared.UnitOfWork;
 using Ecommerce.Modules.Orders.Domain.Complaints.Repositories;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Modules.Orders.Domain.Returns.Repositories;
 using Ecommerce.Modules.Orders.Infrastructure.DAL;
 using Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories;
+using Ecommerce.Modules.Orders.Infrastructure.DAL.UnitOfWork;
 using Ecommerce.Modules.Orders.Infrastructure.Delivery;
 using Ecommerce.Modules.Orders.Infrastructure.Stripe;
 using Ecommerce.Shared.Infrastructure.InPost;
@@ -32,6 +34,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
             services.AddSingleton<IPaymentProcessorService, StripeService>();
             services.AddScoped<IDeliveryService, InpostService>();
+            services.AddScoped<IOrdersUnitOfWork, OrdersUnitOfWork>();
             services.AddHttpClient(_inPost, (sp, client) =>
             {
                 var inPostOptions = sp.GetRequiredService<InPostOptions>();

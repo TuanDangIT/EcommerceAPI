@@ -64,6 +64,12 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
                 .ToListAsync(cancellationToken);
             return products;
         }
+
+        public async Task<IEnumerable<Product>> GetAllThatContainsInArrayAsync(string[] skus, CancellationToken cancellationToken = default)
+            => await _dbContext.Products
+                .Where(p => skus.Contains(p.SKU))
+                .ToListAsync(cancellationToken);
+
         public async Task UpdateListedFlagAsync(Guid[] productIds, bool isListed, CancellationToken cancellationToken = default)
             => await _dbContext.Products
                 .Where(p => productIds.Contains(p.Id))

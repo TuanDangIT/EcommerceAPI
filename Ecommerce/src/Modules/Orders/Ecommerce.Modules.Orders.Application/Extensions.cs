@@ -19,6 +19,7 @@ namespace Ecommerce.Modules.Orders.Application
             services.AddMediatR(cfg =>
             {
                 cfg.AddOpenBehavior(typeof(OrdersValidationBehavior<,>));
+                cfg.AddOpenBehavior(typeof(OrdersUnitOfWorkBehavior<,>));
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
             services.AddSingleton<IOrdersEventMapper, OrdersEventMapper>();
