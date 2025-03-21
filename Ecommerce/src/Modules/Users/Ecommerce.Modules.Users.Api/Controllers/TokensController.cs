@@ -17,11 +17,11 @@ namespace Ecommerce.Modules.Users.Api.Controllers
 {
     [Authorize]
     [ApiVersion(1)]
-    internal class TokenController : BaseController
+    internal class TokensController : BaseController
     {
         private readonly IIdentityService _identityService;
 
-        public TokenController(IIdentityService identityService)
+        public TokensController(IIdentityService identityService)
         {
             _identityService = identityService;
         }

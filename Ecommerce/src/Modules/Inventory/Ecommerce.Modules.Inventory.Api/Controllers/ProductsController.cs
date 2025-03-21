@@ -33,9 +33,9 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
 {
     [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
-    internal class ProductController : BaseController
+    internal class ProductsController : BaseController
     {
-        public ProductController(IMediator mediator) : base(mediator)
+        public ProductsController(IMediator mediator) : base(mediator)
         {
         }
 

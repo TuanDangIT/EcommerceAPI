@@ -1,8 +1,10 @@
 ﻿using Ecommerce.Modules.Users.Core.DAL.Mappings;
 using Ecommerce.Modules.Users.Core.DAL.Repositories;
 using Ecommerce.Modules.Users.Core.DTO;
+using Ecommerce.Modules.Users.Core.Events;
 using Ecommerce.Modules.Users.Core.Exceptions;
 using Ecommerce.Shared.Abstractions.Contexts;
+using Ecommerce.Shared.Abstractions.Messaging;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using Microsoft.Extensions.Logging;
 using Sieve.Models;
@@ -20,14 +22,16 @@ namespace Ecommerce.Modules.Users.Core.Services
         private readonly ICustomerRepository _customerRepository;
         private readonly ILogger<CustomerService> _logger;
         private readonly IContextService _contextService;
+        private readonly IMessageBroker _messageBroker;
 
         public CustomerService(IUserRepository userRepository, ICustomerRepository customerRepository,
-            ILogger<CustomerService> logger, IContextService contextService)
+            ILogger<CustomerService> logger, IContextService contextService, IMessageBroker messageBroker)
         {
             _userRepository = userRepository;
             _customerRepository = customerRepository;
             _logger = logger;
             _contextService = contextService;
+            _messageBroker = messageBroker;
         }
         public async Task<PagedResult<CustomerBrowseDto>> BrowseAsync(SieveModel model, CancellationToken cancellationToken = default)
             => await _customerRepository.GetAllAsync(model, cancellationToken);
@@ -61,6 +65,10 @@ namespace Ecommerce.Modules.Users.Core.Services
             await _userRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Customer: {customerId} was set to {isActive} by {@user}.", customer.Id, isActive, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            if(isActive)
+            {
+                await _messageBroker.PublishAsync(new CustomerActivated(customerId, customer.Email, customer.FirstName, customer.LastName));
+            }
         }
     }
 }

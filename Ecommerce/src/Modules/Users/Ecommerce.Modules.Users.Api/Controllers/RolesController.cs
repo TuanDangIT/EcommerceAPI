@@ -17,11 +17,11 @@ namespace Ecommerce.Modules.Users.Api.Controllers
 {
     [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
-    internal class RoleController : BaseController
+    internal class RolesController : BaseController
     {
         private readonly IRoleService _roleService;
 
-        public RoleController(IRoleService roleService)
+        public RolesController(IRoleService roleService)
         {
             _roleService = roleService;
         }

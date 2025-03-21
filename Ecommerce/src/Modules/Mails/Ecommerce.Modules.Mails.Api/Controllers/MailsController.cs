@@ -25,12 +25,12 @@ namespace Ecommerce.Modules.Mails.Api.Controllers
     [ApiVersion(1)]
     [ApiController]
     [Route("api/v{v:apiVersion}/" + MailsModule.BasePath + "/[controller]")]
-    internal class MailController : ControllerBase
+    internal class MailsController : ControllerBase
     {
         private readonly IMailService _mailService;
         private const string _notFoundTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.5";
 
-        public MailController(IMailService mailService)
+        public MailsController(IMailService mailService)
         {
             _mailService = mailService;
         }

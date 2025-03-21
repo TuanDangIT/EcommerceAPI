@@ -18,12 +18,12 @@ using System.Threading.Tasks;
 namespace Ecommerce.Modules.Users.Api.Controllers
 {
     [ApiVersion(1)]
-    internal class UserController : BaseController
+    internal class UsersController : BaseController
     {
         private readonly IIdentityService _identityService;
         private readonly IContextService _contextService;
 
-        public UserController(IIdentityService identityService, IContextService contextService)
+        public UsersController(IIdentityService identityService, IContextService contextService)
         {
             _identityService = identityService;
             _contextService = contextService;

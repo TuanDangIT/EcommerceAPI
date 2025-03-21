@@ -23,11 +23,11 @@ namespace Ecommerce.Modules.Users.Api.Controllers
 {
     [Authorize]
     [ApiVersion(1)]
-    internal class CustomerController : BaseController
+    internal class CustomersController : BaseController
     {
         private readonly ICustomerService _customerService;
 
-        public CustomerController(ICustomerService customerService)
+        public CustomersController(ICustomerService customerService)
         {
             _customerService = customerService;
         }

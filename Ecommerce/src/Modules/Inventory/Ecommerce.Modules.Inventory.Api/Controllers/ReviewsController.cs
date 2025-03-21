@@ -27,9 +27,9 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
     [Route("api/v{v:apiVersion}/" + InventoryModule.BasePath + "/auctions/{auctionId:guid}/[controller]")]
     [Authorize(Roles = "Admin, Manager, Employee, Customer")]
     [ApiVersion(1)]
-    internal class ReviewController : BaseController
+    internal class ReviewsController : BaseController
     {
-        public ReviewController(IMediator mediator) : base(mediator)
+        public ReviewsController(IMediator mediator) : base(mediator)
         {
         }
 

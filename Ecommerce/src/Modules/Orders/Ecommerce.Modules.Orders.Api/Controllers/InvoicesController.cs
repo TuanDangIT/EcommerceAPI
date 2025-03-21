@@ -25,9 +25,9 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
     [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     [Route("api/v{v:apiVersion}/" + OrdersModule.BasePath + "/orders/{orderId:guid}/[controller]")]
-    internal class InvoiceController : BaseController
+    internal class InvoicesController : BaseController
     {
-        public InvoiceController(IMediator mediator) : base(mediator)
+        public InvoicesController(IMediator mediator) : base(mediator)
         {
         }
 

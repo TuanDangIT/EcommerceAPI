@@ -18,12 +18,12 @@ namespace Ecommerce.Modules.Users.Api.Controllers
 {
     [Authorize(Roles = "Admin, Manager")]
     [ApiVersion(1)]
-    internal class EmployeeController : BaseController
+    internal class EmployeesController : BaseController
     {
         private readonly IEmployeeService _employeeService;
         private const string _employeeEntityName = "Employee";
 
-        public EmployeeController(IEmployeeService employeeService)
+        public EmployeesController(IEmployeeService employeeService)
         {
             _employeeService = employeeService;
         }
