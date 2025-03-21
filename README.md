@@ -1,6 +1,6 @@
 # EcommerceAPI
 
-![EcommerceAPI logo](./assets/logo.png)
+![EcommerceAPI logo](./assets/Logo.png)
 
 ## Overview
 
