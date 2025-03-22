@@ -6,6 +6,16 @@
 
 The Headless CMS Ecommerce API facilitates the process of selling goods and services online, from checkout to post-purchase support. It handles order processing, invoice generation, and shipping label printing, ensuring smooth fulfillment. The API also manages returns, complaints, and other after-sales processes to enhance customer experience. As a headless solution, it integrates seamlessly with any frontend, offering flexibility for businesses of all sizes.
 
+### Disclaimer before proceeding with the documentation and code
+
+The EcommerceAPI project was created to demonstrate my skills as a future .NET Developer. It is not intended for commercial use in its current state. This project includes various shortcuts and simplifications for demonstration purposes, making it unsuitable for real-world implementations.
+
+Many aspects of the application will be improved or reworked in future versions of the API. I acknowledge that there may be mistakes or areas for improvement—some of which I may have overlooked, while others were intentionally left due to time limitation.
+
+If you come across any issues, suggestions, or potential improvements, I would greatly appreciate your feedback. Please feel free to reach out to me at shocksee001@gmail.com.
+
+Thank you for your understanding and interest!
+
 # Table of Contents
 
 - [EcommerceAPI](#ecommerceapi)
@@ -127,7 +137,7 @@ public class Product : AggregateRoot, IAuditable
     public IEnumerable<Parameter> Parameters => _parameters;
     private List<ProductParameter> _productParameters = [];
     public IEnumerable<ProductParameter> ProductParameters => _productParameters;
-    public Manufacturer? Manufacturer { get; private set; } 
+    public Manufacturer? Manufacturer { get; private set; }
     public Guid? ManufacturerId { get; private set; }
     public List<Image> _images = [];
     public IEnumerable<Image> Images => _images;
@@ -151,7 +161,7 @@ public class Auction : AggregateRoot, IAuditable
     public bool HasQuantity => Quantity != null;
     public string Description { get; private set; } = string.Empty;
     public string? AdditionalDescription { get; private set; }
-    public List<AuctionParameter>? Parameters { get; private set; } 
+    public List<AuctionParameter>? Parameters { get; private set; }
     public string? Manufacturer { get; private set; }
     public List<string> ImagePathUrls { get; private set; } = [];
     public string? Category { get; private set; } = string.Empty;
@@ -179,7 +189,6 @@ public class Auction : AggregateRoot, IAuditable
     }
 ```
 
-
 ## Architecture
 
 Everything will wrapped as a modular monolith.
@@ -196,9 +205,154 @@ Everything will wrapped as a modular monolith.
 
 The documentation section will include detailed information about each module, outlining the functionality and associated endpoints for each. It will cover the various API modules, such as order management, payment processing, product listings, and customer interactions, with clear explanations of the available endpoints, request/response formats, and usage examples.
 
+The description is included within every endpoint. Apart from swagger descriptions there will be text for endpoints that require further explanation, because of the more complicated business logic and therefor implementation.
+
+The description is included in every endpoint in the swagger images. For most it's just CRUD operations. In addition to Swagger descriptions, additional text will be provided for endpoints requiring further explanation due to their complex business logic and implementation.
+
 ## Authentication and Authorization
 
 The Ecommerce API utilizes JWT (JSON Web Tokens) for secure and efficient authentication, ensuring that only authorized users can access the system. For authorization, the API implements Role-Based Access Control (RBAC), which assigns specific permissions and access levels based on the user's role within the system.
+
+## Pagination
+
+The EcommerceAPI implements two types of pagination algorithms: offset pagination and cursor pagination. Entities are ordered based on the cluster index of their ID property and CreatedAt datetime.
+
+For date filtering, you can use either date strings or dates with time, but all values must be in UTC format.
+
+### Offset pagination
+
+Offset pagination is used for simpler cases where performance is not significantly affected by large datasets, such as the Product entity. To simplify the implementation, the API leverages Sieve, an external library that reduces the need for additional pagination logic. Sieve is a mature and versatile library that enables filtering and sorting for entities that support browsing.
+
+Each entity using Sieve pagination has a dedicated configuration specifying which properties can be filtered or sorted and how.
+
+Example of a sieve configuration for coupons:
+
+```cs
+ internal class CouponSieveConfiguration : ISieveConfiguration
+ {
+     public void Configure(SievePropertyMapper mapper)
+     {
+         mapper.Property<Coupon>(c => c.Id)
+             .CanFilter();
+         mapper.Property<Coupon>(c => c.CreatedAt)
+             .CanFilter()
+             .CanSort();
+         mapper.Property<Coupon>(c => c.Type)
+             .CanFilter();
+         mapper.Property<Coupon>(c => c.Name)
+             .CanFilter()
+             .CanSort();
+         mapper.Property<Coupon>(c => c.Redemptions)
+            .CanSort();
+         mapper.Property<NominalCoupon>(nc => nc.NominalValue)
+             .CanFilter()
+             .CanSort();
+         mapper.Property<PercentageCoupon>(pc => pc.Percent)
+             .CanFilter()
+             .CanSort();
+     }
+ }
+```
+
+Below is a table of available filter operators and their meanings:
+| Operator | Meaning |
+|------------|--------------------------|
+| `==` | Equals |
+| `!=` | Not equals |
+| `>` | Greater than |
+| `<` | Less than |
+| `>=` | Greater than or equal to |
+| `<=` | Less than or equal to |
+| `@=` | Contains |
+| `_=` | Starts with |
+| `_-=` | Ends with |
+| `!@=` | Does not Contains |
+| `!_=` | Does not Starts with |
+| `!_-=` | Does not Ends with |
+| `@=*` | Case-insensitive string Contains |
+| `_=*` | Case-insensitive string Starts with |
+| `_-=*` | Case-insensitive string Ends with |
+| `==*` | Case-insensitive string Equals |
+| `!=*` | Case-insensitive string Not equals |
+| `!@=*` | Case-insensitive string does not Contains |
+| `!_=*` | Case-insensitive string does not Starts with |
+
+For properties in many-to-many relationships (e.g., parameters and products), custom filter methods are required. To use these filters, you must specify the method name as the property name in the filter argument. It’s important to note that custom Sieve filters only support equality (==) and containment (@=) operators.
+
+Example of a custom filter method for products and their parameters:
+
+```cs
+internal class SieveCustomFilterMethods : ISieveCustomFilterMethods
+{
+    public IQueryable<Product> ProductParameterNameAndValue(IQueryable<Product> source, string op, string[] values)
+    {
+        //This filter is for first when values length is equal to 0 then it filters only by name, if 2 then by name and value associated with that parameter name.
+        switch ((op, values.Length))
+        {
+            case ("==", 1):
+                return source.Where(p => p.Parameters.Any(p => values.Any(v => v.ToLower() == p.Name.ToLower())));
+            case ("==", 2):
+                return source.Where(p => p.Parameters.Any(pa => values[0].ToLower() == pa.Name.ToLower() && p.ProductParameters.First(pp => pp.ParameterId == pa.Id).Value.ToLower() == values[1].ToLower()));
+            case ("@=", 1):
+                return source.Where(p => p.Parameters.Any(p => values.Any(v => p.Name.ToLower().Contains(v.ToLower()))));
+            case ("@=", 2):
+                return source.Where(p => p.Parameters.Any(pa => pa.Name.ToLower().Contains(values[0].ToLower()) && p.ProductParameters.First(pp => pp.ParameterId == pa.Id).Value.ToLower().Contains(values[1].ToLower())));
+            default:
+                break;
+        }
+        return source;
+    }
+}
+```
+
+Example of filter usage in query:
+
+```
+Filter=Name=Adam - which means search for user with a name "Adam"
+
+Filter=Coupon.Name==50OFF - which means that you are filtering through coupons and then looking for exact name "50OFF"
+
+Filter=ProductParameterNameAndValue==Size|30 - which means that you are looking for product that has size with value 30
+```
+
+For more information about Sieve. Please click at the [link](https://github.com/Biarity/Sieve).
+
+### Cursor pagination
+
+Unlike offset pagination, cursor pagination does not have a widely available external library. Therefore, a custom implementation was developed, inspired by [Julio Casal’s approach](https://juliocasal.com/blog/ASP.NET-Core-Pagination-For-Large-Datasets) and modified to also include the CreatedAt property in the pagination algorithm. Additionally, support has been added for various C# types such as Object, Enums and Collections. For objects, filtering is currently limited to two levels deep from the main entity. For example, you can filter on Order.Shipments.TrackingNumber, but not beyond that level. Cursor pagination is primarily used for entities that can rapidly grow in number, such as the Order entity, which can accumulate millions of records in a short time. The trade-off, however, is that users cannot jump to specific pages—only forward and backward navigation is supported. Another limitation is that, unlike offset pagination with Sieve, which supports multiple filter operators, this cursor implementation, because it is self-developed, only supports equality (==) and containment (@=) checks.
+
+To see the list of available filterable properties, check the validator classes. While currently included in the validators for simplicity, this logic will soon be moved to dedicated classes for improved readability and maintainability.
+
+Example of an validator with available/supported filters:
+
+```cs
+public class BrowseOrderValidator : AbstractValidator<BrowseOrders>
+{
+    private readonly string[] _availableFilters = ["Id", "TotalSum", "CreatedAt", "Discount.Code", "Discount.Type", "Payment", "Status",
+        "Customer.UserId", "Customer.FirstName", "Customer.LastName", "Customer.Email", "Customer.FirstName",
+        "Shipments.TrackingNumber", "Shipments.Service", "Shipments.Id", "Shipments.LabelCreatedAt", "Products.SKU", "Products.Name"];
+    public BrowseOrderValidator()
+    {
+        RuleForEach(b => b.Filters)
+            .Custom((keyValuePair, context) =>
+            {
+                if (!_availableFilters.Select(a => a.ToLower()).Contains(keyValuePair.Key.ToLower()))
+                {
+                    context.AddFailure($"Provided filter is not supported. Please use the following ones: {string.Join(", ", _availableFilters)}.");
+                }
+            });
+    }
+}
+```
+
+Example of cursor filter usage in body:
+
+```
+{
+  "TotalSum": "500",
+  "Shipments.TrackingNumber": "000000000000"
+}
+```
 
 ## Carts module
 
@@ -305,26 +459,27 @@ The Ecommerce API utilizes JWT (JSON Web Tokens) for secure and efficient authen
 # Work to be done
 
 API Improvement Task List:
-- [ ] Add functionality for adding and deleting parameters, but only for this purpose.  
-- [ ] Create a job to deactivate expired discounts once per day.  
-- [ ] Add shipment functionality and integrate other shipping providers besides InPost.  
-- [ ] Implement tax handling, but likely before shipment processing.  
-- [ ] Add more payment options.  
-- [ ] Send a Stripe checkout link to users for manual/phone orders.  
-- [ ] Improve module communication by adding synchronous API calls instead of only integration events.  
-- [ ] Implement order archiving as a background task.  
-- [ ] Add refund history and allow refund cancellations.  
-- [ ] Complete work on draft orders.  
-- [ ] Implement generic cursor pagination.  
-- [ ] Make DTOs immutable using records.  
-- [ ] Allow multiple returns per order. Currently, only one return per order is allowed.  
-- [ ] Implement return and complaint functionality where refunds must be processed by the end of the day or within 24 hours, allowing time for cancellation. Likely requires Hangfire.  
-- [ ] Highlight discounted products in the order summary.  
-- [ ] Evaluate whether using SKUs as product identifiers in orders for returns is a correct approach.  
-- [ ] Add more debug logging.  
-- [ ] Allow users to modify settings via `appsettings` or API.  
-- [ ] Add logging for `Order` and `Return` entities from the user's perspective.  
-- [ ] Prevent adding the same product multiple times to a return by linking it to its SKU. If the product status is already "returned," it cannot be added again.  
+
+- [ ] Add functionality for adding and deleting parameters, but only for this purpose.
+- [ ] Create a job to deactivate expired discounts once per day.
+- [ ] Add shipment functionality and integrate other shipping providers besides InPost.
+- [ ] Implement tax handling, but likely before shipment processing.
+- [ ] Add more payment options.
+- [ ] Send a Stripe checkout link to users for manual/phone orders.
+- [ ] Improve module communication by adding synchronous API calls instead of only integration events.
+- [ ] Implement order archiving as a background task.
+- [ ] Add refund history and allow refund cancellations.
+- [ ] Complete work on draft orders.
+- [ ] Implement generic cursor pagination.
+- [ ] Make DTOs immutable using records.
+- [ ] Allow multiple returns per order. Currently, only one return per order is allowed.
+- [ ] Implement return and complaint functionality where refunds must be processed by the end of the day or within 24 hours, allowing time for cancellation. Likely requires Hangfire.
+- [ ] Highlight discounted products in the order summary.
+- [ ] Evaluate whether using SKUs as product identifiers in orders for returns is a correct approach.
+- [ ] Add more debug logging.
+- [ ] Allow users to modify settings via `appsettings` or API.
+- [ ] Add logging for `Order` and `Return` entities from the user's perspective.
+- [ ] Prevent adding the same product multiple times to a return by linking it to its SKU. If the product status is already "returned," it cannot be added again.
 
 # Technology
 

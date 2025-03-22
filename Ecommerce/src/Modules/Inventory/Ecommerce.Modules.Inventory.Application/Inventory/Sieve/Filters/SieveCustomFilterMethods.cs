@@ -46,9 +46,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Filters
                 default:
                     break;
             }
-            //return values.Length == 1
-            //    ? source.Where(a => a.Parameters != null && a.Parameters.Any(p => p.Name.ToLower() == values[0].ToLower()))
-            //    : source.Where(a => a.Parameters != null && a.Parameters.Any(p => p.Name.ToLower() == values[0].ToLower() && p.Value.ToLower() == values[1].ToLower()));
             return source;
         }
     }
