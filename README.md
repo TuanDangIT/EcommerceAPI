@@ -460,26 +460,26 @@ Example of cursor filter usage in body:
 
 API Improvement Task List:
 
-- [ ] Add functionality for adding and deleting parameters, but only for this purpose.
+- [ ] Add functionality for adding, deleting parameters and updating their value for a product,
 - [ ] Create a job to deactivate expired discounts once per day.
-- [ ] Add shipment functionality and integrate other shipping providers besides InPost.
-- [ ] Implement tax handling, but likely before shipment processing.
+- [ ] Integrate other shipping providers besides InPost.
+- [ ] Implement tax handling.
 - [ ] Add more payment options.
 - [ ] Send a Stripe checkout link to users for manual/phone orders.
-- [ ] Improve module communication by adding synchronous API calls instead of only integration events.
+- [ ] Improve module communication by adding synchronous API calls instead of only integration events. This will help deleting unnecassary properties from database and getting the dynamically through public API.
 - [ ] Implement order archiving as a background task.
-- [ ] Add refund history and allow refund cancellations.
-- [ ] Complete work on draft orders.
-- [ ] Implement generic cursor pagination.
+- [ ] Add history logs for orders ex. refunds, returns etc..
+- [ ] Add cancel feature for refunds via Stripe
+- [ ] Able to create drafts (empty orders) on company side for phone/personal orders.
+- [ ] Implement generic cursor pagination, if possible.
 - [ ] Make DTOs immutable using records.
 - [ ] Allow multiple returns per order. Currently, only one return per order is allowed.
 - [ ] Implement return and complaint functionality where refunds must be processed by the end of the day or within 24 hours, allowing time for cancellation. Likely requires Hangfire.
 - [ ] Highlight discounted products in the order summary.
 - [ ] Evaluate whether using SKUs as product identifiers in orders for returns is a correct approach.
-- [ ] Add more debug logging.
-- [ ] Allow users to modify settings via `appsettings` or API.
-- [ ] Add logging for `Order` and `Return` entities from the user's perspective.
-- [ ] Prevent adding the same product multiple times to a return by linking it to its SKU. If the product status is already "returned," it cannot be added again.
+- [ ] Add more debug logging ex. handling integration events.
+- [ ] Allow users/company to modify settings such as currency and other editible areas via `appsettings` or API.
+- [ ] Enhance authorization for reviews, orders, returns when submitting return (property customerID must be equal to context CustomerId) etc. to able to modify only if the user ID matches CustomerId property in the entity.
 
 # Technology
 
