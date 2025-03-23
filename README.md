@@ -480,6 +480,7 @@ API Improvement Task List:
 - [ ] Add more debug logging ex. handling integration events.
 - [ ] Allow users/company to modify settings such as currency and other editible areas via `appsettings` or API.
 - [ ] Enhance authorization for reviews, orders, returns when submitting return (property customerID must be equal to context CustomerId) etc. to able to modify only if the user ID matches CustomerId property in the entity.
+- [ ] Add Github Actions CI/CD after finishing unit and integration tests.
 
 # Technology
 
