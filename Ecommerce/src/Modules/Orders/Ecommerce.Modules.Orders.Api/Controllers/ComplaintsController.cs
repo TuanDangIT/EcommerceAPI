@@ -6,6 +6,7 @@ using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.EditDec
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.GetComplaint;
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.RejectComplaint;
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.SetNote;
+using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaints.BrowseComplaintsByCustomerId;
 using Ecommerce.Modules.Orders.Application.Complaints.Features.Complaints.DeleteComplaint;
 using Ecommerce.Modules.Orders.Application.Orders.DTO;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrders;
@@ -18,6 +19,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
@@ -28,7 +30,6 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Api.Controllers
 {
-    [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     internal class ComplaintsController : BaseController
     {
@@ -36,6 +37,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         {
         }
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Gets cursor paginated complaints")]
         [SwaggerResponse(StatusCodes.Status200OK, "Returns cursor paginated result for complaints.", typeof(ApiResponse<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>))]
         [HttpGet]
@@ -46,6 +48,19 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return Ok(new ApiResponse<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>(HttpStatusCode.OK, result));
         }
 
+        [Authorize(Roles = "Customer")]
+        [SwaggerOperation("Gets offset paginated complaints per customer")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Returns offset paginated result for complaints for specified customer Id.", typeof(ApiResponse<PagedResult<ComplaintBrowseDto>>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [HttpGet("/api/v{v:apiVersion}/" + OrdersModule.BasePath + "/customer/{customerId:guid}" + "/[controller]")]
+        public async Task<ActionResult<ApiResponse<PagedResult<ComplaintBrowseDto>>>> BrowseComplaintsByCustomerId([FromRoute] Guid customerId, [FromQuery] BrowseComplaintsByCustomerId query,
+            CancellationToken cancellationToken)
+        {
+            query.CustomerId = customerId;
+            var result = await _mediator.Send(query, cancellationToken);
+            return Ok(new ApiResponse<PagedResult<ComplaintBrowseDto>>(HttpStatusCode.OK, result));
+        }
+
         [SwaggerOperation("Get a specific complaint")]
         [SwaggerResponse(StatusCodes.Status200OK, "Returns a specific complaint by id.", typeof(ApiResponse<ComplaintDetailsDto>))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "Complaint was not found")]
@@ -54,6 +69,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         public async Task<ActionResult<ApiResponse<ComplaintDetailsDto>>> GetComplaint([FromRoute] Guid complaintId, CancellationToken cancellationToken)
             => OkOrNotFound<ComplaintDetailsDto, Complaint>(await _mediator.Send(new GetComplaint(complaintId), cancellationToken));
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Approves a complaint")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
@@ -66,6 +82,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Rejects a complaint")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
@@ -77,6 +94,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Updates a complaint's note")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
@@ -87,6 +105,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Deletes a specified complaint")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [HttpDelete("{complaintId:guid}")]

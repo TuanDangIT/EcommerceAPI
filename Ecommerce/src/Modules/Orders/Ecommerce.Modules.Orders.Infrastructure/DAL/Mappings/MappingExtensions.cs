@@ -15,25 +15,37 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
             => new()
             {
                 Id = order.Id,
-                CustomerId = order.Customer.UserId,
-                FullName = order.Customer.FirstName + " " + order.Customer.LastName,
+                CustomerId = order.Customer?.UserId,
+                FullName = order.Customer?.FirstName + " " + order.Customer?.LastName,
                 Status = order.Status.ToString(),
                 TotalSum = order.TotalSum,
                 PlacedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
             };
-        public static OrderDetailsDto AsDetailsDto(this Order order)
+
+        public static OrderCustomerBrowseDto AsCustomerBrowseDto(this Order order)
             => new()
             {
                 Id = order.Id,
-                Customer = order.Customer.AsDto(),
+                FullName = order.Customer?.FirstName + " " + order.Customer?.LastName,
+                Status = order.Status.ToString(),
+                TotalSum = order.TotalSum,
+                PlacedAt = order.CreatedAt,
+                UpdatedAt = order.UpdatedAt,
+            };
+
+        public static OrderDetailsDto AsDetailsDto(this Order order, bool hasCustomerConstraint)
+            => new()
+            {
+                Id = order.Id,
+                Customer = order.Customer?.AsDto(),
                 TotalSum = order.TotalSum,
                 Products = order.Products.Select(p => p.AsDto()),
                 Shipment = order.Shipments.Select(s => s.AsDetailsDto()),
                 Payment = order.Payment.ToString(),
                 Status = order.Status.ToString(),
                 ClientAdditionalInformation = order.ClientAdditionalInformation,
-                CompanyAdditionalInformation = order.CompanyAdditionalInformation,
+                CompanyAdditionalInformation = !hasCustomerConstraint ? order.CompanyAdditionalInformation : null,
                 Discount = order.Discount?.AsDto(),
                 Return = order.Return?.AsOrderReturnDto(),
                 Complaints = order.Complaints?.Select(c => c.AsOrderComplaintDto()),
@@ -116,7 +128,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
             => new()
             {
                 Id = order.Id,
-                Customer = order.Customer.AsDto(),
+                Customer = order.Customer!.AsDto(),
                 TotalSum = order.TotalSum,
                 Products = order.Products.Select(p => p.AsDto()),
                 PlacedAt = order.CreatedAt
@@ -125,14 +137,14 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
             => new()
             {
                 Id = complaint.Id,
-                CustomerFullName = complaint.Order.Customer.FirstName + " " + complaint.Order.Customer.LastName,
+                CustomerFullName = complaint.Order.Customer!.FirstName + " " + complaint.Order.Customer!.LastName,
                 OrderId = complaint.OrderId,
                 Title = complaint.Title,
                 Status = complaint.Status.ToString(),
                 CreatedAt = complaint.CreatedAt,
                 UpdatedAt = complaint.UpdatedAt,
             };
-        public static ComplaintDetailsDto AsDetailsDto(this Complaint complaint)
+        public static ComplaintDetailsDto AsDetailsDto(this Complaint complaint, bool hasCustomerConstraint)
             => new()
             {
                 Id = complaint.Id,
@@ -140,7 +152,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Order = complaint.Order.AsShortenedDetailsDto(),
                 Title = complaint.Title,
                 Description = complaint.Description,
-                AdditionalNote = complaint.AdditionalNote,
+                AdditionalNote = !hasCustomerConstraint ? complaint.AdditionalNote : null,
                 Decision = new DecisionApproveOrEditDto()
                 {
                     DecisionText = complaint.Decision!.DecisionText,
@@ -156,21 +168,22 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
             {
                 Id = @return.Id,
                 OrderId = @return.OrderId,
+                CustomerFullName = @return.Order.Customer!.FirstName + " " + @return.Order.Customer.LastName,
                 ReasonForReturn = @return.ReasonForReturn,
                 Status = @return.Status.ToString(),
                 CreatedAt = @return.CreatedAt,
                 UpdatedAt = @return.UpdatedAt
             };
-        public static ReturnDetailsDto AsDetailsDto(this Return @return)
+        public static ReturnDetailsDto AsDetailsDto(this Return @return, bool hasCustomerConstraint)
             => new()
             {
                 Id = @return.Id,
                 Order = @return.Order.AsShortenedDetailsDto(),
                 Products = @return.Products.Select(p => p.AsDto()),
                 TotalSum = @return.TotalSum,
-                TotalSumLeftToReturn = @return.TotalSumLeftToReturn,
+                TotalSumLeftToReturn = !hasCustomerConstraint ? @return.TotalSumLeftToReturn : null,
                 ReasonForReturn = @return.ReasonForReturn,
-                AdditionalNote = @return.AdditionalNote,
+                AdditionalNote = !hasCustomerConstraint ? @return.AdditionalNote : null,
                 RejectReason = @return.RejectReason,
                 Status = @return.Status.ToString(),
                 CreatedAt = @return.CreatedAt,
@@ -182,7 +195,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
             {
                 Id = invoice.Id,
                 OrderId = invoice.OrderId,
-                CustomerFullName = invoice.Order.Customer.FirstName + " " + invoice.Order.Customer.LastName,
+                CustomerFullName = invoice.Order.Customer!.FirstName + " " + invoice.Order.Customer!.LastName,
                 InvoiceNo = invoice.InvoiceNo,
                 CreatedAt = invoice.CreatedAt
             };

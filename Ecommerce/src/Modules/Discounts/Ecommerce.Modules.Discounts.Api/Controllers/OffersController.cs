@@ -28,9 +28,10 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
             _offerService = offerService;
         }
 
-        [SwaggerOperation("Gets offset paginated offers")]
+        [SwaggerOperation("Gets offset paginated offers.")]
         [SwaggerResponse(StatusCodes.Status200OK, "Returns offset paginated result for offers.", typeof(ApiResponse<PagedResult<DiscountBrowseDto>>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [Authorize(Roles = "Admin, Manager, Employee, Customer")]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedResult<OfferBrowseDto>>>> BrowseOffers([FromQuery]SieveModel model, CancellationToken cancellationToken)
             => PagedResult(await _offerService.BrowseAsync(model, cancellationToken));

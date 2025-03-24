@@ -14,7 +14,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.DTO
         public OrderShortenedDetailsDto Order { get; set; } = new();
         public IEnumerable<ReturnProductDto> Products { get; set; } = [];
         public decimal TotalSum { get; set; }
-        public decimal TotalSumLeftToReturn { get; set; }
+        public decimal? TotalSumLeftToReturn { get; set; }
         public string ReasonForReturn { get; set; } = string.Empty;
         public string? AdditionalNote { get; set; }
         public string? RejectReason { get; set; }

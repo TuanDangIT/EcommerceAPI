@@ -8,6 +8,7 @@ using Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleReturn;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Return.RejectReturn;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Return.SetNote;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Returns.AddProductToReturn;
+using Ecommerce.Modules.Orders.Application.Returns.Features.Returns.BrowseReturnsByCustomerId;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Returns.DeleteReturn;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Returns.RemoveReturnProduct;
 using Ecommerce.Modules.Orders.Application.Returns.Features.Returns.SetReturnProductQuantity;
@@ -15,6 +16,7 @@ using Ecommerce.Modules.Orders.Application.Returns.Features.Returns.SetReturnPro
 using Ecommerce.Modules.Orders.Domain.Returns.Entities;
 using Ecommerce.Shared.Abstractions.Api;
 using Ecommerce.Shared.Infrastructure.Pagination.CursorPagination;
+using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -29,7 +31,6 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Api.Controllers
 {
-    [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     internal class ReturnsController : BaseController
     {
@@ -37,6 +38,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         {
         }
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Gets cursor paginated returns")]
         [SwaggerResponse(StatusCodes.Status200OK, "Returns cursor paginated result for returns.", typeof(ApiResponse<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>))]
         [HttpGet]
@@ -47,6 +49,19 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return Ok(new ApiResponse<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>(HttpStatusCode.OK, result));
         }
 
+        [Authorize(Roles = "Customer")]
+        [SwaggerOperation("Gets offset paginated returns per customer")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Returns offset paginated result for returns for specified customer Id.", typeof(ApiResponse<PagedResult<ReturnBrowseDto>>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [HttpGet("/api/v{v:apiVersion}/" + OrdersModule.BasePath + "/customer/{customerId:guid}" + "/[controller]")]
+        public async Task<ActionResult<ApiResponse<PagedResult<ReturnBrowseDto>>>> BrowseReturnsByCustomerId([FromRoute] Guid customerId, [FromQuery] BrowseReturnsByCustomerId query,
+            CancellationToken cancellationToken)
+        {
+            query.CustomerId = customerId;
+            var result = await _mediator.Send(query, cancellationToken);
+            return Ok(new ApiResponse<PagedResult<ReturnBrowseDto>>(HttpStatusCode.OK, result));
+        }
+
         [SwaggerOperation("Get a specific return")]
         [SwaggerResponse(StatusCodes.Status200OK, "Returns a specific return by id.", typeof(ApiResponse<ReturnDetailsDto>))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "Return was not found")]
@@ -55,6 +70,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> GetReturn([FromRoute] Guid returnId, CancellationToken cancellationToken)
             => OkOrNotFound<ReturnDetailsDto, Return>(await _mediator.Send(new GetReturn(returnId), cancellationToken));
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Deletes a return")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
@@ -65,6 +81,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Handles a return")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
@@ -75,6 +92,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Rejects a return")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
@@ -86,6 +104,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Updates a return's note")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
@@ -96,6 +115,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Deletes a product from a specified return")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
@@ -106,6 +126,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Adds a product to a specified return")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
@@ -117,6 +138,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Updates a product's quantity for a specified return")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
@@ -128,6 +150,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Updates a product's status for a specified return", "Checks product status if it's correct.")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]

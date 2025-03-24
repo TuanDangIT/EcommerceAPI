@@ -11,6 +11,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.DTO
     {
         public Guid Id { get; set; }
         public Guid OrderId { get; set; }
+        public string CustomerFullName { get; set; } = string.Empty;
         public string ReasonForReturn { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }

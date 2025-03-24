@@ -51,15 +51,21 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             {
                 throw new PaginationException();
             }
-            var coupons = _dbContext.Offers
+            var offers = _dbContext.Offers
                 .AsNoTracking()
                 .AsQueryable();
+            if(_contextService.Identity!.Role == "Customer")
+            {
+                offers
+                    .Where(o => o.CustomerId == _contextService.Identity!.Id)
+                    .AsQueryable();
+            }
             var dtos = await _sieveProcessor
-                .Apply(model, coupons)
+                .Apply(model, offers)
                 .Select(o => o.AsBrowseDto())
                 .ToListAsync(cancellationToken);
             var totalCount = await _sieveProcessor
-                .Apply(model, coupons, applyPagination: false, applySorting: false)
+                .Apply(model, offers, applyPagination: false, applySorting: false)
                 .CountAsync(cancellationToken);
             int pageSize = _sieveOptions.Value.DefaultPageSize;
             if (model.PageSize is not null)

@@ -15,7 +15,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 {
     public class Order : AggregateRoot, IAuditable
     {
-        public Customer Customer { get; private set; } = default!;
+        public Customer? Customer { get; private set; } = default!;
         private readonly List<Product> _products = [];
         public IEnumerable<Product> Products => _products;
         public decimal TotalSum { get; private set; }
