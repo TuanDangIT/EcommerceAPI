@@ -80,7 +80,7 @@ The design section will provide an overview of the application's architecture, f
 
 ## Domain models
 
-Only most important domain models C# code will be displayed below.
+Only most important domain models C# code will be displayed below (just properties withour any domain methods). 
 
 ### Order
 
