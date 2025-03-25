@@ -21,6 +21,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Users.Api.Controllers
 {
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
     [Authorize]
     [ApiVersion(1)]
     internal class CustomersController : BaseController

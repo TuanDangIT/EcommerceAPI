@@ -46,6 +46,8 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return Ok(new ApiResponse<PagedResult<ReviewDto>>(HttpStatusCode.OK, result));
         }
 
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [SwaggerOperation("Creates review for a specified auction")]
         [SwaggerResponse(StatusCodes.Status201Created)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
@@ -57,6 +59,8 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return NoContent();
         }
 
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [SwaggerOperation("Deletes a review")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [HttpDelete("{reviewId:guid}")]
@@ -67,6 +71,8 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
             return NoContent();
         }
 
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [SwaggerOperation("Updates a review")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]

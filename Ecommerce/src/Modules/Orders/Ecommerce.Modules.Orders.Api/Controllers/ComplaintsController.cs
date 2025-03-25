@@ -40,6 +40,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Gets cursor paginated complaints")]
         [SwaggerResponse(StatusCodes.Status200OK, "Returns cursor paginated result for complaints.", typeof(ApiResponse<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<CursorPagedResult<ComplaintBrowseDto, ComplaintCursorDto>>>> BrowseComplaints([FromQuery] BrowseComplaints query, 
             CancellationToken cancellationToken)
@@ -52,6 +54,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Gets offset paginated complaints per customer")]
         [SwaggerResponse(StatusCodes.Status200OK, "Returns offset paginated result for complaints for specified customer Id.", typeof(ApiResponse<PagedResult<ComplaintBrowseDto>>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpGet("/api/v{v:apiVersion}/" + OrdersModule.BasePath + "/customer/{customerId:guid}" + "/[controller]")]
         public async Task<ActionResult<ApiResponse<PagedResult<ComplaintBrowseDto>>>> BrowseComplaintsByCustomerId([FromRoute] Guid customerId, [FromQuery] BrowseComplaintsByCustomerId query,
             CancellationToken cancellationToken)
@@ -73,6 +77,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Approves a complaint")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpPut("{complaintId:guid}/approve")]
         public async Task<ActionResult> ApproveComplaint([FromRoute] Guid complaintId, [FromForm] ApproveComplaint command, 
             CancellationToken cancellationToken)
@@ -86,6 +92,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Rejects a complaint")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpPut("{complaintId:guid}/reject")]
         public async Task<ActionResult> RejectComplaint([FromRoute] Guid complaintId, [FromForm] DecisionRejectDto decision, 
             CancellationToken cancellationToken)
@@ -98,6 +106,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Updates a complaint's note")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpPatch("{complaintId:guid}/note")]
         public async Task<ActionResult> SetNote([FromRoute] Guid complaintId, [FromForm] string note, CancellationToken cancellationToken)
         {
@@ -108,6 +118,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Deletes a specified complaint")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpDelete("{complaintId:guid}")]
         public async Task<ActionResult> DeleteComplaint([FromRoute]Guid complaintId, CancellationToken cancellationToken)
         {

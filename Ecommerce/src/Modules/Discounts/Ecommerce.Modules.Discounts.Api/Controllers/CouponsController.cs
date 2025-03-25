@@ -18,6 +18,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Discounts.Api.Controllers
 {
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
     [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     internal class CouponsController : BaseController

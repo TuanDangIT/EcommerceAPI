@@ -21,6 +21,8 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Ecommerce.Modules.Orders.Api.Controllers
 {
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
     [Authorize(Roles = "Admin, Manager, Employee")]
     [ApiVersion(1)]
     [Route("/api/v{v:apiVersion}/" + OrdersModule.BasePath + "/orders/{orderId:guid}/[controller]")]

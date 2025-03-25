@@ -41,6 +41,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Gets cursor paginated returns")]
         [SwaggerResponse(StatusCodes.Status200OK, "Returns cursor paginated result for returns.", typeof(ApiResponse<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<CursorPagedResult<ReturnBrowseDto, ReturnCursorDto>>>> BrowseReturns([FromQuery] BrowseReturns query, 
             CancellationToken cancellationToken)
@@ -53,6 +55,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Gets offset paginated returns per customer")]
         [SwaggerResponse(StatusCodes.Status200OK, "Returns offset paginated result for returns for specified customer Id.", typeof(ApiResponse<PagedResult<ReturnBrowseDto>>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpGet("/api/v{v:apiVersion}/" + OrdersModule.BasePath + "/customer/{customerId:guid}" + "/[controller]")]
         public async Task<ActionResult<ApiResponse<PagedResult<ReturnBrowseDto>>>> BrowseReturnsByCustomerId([FromRoute] Guid customerId, [FromQuery] BrowseReturnsByCustomerId query,
             CancellationToken cancellationToken)
@@ -74,6 +78,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Deletes a return")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpDelete("{returnId:guid}")]
         public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> DeleteReturn([FromRoute] Guid returnId, CancellationToken cancellationToken)
         {
@@ -85,6 +91,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Handles a return")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpPut("{returnId:guid}/handle")]
         public async Task<ActionResult> HandleReturn([FromRoute]Guid returnId, CancellationToken cancellationToken)
         {
@@ -96,6 +104,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Rejects a return")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpPut("{returnId:guid}/reject")]
         public async Task<ActionResult> RejectReturn([FromRoute] Guid returnId, [FromBody] RejectReturn command, CancellationToken cancellationToken)
         {
@@ -108,6 +118,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Updates a return's note")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpPatch("{returnId:guid}/note")]
         public async Task<ActionResult> SetNote([FromRoute] Guid returnId, [FromForm]string note, CancellationToken cancellationToken)
         {
@@ -119,6 +131,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Deletes a product from a specified return")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpDelete("{returnId:guid}/return-products/{productId:int}")]
         public async Task<ActionResult> DeleteReturnProduct([FromRoute] Guid returnId, [FromRoute] int productId,CancellationToken cancellationToken)
         {
@@ -130,6 +144,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Adds a product to a specified return")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpPatch("{returnId:guid}/return-products")]
         public async Task<ActionResult> AddReturnProduct([FromRoute] Guid returnId, [FromBody] AddProductToReturn command, CancellationToken cancellationToken)
         {
@@ -142,6 +158,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Updates a product's quantity for a specified return")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpPatch("{returnId:guid}/return-products/{productId:int}/quantity")]
         public async Task<ActionResult> SetReturnProductQuantity([FromRoute] Guid returnId, [FromRoute] int productId,
             [FromBody] int quantity, CancellationToken cancellationToken)
@@ -154,6 +172,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Updates a product's status for a specified return", "Checks product status if it's correct.")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpPatch("{returnId:guid}/return-products/{productId:int}/status")]
         public async Task<ActionResult> SetReturnProductStatus([FromRoute] Guid returnId, [FromRoute] int productId, 
             [FromBody] string status, CancellationToken cancellationToken)

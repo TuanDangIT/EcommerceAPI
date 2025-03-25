@@ -51,6 +51,8 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerOperation("Sends request offer")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [Authorize]
         [HttpPost("{auctionId:guid}/offers")]
         public async Task<ActionResult> RequestOffer([FromRoute]Guid auctionId, [FromForm]RequestOffer command, 

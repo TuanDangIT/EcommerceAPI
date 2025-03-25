@@ -33,6 +33,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
 
         [SwaggerOperation("Gets cursor paginated invoices")]
         [SwaggerResponse(StatusCodes.Status200OK, "Returns cursor paginated result for invoices.", typeof(ApiResponse<CursorPagedResult<InvoiceBrowseDto, InvoiceCursorDto>>))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [Route("/api/v{v:apiVersion}/" + OrdersModule.BasePath + "/[controller]")]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<CursorPagedResult<InvoiceBrowseDto, InvoiceCursorDto>>>> BrowseInvoices([FromQuery] BrowseInvoices query, 
@@ -41,6 +43,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
 
         [SwaggerOperation("Creates an invoice")]
         [SwaggerResponse(StatusCodes.Status200OK, "Creates a manufacturer and returns it's invoice number.", typeof(string))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpPost]
         public async Task<ActionResult<string>> CreateInvoice([FromRoute] Guid orderId, 
             CancellationToken cancellationToken)
@@ -52,6 +56,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Downloads an invoice")]
         [SwaggerResponse(StatusCodes.Status200OK, "Downloads an invoice for a specified order.", typeof(ApiResponse<InvoiceDetailsDto>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<InvoiceDetailsDto>>> DownloadInvoice([FromRoute]Guid orderId, 
             CancellationToken cancellationToken)
@@ -62,6 +67,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
 
         [SwaggerOperation("Deletes an invoice")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpDelete]
         public async Task<ActionResult> DeleteInvoice([FromRoute]Guid orderId, CancellationToken cancellationToken)
         {

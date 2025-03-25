@@ -31,6 +31,8 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [SwaggerOperation("Gets offset paginated payments")]
         [SwaggerResponse(StatusCodes.Status200OK, "Returns offset paginated result for payments.", typeof(ApiResponse<IEnumerable<PaymentDto>>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<PaymentDto>>>> BrowsePayments(CancellationToken cancellationToken)
         {
@@ -52,6 +54,8 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [SwaggerOperation("Activates payment", "Makes the payment not available for customers")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpPut("{paymentId:guid}/activate")]
         public async Task<ActionResult> ActivatePayment([FromRoute] Guid paymentId, CancellationToken cancellationToken)
         {
@@ -62,6 +66,8 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [SwaggerOperation("Deactivates payment")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpPut("{paymentId:guid}/deactivate")]
         public async Task<ActionResult> DeactivatePayment([FromRoute] Guid paymentId, CancellationToken cancellationToken)
         {
