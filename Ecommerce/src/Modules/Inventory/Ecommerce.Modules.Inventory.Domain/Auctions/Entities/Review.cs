@@ -11,6 +11,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
     public class Review : BaseEntity<Guid>, IAuditable
     {
         public string Username { get; private set; } 
+        public Guid CustomerId { get; private set; }
         public string Text { get; private set; } 
         public int Grade { get; private set; }
         public Auction Auction { get; private set; } = default!;
@@ -26,11 +27,15 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
             Text = text;
             Grade = grade;
         }
-        public Review(Guid id, string username, string text, int grade)
+        public Review(string username, Guid customerId, string text, int grade)
         {
-            Id = id;
             Username = username;
+            CustomerId = customerId;
             Text = text;
+            if (grade < 1 && grade > 10)
+            {
+                throw new AuctionInvalidGradeException();
+            }
             Grade = grade;
         }
     }

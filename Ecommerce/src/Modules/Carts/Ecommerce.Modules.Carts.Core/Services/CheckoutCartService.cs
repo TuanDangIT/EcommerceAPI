@@ -230,6 +230,8 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 AdditionalInformation = checkoutCart.AdditionalInformation,
                 DiscountCode = checkoutCart.Discount?.Code,
                 DiscountType = checkoutCart.Discount?.Type.ToString(),
+                DiscountValue = checkoutCart.Discount?.Value,
+                DiscountSku = checkoutCart.Discount?.SKU,
                 StripePaymentIntentId = checkoutCart.StripePaymentIntentId!
             });
             if(checkoutCart.Discount is not null)

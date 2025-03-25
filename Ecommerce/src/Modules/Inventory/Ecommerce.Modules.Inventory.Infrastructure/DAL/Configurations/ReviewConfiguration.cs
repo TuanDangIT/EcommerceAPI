@@ -14,6 +14,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Configurations
         public void Configure(EntityTypeBuilder<Review> builder)
         {
             builder.Property(r => r.Username).IsRequired();
+            builder.Property(r => r.CustomerId).IsRequired();
             builder.Property(r => r.Text).IsRequired();
             builder.Property(r => r.Grade).IsRequired();
             builder.Property(r => r.AuctionId).IsRequired();

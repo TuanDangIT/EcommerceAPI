@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 namespace Ecommerce.Modules.Inventory.Api.Controllers
 {
     [Route("api/v{v:apiVersion}/" + InventoryModule.BasePath + "/auctions/{auctionId:guid}/[controller]")]
-    [Authorize(Roles = "Admin, Manager, Employee, Customer")]
+    [Authorize(Roles = "Admin, Customer")]
     [ApiVersion(1)]
     internal class ReviewsController : BaseController
     {

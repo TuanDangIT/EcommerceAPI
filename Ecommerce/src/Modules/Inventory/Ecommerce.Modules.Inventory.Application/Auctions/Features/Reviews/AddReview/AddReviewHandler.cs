@@ -35,9 +35,10 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.AddRe
                 _contextService.Identity.IsAuthenticated ?
                 _contextService.Identity.Username :
                 throw new UserIsNotAuthenticatedException();
+            var customerId = _contextService.Identity.Id;
             auction.AddReview(new Domain.Auctions.Entities.Review(
-                Guid.NewGuid(),
                 username,
+                customerId,
                 request.Text,
                 request.Grade));
             await _reviewRepository.UpdateAsync(cancellationToken);
