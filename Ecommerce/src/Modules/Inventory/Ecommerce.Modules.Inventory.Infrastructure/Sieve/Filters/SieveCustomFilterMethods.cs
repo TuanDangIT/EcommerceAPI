@@ -7,9 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
-namespace Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Filters
+namespace Ecommerce.Modules.Inventory.Infrastructure.Sieve.Filters
 {
     internal class SieveCustomFilterMethods : ISieveCustomFilterMethods
     {

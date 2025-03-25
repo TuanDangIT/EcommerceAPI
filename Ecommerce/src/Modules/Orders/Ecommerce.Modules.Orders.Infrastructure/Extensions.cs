@@ -6,9 +6,9 @@ using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Modules.Orders.Domain.Returns.Repositories;
 using Ecommerce.Modules.Orders.Infrastructure.DAL;
 using Ecommerce.Modules.Orders.Infrastructure.DAL.Repositories;
-using Ecommerce.Modules.Orders.Infrastructure.DAL.Sieve;
 using Ecommerce.Modules.Orders.Infrastructure.DAL.UnitOfWork;
 using Ecommerce.Modules.Orders.Infrastructure.Delivery;
+using Ecommerce.Modules.Orders.Infrastructure.Sieve;
 using Ecommerce.Modules.Orders.Infrastructure.Stripe;
 using Ecommerce.Shared.Infrastructure.InPost;
 using Ecommerce.Shared.Infrastructure.Postgres;
@@ -43,7 +43,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer" + " " + inPostOptions.ApiKey);
                 client.BaseAddress = new Uri(inPostOptions.BaseUrl);
             });
-            services.AddKeyedScoped<ISieveProcessor, OrdersModuleSieveProcessor>("orders-sieve-processor");
+            services.AddSieve();
             return services;
         }
     }

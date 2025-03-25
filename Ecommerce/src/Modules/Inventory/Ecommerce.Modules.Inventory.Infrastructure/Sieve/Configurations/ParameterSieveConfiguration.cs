@@ -6,17 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Configurations
+namespace Ecommerce.Modules.Inventory.Infrastructure.Sieve.Configurations
 {
-    internal class ManufacturerSieveConfiguration : ISieveConfiguration
+    internal class ParameterSieveConfiguration : ISieveConfiguration
     {
         public void Configure(SievePropertyMapper mapper)
         {
-            mapper.Property<Manufacturer>(c => c.Id)
+            mapper.Property<Manufacturer>(p => p.Id)
                 .CanFilter();
-            mapper.Property<Manufacturer>(c => c.Name)
+            mapper.Property<Manufacturer>(p => p.Name)
                 .CanFilter();
-            mapper.Property<Manufacturer>(c => c.CreatedAt)
+            mapper.Property<Manufacturer>(p => p.CreatedAt)
                 .CanFilter()
                 .CanSort();
         }

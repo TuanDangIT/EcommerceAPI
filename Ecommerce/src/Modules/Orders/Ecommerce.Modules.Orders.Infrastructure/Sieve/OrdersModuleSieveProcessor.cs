@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Sieve
+namespace Ecommerce.Modules.Orders.Infrastructure.Sieve
 {
     internal class OrdersModuleSieveProcessor : SieveProcessor
     {

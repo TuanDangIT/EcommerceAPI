@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Inventory.Application.Auctions.Sieve.Configurations
+namespace Ecommerce.Modules.Inventory.Infrastructure.Sieve.Configurations
 {
     internal class ReviewSieveConfiguration : ISieveConfiguration
     {

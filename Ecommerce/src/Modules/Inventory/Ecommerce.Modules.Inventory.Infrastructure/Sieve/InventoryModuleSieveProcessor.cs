@@ -9,11 +9,11 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Inventory.Application.Shared.Sieve
+namespace Ecommerce.Modules.Inventory.Infrastructure.Sieve
 {
     public class InventoryModuleSieveProcessor : SieveProcessor
     {
-        public InventoryModuleSieveProcessor(IOptions<SieveOptions> options, [FromKeyedServices("inventory-sieve-custom-filters")]ISieveCustomFilterMethods sieveCustomFilterMethods) : base(options, sieveCustomFilterMethods)
+        public InventoryModuleSieveProcessor(IOptions<SieveOptions> options, [FromKeyedServices("inventory-sieve-custom-filters")] ISieveCustomFilterMethods sieveCustomFilterMethods) : base(options, sieveCustomFilterMethods)
         {
         }
         protected override SievePropertyMapper MapProperties(SievePropertyMapper mapper)

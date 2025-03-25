@@ -1,7 +1,5 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Inventory.Services;
-using Ecommerce.Modules.Inventory.Application.Inventory.Sieve.Filters;
 using Ecommerce.Modules.Inventory.Application.Shared.Behaviors;
-using Ecommerce.Modules.Inventory.Application.Shared.Sieve;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,8 +31,6 @@ namespace Ecommerce.Modules.Inventory.Application
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
             //services.Configure<SieveOptions>(configuration.GetSection(_sieveSectionName));
-            services.AddKeyedScoped<ISieveProcessor, InventoryModuleSieveProcessor>("inventory-sieve-processor");
-            services.AddKeyedScoped<ISieveCustomFilterMethods, SieveCustomFilterMethods>("inventory-sieve-custom-filters");
             return services;
         }
     }

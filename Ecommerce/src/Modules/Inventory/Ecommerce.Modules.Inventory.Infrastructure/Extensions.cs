@@ -6,6 +6,7 @@ using Ecommerce.Modules.Inventory.Infrastructure.CsvHelper.Services;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL.UnitOfWork;
+using Ecommerce.Modules.Inventory.Infrastructure.Sieve;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -16,6 +17,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
+            services.AddSieve();
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddPostgres<InventoryDbContext>();
             services.AddScoped<IManufacturerRepository, ManufacturerRepository>();

@@ -1,7 +1,6 @@
 ﻿using Ecommerce.Modules.Inventory.Application.Auctions.DTO;
 using Ecommerce.Modules.Inventory.Application.Auctions.Features.Auction.BrowseAuctions;
 using Ecommerce.Modules.Inventory.Application.Inventory.Exceptions;
-using Ecommerce.Modules.Inventory.Application.Shared.Sieve;
 using Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Ecommerce.Shared.Infrastructure.Pagination.OffsetPagination;
