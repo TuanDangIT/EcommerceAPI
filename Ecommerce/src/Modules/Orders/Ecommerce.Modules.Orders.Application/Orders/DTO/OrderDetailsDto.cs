@@ -17,6 +17,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.DTO
         public string? Status { get; set; } = string.Empty;
         public string? ClientAdditionalInformation { get; set; }
         public string? CompanyAdditionalInformation { get; set; }
+        public OrderInvoiceDto? Invoice { get; set; }
         public DiscountDto? Discount { get; set; } = new();
         public IEnumerable<ShipmentDetailsDto> Shipment { get; set; } = [];
         public OrderReturnDto? Return { get; set; } 

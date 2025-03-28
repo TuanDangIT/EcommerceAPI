@@ -34,6 +34,12 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 UpdatedAt = order.UpdatedAt,
             };
 
+        public static OrderInvoiceDto AsOrderInvoiceDto(this Invoice invoice)
+            => new()
+            {
+                Id = invoice.Id,
+                InvoiceNo = invoice.InvoiceNo
+            };
         public static OrderDetailsDto AsDetailsDto(this Order order, bool hasCustomerConstraint)
             => new()
             {
@@ -46,6 +52,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Status = order.Status.ToString(),
                 ClientAdditionalInformation = order.ClientAdditionalInformation,
                 CompanyAdditionalInformation = !hasCustomerConstraint ? order.CompanyAdditionalInformation : null,
+                Invoice = order.Invoice?.AsOrderInvoiceDto(),
                 Discount = order.Discount?.AsDto(),
                 Return = order.Return?.AsOrderReturnDto(),
                 Complaints = order.Complaints?.Select(c => c.AsOrderComplaintDto()),

@@ -31,6 +31,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 .Include(o => o.Return)
                 .ThenInclude(r => r!.Products)
                 .Include(o => o.Complaints)
+                .Include(o => o.Invoice)
                 .Where(o => o.Id == request.OrderId)
                 .Select(o => o.AsDetailsDto(_contextService.Identity == null || _contextService.Identity.Id == Guid.Empty || _contextService.Identity.Role == "Customer"))
                 .FirstOrDefaultAsync(cancellationToken);
