@@ -57,11 +57,11 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         }
 
         [SwaggerOperation("Downloads an invoice")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Downloads an invoice for a specified order.", typeof(ApiResponse<InvoiceDetailsDto>))]
+        [SwaggerResponse(StatusCodes.Status200OK, "Downloads an invoice for a specified order.")]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<InvoiceDetailsDto>>> DownloadInvoice([FromRoute]Guid orderId, 
+        public async Task<FileStreamResult> DownloadInvoice([FromRoute]Guid orderId, 
             CancellationToken cancellationToken)
             => await _mediator.Send(new DownloadInvoice(orderId), cancellationToken);
 

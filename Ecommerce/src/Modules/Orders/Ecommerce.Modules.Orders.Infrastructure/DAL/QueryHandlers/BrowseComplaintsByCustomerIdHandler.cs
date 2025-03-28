@@ -47,7 +47,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
             var complaints = _dbContext.Complaints
                 .Include(c => c.Order)
                 .ThenInclude(o => o.Customer)
-                .Where(c => c.Order.Customer.UserId == request.CustomerId)
+                .Where(c => c.Order.Customer!.UserId == request.CustomerId)
                 .AsNoTracking()
                 .AsQueryable();
             var dtos = await _sieveProcessor
