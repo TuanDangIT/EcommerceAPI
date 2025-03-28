@@ -20,7 +20,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         private readonly IMailsDbContext _dbContext;
         private readonly CompanyOptions _companyOptions;
         private readonly StripeOptions _stripeOptions;
-        private const string _mailTemplatePath = "MailTemplates\\OfferRequested.html";
+        private const string _mailTemplatePath = "MailTemplates/OfferRequested.html";
 
         public OfferRequestedHandler(IMailService mailService, IMailsDbContext dbContext, CompanyOptions companyOptions, StripeOptions stripeOptions)
         {

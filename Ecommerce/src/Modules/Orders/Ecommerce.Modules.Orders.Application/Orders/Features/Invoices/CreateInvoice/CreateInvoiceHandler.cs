@@ -6,7 +6,7 @@ using Ecommerce.Shared.Abstractions.BloblStorage;
 using Ecommerce.Shared.Abstractions.DomainEvents;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Microsoft.AspNetCore.Http;
-using SelectPdf;
+//using SelectPdf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +23,7 @@ using Microsoft.Extensions.Logging;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
+using ceTe.DynamicPDF.HtmlConverter;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInvoice
 {
@@ -37,7 +38,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
         private readonly TimeProvider _timeProvider;
         private readonly ILogger<CreateInvoiceHandler> _logger;
         private readonly IContextService _contextService;
-        private const string _invoiceTemplatePath = "Orders\\InvoiceTemplates\\Invoice.html";
+        private const string _invoiceTemplatePath = "Orders/InvoiceTemplates/Invoice.html";
         private const string _containerName = "invoices";
         private readonly string _contentType = "application/pdf";
 
@@ -78,20 +79,31 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
             var invoiceNo = string.Concat(now.Year, "/", now.Month, "/", now.Millisecond, now.Nanosecond, rand.Next(0, 9));
             var invoiceTemplate = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _invoiceTemplatePath));
             invoiceTemplate = FillInvoiceDetails(invoiceTemplate, invoiceNo, order);
-            HtmlToPdf converter = new();
-            PdfDocument pdf = converter.ConvertHtmlString(invoiceTemplate);
-            var stream = new MemoryStream();
-            pdf.Save(stream);
+            //var renderer = new ChromePdfRenderer();
+            //var pdf = renderer.RenderHtmlAsPdf(invoiceTemplate);
+            //var a = pdf.SaveAs("name");
+            //var stream = a.Stream;
+            //HtmlToPdf converter = new();
+            //PdfDocument pdf = converter.ConvertHtmlString(invoiceTemplate);
+            //var stream = new MemoryStream();
+            //pdf.Save(stream);
+            Converter.ChromiumProcessPath = "/usr/bin/chromium";
+            Converter.TemporaryDirectory = "/dpdfTemp";
+            Console.WriteLine(Converter.ChromiumProcessPath);
+            var conversionOptions = new ConversionOptions(PageSize.A4, PageOrientation.Portrait, margins: 0);
+            var bytes = await Converter.ConvertAsync(invoiceTemplate, conversionOptions: conversionOptions);
+            var stream = new MemoryStream(bytes);
             var file = new FormFile(stream, 0, stream.Length, "invoice", invoiceNo)
             {
                 Headers = new HeaderDictionary()
             };
+            Console.WriteLine(Converter.ChromiumProcessPath);
             file.ContentType = _contentType;
             await _blobStorageService.UploadAsync(file, invoiceNo, _containerName, cancellationToken);
             await _invoiceRepository.CreateAsync(new Domain.Orders.Entities.Invoice(invoiceNo, order));
             _logger.LogInformation("Invoice: {invoiceNo} was created for order: {orderId} by {@user}.", invoiceNo, order.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-            await _messageBroker.PublishAsync(new InvoiceCreated(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, invoiceNo));
+            await _messageBroker.PublishAsync(new InvoiceCreated(order.Id, order.Customer!.UserId, order.Customer.FirstName, order.Customer.Email, invoiceNo));
             return invoiceNo;
         }
         private string FillInvoiceDetails(string invoiceTemplate, string invoiceNo, Domain.Orders.Entities.Order order)
@@ -102,7 +114,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
             invoiceTemplate = invoiceTemplate.Replace("{companyCountry}", _companyOptions.Country);
             invoiceTemplate = invoiceTemplate.Replace("{companyCity}", _companyOptions.City);
             invoiceTemplate = invoiceTemplate.Replace("{companyPostCode}", _companyOptions.PostCode);
-            invoiceTemplate = invoiceTemplate.Replace("{customerAddress}", order.Customer.Address.Street);
+            invoiceTemplate = invoiceTemplate.Replace("{customerAddress}", order.Customer!.Address.Street);
             invoiceTemplate = invoiceTemplate.Replace("{customerAddressNumber}", order.Customer.Address.BuildingNumber);
             invoiceTemplate = invoiceTemplate.Replace("{customerCountry}", order.Customer.Address.Country);
             invoiceTemplate = invoiceTemplate.Replace("{customerPostCode}", order.Customer.Address.PostCode);

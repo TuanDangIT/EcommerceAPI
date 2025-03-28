@@ -16,7 +16,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         private readonly IMailService _mailService;
         private readonly CompanyOptions _companyOptions;
         private readonly StripeOptions _stripeOptions;
-        private const string _mailTemplatePath = "MailTemplates\\ReturnHandled.html";
+        private const string _mailTemplatePath = "MailTemplates/ReturnHandled.html";
 
         public ReturnHandledHandler(IMailService mailService, CompanyOptions companyOptions, StripeOptions stripeOptions)
         {

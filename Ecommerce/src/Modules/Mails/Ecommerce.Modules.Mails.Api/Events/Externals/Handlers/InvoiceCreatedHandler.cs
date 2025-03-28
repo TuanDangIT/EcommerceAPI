@@ -21,7 +21,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         private readonly CompanyOptions _companyOptions;
         private readonly IMailsDbContext _dbContext;
         private readonly IBlobStorageService _blobStorageService;
-        private const string _mailTemplatePath = "MailTemplates\\InvoiceCreated.html";
+        private const string _mailTemplatePath = "MailTemplates/InvoiceCreated.html";
         private const string _containerName = "invoices";
         private const string _contentType = "application/pdf";
 

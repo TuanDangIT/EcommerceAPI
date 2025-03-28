@@ -19,7 +19,7 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.DTO
         public List<AuctionParameter>? Parameters { get; set; } = [];
         public string? Manufacturer { get; set; }
         public List<string> ImageUrls { get; set; } = [];
-        public string Category { get; set; } = string.Empty;
+        public string? Category { get; set; } = string.Empty;
         public double AverageGrade { get; set; }
         public List<ReviewDto>? Reviews { get; set; } = [];
     }

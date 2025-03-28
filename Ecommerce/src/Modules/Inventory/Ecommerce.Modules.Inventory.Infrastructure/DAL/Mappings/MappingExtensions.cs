@@ -85,11 +85,12 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
                 Quantity = product.Quantity,
                 Reserved = product.Reserved,
                 VAT = product.VAT,
+                IsListed = product.IsListed,
                 Location = product.Location,
                 Description = product.Description,
                 AdditionalDescription = product.AdditionalDescription,
-                Manufacturer = product.Manufacturer.Name,
-                Category = product.Category.Name,
+                Manufacturer = product.Manufacturer?.Name,
+                Category = product.Category?.Name,
                 Images = productDetailsImagesDto,
                 Parameters = productDetailsParametersDto
             };
@@ -103,7 +104,8 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Mappings
                 Name = product.Name,
                 Price = product.Price,
                 Quantity = product.Quantity,
-                Reserved = product.Reserved
+                Reserved = product.Reserved,
+                IsListed = product.IsListed
             };
         public static AuctionBrowseDto AsBrowseDto(this Auction auction)
             => new AuctionBrowseDto()

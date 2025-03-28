@@ -53,7 +53,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitCompl
             }
             var domainEvent = new ComplaintSubmitted(
                     order.Id,
-                    order.Customer.UserId,
+                    order.Customer!.UserId,
                     order.Customer.FirstName,
                     order.Customer.Email,
                     request.Title,

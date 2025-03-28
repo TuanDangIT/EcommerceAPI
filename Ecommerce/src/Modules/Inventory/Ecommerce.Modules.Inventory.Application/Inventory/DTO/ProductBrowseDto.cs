@@ -14,5 +14,6 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.DTO
         public int? Quantity { get; set; }
         public int? Reserved { get; set; }
         public decimal Price { get; set; }
+        public bool IsListed { get; set; }
     }
 }

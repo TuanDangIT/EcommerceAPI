@@ -41,9 +41,9 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Rej
             await _messageBroker.PublishAsync(new ComplaintRejected(
                 complaint.Id,
                 complaint.OrderId,
-                complaint.Order.Customer.UserId,
-                complaint.Order.Customer.FirstName,
-                complaint.Order.Customer.Email,
+                complaint.Order.Customer!.UserId,
+                complaint.Order.Customer!.FirstName!,
+                complaint.Order.Customer!.Email!,
                 complaint.Title,
                 complaint.Decision!.DecisionText,
                 complaint.Decision.AdditionalInformation,

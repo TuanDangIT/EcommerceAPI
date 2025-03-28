@@ -34,4 +34,5 @@ RUN dotnet publish "Ecommerce.Bootstrapper.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+RUN apt-get update && apt-get install chromium -y
 ENTRYPOINT ["dotnet", "Ecommerce.Bootstrapper.dll"]

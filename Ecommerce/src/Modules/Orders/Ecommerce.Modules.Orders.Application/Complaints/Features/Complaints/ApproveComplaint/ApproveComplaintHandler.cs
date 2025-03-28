@@ -66,7 +66,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
             await _messageBroker.PublishAsync(new ComplaintApproved(
                 complaint.Id,
                 complaint.OrderId,
-                complaint.Order.Customer.UserId,
+                complaint.Order.Customer!.UserId,
                 complaint.Order.Customer.FirstName,
                 complaint.Order.Customer.Email,
                 complaint.Title,

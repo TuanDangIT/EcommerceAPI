@@ -14,7 +14,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
     {
         private readonly IMailService _mailService;
         private readonly CompanyOptions _companyOptions;
-        private const string _mailTemplatePath = "MailTemplates\\OrderShipped.html";
+        private const string _mailTemplatePath = "MailTemplates/OrderShipped.html";
 
         public OrderShippedHandler(IMailService mailService, CompanyOptions companyOptions)
         {

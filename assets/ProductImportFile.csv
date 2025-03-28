@@ -1,0 +1,13 @@
+﻿SKU;EAN;Name;Price;VAT;Quantity;Location;Description;AdditionalDescription;Manufacturer;Category;Images;Size;Color;Duration
+1000001;57738659;Nike Sb Dunk;22;23;4;AB302;description;description;Nike;Shoes;/link1;44;black;
+2000001;56836097;Iphone 15 Pro;5000;23;5;D1S1;description;description;Apple;Electronics;/link2, /link3;;black;
+3000001;57738652;1 month Netflix subscription;20;23;;;description;description;Netflix;Entertainment;/link4;;;1 month
+4000001;59483210;Samsung Galaxy S24 Ultra;4800;23;3;D1S2;description;description;Samsung;Electronics;link5, link6;;gray;
+5000001;60125874;Adidas Ultraboost;150;23;10;AB401;description;description;Adidas;Shoes;/link7;42;white;
+6000001;62347896;Spotify Premium 3 months;50;23;;;description;description;Spotify;Entertainment;/link8;;;3 months
+7000001;63214587;Sony WH-1000XM5 Headphones;350;23;7;D2S3;Premium noise-canceling wireless headphones;High-end audio experience;Sony;Electronics;/link9;;silver;
+8000001;64982310;Kindle Paperwhite;140;23;12;AB503;E-reader with adjustable warm light;Waterproof design for reading anywhere;Amazon;Electronics;/link10;;black;
+9000001;65739824;Lego Star Wars Millennium Falcon;250;23;6;D1S4;Ultimate collector series LEGO set;Detailed replica of iconic spaceship;LEGO;Toys;/link11;;multicolor;
+10000001;66582947;Ray-Ban Aviator Classic;160;23;8;AB201;Iconic sunglasses with polarized lenses;Timeless design with UV protection;Ray-Ban;Accessories;/link12;Medium;gold;
+11000001;67425896;Fitbit Charge 6;180;23;9;D2S5;Advanced fitness and health tracker;GPS and heart rate monitoring;Fitbit;Wearables;/link13;;graphite;
+12000001;68273541;Cuisinart Air Fryer;120;23;5;AB604;Digital air fryer with multiple cooking functions;Healthy cooking made easy;Cuisinart;Kitchen Appliances;/link14;;stainless steel;

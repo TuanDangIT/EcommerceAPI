@@ -58,7 +58,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
             await _returnRepository.UpdateAsync();
             _logger.LogInformation("Return: {returnId} was handled by {@user}.", @return.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-            await _messageBroker.PublishAsync(new ReturnHandled(@return.Id, @return.OrderId, @return.Order.Customer.UserId, 
+            await _messageBroker.PublishAsync(new ReturnHandled(@return.Id, @return.OrderId, @return.Order.Customer!.UserId, 
                 @return.Order.Customer.FirstName, @return.Order.Customer.Email, productToReturn.Select(p => new { p.Name, p.Price, p.SKU, p.Quantity }), @return.CreatedAt));
         }
     }

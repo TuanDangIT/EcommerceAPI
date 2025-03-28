@@ -13,7 +13,7 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.DTO
         public decimal Price { get; set; }
         public int? Quantity { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
-        public string Category { get; set; } = string.Empty;
+        public string? Category { get; set; } = string.Empty;
         public double AverageGrade { get; set; }
     }
 }

@@ -12,7 +12,9 @@ services:
     container_name: ecommerce_api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - Postgres__ConnectionString=Host=localhost;User ID=postgres;Password=mysecretpassword;Server=ecommerce_db;Port=5432;Database=EcommerceDb
+      - Postgres__ConnectionString=Host=ecommerce_db;User ID=postgres;Password=mysecretpassword;Server=ecommerce_db;Port=5432;Database=EcommerceDb
+      - Serilog__WriteTo__1__Args__ServerUrl=http://ecommerce_seq:5341
+      - BlobAzureStorage__ConnectionString=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://ecommerce_azurite:10000/devstoreaccount1;QueueEndpoint=http://ecommerce_azurite:10001/devstoreaccount1;TableEndpoint=http://ecommerce_azurite:10002/devstoreaccount1;
     ports:
       - "8080:8080"
       - "8081:8081"
@@ -54,6 +56,7 @@ services:
     environment:
       - ACCEPT_EULA=Y
     ports:
-      - "5341:80"
+      - "5341:5341"
+      - "8090:80"
     networks:
       - dev

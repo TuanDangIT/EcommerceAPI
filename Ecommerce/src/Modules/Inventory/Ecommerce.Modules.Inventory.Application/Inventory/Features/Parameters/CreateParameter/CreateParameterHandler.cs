@@ -29,7 +29,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.
         {
             var parameter = new Parameter(request.Name);
             await _parameterRepository.AddAsync(parameter, cancellationToken);
-            _logger.LogInformation("Parameter was created by {@user}.",
+            _logger.LogInformation("Parameter: {@parameter} was created by {@user}.",
                 parameter, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
 
         }

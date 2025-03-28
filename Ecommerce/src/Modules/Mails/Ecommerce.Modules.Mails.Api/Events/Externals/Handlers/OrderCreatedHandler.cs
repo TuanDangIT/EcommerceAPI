@@ -17,7 +17,7 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         private readonly IMailService _mailService;
         private readonly CompanyOptions _companyOptions;
         private readonly StripeOptions _stripeOptions;
-        private const string _mailTemplatePath = "MailTemplates\\OrderCreated.html";
+        private const string _mailTemplatePath = "MailTemplates/OrderCreated.html";
         private readonly decimal _defaultDeliveryPrice = 15;
 
         public OrderCreatedHandler(IMailService mailService, CompanyOptions companyOptions, StripeOptions stripeOptions)

@@ -77,7 +77,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
                 return;
             }
             bool isFullReturn = !order.Products.Any();
-            var domainEvent = new OrderReturned(order.Id, order.Customer.UserId, order.Customer.FirstName, order.Customer.Email, request.ReasonForReturn, returnProducts, isFullReturn);
+            var domainEvent = new OrderReturned(order.Id, order.Customer!.UserId, order.Customer.FirstName, order.Customer.Email, request.ReasonForReturn, returnProducts, isFullReturn);
             await _domainEventDispatcher.DispatchAsync(domainEvent);
             var integrationEvent = _ordersEventMapper.Map(domainEvent);
             await _messageBroker.PublishAsync(integrationEvent);

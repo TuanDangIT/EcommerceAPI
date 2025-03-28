@@ -35,7 +35,7 @@ namespace Ecommerce.Modules.Mails.Api.Services
         private readonly IFilterService _filterService;
         private readonly ILogger<MailService> _logger;
         private readonly IContextService _contextService;
-        private const string _mailDefaultTemplatePath = "MailTemplates\\Default.html";
+        private const string _mailDefaultTemplatePath = "MailTemplates/Default.html";
         private const string _containerName = "mails";
 
         public MailService(IMailsDbContext dbContext, MailOptions mailOptions, IBlobStorageService blobStorageService, 
