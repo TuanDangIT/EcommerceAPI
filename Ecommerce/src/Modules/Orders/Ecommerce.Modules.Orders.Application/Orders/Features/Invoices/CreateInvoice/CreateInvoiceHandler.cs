@@ -27,7 +27,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInvoice
 {
-    internal class CreateInvoiceHandler : ICommandHandler<CreateInvoice, (string InvoiceNo, FileContentResult File)>
+    internal class CreateInvoiceHandler : ICommandHandler<CreateInvoice, string>
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IBlobStorageService _blobStorageService;
@@ -50,7 +50,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
             _contextService = contextService;
             _invoiceService = invoiceService;
         }
-        public async Task<(string InvoiceNo, FileContentResult File)> Handle(CreateInvoice request, CancellationToken cancellationToken)
+        public async Task<string> Handle(CreateInvoice request, CancellationToken cancellationToken)
         {
             var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
                 query => query.Include(o => o.Invoice),
@@ -74,14 +74,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
             _logger.LogInformation("Invoice: {invoiceNo} was created for order: {orderId} by {@user}.", invoiceNo, order.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new InvoiceCreated(order.Id, order.Customer!.UserId, order.Customer.FirstName, order.Customer.Email, invoiceNo));
-            using var memoryStream = new MemoryStream();
-            await file.CopyToAsync(memoryStream);
-            var fileBytes = memoryStream.ToArray();
-            var fileResult =  new FileContentResult(fileBytes, "application/pdf")
-            {
-                FileDownloadName = $"{invoiceNo}-invoice.pdf"
-            };
-            return (invoiceNo, fileResult);
+            return invoiceNo;
         }
     }
 }

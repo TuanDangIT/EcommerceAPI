@@ -9,5 +9,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInvoice
 {
-    public sealed record class CreateInvoice(Guid OrderId) : ICommand<(string InvoiceNo, FileContentResult File)>;
+    public sealed record class CreateInvoice(Guid OrderId) : ICommand<string>;
 }

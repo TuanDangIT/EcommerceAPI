@@ -52,8 +52,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new CreateInvoice(orderId), cancellationToken);
-            Response.Headers.Append("InvoiceNo", result.InvoiceNo);
-            return result.File;
+            return result;
         }
 
         [SwaggerOperation("Downloads an invoice")]
