@@ -11,38 +11,11 @@
   </ItemGroup>-->
 
   <ItemGroup>
-    <PackageReference Include="ceTe.DynamicPDF.HtmlConverter.NET" Version="2.4.0" />
     <PackageReference Include="FluentValidation" Version="11.9.2" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" />
 <!---->  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Ecommerce.Modules.Orders.Domain\Ecommerce.Modules.Orders.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Orders\InvoiceTemplates\Invoice.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="C:\Users\shock\.nuget\packages\cete.dynamicpdf.htmltopdfresources\1.1.0\build\Chromium_119_0_6045_00_Win32.zip" Link="Shared\Chromium_119_0_6045_00_Win32.zip" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="C:\Users\shock\.nuget\packages\cete.dynamicpdf.htmltopdfresources\1.1.0\build\Chromium_119_0_6045_00_Win32.zip" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="C:\Users\shock\.nuget\packages\cete.dynamicpdf.htmltopdfresources\1.1.0\build\Chromium_119_0_6045_00_Win32.zip" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="C:\Users\shock\.nuget\packages\cete.dynamicpdf.htmltopdfresources\1.1.0\build\Chromium_119_0_6045_00_Win32.zip" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="C:\Users\shock\.nuget\packages\cete.dynamicpdf.htmltopdfresources\1.1.0\build\Chromium_119_0_6045_00_Win32.zip" />
   </ItemGroup>
 </Project>

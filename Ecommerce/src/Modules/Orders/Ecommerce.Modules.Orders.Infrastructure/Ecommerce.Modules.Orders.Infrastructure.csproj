@@ -7,11 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ceTe.DynamicPDF.HtmlConverter.NET" Version="2.4.0" />
     <PackageReference Include="Stripe.net" Version="45.15.0-beta.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Ecommerce.Modules.Orders.Application\Ecommerce.Modules.Orders.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Invoices\Templates\Invoice.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="C:\Users\shock\.nuget\packages\cete.dynamicpdf.htmltopdfresources\1.1.0\build\Chromium_119_0_6045_00_Win32.zip" Link="Invoices\Chromium_119_0_6045_00_Win32.zip" />
   </ItemGroup>
 
 </Project>

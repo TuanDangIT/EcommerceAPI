@@ -1,27 +1,29 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.Exceptions;
+using Ecommerce.Modules.Orders.Domain.Orders.Entities;
 using Ecommerce.Modules.Orders.Domain.Orders.Repositories;
 using Ecommerce.Shared.Abstractions.BloblStorage;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.DownloadInvoice
 {
-    internal class DownloadInvoiceHandler : IQueryHandler<DownloadInvoice, (Stream FileStream, string MimeType, string FileName)>
+    internal class DownloadInvoiceHandler : IQueryHandler<DownloadInvoice, FileStreamResult>
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IBlobStorageService _blobStorageService;
         private readonly ILogger<DownloadInvoiceHandler> _logger;
         private readonly IContextService _contextService;
         private const string _containerName = "invoices";
-        private const string _mimeType = "application/pdf";
 
         public DownloadInvoiceHandler(IOrderRepository orderRepository, IBlobStorageService blobStorageService, ILogger<DownloadInvoiceHandler> logger,
             IContextService contextService)
@@ -32,7 +34,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.DownloadI
             _contextService = contextService;
         }
 
-        public async Task<(Stream FileStream, string MimeType, string FileName)> Handle(DownloadInvoice request, CancellationToken cancellationToken)
+        public async Task<FileStreamResult> Handle(DownloadInvoice request, CancellationToken cancellationToken)
         {
             var order = await _orderRepository.GetAsync(request.OrderId,cancellationToken,
                 query => query.Include(o => o.Invoice)) ?? 
@@ -44,7 +46,11 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.DownloadI
             var dto = await _blobStorageService.DownloadAsync(order.Invoice!.InvoiceNo, _containerName, cancellationToken);
             _logger.LogInformation("Invoice: {invoiceId} was downloaded by {@user}.", order.Invoice.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-            return (dto.FileStream, _mimeType, $"{order.Invoice.InvoiceNo}-invoice");
+            var fileResult = new FileStreamResult(dto.FileStream, dto.ContentType)
+            {
+                FileDownloadName = $"{order.Invoice.InvoiceNo}-invoice.pdf"
+            };
+            return fileResult;
         }
     }
 }

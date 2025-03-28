@@ -23,40 +23,34 @@ using Microsoft.Extensions.Logging;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities.Enums;
-using ceTe.DynamicPDF.HtmlConverter;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInvoice
 {
-    internal class CreateInvoiceHandler : ICommandHandler<CreateInvoice, string>
+    internal class CreateInvoiceHandler : ICommandHandler<CreateInvoice, (string InvoiceNo, FileContentResult File)>
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IBlobStorageService _blobStorageService;
         private readonly IMessageBroker _messageBroker;
-        private readonly CompanyOptions _companyOptions;
-        private readonly StripeOptions _stripeOptions;
         private readonly IInvoiceRepository _invoiceRepository;
-        private readonly TimeProvider _timeProvider;
         private readonly ILogger<CreateInvoiceHandler> _logger;
         private readonly IContextService _contextService;
-        private const string _invoiceTemplatePath = "Orders/InvoiceTemplates/Invoice.html";
+        private readonly IInvoiceService _invoiceService;
         private const string _containerName = "invoices";
-        private readonly string _contentType = "application/pdf";
 
         public CreateInvoiceHandler(IOrderRepository orderRepository, IBlobStorageService blobStorageService,
-            IMessageBroker messageBroker, CompanyOptions companyOptions, StripeOptions stripeOptions, IInvoiceRepository invoiceRepository, TimeProvider timeProvider,
-            ILogger<CreateInvoiceHandler> logger, IContextService contextService)
+            IMessageBroker messageBroker, IInvoiceRepository invoiceRepository, ILogger<CreateInvoiceHandler> logger, 
+            IContextService contextService, IInvoiceService invoiceService)
         {
             _orderRepository = orderRepository;
             _blobStorageService = blobStorageService;
             _messageBroker = messageBroker;
-            _companyOptions = companyOptions;
-            _stripeOptions = stripeOptions;
             _invoiceRepository = invoiceRepository;
-            _timeProvider = timeProvider;
             _logger = logger;
             _contextService = contextService;
+            _invoiceService = invoiceService;
         }
-        public async Task<string> Handle(CreateInvoice request, CancellationToken cancellationToken)
+        public async Task<(string InvoiceNo, FileContentResult File)> Handle(CreateInvoice request, CancellationToken cancellationToken)
         {
             var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
                 query => query.Include(o => o.Invoice),
@@ -74,73 +68,20 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
             {
                 throw new InvoiceAlreadyCreatedException(order.Id);
             }
-            var now = _timeProvider.GetUtcNow();
-            Random rand = new();
-            var invoiceNo = string.Concat(now.Year, "/", now.Month, "/", now.Millisecond, now.Nanosecond, rand.Next(0, 9));
-            var invoiceTemplate = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _invoiceTemplatePath));
-            invoiceTemplate = FillInvoiceDetails(invoiceTemplate, invoiceNo, order);
-            //var renderer = new ChromePdfRenderer();
-            //var pdf = renderer.RenderHtmlAsPdf(invoiceTemplate);
-            //var a = pdf.SaveAs("name");
-            //var stream = a.Stream;
-            //HtmlToPdf converter = new();
-            //PdfDocument pdf = converter.ConvertHtmlString(invoiceTemplate);
-            //var stream = new MemoryStream();
-            //pdf.Save(stream);
-            Converter.ChromiumProcessPath = "/usr/bin/chromium";
-            Converter.TemporaryDirectory = "/dpdfTemp";
-            Console.WriteLine(Converter.ChromiumProcessPath);
-            var conversionOptions = new ConversionOptions(PageSize.A4, PageOrientation.Portrait, margins: 0);
-            var bytes = await Converter.ConvertAsync(invoiceTemplate, conversionOptions: conversionOptions);
-            var stream = new MemoryStream(bytes);
-            var file = new FormFile(stream, 0, stream.Length, "invoice", invoiceNo)
-            {
-                Headers = new HeaderDictionary()
-            };
-            Console.WriteLine(Converter.ChromiumProcessPath);
-            file.ContentType = _contentType;
+            (var invoiceNo, var file) = await _invoiceService.CreateInvoiceAsync(order);
             await _blobStorageService.UploadAsync(file, invoiceNo, _containerName, cancellationToken);
             await _invoiceRepository.CreateAsync(new Domain.Orders.Entities.Invoice(invoiceNo, order));
             _logger.LogInformation("Invoice: {invoiceNo} was created for order: {orderId} by {@user}.", invoiceNo, order.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
             await _messageBroker.PublishAsync(new InvoiceCreated(order.Id, order.Customer!.UserId, order.Customer.FirstName, order.Customer.Email, invoiceNo));
-            return invoiceNo;
-        }
-        private string FillInvoiceDetails(string invoiceTemplate, string invoiceNo, Domain.Orders.Entities.Order order)
-        {
-            invoiceTemplate = invoiceTemplate.Replace("{invoiceId}", invoiceNo);
-            invoiceTemplate = invoiceTemplate.Replace("{companyName}", _companyOptions.Name);
-            invoiceTemplate = invoiceTemplate.Replace("{companyAddress}", _companyOptions.Address);
-            invoiceTemplate = invoiceTemplate.Replace("{companyCountry}", _companyOptions.Country);
-            invoiceTemplate = invoiceTemplate.Replace("{companyCity}", _companyOptions.City);
-            invoiceTemplate = invoiceTemplate.Replace("{companyPostCode}", _companyOptions.PostCode);
-            invoiceTemplate = invoiceTemplate.Replace("{customerAddress}", order.Customer!.Address.Street);
-            invoiceTemplate = invoiceTemplate.Replace("{customerAddressNumber}", order.Customer.Address.BuildingNumber);
-            invoiceTemplate = invoiceTemplate.Replace("{customerCountry}", order.Customer.Address.Country);
-            invoiceTemplate = invoiceTemplate.Replace("{customerPostCode}", order.Customer.Address.PostCode);
-            invoiceTemplate = invoiceTemplate.Replace("{customerCity}", order.Customer.Address.City);
-            invoiceTemplate = invoiceTemplate.Replace("{customerEmail}", order.Customer.Email);
-            invoiceTemplate = invoiceTemplate.Replace("{customerPhoneNumber}", order.Customer.PhoneNumber);
-            invoiceTemplate = invoiceTemplate.Replace("{customerName}", order.Customer.FirstName + " " + order.Customer.LastName);
-            invoiceTemplate = invoiceTemplate.Replace("{additionalInformation}", order.CompanyAdditionalInformation ?? "");
-            invoiceTemplate = invoiceTemplate.Replace("{totalPrice}", order.TotalSum.ToString("0.00") + " " + _stripeOptions.Currency);
-            invoiceTemplate = invoiceTemplate.Replace("{shipPrice}", order.ShippingPrice.ToString("0.00"));
-            StringBuilder productsHtml = new StringBuilder();
-            foreach (var product in order.Products)
+            using var memoryStream = new MemoryStream();
+            await file.CopyToAsync(memoryStream);
+            var fileBytes = memoryStream.ToArray();
+            var fileResult =  new FileContentResult(fileBytes, "application/pdf")
             {
-                productsHtml.Append(
-                    $"""
-                        <tr>
-                            <td>{product.Name}</td>
-                            <td>{product.SKU}</td>
-                            <td>{product.Price.ToString("0.00")}</td>
-                            <td>{product.Quantity}</td>
-                        </tr>
-                    """
-                    );
-            }
-            invoiceTemplate = invoiceTemplate.Replace("{orderItems}", productsHtml.ToString());
-            return invoiceTemplate;
+                FileDownloadName = $"{invoiceNo}-invoice.pdf"
+            };
+            return (invoiceNo, fileResult);
         }
     }
 }

@@ -16,6 +16,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,7 +52,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new CreateInvoice(orderId), cancellationToken);
-            return Ok(result);
+            Response.Headers.Append("InvoiceNo", result.InvoiceNo);
+            return result.File;
         }
 
         [SwaggerOperation("Downloads an invoice")]
@@ -60,10 +63,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<InvoiceDetailsDto>>> DownloadInvoice([FromRoute]Guid orderId, 
             CancellationToken cancellationToken)
-        {
-            var result = await _mediator.Send(new DownloadInvoice(orderId), cancellationToken);
-            return File(result.FileStream, result.MimeType, result.FileName);
-        }
+            => await _mediator.Send(new DownloadInvoice(orderId), cancellationToken);
 
         [SwaggerOperation("Deletes an invoice")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
