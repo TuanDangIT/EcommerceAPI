@@ -60,3 +60,10 @@ services:
       - "8090:80"
     networks:
       - dev
+
+  ecommerce_stripe:
+    image: stripe/stripe-cli
+    container_name: ecommerce_stripe
+    command: listen --api-key sk_test_51PtprLCDEnJlTwZQPHr8DhSUaXhQCNlqHWaf5iJcOh3FCPOja6oU5S1l9uhPZkLEYkspelLMj5NFr9w5WFIBKPPT00eXRPMYwx --forward-to http://ecommerce_api:8080/api/webhooks/v1/carts-module/CheckoutCarts/checkout-session-completed
+    networks:
+      - dev
