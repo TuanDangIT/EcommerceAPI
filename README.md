@@ -542,6 +542,8 @@ Example of cursor filter usage in body:
 
 # Work to be done
 
+Below is a list of tasks to enhance the quality of the API. They will all be done one by one in the future commits.
+
 API Improvement Task List:
 
 - [ ] Add functionality for adding, deleting parameters and updating their value for a product,
@@ -569,6 +571,8 @@ API Improvement Task List:
 - [ ] Enable invoice editting.
 - [ ] Validate CSV product imports.
 - [ ] Autocomplete of customer's details when logged in.
+- [ ] Make discount Id as type Guid to facilite integration with carts module.
+- [ ] Put submit return and complaint in it's respective controllers, instead of having it in OrdersController.
 
 # Technology
 
