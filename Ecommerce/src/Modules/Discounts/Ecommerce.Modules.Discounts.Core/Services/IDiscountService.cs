@@ -13,7 +13,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
     public interface IDiscountService
     {
         Task<IEnumerable<DiscountBrowseDto>> BrowseDiscountsAsync(int couponId, CancellationToken cancellationToken = default);
-        Task CreateAsync(int couponId, DiscountCreateDto dto, CancellationToken cancellationToken = default);
+        Task<int> CreateAsync(int couponId, DiscountCreateDto dto, CancellationToken cancellationToken = default);
         Task ActivateAsync(int couponId, int discountId, CancellationToken cancellationToken = default);
         Task DeactivateAsync(int couponId, int discountId, CancellationToken cancellationToken = default);
     }

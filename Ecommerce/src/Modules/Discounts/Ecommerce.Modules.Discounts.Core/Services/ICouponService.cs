@@ -11,8 +11,8 @@ namespace Ecommerce.Modules.Discounts.Core.Services
 {
     public interface ICouponService
     {
-        Task CreateAsync(NominalCouponCreateDto dto, CancellationToken cancellationToken = default);
-        Task CreateAsync(PercentageCouponCreateDto dto, CancellationToken cancellationToken = default);
+        Task<int> CreateAsync(NominalCouponCreateDto dto, CancellationToken cancellationToken = default);
+        Task<int> CreateAsync(PercentageCouponCreateDto dto, CancellationToken cancellationToken = default);
         Task UpdateNameAsync(int couponId, CouponUpdateNameDto dto, CancellationToken cancellationToken = default);
         Task DeleteAsync(int couponId, CancellationToken cancellationToken = default);
         Task<PagedResult<NominalCouponBrowseDto>> BrowseNominalCouponsAsync(SieveModel model, CancellationToken cancellationToken = default);

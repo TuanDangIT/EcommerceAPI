@@ -16,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateShipment
 {
-    internal class CreateShipmentHandler : ICommandHandler<CreateShipment>
+    internal class CreateShipmentHandler : ICommandHandler<CreateShipment, int>
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IDeliveryService _deliveryService;
@@ -33,7 +33,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
             _logger = logger;
             _contextService = contextService;
         }
-        public async Task Handle(CreateShipment request, CancellationToken cancellationToken)
+        public async Task<int> Handle(CreateShipment request, CancellationToken cancellationToken)
         {
             var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
                 query => query.Include(o => o.Customer),
@@ -61,6 +61,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
             await _orderRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Shipment was created for order: {orderId} for {@user}.", order.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            return shipment.Id;
         }
     }
 }

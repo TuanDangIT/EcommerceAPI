@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.CreateCategory
 {
-    public sealed record class CreateCategory(string Name) : ICommand;
+    public sealed record class CreateCategory(string Name) : ICommand<Guid>;
 }

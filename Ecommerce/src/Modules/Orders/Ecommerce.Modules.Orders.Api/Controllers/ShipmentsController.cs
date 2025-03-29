@@ -42,11 +42,12 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [SwaggerOperation("Creates an shipment for a specified order")]
         [SwaggerResponse(StatusCodes.Status201Created, "Creates a manufacturer for specified order and returns it's identifier.", typeof(int))]
         [HttpPost]
-        public async Task<ActionResult> CreateShipment([FromRoute] Guid orderId, [FromBody] CreateShipment command, CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<object>>> CreateShipment([FromRoute] Guid orderId, [FromBody] CreateShipment command, CancellationToken cancellationToken)
         {
             command = command with { OrderId = orderId };
-            await _mediator.Send(command, cancellationToken);
-            return NoContent();
+            var shipmentId = await _mediator.Send(command, cancellationToken);
+            Response.Headers.Append("shipment-id", shipmentId.ToString());
+            return Created(default(string), new ApiResponse<object>(System.Net.HttpStatusCode.Created, new { Id = shipmentId }));
         }
 
         [SwaggerOperation("Downloads a label")]

@@ -30,10 +30,10 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
         [SwaggerOperation("Creates a cart")]
         [SwaggerResponse(StatusCodes.Status201Created, "Creates a cart and returns it's id.", typeof(Guid))]
         [HttpPost]
-        public async Task<ActionResult> CreateCart(CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<object>>> CreateCart(CancellationToken cancellationToken)
         {
             var cartId = await _cartService.CreateAsync(cancellationToken);
-            return CreatedAtAction(nameof(GetCart), new { cartId }, cartId);
+            return CreatedAtAction(nameof(GetCart), new { cartId }, new ApiResponse<object>(HttpStatusCode.Created, new { Id = cartId }));
         }
 
         [SwaggerOperation("Gets specific cart")]

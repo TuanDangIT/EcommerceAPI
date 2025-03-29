@@ -35,10 +35,11 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerOperation("Creates a paramter")]
         [SwaggerResponse(StatusCodes.Status201Created)]
         [HttpPost]
-        public async Task<ActionResult> CreateParameter([FromBody] CreateParameter command, CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<object>>> CreateParameter([FromBody] CreateParameter command, CancellationToken cancellationToken)
         {
-            await _mediator.Send(command, cancellationToken);
-            return Created();
+            var parameterId = await _mediator.Send(command, cancellationToken);
+            Response.Headers.Append("parameter-id", parameterId.ToString());
+            return Created(parameterId.ToString());
         }
 
         [SwaggerOperation("Gets offset paginated parameters")]

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.AddReview
 {
-    public sealed record class AddReview : ICommand
+    public sealed record class AddReview : ICommand<Guid>
     {
         public string Text { get; init; } = string.Empty;
         public int Grade { get; init; }

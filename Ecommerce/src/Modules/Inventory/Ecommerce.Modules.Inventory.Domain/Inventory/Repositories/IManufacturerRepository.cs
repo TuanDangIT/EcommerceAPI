@@ -9,7 +9,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Repositories
 {
     public interface IManufacturerRepository
     {
-        Task AddAsync(Manufacturer manufacturer, CancellationToken cancellationToken = default);
+        Task<Guid> AddAsync(Manufacturer manufacturer, CancellationToken cancellationToken = default);
         Task AddManyAsync(IEnumerable<Manufacturer> manufacturers, CancellationToken cancellationToken = default);
         Task UpdateAsync(CancellationToken cancellationToken = default);
         Task DeleteAsync(Guid manufacturerId, CancellationToken cancellationToken = default);

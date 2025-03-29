@@ -41,10 +41,11 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerOperation("Creates a manufacturer")]
         [SwaggerResponse(StatusCodes.Status201Created)]
         [HttpPost()]
-        public async Task<ActionResult> CreateManufacturer([FromBody]CreateManufacturer command, CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<object>>> CreateManufacturer([FromBody]CreateManufacturer command, CancellationToken cancellationToken)
         {
-            await _mediator.Send(command, cancellationToken);
-            return Created();
+            var manufacturerId = await _mediator.Send(command, cancellationToken);
+            Response.Headers.Append("manufacturer-id", manufacturerId.ToString());
+            return Created(manufacturerId.ToString());
         }
 
         [SwaggerOperation("Gets offset paginated manufacturers")]

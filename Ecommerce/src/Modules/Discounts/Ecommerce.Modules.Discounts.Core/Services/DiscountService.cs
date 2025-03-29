@@ -20,24 +20,20 @@ namespace Ecommerce.Modules.Discounts.Core.Services
     {
         private readonly IDiscountDbContext _dbContext;
         private readonly IPaymentProcessorService _paymentProcessorService;
-        private readonly ISieveProcessor _sieveProcessor;
         private readonly IMessageBroker _messageBroker;
         private readonly ILogger<DiscountService> _logger;
         private readonly IContextService _contextService;
         private readonly TimeProvider _timeProvider;
-        private readonly IOptions<SieveOptions> _sieveOptions;
 
-        public DiscountService(IDiscountDbContext dbContext, IPaymentProcessorService paymentProcessorService, [FromKeyedServices("discounts-sieve-processor")]ISieveProcessor sieveProcessor, 
-            IMessageBroker messageBroker, ILogger<DiscountService> logger, IContextService contextService, TimeProvider timeProvider, IOptions<SieveOptions> sieveOptions)
+        public DiscountService(IDiscountDbContext dbContext, IPaymentProcessorService paymentProcessorService,
+            IMessageBroker messageBroker, ILogger<DiscountService> logger, IContextService contextService, TimeProvider timeProvider)
         {
             _dbContext = dbContext;
             _paymentProcessorService = paymentProcessorService;
-            _sieveProcessor = sieveProcessor;
             _messageBroker = messageBroker;
             _logger = logger;
             _contextService = contextService;
             _timeProvider = timeProvider;
-            _sieveOptions = sieveOptions;
         }
 
         public async Task<IEnumerable<DiscountBrowseDto>> BrowseDiscountsAsync(int couponId, CancellationToken cancellationToken = default)
@@ -47,7 +43,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
-        public async Task CreateAsync(int couponId, DiscountCreateDto dto, CancellationToken cancellationToken = default)
+        public async Task<int> CreateAsync(int couponId, DiscountCreateDto dto, CancellationToken cancellationToken = default)
         {
             var discount = await _dbContext.Discounts
                 .Select(d => d.Code)
@@ -60,10 +56,12 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 throw new CouponNotFoundException(couponId);
             var stripePromotionCodeId = await _paymentProcessorService.CreateDiscountAsync(coupon.StripeCouponId, dto, cancellationToken);
             var expiresDate = dto.ExpiresDate is null ? dto.ExpiresDate :  DateTime.SpecifyKind((DateTime)dto.ExpiresDate, DateTimeKind.Utc);
-            coupon.AddDiscount(new Entities.Discount(dto.Code, stripePromotionCodeId, dto.RequiredCartTotalValue ?? 0, expiresDate, _timeProvider.GetUtcNow().DateTime));
+            var newDiscount = new Discount(dto.Code, stripePromotionCodeId, dto.RequiredCartTotalValue ?? 0, expiresDate, _timeProvider.GetUtcNow().DateTime);
+            coupon.AddDiscount(newDiscount);
             await _dbContext.SaveChangesAsync();
             _logger.LogInformation("Discount with given details: {@discount} was created for coupon: {coupon} by {@user}.", dto, coupon.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            return newDiscount.Id;
         }
 
         public async Task ActivateAsync(int couponId, int discountId, CancellationToken cancellationToken = default)

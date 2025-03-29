@@ -35,6 +35,8 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         {
             return Ok(new ApiResponse<PagedResult<T>>(HttpStatusCode.OK, model));
         }
+        protected ActionResult<ApiResponse<object>> Created(string id)
+            => new ApiResponse<object>(HttpStatusCode.Created, new { Id = id });
         //private string FirstCharToUpper(string input) =>
         //    input switch
         //{

@@ -39,5 +39,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
                 Status = (int)HttpStatusCode.NotFound
             });
         }
+        protected ActionResult<ApiResponse<object>> Created(string id)
+            => new ApiResponse<object>(HttpStatusCode.Created, new { Id = id});
     }
 }

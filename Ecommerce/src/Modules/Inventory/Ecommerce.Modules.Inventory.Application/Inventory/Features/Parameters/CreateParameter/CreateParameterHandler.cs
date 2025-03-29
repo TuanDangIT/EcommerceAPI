@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.CreateParameter
 {
-    internal sealed class CreateParameterHandler : ICommandHandler<CreateParameter>
+    internal sealed class CreateParameterHandler : ICommandHandler<CreateParameter, Guid>
     {
         private readonly IParameterRepository _parameterRepository;
         private readonly ILogger<CreateParameterHandler> _logger;
@@ -25,12 +25,13 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.
             _logger = logger;
             _contextService = contextService;
         }
-        public async Task Handle(CreateParameter request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateParameter request, CancellationToken cancellationToken)
         {
             var parameter = new Parameter(request.Name);
-            await _parameterRepository.AddAsync(parameter, cancellationToken);
+            var parameterId = await _parameterRepository.AddAsync(parameter, cancellationToken);
             _logger.LogInformation("Parameter: {@parameter} was created by {@user}.",
                 parameter, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            return parameterId;
 
         }
     }

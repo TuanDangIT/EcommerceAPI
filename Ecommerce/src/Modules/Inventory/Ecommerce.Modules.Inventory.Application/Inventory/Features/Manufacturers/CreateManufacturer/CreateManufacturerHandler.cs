@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacturers.CreateManufacturer
 {
-    internal sealed class CreateManufacturerHandler : ICommandHandler<CreateManufacturer>
+    internal sealed class CreateManufacturerHandler : ICommandHandler<CreateManufacturer, Guid>
     {
         private readonly IManufacturerRepository _manufacturerRepository;
         private readonly ILogger<CreateManufacturerHandler> _logger;
@@ -25,12 +25,13 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacture
             _logger = logger;
             _contextService = contextService;
         }
-        public async Task Handle(CreateManufacturer request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateManufacturer request, CancellationToken cancellationToken)
         {
             var manufacturer = new Manufacturer(request.Name);
-            await _manufacturerRepository.AddAsync(manufacturer, cancellationToken);
+            var manufacturerId = await _manufacturerRepository.AddAsync(manufacturer, cancellationToken);
             _logger.LogInformation("Manufacturer: {@manufacturer} was created by {@user}.",
                 manufacturer, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            return manufacturerId;
         }
     }
 }

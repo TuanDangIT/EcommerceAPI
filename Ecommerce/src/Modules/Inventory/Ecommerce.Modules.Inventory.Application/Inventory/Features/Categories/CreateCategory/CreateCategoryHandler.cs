@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.CreateCategory
 {
-    internal sealed class CreateCategoryHandler : ICommandHandler<CreateCategory>
+    internal sealed class CreateCategoryHandler : ICommandHandler<CreateCategory, Guid>
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly ILogger<CreateCategoryHandler> _logger;
@@ -25,12 +25,13 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Categories.
             _logger = logger;
             _contextService = contextService;
         }
-        public async Task Handle(CreateCategory request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateCategory request, CancellationToken cancellationToken)
         {
             var category = new Category(request.Name);
-            await _categoryRepository.AddAsync(category, cancellationToken);
+            var categoryId = await _categoryRepository.AddAsync(category, cancellationToken);
             _logger.LogInformation("Category was created by {@user}.", 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            return categoryId;
         }
     }
 }

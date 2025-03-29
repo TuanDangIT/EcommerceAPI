@@ -46,10 +46,11 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [HttpPost]
-        public async Task<ActionResult> CreateDiscount([FromRoute] int couponId, [FromBody] DiscountCreateDto dto, CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<object>>> CreateDiscount([FromRoute] int couponId, [FromBody] DiscountCreateDto dto, CancellationToken cancellationToken)
         {
-            await _discountService.CreateAsync(couponId, dto, cancellationToken);
-            return NoContent();
+            var discountId = await _discountService.CreateAsync(couponId, dto, cancellationToken);
+            Response.Headers.Append("discount-id", discountId.ToString());
+            return Created(discountId.ToString());
         }
 
         [SwaggerOperation("Activates a discount", "Activate a discount to able to use it in a cart.")]

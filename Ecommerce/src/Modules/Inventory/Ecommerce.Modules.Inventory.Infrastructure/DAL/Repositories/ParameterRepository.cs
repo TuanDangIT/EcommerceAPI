@@ -17,10 +17,11 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task AddAsync(Parameter parameter, CancellationToken cancellationToken = default)
+        public async Task<Guid> AddAsync(Parameter parameter, CancellationToken cancellationToken = default)
         {
             await _dbContext.AddAsync(parameter, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
+            return parameter.Id;
         }
 
         public async Task AddManyAsync(IEnumerable<Parameter> parameters, CancellationToken cancellationToken = default)

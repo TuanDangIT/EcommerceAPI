@@ -44,15 +44,16 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             => CursorPagedResult(await _mediator.Send(query, cancellationToken));
 
         [SwaggerOperation("Creates an invoice")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Creates a manufacturer and returns it's invoice number.", typeof(string))]
+        [SwaggerResponse(StatusCodes.Status201Created, "Creates a manufacturer and returns it's invoice number.", typeof(string))]
         [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
         [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpPost]
-        public async Task<ActionResult<string>> CreateInvoice([FromRoute] Guid orderId, 
+        public async Task<ActionResult<ApiResponse<object>>> CreateInvoice([FromRoute] Guid orderId, 
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new CreateInvoice(orderId), cancellationToken);
-            return result;
+            var invoiceNo = await _mediator.Send(new CreateInvoice(orderId), cancellationToken);
+            Response.Headers.Append("invoice-no", invoiceNo);
+            return Created(default(string), new ApiResponse<object>(System.Net.HttpStatusCode.Created, new { InvoiceNo = invoiceNo }));
         }
 
         [SwaggerOperation("Downloads an invoice")]

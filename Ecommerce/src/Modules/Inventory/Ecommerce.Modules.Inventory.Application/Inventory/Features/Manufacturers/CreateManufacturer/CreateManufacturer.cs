@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Manufacturers.CreateManufacturer
 {
-    public sealed record class CreateManufacturer(string Name) : ICommand;
+    public sealed record class CreateManufacturer(string Name) : ICommand<Guid>;
 }

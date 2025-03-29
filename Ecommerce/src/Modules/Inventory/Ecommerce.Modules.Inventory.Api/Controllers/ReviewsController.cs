@@ -52,11 +52,12 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status201Created)]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [HttpPost]
-        public async Task<ActionResult> AddReview([FromRoute] Guid auctionId, [FromForm]AddReview command, 
+        public async Task<ActionResult<ApiResponse<object>>> AddReview([FromRoute] Guid auctionId, [FromForm]AddReview command, 
             CancellationToken cancellationToken)
         {
-            await _mediator.Send(command with { AuctionId = auctionId }, cancellationToken);
-            return NoContent();
+            var reviewId = await _mediator.Send(command with { AuctionId = auctionId }, cancellationToken);
+            Response.Headers.Append("review-id", reviewId.ToString());
+            return Created(reviewId.ToString());
         }
 
         [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]

@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Parameters.CreateParameter
 {
-    public sealed record class CreateParameter(string Name) : ICommand;
+    public sealed record class CreateParameter(string Name) : ICommand<Guid>;
 }

@@ -36,10 +36,11 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerOperation("Creates a category")]
         [SwaggerResponse(StatusCodes.Status201Created)]
         [HttpPost]
-        public async Task<ActionResult> CreateCategory([FromBody] CreateCategory command, CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<object>>> CreateCategory([FromBody] CreateCategory command, CancellationToken cancellationToken)
         {
-            await _mediator.Send(command, cancellationToken);
-            return Created();
+            var categoryId = await _mediator.Send(command, cancellationToken);
+            Response.Headers.Append("category-id", categoryId.ToString());
+            return Created(categoryId.ToString());
         }
 
         [SwaggerOperation("Gets offset paginated categories")]

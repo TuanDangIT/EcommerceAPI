@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateShipment
 {
-    public sealed record class CreateShipment(IEnumerable<ParcelDto> Parcels) : ICommand
+    public sealed record class CreateShipment(IEnumerable<ParcelDto> Parcels) : ICommand<int>
     {
         [SwaggerIgnore]
         public Guid OrderId { get; init; }

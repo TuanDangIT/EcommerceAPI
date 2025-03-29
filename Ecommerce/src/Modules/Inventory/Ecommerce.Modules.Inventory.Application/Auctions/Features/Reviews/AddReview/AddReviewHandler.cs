@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.AddReview
 {
-    internal sealed class AddReviewHandler : ICommandHandler<AddReview>
+    internal sealed class AddReviewHandler : ICommandHandler<AddReview, Guid>
     {
         private readonly IAuctionRepository _auctionRepository;
         private readonly IReviewRepository _reviewRepository;
@@ -27,7 +27,7 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.AddRe
             _contextService = contextService;
             _logger = logger;
         }
-        public async Task Handle(AddReview request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(AddReview request, CancellationToken cancellationToken)
         {
             var auction = await _auctionRepository.GetAsync(request.AuctionId, cancellationToken, a => a.Reviews) ?? 
                 throw new AuctionNotFoundException(request.AuctionId);
@@ -36,14 +36,16 @@ namespace Ecommerce.Modules.Inventory.Application.Auctions.Features.Review.AddRe
                 _contextService.Identity.Username :
                 throw new UserIsNotAuthenticatedException();
             var customerId = _contextService.Identity.Id;
-            auction.AddReview(new Domain.Auctions.Entities.Review(
+            var review = new Domain.Auctions.Entities.Review(
                 username,
                 customerId,
                 request.Text,
-                request.Grade));
+                request.Grade);
+            auction.AddReview(review);
             await _reviewRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Review: {@review} was added to auction: {auctionId} by {@user}.", new { request.Grade, request.Text },
                 request.AuctionId, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            return review.Id;
         }
     }
 }

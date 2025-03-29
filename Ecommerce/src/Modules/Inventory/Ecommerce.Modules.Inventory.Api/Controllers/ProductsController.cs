@@ -45,10 +45,10 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status201Created, "Creates a product and returns it's identifier", typeof(Guid))]
         [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [HttpPost]
-        public async Task<ActionResult> CreateProduct([FromForm] CreateProduct command, CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<object>>> CreateProduct([FromForm] CreateProduct command, CancellationToken cancellationToken)
         {
             var productId = await _mediator.Send(command, cancellationToken);
-            return CreatedAtAction(nameof(GetProduct), new { id = productId }, productId);
+            return CreatedAtAction(nameof(GetProduct), new { id = productId }, new ApiResponse<object>(HttpStatusCode.Created, new { Id = productId }));
         }
 
         [SwaggerOperation("Imports products", "Imports products from a csv file.")]
