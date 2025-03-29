@@ -573,6 +573,7 @@ API Improvement Task List:
 - [ ] Autocomplete of customer's details when logged in.
 - [ ] Make discount Id as type Guid to facilite integration with carts module.
 - [ ] Put submit return and complaint in it's respective controllers, instead of having it in OrdersController.
+- [ ] Make API more resilient to errors by implementing rollbacks for extenal services such as Stripe, InPost or Azurite.
 
 # Technology
 
