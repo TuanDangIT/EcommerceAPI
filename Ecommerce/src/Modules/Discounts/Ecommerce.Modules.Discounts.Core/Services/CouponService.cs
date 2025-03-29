@@ -101,24 +101,48 @@ namespace Ecommerce.Modules.Discounts.Core.Services
 
         public async Task<int> CreateAsync(NominalCouponCreateDto dto, CancellationToken cancellationToken = default)
         {
-            var stripeCouponId = await _paymentProcessorService.CreateCouponAsync(dto, cancellationToken);
-            var coupon = new NominalCoupon(dto.Name, dto.NominalValue, stripeCouponId);
-            await _dbContext.Coupons.AddAsync(coupon);
-            await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Nominal coupon with given details: {@coupon} was created by {@user}.", dto, 
-                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-            return coupon.Id;
+            string? stripeCouponId = null;
+            try
+            {
+                stripeCouponId = await _paymentProcessorService.CreateCouponAsync(dto, cancellationToken);
+                var coupon = new NominalCoupon(dto.Name, dto.NominalValue, stripeCouponId);
+                await _dbContext.Coupons.AddAsync(coupon);
+                await _dbContext.SaveChangesAsync();
+                _logger.LogInformation("Nominal coupon with given details: {@coupon} was created by {@user}.", dto,
+                    new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+                return coupon.Id;
+            }
+            catch(Exception)
+            {
+                if(!string.IsNullOrEmpty(stripeCouponId))
+                {
+                    await _paymentProcessorService.DeleteCouponAsync(stripeCouponId, cancellationToken);
+                }
+                throw;
+            }
         }
 
         public async Task<int> CreateAsync(PercentageCouponCreateDto dto, CancellationToken cancellationToken = default)
         {
-            var stripeCouponId = await _paymentProcessorService.CreateCouponAsync(dto, cancellationToken);
-            var coupon = new PercentageCoupon(dto.Name, dto.Percent, stripeCouponId);
-            await _dbContext.Coupons.AddAsync(coupon);
-            await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Percentage coupon with given details: {@coupon} was created by {@user}.", dto,
-                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-            return coupon.Id;
+            string? stripeCouponId = null;
+            try
+            {
+                stripeCouponId = await _paymentProcessorService.CreateCouponAsync(dto, cancellationToken);
+                var coupon = new PercentageCoupon(dto.Name, dto.Percent, stripeCouponId);
+                await _dbContext.Coupons.AddAsync(coupon);
+                await _dbContext.SaveChangesAsync();
+                _logger.LogInformation("Percentage coupon with given details: {@coupon} was created by {@user}.", dto,
+                    new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+                return coupon.Id;
+            }
+            catch (Exception)
+            {
+                if (!string.IsNullOrEmpty(stripeCouponId))
+                {
+                    await _paymentProcessorService.DeleteCouponAsync(stripeCouponId, cancellationToken);
+                }
+                throw;
+            }
         }
 
         public async Task DeleteAsync(int couponId, CancellationToken cancellationToken = default)

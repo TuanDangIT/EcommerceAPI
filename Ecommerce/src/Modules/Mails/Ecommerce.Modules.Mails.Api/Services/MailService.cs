@@ -15,6 +15,7 @@ using MailKit.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using MimeKit;
 using System;
 using System.Collections.Generic;
@@ -122,49 +123,62 @@ namespace Ecommerce.Modules.Mails.Api.Services
 
         public async Task SendAsync(MailSendDto dto)
         {
-            var customer = await GetCustomerAsync(dto.CustomerId);
-            var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(_mailOptions.Email));
-            email.To.Add(MailboxAddress.Parse(dto.To));
-            email.Subject = dto.Subject;
-            var stream = new MemoryStream();
-            var bodyHtml = new TextPart(MimeKit.Text.TextFormat.Html)
+            List<string> filePaths = [];
+            try
             {
-                Text = dto.Body
-            };
-            var multipart = new Multipart("mixed");
-            if (dto.Files is not null && dto.Files.Any())
-            {
-                foreach(var file in dto.Files)
+                var customer = await GetCustomerAsync(dto.CustomerId);
+                var email = new MimeMessage();
+                email.From.Add(MailboxAddress.Parse(_mailOptions.Email));
+                email.To.Add(MailboxAddress.Parse(dto.To));
+                email.Subject = dto.Subject;
+                var stream = new MemoryStream();
+                var bodyHtml = new TextPart(MimeKit.Text.TextFormat.Html)
                 {
-                    await file.CopyToAsync(stream);
-                    multipart.Add(new MimePart(file.ContentType)
+                    Text = dto.Body
+                };
+                var multipart = new Multipart("mixed");
+                if (dto.Files is not null && dto.Files.Any())
+                {
+                    foreach (var file in dto.Files)
                     {
-                        Content = new MimeContent(stream),
-                        ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
-                        ContentTransferEncoding = ContentEncoding.Base64,
-                        FileName = file.FileName
-                    });
-                    await _blobStorageService.UploadAsync(file, file.FileName, _containerName);
+                        await file.CopyToAsync(stream);
+                        multipart.Add(new MimePart(file.ContentType)
+                        {
+                            Content = new MimeContent(stream),
+                            ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+                            ContentTransferEncoding = ContentEncoding.Base64,
+                            FileName = file.FileName
+                        });
+                        var filePath = await _blobStorageService.UploadAsync(file, file.FileName, _containerName);
+                        filePaths.Add(filePath);
+                    }
                 }
+                multipart.Add(bodyHtml);
+                email.Body = multipart;
+                using var smtp = new SmtpClient();
+                await smtp.ConnectAsync(_mailOptions.SmtpHost, _mailOptions.SmtpPort, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(_mailOptions.Email, _mailOptions.Password);
+                await smtp.SendAsync(email);
+                await smtp.DisconnectAsync(true);
+                await stream.DisposeAsync();
+                if (customer is not null)
+                {
+                    await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, customer, dto.OrderId, filePaths));
+                }
+                else
+                {
+                    await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, dto.OrderId, filePaths));
+                }
+                await _dbContext.SaveChangesAsync();
             }
-            multipart.Add(bodyHtml);
-            email.Body = multipart;
-            using var smtp = new SmtpClient();
-            await smtp.ConnectAsync(_mailOptions.SmtpHost, _mailOptions.SmtpPort, SecureSocketOptions.StartTls);
-            await smtp.AuthenticateAsync(_mailOptions.Email, _mailOptions.Password);
-            await smtp.SendAsync(email);
-            await smtp.DisconnectAsync(true);
-            await stream.DisposeAsync();
-            if(customer is not null)
+            catch
             {
-                await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, customer, dto.OrderId, dto.Files?.Select(f => f.FileName)));
+                if (!filePaths.IsNullOrEmpty())
+                {
+                    await _blobStorageService.DeleteManyAsync(filePaths, _containerName);
+                }
+                throw;
             }
-            else
-            {
-                await _dbContext.Mails.AddAsync(new Mail(_mailOptions.Email, dto.To, dto.Subject, dto.Body, dto.OrderId, dto.Files?.Select(f => f.FileName)));
-            }
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task SendAsync(MailSendDefaultBodyDto dto)

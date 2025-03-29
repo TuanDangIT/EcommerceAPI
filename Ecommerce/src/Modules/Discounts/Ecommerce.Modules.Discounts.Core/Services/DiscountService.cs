@@ -45,23 +45,35 @@ namespace Ecommerce.Modules.Discounts.Core.Services
 
         public async Task<int> CreateAsync(int couponId, DiscountCreateDto dto, CancellationToken cancellationToken = default)
         {
-            var discount = await _dbContext.Discounts
+            string? stripePromotionCodeId = null;
+            try
+            {
+                var discount = await _dbContext.Discounts
                 .Select(d => d.Code)
                 .FirstOrDefaultAsync(code => code == dto.Code, cancellationToken);
-            if (discount is not null)
-            {
-                throw new DiscountCodeAlreadyInUseException(dto.Code);
+                if (discount is not null)
+                {
+                    throw new DiscountCodeAlreadyInUseException(dto.Code);
+                }
+                var coupon = await _dbContext.Coupons.FirstOrDefaultAsync(c => c.Id == couponId, cancellationToken) ??
+                    throw new CouponNotFoundException(couponId);
+                stripePromotionCodeId = await _paymentProcessorService.CreateDiscountAsync(coupon.StripeCouponId, dto, cancellationToken);
+                var expiresDate = dto.ExpiresDate is null ? dto.ExpiresDate : DateTime.SpecifyKind((DateTime)dto.ExpiresDate, DateTimeKind.Utc);
+                var newDiscount = new Discount(dto.Code, stripePromotionCodeId, dto.RequiredCartTotalValue ?? 0, expiresDate, _timeProvider.GetUtcNow().DateTime);
+                coupon.AddDiscount(newDiscount);
+                await _dbContext.SaveChangesAsync();
+                _logger.LogInformation("Discount with given details: {@discount} was created for coupon: {coupon} by {@user}.", dto, coupon.Id,
+                    new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+                return newDiscount.Id;
             }
-            var coupon = await _dbContext.Coupons.FirstOrDefaultAsync(c => c.Id == couponId, cancellationToken) ?? 
-                throw new CouponNotFoundException(couponId);
-            var stripePromotionCodeId = await _paymentProcessorService.CreateDiscountAsync(coupon.StripeCouponId, dto, cancellationToken);
-            var expiresDate = dto.ExpiresDate is null ? dto.ExpiresDate :  DateTime.SpecifyKind((DateTime)dto.ExpiresDate, DateTimeKind.Utc);
-            var newDiscount = new Discount(dto.Code, stripePromotionCodeId, dto.RequiredCartTotalValue ?? 0, expiresDate, _timeProvider.GetUtcNow().DateTime);
-            coupon.AddDiscount(newDiscount);
-            await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Discount with given details: {@discount} was created for coupon: {coupon} by {@user}.", dto, coupon.Id, 
-                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-            return newDiscount.Id;
+            catch (Exception)
+            {
+                if(!string.IsNullOrEmpty(stripePromotionCodeId))
+                {
+                    await _paymentProcessorService.DeactivateDiscountAsync(stripePromotionCodeId, cancellationToken);
+                }
+                throw;
+            }
         }
 
         public async Task ActivateAsync(int couponId, int discountId, CancellationToken cancellationToken = default)

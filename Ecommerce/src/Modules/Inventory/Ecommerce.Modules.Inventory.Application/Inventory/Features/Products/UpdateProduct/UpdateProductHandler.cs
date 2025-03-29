@@ -67,7 +67,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
             product.ChangeManufacturer(manufacturer);
             product.ChangeCategory(category);
             var productParameters = await ChangeProductParametersAsync(request.ProductParameters, cancellationToken);
-            product.ChangeParameters(productParameters);
+            product.ChangeParameters(productParameters); 
             await _productRepository.DeleteProductParametersAndImagesRelatedToProduct(request.Id, cancellationToken);
             await _productRepository.UpdateAsync();
             await UploadImagesToBlobStorageAsync(request.Images, product);

@@ -8,6 +8,7 @@ using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,33 +41,45 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Cr
         }
         public async Task<Guid> Handle(CreateProduct request, CancellationToken cancellationToken)
         {
-            var manufacturer = await GetManufacturerIfSpecifiedAsync(request.ManufacturerId, cancellationToken);
-            var category = await GetCategoryIfSpecifiedAsync(request.CategoryId, cancellationToken);
-            var productParameters = await CreateProductParametersAsync(request.ProductParameters, cancellationToken);
-            var imageList = await UploadImagesToBlobStorageAsync(request.Images);
-            var productId = Guid.NewGuid();
-            var product = new Product
-                (
-                    id: productId,
-                    sku: request.SKU,
-                    ean: request.EAN,
-                    name: request.Name,
-                    price: request.Price,
-                    vat: request.VAT,
-                    quantity: request.Quantity,
-                    location: request.Location,
-                    description: request.Description,
-                    additionalDescription: request.AdditionalDescription,
-                    productParameters: productParameters,
-                    manufacturer: manufacturer,
-                    category: category,
-                    images: imageList.ToList(),
-                    reserved: request.Quantity is null ? null : 0
-                );
-            await _productRepository.AddAsync(product);
-            _logger.LogInformation("Product was created by {@user}.",
-                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-            return productId;
+            IEnumerable<Image>? imageList = null;
+            try
+            {
+                var manufacturer = await GetManufacturerIfSpecifiedAsync(request.ManufacturerId, cancellationToken);
+                var category = await GetCategoryIfSpecifiedAsync(request.CategoryId, cancellationToken);
+                var productParameters = await CreateProductParametersAsync(request.ProductParameters, cancellationToken);
+                imageList = await UploadImagesToBlobStorageAsync(request.Images);
+                var productId = Guid.NewGuid();
+                var product = new Product
+                    (
+                        id: productId,
+                        sku: request.SKU,
+                        ean: request.EAN,
+                        name: request.Name,
+                        price: request.Price,
+                        vat: request.VAT,
+                        quantity: request.Quantity,
+                        location: request.Location,
+                        description: request.Description,
+                        additionalDescription: request.AdditionalDescription,
+                        productParameters: productParameters,
+                        manufacturer: manufacturer,
+                        category: category,
+                        images: imageList.ToList(),
+                        reserved: request.Quantity is null ? null : 0
+                    );
+                await _productRepository.AddAsync(product);
+                _logger.LogInformation("Product was created by {@user}.",
+                    new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+                return productId;
+            }
+            catch (Exception)
+            {
+                if (!imageList.IsNullOrEmpty())
+                {
+                    await _blobStorageService.DeleteManyAsync(imageList!.Select(i => i.ToString())!, _containerName);
+                }
+                throw;
+            }
         }
         private async Task<Manufacturer?> GetManufacturerIfSpecifiedAsync(Guid? manufacturerId, CancellationToken cancellationToken)
         {

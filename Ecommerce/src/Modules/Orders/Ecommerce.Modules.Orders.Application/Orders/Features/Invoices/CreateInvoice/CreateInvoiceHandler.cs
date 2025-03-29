@@ -52,29 +52,42 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInv
         }
         public async Task<string> Handle(CreateInvoice request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
+            string? invoiceUri = null;
+            string? invoiceNo = null;
+            try
+            {
+                var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
                 query => query.Include(o => o.Invoice),
-                query => query.Include(o => o.Customer)) ?? 
+                query => query.Include(o => o.Customer)) ??
                 throw new OrderNotFoundException(request.OrderId);
-            if(order.Status == OrderStatus.Draft)
-            {
-                throw new OrderDraftException(order.Id);
+                if (order.Status == OrderStatus.Draft)
+                {
+                    throw new OrderDraftException(order.Id);
+                }
+                if (order.Status != OrderStatus.Placed && order.Status != OrderStatus.ParcelPacked)
+                {
+                    throw new InvoiceCannotCreateInvoiceException(order.Id, order.Status.ToString());
+                }
+                if (order.HasInvoice)
+                {
+                    throw new InvoiceAlreadyCreatedException(order.Id);
+                }
+                (invoiceNo, var file) = await _invoiceService.CreateInvoiceAsync(order);
+                invoiceUri = await _blobStorageService.UploadAsync(file, invoiceNo, _containerName, cancellationToken);
+                await _invoiceRepository.CreateAsync(new Domain.Orders.Entities.Invoice(invoiceNo, order));
+                _logger.LogInformation("Invoice: {invoiceNo} was created for order: {orderId} by {@user}.", invoiceNo, order.Id,
+                    new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+                await _messageBroker.PublishAsync(new InvoiceCreated(order.Id, order.Customer!.UserId, order.Customer.FirstName, order.Customer.Email, invoiceNo));
+                return invoiceNo;
             }
-            if(order.Status != OrderStatus.Placed && order.Status != OrderStatus.ParcelPacked)
+            catch (Exception)
             {
-                throw new InvoiceCannotCreateInvoiceException(order.Id, order.Status.ToString());
+                if (!string.IsNullOrEmpty(invoiceUri) && !string.IsNullOrEmpty(invoiceNo))
+                {
+                    await _blobStorageService.DeleteAsync(invoiceNo, _containerName);
+                }
+                throw;
             }
-            if (order.HasInvoice)
-            {
-                throw new InvoiceAlreadyCreatedException(order.Id);
-            }
-            (var invoiceNo, var file) = await _invoiceService.CreateInvoiceAsync(order);
-            await _blobStorageService.UploadAsync(file, invoiceNo, _containerName, cancellationToken);
-            await _invoiceRepository.CreateAsync(new Domain.Orders.Entities.Invoice(invoiceNo, order));
-            _logger.LogInformation("Invoice: {invoiceNo} was created for order: {orderId} by {@user}.", invoiceNo, order.Id, 
-                new { _contextService.Identity!.Username, _contextService.Identity!.Id });
-            await _messageBroker.PublishAsync(new InvoiceCreated(order.Id, order.Customer!.UserId, order.Customer.FirstName, order.Customer.Email, invoiceNo));
-            return invoiceNo;
         }
     }
 }
