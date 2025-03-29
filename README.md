@@ -32,7 +32,12 @@ Thank you for your understanding and interest!
     - [Cart](#cart)
   - [Architecture](#architecture)
   - [File structure](#file-structure)
+  - [Payment processing](#payment-processing)
+  - [Delivery system](#delivery-system)
 - [Getting started](#getting-started)
+  - [appsettings.json](#appsettingsjson)
+  - [Docker](#docker)
+  - [Csv import file](#csv-import-file)
 - [Documentation](#documentation)
   - [Authentication and Authorization](#authentication-and-authorization)
   - [Pagination](#pagination)
@@ -203,7 +208,82 @@ Everything will wrapped as a modular monolith.
 
 ![Solution file structure of the API](/assets/file-structure.png)
 
+## Payment processing
+
+The system uses Stripe for payment processing. However, it currently operates in test mode rather than the official production version. Stripe is a financial technology company that enables businesses to process payments, manage subscriptions, and handle financial transactions securely.
+
+After invoking place order a checkout link will be given to the user in a HTTP response. To complete the transaction successfully, use the test card number **4242 4242 4242 4242**. Other card details can be customized freely.
+
+![Stripe success card details](/assets/stripe-card-details.png)
+
+## Delivery system
+
+For deliveries, the system integrates with InPost, a Polish logistics company specializing in automated parcel lockers and courier services. Currently, InPost is the only supported courier in the API. Future updates will introduce support for international providers such as DHL, DPD, and GLS.
+
 # Getting started
+
+This section provides essential steps to quickly set up and run the application.
+
+## appsettings.json
+
+Before getting started, you need to configure essential details for external services such as delivery and payment systems to ensure the API functions correctly. This is managed through a centralized configuration called appsettings.
+
+The configuration is divided into two files:
+
+- One for general settings, which serve as a base for all environments.
+
+- One specifically for Development settings.
+
+In the future, an additional file will be added for Production.
+
+Besides key details, the configuration also includes settings for pagination, authentication, and other adjustable parameters.
+
+Most important details to fill are:
+
+- Stripe\_\_ApiKey
+- Stripe \_\_ WebhookSecret (this can be found on stripe dashboard or in stripe CLI in docker: [Docker webhook secret in stripe CLI](/assets/docker-webhook-secret.png))
+- InPost\_\_OrganizationId
+- InPost\_\_ApiKey
+- Mail\_\_Email
+- Mail\_\_Password
+- Mail \_\_SmtpHost and \_\_SmtpPort (default provider is Gmail, but this can be changed)
+- Company details
+
+Access the configuration files here: [appsettings.json](/Ecommerce/src/Bootstrapper/Ecommerce.Bootstrapper/appsettings.json) and [appsettings.Development.json](/Ecommerce/src/Bootstrapper/Ecommerce.Bootstrapper/appsettings.Development.json).
+
+_Note: All these details can also be changed via docker-compose.yml file where you can manage them as environment variables_
+
+## Docker
+
+After configuring the necessary information in the appsettings.json file, you have two options:
+
+- Manual Setup – Install an IDE like Visual Studio along with external dependencies such as PostgreSQL and Seq on your local machine.
+
+- [Docker](https://www.docker.com) – Use Docker to run all dependencies in a containerized environment, eliminating the need for manual installation and keeping your system clean.
+
+With Docker, everything runs in an isolated environment, ensuring consistency across different setups.
+
+The application requires the following external services:
+
+- PostgreSQL
+- Seq
+- Stripe CLI
+- Azurite Emulator
+
+To start the infrastructure using [Docker](https://www.docker.com), run:
+
+```
+docker compose up -d
+```
+
+After executing the command, all required containers should be up and running:
+![Docker desktop containers](/assets/docker.png)
+
+## Csv import file
+
+In the assets, there is a CSV import file named [ProductImportFile.csv](/assets/ProductImportFile.csv), which contains sample products that can be added to the database. This helps streamline the user testing experience, allowing for a quick start and easy API testing.
+The file includes only a few products by default, but you can add more entries directly, which is faster than manual insertion via API endpoints.
+Please keep in mind the constraints on certain properties, such as EAN, which must be exactly 13 characters long. Otherwise, a database error will be thrown. _While these constraints may not yet be enforced, they will be implemented soon in future commits_.
 
 # Documentation
 
@@ -485,6 +565,10 @@ API Improvement Task List:
 - [ ] Allow users/company to modify settings such as currency and other editible areas via `appsettings` or API.
 - [ ] Enhance authorization for reviews, orders, returns when submitting return (property customerID must be equal to context CustomerId) etc. to able to modify only if the user ID matches CustomerId property in the entity.
 - [ ] Add Github Actions CI/CD after finishing unit and integration tests.
+- [ ] Allow CSV exports for invoices and orders.
+- [ ] Enable invoice editting.
+- [ ] Validate CSV product imports.
+- [ ] Autocomplete of customer's details when logged in.
 
 # Technology
 
@@ -500,10 +584,10 @@ List of technologies, frameworks and libraries used for implementation:
 - Serilog
 - Seq
 - Azure Blob Storage
-- Azurite
+- Azurite Emulator
 - Scrutor
 - Sieve
-- Stripe.net
+- Stripe/Stripe .NET (test environemt)
 - Polly
 - Coravel
 - CsvHelper
