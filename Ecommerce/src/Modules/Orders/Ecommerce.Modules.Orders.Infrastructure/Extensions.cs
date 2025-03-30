@@ -26,7 +26,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure
 {
     public static class Extensions
     {
-        private const string _inPost = "inpost";
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
@@ -36,15 +35,14 @@ namespace Ecommerce.Modules.Orders.Infrastructure
             services.AddScoped<IComplaintRepository, ComplaintRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
             services.AddSingleton<IPaymentProcessorService, StripeService>();
-            services.AddScoped<IDeliveryService, InpostService>();
             services.AddScoped<IOrdersUnitOfWork, OrdersUnitOfWork>();
             services.AddSingleton<IInvoiceService, InvoiceService>();
-            services.AddHttpClient(_inPost, (sp, client) =>
+            services.AddHttpClient<IDeliveryService, InpostService>((sp, client) =>
             {
                 var inPostOptions = sp.GetRequiredService<InPostOptions>();
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer" + " " + inPostOptions.ApiKey);
                 client.BaseAddress = new Uri(inPostOptions.BaseUrl);
-            });
+            }).AddStandardResilienceHandler();
             services.AddSieve();
             return services;
         }

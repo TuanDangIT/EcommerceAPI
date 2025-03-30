@@ -9,7 +9,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Services
 {
     public interface IDeliveryService
     {
-        Task<(int Id, string TrackingNumber)> CreateShipmentAsync(Shipment shipment);
+        Task<(int Id, string TrackingNumber)> CreateShipmentAsync(Shipment shipment, CancellationToken cancellationToken = default);
         Task<(Stream FileStream, string MimeType, string FileName)> GetLabelAsync(Shipment shipment, CancellationToken cancellationToken = default);
     }
 }

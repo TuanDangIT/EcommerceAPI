@@ -53,7 +53,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
             });
             var shipment = new Domain.Orders.Entities.Shipment(receiver, parcels, order.TotalSum);
             order.AddShipment(shipment);
-            var (labelId, trackingNumber) = await _deliveryService.CreateShipmentAsync(shipment);
+            var (labelId, trackingNumber) = await _deliveryService.CreateShipmentAsync(shipment, cancellationToken);
             shipment.SetLabelId(labelId.ToString());
             shipment.SetTrackingNumber(trackingNumber);
             shipment.SetLabelCreatedAt(_timeProvider.GetUtcNow().UtcDateTime);
