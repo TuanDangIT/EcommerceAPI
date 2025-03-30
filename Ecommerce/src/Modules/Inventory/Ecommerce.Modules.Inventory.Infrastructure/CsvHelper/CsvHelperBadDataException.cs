@@ -9,8 +9,12 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.CsvHelper
 {
     internal class CsvHelperBadDataException : EcommerceException
     {
-        public CsvHelperBadDataException() : base("One or more datas are incorrect.")
+        public CsvHelperBadDataException(string header, int row, string value) : base($"{header} in row: {row} has invalid value: {value}.")
         {
+        }
+        public CsvHelperBadDataException(string header, int row) : base($"{header} in row: {row} cannot be empty;")
+        {
+            
         }
     }
 }

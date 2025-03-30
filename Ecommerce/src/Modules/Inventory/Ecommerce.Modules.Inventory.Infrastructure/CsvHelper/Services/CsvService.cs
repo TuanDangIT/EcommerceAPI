@@ -18,19 +18,51 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.CsvHelper.Services
     {
         public IEnumerable<ProductCsvRecordDto> ParseCsvFile(IFormFile file, char delimiter)
         {
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            try
             {
-                Encoding = Encoding.UTF8,
-                HasHeaderRecord = true,
-                Delimiter = delimiter.ToString(),
-                BadDataFound = _ => throw new CsvHelperBadDataException()
-            };
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    Encoding = Encoding.UTF8,
+                    HasHeaderRecord = true,
+                    Delimiter = delimiter.ToString(),
+                    //BadDataFound = args =>
+                    //{
+                    //    var currentIndex = args.Context.Reader?.CurrentIndex ?? throw new NullReferenceException();
+                    //    var header = args.Context.Reader?.HeaderRecord![currentIndex]!;
+                    //    var rowNumber = args.Context.Parser?.Row ?? throw new NullReferenceException();
+                    //    var isFieldEmpty = args.Field == "";
+                    //    if (isFieldEmpty)
+                    //    {
+                    //        throw new CsvHelperBadDataException(header, rowNumber, args.Field);
+                    //    }
+                    //    else
+                    //    {
+                    //        throw new CsvHelperBadDataException(header, rowNumber);
+                    //    }
+                    //},
+                };
 
-            using var reader = new StreamReader(file.OpenReadStream());
-            using var csv = new CsvReader(reader, config);
+                using var reader = new StreamReader(file.OpenReadStream());
+                using var csv = new CsvReader(reader, config);
 
-            csv.Context.RegisterClassMap(new ProductCsvClassMap(delimiter is ',' ? ';' : ','));
-            return csv.GetRecords<ProductCsvRecordDto>().ToList();
+                csv.Context.RegisterClassMap(new ProductCsvClassMap(delimiter is ',' ? ';' : ','));
+                return csv.GetRecords<ProductCsvRecordDto>().ToList();
+
+            }catch(FieldValidationException ex)
+            {
+                var currentIndex = ex.Context?.Reader?.CurrentIndex ?? throw new NullReferenceException();
+                var header = ex.Context.Reader?.HeaderRecord![currentIndex]!;
+                var rowNumber = ex.Context.Parser?.Row - 1 ?? throw new NullReferenceException();
+                var isFieldEmpty = ex.Field == "";
+                if (!isFieldEmpty)
+                {
+                    throw new CsvHelperBadDataException(header, rowNumber, ex.Field);
+                }
+                else
+                {
+                    throw new CsvHelperBadDataException(header, rowNumber);
+                }
+            }
         }
     }
 }

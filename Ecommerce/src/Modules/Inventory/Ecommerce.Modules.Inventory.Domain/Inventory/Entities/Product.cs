@@ -49,12 +49,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             , List<ProductParameter> productParameters, Manufacturer? manufacturer, Category? category
             , List<Image> images, string? ean, int? quantity, string? location, string? additionalDescription, int? reserved)
         {
-            IsPriceValid(price);
-            if(quantity is not null)
-            {
-                IsQuantityValid((int)quantity);
-            }
-            IsVatValid(vat);
+            Validate(price, quantity, vat, sku, ean, location, name);
             Id = id;
             SKU = sku;
             EAN = ean;
@@ -75,12 +70,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             , List<ProductParameter> productParameters, Manufacturer manufacturer, Category category
             , List<Image> images, string? ean, int? quantity, string? location, string? additionalDescription, int? reserved)
         {
-            IsPriceValid(price);
-            if (quantity is not null)
-            {
-                IsQuantityValid((int)quantity);
-            }
-            IsVatValid(vat);
+            Validate(price, quantity, vat, sku, ean, location, name);
             SKU = sku;
             EAN = ean;
             Name = name;
@@ -145,12 +135,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public void ChangeBaseDetails(string sku, string name, decimal price, int vat, string description, string? ean = null, 
             int? quantity = null, string? location = null, string? additionalDescription = null, int? reserved = null)
         {
-            IsPriceValid(price);
-            if(quantity is not null)
-            {
-                IsQuantityValid((int)quantity);
-            }
-            IsVatValid(vat);
+            Validate(price, quantity, vat, sku, ean, location, name);
             SKU = sku;
             EAN = ean;
             Name = name;
@@ -228,87 +213,69 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             Reserved = reserved;
             IncrementVersion();
         }
-        private void CheckIfHasQuantityOrThrow()
+        public void CheckIfHasQuantityOrThrow()
         {
             if (!HasQuantity)
             {
                 throw new ProductInvalidChangeOfQuantityException();
             }
         }
-        private void IsPriceValid(decimal price)
+
+        public static bool IsPriceValid(decimal price)
+            => price >= 0;
+
+        public static bool IsQuantityValid(int? quantity)
         {
-            if(price < 0)
-            {
+            if (quantity is null)
+                return true;
+            return quantity >= 0;
+        }
+
+        public static bool IsVatValid(int vat)
+            => vat >= 0;
+
+        public static bool IsSkuValid(string sku)
+            => sku.Length >= 8 && sku.Length <= 16;
+
+        public static bool IsEanValid(string? ean)
+        {
+            if (ean is null)
+                return true;
+            return ean.Length == 13;
+        }
+
+        public static bool IsNameValid(string name)
+            => name.Length >= 2 && name.Length <= 64;
+
+        public static bool IsLocationValid(string? location)
+        {
+            if (location is null)
+                return true;
+            return location.Length <= 64;
+        }
+
+        private static void Validate(decimal price, int? quantity, int vat, string sku, string? ean, string? location, string name)
+        {
+            if (!IsPriceValid(price))
                 throw new ProductPriceBelowZeroException();
-            } 
-        }
-        public void IsQuantityValid(int quantity)
-        {
-            if (quantity < 0)
-            {
+
+            if (!IsQuantityValid(quantity))
                 throw new ProductQuantityBelowZeroException();
-            }
-        }
-        public void IsVatValid(int vat)
-        {
-            if (vat < 0)
-            {
+
+            if (!IsVatValid(vat))
                 throw new ProductVatBelowZeroException();
-            }
+
+            if (!IsSkuValid(sku))
+                throw new ProductInvalidSkuException();
+
+            if (!IsEanValid(ean))
+                throw new ProductInvalidEanException();
+
+            if (!IsNameValid(name))
+                throw new ProductInvalidNameException();
+
+            if (!IsLocationValid(location))
+                throw new ProductInvalidLocationException();
         }
-        //private static void IsSkuValid(string sku)
-        //{
-        //    if (sku.Length >= 8 && sku.Length <= 16) 
-        //    { 
-        //        throw new ProductInvalidSkuException();
-        //    }
-        //}
-        //private static void IsEanValid(string ean)
-        //{
-        //    if (ean.Length == 13)
-        //    {
-        //        throw new ProductInvalidEanException();
-        //    }
-        //}
-
-        //private static void IsNameValid(string name)
-        //{
-        //    if (name.Length >= 2 && name.Length <= 24)
-        //    {
-        //        throw new ProductInvalidSkuException();
-        //    }
-        //}
-
-        //private static void IsPriceValid(decimal price)
-        //{
-        //    if (price <= 0)
-        //    {
-        //        throw new ProductInvalidSkuException();
-        //    }
-        //}
-
-        //private static void IsVatValid(int vat)
-        //{
-        //    if (vat <= 0 && vat <= 100)
-        //    {
-        //        throw new ProductInvalidSkuException();
-        //    }
-        //}
-
-        //private static void IsLocationValid(string location)
-        //{
-        //    if (location.Length <= 64)
-        //    {
-        //        throw new ProductInvalidSkuException();
-        //    }
-        //}
-
-        //private static void IsQuantityValid(int quantity)
-        //{
-        //    if (quantity <= 0)
-        //    {
-        //        throw new ProductInvalidSkuException();
-        //    }
-        //}
     }
 }
