@@ -442,13 +442,19 @@ Example of cursor filter usage in body:
 
 ### Carts
 
+The Carts controller enables users to perform CRUD operations on their carts. Additionally, users can add or remove products as needed. A discount system is implemented to enhance the shopping experience. Once users have selected their items, they can proceed to checkout. Notably, even after a Checkout cart is created, all cart endpoints remain accessible, ensuring any changes made are instantly synchronized with the corresponding Checkout cart.
+
 ![Carts endpoints](/assets/carts-swagger.png)
 
 ### Checkout Carts
 
+This controller allows users to view Checkout cart details and configure essential order processing information, including customer details, payment method, and shipment details. Once finalized, users can place an order, receiving a Stripe payment link to complete the transaction. Upon successful payment, Stripe triggers a webhook endpoint, leading to order creation and automatic product quantity reduction. After successfull purchase, an email will be sent to the customer's email.
+
 ![Checkout carts endpoints](/assets/checkoutcarts-swagger.png)
 
 ### Payments
+
+The Payment controller enables users to view available payment methods, while allowing companies to configure their payment policy by enabling or disabling specific payment options.
 
 ![Payments endpoints](/assets/payments-swagger.png)
 
@@ -456,19 +462,27 @@ Example of cursor filter usage in body:
 
 ### Coupons
 
+These endpoints allow a company to create, update, and delete coupons. Coupons are Stripe-related entities used to apply discounts. A company can create either a nominal discount, which subtracts a fixed amount from the cart total, or a percentage discount, which reduces the total by a specified percentage.
+
 ![Coupons endpoints](/assets/coupons-swagger.png)
 
 ### Discounts
 
+The Discount controller enables CRUD operations. To access a discount, a coupon must first be specified in the route. Discounts are Stripe-related entities that include a code entered by the user in the discount field and an expiration date.
+
 ![Discount's endpoints](/assets/discounts-swagger.png)
 
 ### Offers
+
+The Offer entity is generated through the auction request endpoint. Once created, an employee can choose to accept or reject it. Upon acceptance, a discount with a unique code is created. Notably, this discount is independent of any coupon or Stripe service.
 
 ![Offers endpoints](/assets/offers-swagger.png)
 
 ## Inventory module
 
 ### Auctions
+
+The auctions controller is very simple. It only allows browsing, getting specified auction by id and sending offer request.
 
 ![Auctions endpoints](/assets/auctions-swagger.png)
 
@@ -486,15 +500,21 @@ Example of cursor filter usage in body:
 
 ### Products
 
+This is one of the key controllers in the API, supporting standard CRUD operations. Additionally, it provides quick updates for individual properties such as price or quantity. There are also two endpoints for managing product visibility for end customers: listing and unlisting. Notably, a product must be unlisted before it can be updated.
+
 ![Products endpoints](/assets/products-swagger.png)
 
 ### Reviews
+
+This controller handles the review of active auctions. Auctions that are later delisted will remain linked, even if they are relisted.
 
 ![Reviews endpoints](/assets/reviews-swagger.png)
 
 ## Orders module
 
 ### Orders
+
+The Orders controller allows a company to manage order processing, invoice generation, and shipping label printing. It also handles returns, complaints, and other after-sales processes to improve the customer experience. An endpoint for order cancellation is available, but it must occur within 30 minutes of the order being placed. Currently, the time limit is set directly in the class, though it will soon be configurable through the appsettings.json file. After this period, customers can only return products through the return process. The API also supports submitting complaints, with each order able to have multiple complaints associated with it. At the end, there are two webhooks for order status updates, triggered by the delivery system. After invoking some endpoints such as cancelling an order or returning it, an email will sent via mailkit to the end customer.
 
 ![Orders endpoints](/assets/orders-swagger.png)
 
@@ -504,13 +524,19 @@ Example of cursor filter usage in body:
 
 ### Shipments
 
+This controller allows a company to create shipments by integrating with external services. Currently, the only supported provider is InPost, though more providers will be added in the future. An employee can generate a shipping label, which can then be downloaded as a PDF after a few seconds. While an order can have multiple shipments, the shipping cost is applied only once.
+
 ![Shipments endpoints](/assets/shipments-swagger.png)
 
 ### Returns
 
+After invoking the return endpoint in the Orders controller, a return entity is created and managed in the Return controller. Here, the return can either be handled or rejected. When a return is handled, the Stripe service is triggered to refund the customer. It is worth to mention that each operation on return including handling it and rejecting invokes a mail sending notification to the customer. The controller also allows for product manipulation, where employees can add or remove products from the return. All changes are synchronized with the order entity—removing a product from the return will also remove it from the order, and vice versa.
+
 ![Returns endpoints](/assets/returns-swagger.png)
 
 ### Complaints
+
+The Complaints controller manages the acceptance and rejection of complaints. If accepted, a partial or full refund will be processed via the Stripe service. These actions will also trigger an email notification to the customer.
 
 ![Complaints endpoints](/assets/complaints-swagger.png)
 
@@ -569,11 +595,13 @@ API Improvement Task List:
 - [ ] Add Github Actions CI/CD after finishing unit and integration tests.
 - [ ] Allow CSV exports for invoices and orders.
 - [ ] Enable invoice editting.
-- [ ] Validate CSV product imports.
+- [x] Validate CSV product imports.
 - [ ] Autocomplete of customer's details when logged in.
 - [ ] Make discount Id as type Guid to facilite integration with carts module.
 - [ ] Put submit return and complaint in it's respective controllers, instead of having it in OrdersController.
 - [ ] Make API more resilient to errors by implementing rollbacks for extenal services such as Stripe, InPost or Azurite.
+- [ ] Add raports for number of order, returns, complaints and sold products per day, month and year endpoints.
+- [ ] Enable creating decisions for complaints as drafts.
 
 # Technology
 
