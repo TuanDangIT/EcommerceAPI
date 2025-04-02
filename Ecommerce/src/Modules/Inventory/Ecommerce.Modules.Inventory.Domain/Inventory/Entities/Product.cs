@@ -249,7 +249,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
 
         public static bool IsLocationValid(string? location)
         {
-            if (location is null)
+            if (string.IsNullOrEmpty(location))
                 return true;
             return location.Length <= 64;
         }

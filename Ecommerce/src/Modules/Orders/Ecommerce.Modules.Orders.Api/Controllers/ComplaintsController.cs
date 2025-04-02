@@ -116,6 +116,20 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         }
 
         [Authorize(Roles = "Admin, Manager, Employee")]
+        [SwaggerOperation("Updates a complaint's decision")]
+        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
+        [HttpPatch("{complaintId:guid}/decision")]
+        public async Task<ActionResult> EditDecision([FromRoute] Guid complaintId, [FromForm] EditDecision command, CancellationToken cancellationToken)
+        {
+            command = command with { ComplaintId = complaintId };
+            await _mediator.Send(command, cancellationToken);
+            return NoContent();
+        }
+
+        [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Deletes a specified complaint")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]
         [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]

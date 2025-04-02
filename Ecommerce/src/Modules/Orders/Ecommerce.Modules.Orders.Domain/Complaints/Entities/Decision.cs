@@ -28,5 +28,10 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
         {
             
         }
+        public void EditDecision(string decisionText, string? additionalInformation)
+        {
+            DecisionText = decisionText;
+            AdditionalInformation = additionalInformation;
+        }
     }
 }

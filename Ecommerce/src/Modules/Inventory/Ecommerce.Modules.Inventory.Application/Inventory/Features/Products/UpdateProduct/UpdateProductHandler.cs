@@ -76,7 +76,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
         }
         private async Task<Manufacturer?> GetManufacturerIfSpecifiedAsync(Guid? manufacturerId, CancellationToken cancellationToken)
         {
-            if (manufacturerId is null)
+            if (manufacturerId is null || manufacturerId == Guid.Empty)
                 return null;
 
             var manufacturer = await _manufacturerRepository.GetAsync(manufacturerId.Value, cancellationToken) ??
@@ -85,7 +85,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
         }
         private async Task<Category?> GetCategoryIfSpecifiedAsync(Guid? categoryId, CancellationToken cancellationToken)
         {
-            if (categoryId is null)
+            if (categoryId is null || categoryId == Guid.Empty)
                 return null;
 
             var category = await _categoryRepository.GetAsync(categoryId.Value, cancellationToken) ??

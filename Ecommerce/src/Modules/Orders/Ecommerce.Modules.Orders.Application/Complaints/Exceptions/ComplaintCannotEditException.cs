@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Complaints.Exceptions
 {
-    internal class ComplaintCannotEditRefundAmountException : EcommerceException
+    internal class ComplaintCannotEditException : EcommerceException
     {
-        public ComplaintCannotEditRefundAmountException() : base("Cannot edit refund amount on rejected complaint.")
+        public ComplaintCannotEditException(string message) : base(message)
         {
+            
         }
     }
 }

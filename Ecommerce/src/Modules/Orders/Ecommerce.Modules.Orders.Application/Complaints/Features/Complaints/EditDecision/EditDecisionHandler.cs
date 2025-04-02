@@ -1,4 +1,7 @@
-﻿using Ecommerce.Modules.Orders.Application.Complaints.Exceptions;
+﻿using Ecommerce.Modules.Orders.Application.Complaints.DTO;
+using Ecommerce.Modules.Orders.Application.Complaints.Exceptions;
+using Ecommerce.Modules.Orders.Domain.Complaints.Entities;
+using Ecommerce.Modules.Orders.Domain.Complaints.Entities.Enums;
 using Ecommerce.Modules.Orders.Domain.Complaints.Repositories;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
@@ -27,14 +30,10 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Edi
         {
             var complaint = await _complaintRepository.GetAsync(request.ComplaintId, cancellationToken) ?? 
                 throw new ComplaintNotFoundException(request.ComplaintId);
-            if (complaint.Decision is not null && complaint.Decision.RefundAmount is null && request.Decision.RefundAmount is not null)
-            {
-                throw new ComplaintCannotEditRefundAmountException();
-            }
-            complaint.EditDecision(new Domain.Complaints.Entities.Decision(request.Decision.DecisionText, request.Decision.AdditionalInformation));
+            complaint.EditDecision(request.DecisionText, request.DecisionAdditionalInformation);
             await _complaintRepository.UpdateAsync(cancellationToken);
-            _logger.LogInformation("Decision was edited for complaint: {complaintId} with new details: {@updatingDetails} by {@user}.", 
-                complaint.Id, request.Decision, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+            _logger.LogInformation("Decision was edited for complaint: {complaintId} by {@user}.", 
+                complaint.Id, new { _contextService.Identity!.Username, _contextService.Identity!.Id });
         }
     }
 }

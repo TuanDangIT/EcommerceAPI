@@ -14,15 +14,9 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.Edi
             RuleFor(a => a.ComplaintId)
                 .NotNull()
                 .NotEmpty();
-            RuleFor(a => a.Decision)
+            RuleFor(a => a.DecisionText)
                 .NotEmpty()
-                .NotNull()
-                .ChildRules(d =>
-                {
-                    d.RuleFor(d => d.RefundAmount)
-                        .PrecisionScale(11, 2, true)
-                        .GreaterThan(0);
-                });
+                .NotNull();
         }
     }
 }

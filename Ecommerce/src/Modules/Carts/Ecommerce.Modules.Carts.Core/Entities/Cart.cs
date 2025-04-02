@@ -52,9 +52,9 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 cartProduct.DecreaseQuantity(quantity);
                 _products.Remove(cartProduct);
-                if(Discount?.SKU is not null)
+                if(!string.IsNullOrEmpty(Discount?.SKU) && Discount?.SKU == product.SKU)
                 {
-                    Discount = null;
+                    RemoveDiscount();
                 }
             }
             else
@@ -103,6 +103,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             Discount = null;
             TotalSum = 0;
             CheckoutCart?.SetTotalSum(TotalSum);
+            CheckoutCart?.RemoveDiscount();
         }
         public CheckoutCart Checkout(Guid? customerId)
         {
@@ -115,9 +116,6 @@ namespace Ecommerce.Modules.Carts.Core.Entities
                 return CheckoutCart;
             }
             return CheckoutCart ??= new CheckoutCart(this, customerId);
-            //var checkoutCart = new CheckoutCart(this, customerId);
-            //CheckoutCart = checkoutCart;
-            //return checkoutCart;
         }
         public void AddDiscount(Discount discount)
         {
@@ -137,7 +135,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 throw new AddDiscountHigherThanTotalValueException(discount.Id, TotalSum);
             }
-            if (discount.SKU is not null)
+            if (!string.IsNullOrEmpty(discount.SKU))
             {
                 var cartProduct = _products.SingleOrDefault(p => p.Product.SKU == discount.SKU) 
                     ?? throw new CheckoutCartCannotApplyIndividualDiscountException(discount.SKU);
@@ -169,7 +167,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             decimal calculatedTotal = productsTotal;
             if (Discount.Type is DiscountType.NominalDiscount)
             {
-                if (Discount.SKU is not null)
+                if (!string.IsNullOrEmpty(Discount.SKU))
                 {
                     var discountedProduct = _products
                         .SingleOrDefault(p => p.Product.SKU == Discount.SKU) ?? throw new ProductNotFoundException(Discount.SKU);

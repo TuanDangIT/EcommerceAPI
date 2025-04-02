@@ -196,8 +196,6 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             CompanyAdditionalInformation = additionalInformation;
             IncrementVersion();
         }
-        public bool HasProduct(string sku)
-            => Products.FirstOrDefault(p => p.SKU == sku) is not null;
 
         private void CalculateTotalSum()
         {
@@ -210,7 +208,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             decimal calculatedTotal = productsTotal;
             if (Discount.Type is DiscountType.NominalDiscount)
             {
-                if (Discount.SKU is not null)
+                if (!string.IsNullOrEmpty(Discount.SKU))
                 {
                     var discountedProduct = _products
                         .SingleOrDefault(p => p.SKU == Discount.SKU) ?? throw new ProductNotFoundException(Discount.SKU);

@@ -75,9 +75,9 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
             }
             Decision = decision;
         }
-        public void EditDecision(Decision decision)
+        public void EditDecision(string decisionText, string? decisionAdditionalInformation)
         {
-            WriteDecision(decision);
+            Decision?.EditDecision(decisionText, decisionAdditionalInformation);
             IncrementVersion();
         }
     }

@@ -32,7 +32,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
         }
         public async Task<PagedResult<AuctionBrowseDto>> Handle(BrowseAuctions request, CancellationToken cancellationToken)
         {
-            if (request.Page is null)
+            if (request.Page is null || request.Page <= 0)
             {
                 throw new PaginationException();
             }
@@ -50,7 +50,7 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.DAL.QueryHandlers
                 .Where(a => a.IsSold == false)
                 .CountAsync(cancellationToken);
             int pageSize = _sieveOptions.Value.DefaultPageSize;
-            if (request.PageSize is not null)
+            if (request.PageSize is not null || request.PageSize <= 0)
             {
                 pageSize = request.PageSize.Value;
             }

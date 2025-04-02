@@ -47,7 +47,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
 
         public async Task<PagedResult<OfferBrowseDto>> BrowseAsync(SieveModel model, CancellationToken cancellationToken = default)
         {
-            if (model.Page is null)
+            if (model.Page is null || model.Page <= 0)
             {
                 throw new PaginationException();
             }
@@ -68,7 +68,7 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 .Apply(model, offers, applyPagination: false, applySorting: false)
                 .CountAsync(cancellationToken);
             int pageSize = _sieveOptions.Value.DefaultPageSize;
-            if (model.PageSize is not null)
+            if (model.PageSize is not null || model.PageSize <= 0)
             {
                 pageSize = model.PageSize.Value;
             }

@@ -169,7 +169,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
             var payment = await _dbContext.Payments
                 .FirstOrDefaultAsync(p => p.Id == paymentId, cancellationToken) ?? throw new PaymentNotFoundException(paymentId);
             checkoutCart.SetPayment(payment);
-            if(additionalInformation is not null)
+            if(!string.IsNullOrEmpty(additionalInformation))
             {
                 checkoutCart.SetAdditionalInformation(additionalInformation);
             }

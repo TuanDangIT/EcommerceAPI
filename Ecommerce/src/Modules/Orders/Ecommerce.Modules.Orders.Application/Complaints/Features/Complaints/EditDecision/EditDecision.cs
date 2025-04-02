@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.EditDecision
 {
-    public sealed record class EditDecision(DecisionApproveOrEditDto Decision) : ICommand
+    public sealed record class EditDecision(string DecisionText, string DecisionAdditionalInformation) : ICommand
     {
         [SwaggerIgnore]
         public Guid ComplaintId { get; init; }
