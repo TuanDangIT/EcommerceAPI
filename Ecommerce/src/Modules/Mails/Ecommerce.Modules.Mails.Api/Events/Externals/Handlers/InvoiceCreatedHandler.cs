@@ -34,9 +34,6 @@ namespace Ecommerce.Modules.Mails.Api.Events.Externals.Handlers
         }
         public async Task HandleAsync(InvoiceCreated @event)
         {
-            var email = _dbContext.Customers
-                .AsNoTracking()
-                .SingleOrDefaultAsync(c => c.Email == @event.Email);
             var bodyHtml = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _mailTemplatePath));
             bodyHtml = bodyHtml.Replace("{title}", $"Invoice for order ID: {@event.OrderId}");
             bodyHtml = bodyHtml.Replace("{companyName}", _companyOptions.Name);

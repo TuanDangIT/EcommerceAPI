@@ -12,10 +12,11 @@ namespace Ecommerce.Modules.Mails.Api.DTO
 {
     internal class MailCursorDto : CursorDto<int>
     {
-        //public int CursorId { get; set; }
+        public bool? IsNextPage { get; set; }
+        public int PageSize { get; set; }
         public DateTime CursorCreatedAt { get; set; }
-        [ModelBinder(BinderType = typeof(DictionaryModelBinder))]
         [MailCursor]
+        [ModelBinder(BinderType = typeof(DictionaryModelBinder))]
         public Dictionary<string, string>? Filters { get; set; }    
     }
 }

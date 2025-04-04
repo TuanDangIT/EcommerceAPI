@@ -17,7 +17,7 @@ namespace Ecommerce.Modules.Mails.Api.DAL.Mappings
                 From = mail.From,
                 To = mail.To,
                 Subject = mail.Subject,
-                AttachmentFileNames = mail.AttachmentFileNames,
+                AttachmentFiles = mail.AttachmentFiles?.Select(af => af.AsDto()),
                 CreatedAt = mail.CreatedAt
             };
         public static MailDetailsDto AsDetailsDto(this Mail mail)
@@ -28,8 +28,15 @@ namespace Ecommerce.Modules.Mails.Api.DAL.Mappings
                 To = mail.To,
                 Subject = mail.Subject,
                 Body = mail.Body,
-                AttachmentFileNames = mail.AttachmentFileNames,
+                AttachmentFiles = mail.AttachmentFiles?.Select(af => af.AsDto()),
                 CreatedAt = mail.CreatedAt
+            };
+
+        public static AttachmentFileDto AsDto(this AttachmentFile file)
+            => new()
+            {
+                Id = file.Id,
+                FileName = file.FileName
             };
     }
 }

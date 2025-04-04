@@ -20,15 +20,20 @@ namespace Ecommerce.Modules.Mails.Api.DAL.Configuration
                 .HasMaxLength(256)
                 .IsRequired();
             builder.Property(m => m.Body).IsRequired();
-            builder.Property(m => m.AttachmentFileNames)
-                .HasConversion(
-                a => a != null ? string.Join(',', a) : string.Empty,
-                a => a != null ? a.Split(',', StringSplitOptions.None) : Enumerable.Empty<string>()
-            );
-            builder.Property(x => x.AttachmentFileNames).Metadata.SetValueComparer(
-                new ValueComparer<IEnumerable<string>>(
-                    (a1, a2) => a1!.SequenceEqual(a2!),
-                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode()))));
+            builder
+                .HasMany(m => m.AttachmentFiles)
+                .WithOne(af => af.Mail)
+                .HasForeignKey(af => af.MailId);
+
+            //builder.Property(m => m.AttachmentFileNames)
+            //    .HasConversion(
+            //    a => a != null ? string.Join(',', a) : string.Empty,
+            //    a => a != null ? a.Split(',', StringSplitOptions.None) : Enumerable.Empty<string>()
+            //);
+            //builder.Property(x => x.AttachmentFileNames).Metadata.SetValueComparer(
+            //    new ValueComparer<IEnumerable<string>>(
+            //        (a1, a2) => a1!.SequenceEqual(a2!),
+            //        c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode()))));
         }
     }
 }

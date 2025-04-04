@@ -3,6 +3,7 @@ using System;
 using Ecommerce.Modules.Mails.Api.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Mails.Api.DAL.Migrations
 {
     [DbContext(typeof(MailsDbContext))]
-    partial class MailsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250404203757_ExtractAttachmentFileAsNewEntity")]
+    partial class ExtractAttachmentFileAsNewEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

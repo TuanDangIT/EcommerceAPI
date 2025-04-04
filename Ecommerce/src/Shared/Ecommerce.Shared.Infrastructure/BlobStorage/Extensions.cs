@@ -1,4 +1,5 @@
-﻿using Azure.Storage.Blobs;
+﻿using Azure.Core;
+using Azure.Storage.Blobs;
 using Ecommerce.Shared.Abstractions.BloblStorage;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Microsoft.Extensions.Azure;

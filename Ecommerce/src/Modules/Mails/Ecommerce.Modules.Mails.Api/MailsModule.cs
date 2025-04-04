@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Mails.Api.DAL;
 using Ecommerce.Modules.Mails.Api.Services;
+using Ecommerce.Modules.Mails.Api.Sieve;
 using Ecommerce.Shared.Abstractions.Modules;
 using Ecommerce.Shared.Infrastructure.InPost;
 using Ecommerce.Shared.Infrastructure.Postgres;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Sieve.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +31,7 @@ namespace Ecommerce.Modules.Mails.Api
                 return sp.GetRequiredService<MailsDbContext>();
             });
             services.AddScoped<IMailService, MailService>();
+            services.AddKeyedScoped<ISieveProcessor, MailsModuleSieveProcessor>("mails-sieve-processor");
         }
 
         public void Use(WebApplication app)
