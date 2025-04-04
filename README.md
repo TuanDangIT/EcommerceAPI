@@ -564,6 +564,8 @@ The Complaints controller manages the acceptance and rejection of complaints. If
 
 ## Mails module
 
+The primary role of the Mails module is to send notifications to clients about the status of their orders, offers, returns, and complaints. In addition, the module also provides endpoints for sending emails to both customers and non-customers (email address is needed). It supports two types of browsing: paginated browsing, which allows filtering by Order ID or Customer ID, and offset-based browsing, which is intended for handling larger volumes of data, such as viewing all sent emails. The module also includes functionality for downloading files that were attached to the emails.
+
 ![Mails endpoints](/assets/mails-swagger.png)
 
 # Work to be done
