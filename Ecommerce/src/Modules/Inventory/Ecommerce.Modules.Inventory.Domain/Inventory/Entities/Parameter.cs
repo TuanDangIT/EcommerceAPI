@@ -19,7 +19,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public DateTime? UpdatedAt { get; private set; }
         public Parameter(string name)
         {
-            IsNameValid(name);
+            Validate(name);
             Name = name;
         }
         public Parameter()
@@ -28,13 +28,21 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public void ChangeName(string name)
         {
-            IsNameValid(name);
+            Validate(name);
             Name = name;
             IncrementVersion();
         }
-        private static void IsNameValid(string name)
+        public static bool IsNameValid(string name)
         {
             if(name.Length < 2 && name.Length > 32)
+            {
+                return false;
+            }
+            return true;
+        }
+        private static void Validate(string name)
+        {
+            if(!IsNameValid(name))
             {
                 throw new ParameterInvalidNameLengthException();
             }

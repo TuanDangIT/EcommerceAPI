@@ -251,7 +251,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
 
         public static bool IsEanValid(string? ean)
         {
-            if (ean is null)
+            if (string.IsNullOrEmpty(ean))
                 return true;
             return ean.Length == 13;
         }

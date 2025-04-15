@@ -69,8 +69,12 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Im
                 throw new ImportFileNotSupportedException(request.ImportFile.ContentType);
             }
         }
-        private T GetOrCreate<T>(string key, Dictionary<string, T> existing, Dictionary<string, T> newItems, Func<string, T> factory)
+        private T? GetOrCreate<T>(string? key, Dictionary<string, T> existing, Dictionary<string, T> newItems, Func<string, T> factory)
         {
+            if(string.IsNullOrEmpty(key))
+            {
+                return default(T);
+            }
             if (existing.TryGetValue(key, out var item) || newItems.TryGetValue(key, out item))
             {
                 return item;
@@ -121,7 +125,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Im
 
                     productParameters.Add(new ProductParameter
                     {
-                        Parameter = parameter,
+                        Parameter = parameter!,
                         Value = value
                     });
                 }

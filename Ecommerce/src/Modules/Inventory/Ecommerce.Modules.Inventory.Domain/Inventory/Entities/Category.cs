@@ -17,7 +17,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public DateTime? UpdatedAt { get; private set; }
         public Category(string name)
         {
-            IsNameValid(name);
+            Validate(name);
             Name = name;
         }
         public Category()
@@ -26,13 +26,21 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public void ChangeName(string name)
         {
-            IsNameValid(name);
+            Validate(name);
             Name = name;
             IncrementVersion();
         }
-        private static void IsNameValid(string name)
+        public static bool IsNameValid(string name)
         {
-            if (name.Length < 2 && name.Length > 32)
+            if (name is null || name.Length < 2 && name.Length > 32)
+            {
+                return false;
+            }
+            return true;
+        }
+        private static void Validate(string name)
+        {
+            if (!IsNameValid(name))
             {
                 throw new CategoryInvalidNameLengthException();
             }

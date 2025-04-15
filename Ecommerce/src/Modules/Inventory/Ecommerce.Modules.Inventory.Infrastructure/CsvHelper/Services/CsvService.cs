@@ -11,41 +11,30 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Ecommerce.Modules.Inventory.Tests.Unit")]
 namespace Ecommerce.Modules.Inventory.Infrastructure.CsvHelper.Services
 {
     internal class CsvService : ICsvService
     {
+        private readonly string _cultureInfo = "de-DE";
         public IEnumerable<ProductCsvRecordDto> ParseCsvFile(IFormFile file, char delimiter)
         {
             try
             {
-                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                var config = new CsvConfiguration(new CultureInfo(_cultureInfo))
                 {
                     Encoding = Encoding.UTF8,
                     HasHeaderRecord = true,
                     Delimiter = delimiter.ToString(),
-                    //BadDataFound = args =>
-                    //{
-                    //    var currentIndex = args.Context.Reader?.CurrentIndex ?? throw new NullReferenceException();
-                    //    var header = args.Context.Reader?.HeaderRecord![currentIndex]!;
-                    //    var rowNumber = args.Context.Parser?.Row ?? throw new NullReferenceException();
-                    //    var isFieldEmpty = args.Field == "";
-                    //    if (isFieldEmpty)
-                    //    {
-                    //        throw new CsvHelperBadDataException(header, rowNumber, args.Field);
-                    //    }
-                    //    else
-                    //    {
-                    //        throw new CsvHelperBadDataException(header, rowNumber);
-                    //    }
-                    //},
+                    //TrimOptions = TrimOptions.Trim
                 };
 
                 using var reader = new StreamReader(file.OpenReadStream());
                 using var csv = new CsvReader(reader, config);
 
-                csv.Context.RegisterClassMap(new ProductCsvClassMap(delimiter is ',' ? ';' : ','));
+                csv.Context.RegisterClassMap(new ProductCsvClassMap(/*delimiter is ',' ? ';' : ','*/));
                 return csv.GetRecords<ProductCsvRecordDto>().ToList();
 
             }catch(FieldValidationException ex)

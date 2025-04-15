@@ -17,8 +17,8 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.DTO
         public string? Location { get; set; }
         public string Description { get; set; } = string.Empty;
         public string? AdditionalDescription { get; set; }
-        public string Manufacturer { get; set; } = string.Empty;
-        public string Category { get; set; } = string.Empty;
+        public string? Manufacturer { get; set; } = string.Empty;
+        public string? Category { get; set; } = string.Empty;
         public Dictionary<string, string> Parameters { get; set; } = [];
         public List<string> Images { get; set; } = [];
     }
