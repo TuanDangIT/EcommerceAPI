@@ -3,6 +3,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
 using Ecommerce.Shared.Abstractions.BloblStorage;
+using Ecommerce.Shared.Infrastructure.BlobStorage.Exceptions;
 using Ecommerce.Shared.Infrastructure.Storage.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Azure;
@@ -22,6 +23,7 @@ namespace Ecommerce.Shared.Infrastructure.Storage
         private readonly BlobServiceClient _blobServiceClient;
         private readonly IAzureClientFactory<BlobServiceClient> _factory;
         private const string _clientName = "Blob";
+        private long _maxFileSize = 10 * 1024 * 1024; //10MB
 
         public BlobStorageService(IAzureClientFactory<BlobServiceClient> factory)
         {
@@ -56,6 +58,18 @@ namespace Ecommerce.Shared.Infrastructure.Storage
         }
         public async Task<string> UploadAsync(IFormFile blob, string fileName, string containerName, CancellationToken cancellationToken = default)
         {
+            if (blob is null || blob.Length == 0)
+            {
+                throw new BlobStorageFileNullOrEmptyException();
+            }
+            if (blob.Length > _maxFileSize)
+            {
+                throw new BlobStorageFileExceedMaxSizeException();
+            }
+            if (string.IsNullOrEmpty(blob.ContentType))
+            {
+                throw new BlobStorageFileContentTypeNotSpecifiedException();
+            }
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             await containerClient.CreateIfNotExistsAsync(publicAccessType: PublicAccessType.Blob, cancellationToken: cancellationToken);
             var blobClient = containerClient.GetBlobClient(fileName);

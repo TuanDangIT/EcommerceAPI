@@ -15,6 +15,7 @@ using FluentAssertions;
 using Ecommerce.Shared.Infrastructure.Storage;
 using Azure.Storage;
 using System.Linq.Expressions;
+using Ecommerce.Shared.Infrastructure.BlobStorage.Exceptions;
 
 namespace Ecommerce.Shared.Infrastructure.Tests.Unit.BlobStorage
 {
@@ -109,6 +110,71 @@ namespace Ecommerce.Shared.Infrastructure.Tests.Unit.BlobStorage
             return (service, mockBlobServiceClient, mockContainerClient, mockBlobClient);
         }
 
+        [Fact]
+        public async Task UploadAsync_WithNullFormFile_ShouldThrowBlobStorageFileNullOrEmptyException()
+        {
+            // Arrange
+            var (service, _, _, _) = SetupMocks();
+            IFormFile formFile = null!;
+
+            // Act
+            Func<Task> act = async () => await service.UploadAsync(formFile, It.IsAny<string>(), It.IsAny<string>());
+
+            // Assert
+            await act.Should().ThrowAsync<BlobStorageFileNullOrEmptyException>();
+        }
+
+        [Fact]
+        public async Task UploadAsync_WithEmptyFormFile_ShouldThrowBlobStorageFileNullOrEmptyException()
+        {
+            // Arrange
+            var (service, _, _, _) = SetupMocks();
+            var mockFormFile = new Mock<IFormFile>();
+            mockFormFile.Setup(f => f.Length).Returns(0);
+            IFormFile formFile = mockFormFile.Object;
+
+            // Act
+            Func<Task> act = async () => await service.UploadAsync(formFile, It.IsAny<string>(), It.IsAny<string>());
+
+            // Assert
+            await act.Should().ThrowAsync<BlobStorageFileNullOrEmptyException>();
+        }
+
+        [Fact]
+        public async Task UploadAsync_WithExceedingMaxSizeFormFile_ShouldThrowBlobStorageFileExceedMaxSizeException()
+        {
+            // Arrange
+            var (service, _, _, _) = SetupMocks();
+            var mockFormFile = new Mock<IFormFile>();
+            mockFormFile.Setup(f => f.Length).Returns(10 * 1024 * 1024 + 5);
+            IFormFile formFile = mockFormFile.Object;
+
+            // Act
+            Func<Task> act = async () => await service.UploadAsync(formFile, It.IsAny<string>(), It.IsAny<string>());
+
+            // Assert
+            await act.Should().ThrowAsync<BlobStorageFileExceedMaxSizeException>();
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        public async Task UploadAsync_WithNoContentTypeFormFile_ShouldThrowBlobStorageFileContentTypeNotSpecifiedException(string contentType)
+        {
+            // Arrange
+            var (service, _, _, _) = SetupMocks();
+            var mockFormFile = new Mock<IFormFile>();
+            mockFormFile.Setup(f => f.ContentType).Returns(contentType);
+            mockFormFile.Setup(f => f.Length).Returns(20);
+            IFormFile formFile = mockFormFile.Object;
+
+            // Act
+            Func<Task> act = async () => await service.UploadAsync(formFile, It.IsAny<string>(), It.IsAny<string>());
+
+            // Assert
+            await act.Should().ThrowAsync<BlobStorageFileContentTypeNotSpecifiedException>();
+        }
+
         private Mock<IFormFile> SetupMockFormFile(string contentType)
         {
             var mockFormFile = new Mock<IFormFile>();
@@ -140,85 +206,5 @@ namespace Ecommerce.Shared.Infrastructure.Tests.Unit.BlobStorage
                 It.IsAny<StorageTransferOptions>(),
                 It.IsAny<CancellationToken>());
         }
-
-        //[Fact]
-        //public async Task UploadAsync_WithNullFormFile_ShouldThrowArgumentNullException()
-        //{
-        //    // Arrange
-        //    var (service, _, _, _) = SetupMocks();
-        //    IFormFile formFile = null;
-        //    var fileName = "test.jpg";
-        //    var containerName = "images";
-
-        //    // Act
-        //    Func<Task> act = async () => await service.UploadAsync(formFile, fileName, containerName);
-
-        //    // Assert
-        //    await act.Should().ThrowAsync<ArgumentNullException>();
-        //}
-
-        //[Fact]
-        //public async Task UploadAsync_WithNullFileName_ShouldThrowArgumentNullException()
-        //{
-        //    // Arrange
-        //    var (service, _, _, _) = SetupMocks();
-        //    var mockFile = new Mock<IFormFile>().Object;
-        //    string fileName = null;
-        //    var containerName = "images";
-
-        //    // Act
-        //    Func<Task> act = async () => await service.UploadAsync(mockFile, fileName, containerName);
-
-        //    // Assert
-        //    await act.Should().ThrowAsync<ArgumentNullException>();
-        //}
-
-        //[Fact]
-        //public async Task UploadAsync_WithEmptyFileName_ShouldThrowArgumentException()
-        //{
-        //    // Arrange
-        //    var (service, _, _, _) = SetupMocks();
-        //    var mockFile = new Mock<IFormFile>().Object;
-        //    var fileName = "";
-        //    var containerName = "images";
-
-        //    // Act
-        //    Func<Task> act = async () => await service.UploadAsync(mockFile, fileName, containerName);
-
-        //    // Assert
-        //    await act.Should().ThrowAsync<ArgumentException>();
-        //}
-
-        //[Fact]
-        //public async Task UploadAsync_WithNullContainerName_ShouldThrowArgumentNullException()
-        //{
-        //    // Arrange
-        //    var (service, _, _, _) = SetupMocks();
-        //    var mockFile = new Mock<IFormFile>().Object;
-        //    var fileName = "test.jpg";
-        //    string containerName = null;
-
-        //    // Act
-        //    Func<Task> act = async () => await service.UploadAsync(mockFile, fileName, containerName);
-
-        //    // Assert
-        //    await act.Should().ThrowAsync<ArgumentNullException>();
-        //}
-
-        //[Fact]
-        //public async Task UploadAsync_WithEmptyContainerName_ShouldThrowArgumentException()
-        //{
-        //    // Arrange
-        //    var (service, _, _, _) = SetupMocks();
-        //    var mockFile = new Mock<IFormFile>().Object;
-        //    var fileName = "test.jpg";
-        //    var containerName = "";
-
-        //    // Act
-        //    Func<Task> act = async () => await service.UploadAsync(mockFile, fileName, containerName);
-
-        //    // Assert
-        //    await act.Should().ThrowAsync<ArgumentException>();
-        //}
     }
 }
