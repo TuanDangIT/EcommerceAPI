@@ -60,7 +60,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
                     location: request.Location,
                     description: request.Description,
                     additionalDescription: request.AdditionalDescription,
-                    reserved: request.Reserved
+                    reserved: !product.HasQuantity ? null : request.Reserved
                 );
             var manufacturer = await GetManufacturerIfSpecifiedAsync(request.ManufacturerId, cancellationToken);
             var category = await GetCategoryIfSpecifiedAsync(request.CategoryId, cancellationToken);

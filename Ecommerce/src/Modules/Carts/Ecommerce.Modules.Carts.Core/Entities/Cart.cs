@@ -32,7 +32,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             {
                 throw new ProductOutOfStockException(product.Id);
             }
-            var cartProduct = _products.SingleOrDefault(p => p.ProductId == product.Id);
+            var cartProduct = _products.SingleOrDefault(p => p.Product.Id == product.Id);
             if (cartProduct is not null)
             {
                 cartProduct.IncreaseQuantity(quantity);

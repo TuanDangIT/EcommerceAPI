@@ -42,6 +42,23 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             Quantity = quantity;
             ImagePathUrl = imagePathUrl;
         }
+        public Product(Guid id, string sku, string name, decimal price, int? quantity, string imagePathUrl)
+        {
+            if (quantity < 0)
+            {
+                throw new ProductQuantityBelowZeroException();
+            }
+            if (price < 0)
+            {
+                throw new ProductPriceBelowZeroException();
+            }
+            Id = id;
+            SKU = sku;
+            Name = name;
+            Price = price;
+            Quantity = quantity;
+            ImagePathUrl = imagePathUrl;
+        }
         private Product()
         {
             

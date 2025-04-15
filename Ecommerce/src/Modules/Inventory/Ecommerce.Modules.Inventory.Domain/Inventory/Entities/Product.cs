@@ -25,10 +25,10 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public decimal Price { get; private set; }
         public int VAT { get; private set; }
         [JsonInclude]
-        public int? Quantity { get; private set; }
-        public bool HasQuantity => Quantity != null;
+        public int? Quantity { get; set; }
+        public virtual bool HasQuantity => Quantity != null;
         public bool IsSold => Quantity == 0;
-        public int? Reserved { get; private set; }
+        public int? Reserved { get; protected set; }
         public string? Location { get; private set; }
         public string Description { get; private set; } = string.Empty;
         public string? AdditionalDescription { get; private set; }
@@ -49,7 +49,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             , List<ProductParameter> productParameters, Manufacturer? manufacturer, Category? category
             , List<Image> images, string? ean, int? quantity, string? location, string? additionalDescription, int? reserved)
         {
-            Validate(price, quantity, vat, sku, ean, location, name);
+            Validate(price, quantity, vat, sku, ean, location, name, reserved);
             Id = id;
             SKU = sku;
             EAN = ean;
@@ -67,16 +67,15 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             Reserved = reserved;
         }
         public Product(string sku, string name, decimal price, int vat, string description
-            , List<ProductParameter> productParameters, Manufacturer manufacturer, Category category
+            , List<ProductParameter> productParameters, Manufacturer? manufacturer, Category? category
             , List<Image> images, string? ean, int? quantity, string? location, string? additionalDescription, int? reserved)
         {
-            Validate(price, quantity, vat, sku, ean, location, name);
+            Validate(price, quantity, vat, sku, ean, location, name, reserved);
             SKU = sku;
             EAN = ean;
             Name = name;
             Price = price;
             VAT = vat;
-            Quantity = quantity;
             Location = location;
             Description = description;
             AdditionalDescription = additionalDescription;
@@ -84,6 +83,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             Manufacturer = manufacturer;
             Category = category;
             _images = images;
+            Quantity = quantity;
             Reserved = reserved;
         }
         public Product()
@@ -92,7 +92,15 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public void Purchase(int quantity)
         {
-            //DecreaseQuantity(quantity);
+            CheckIfQuantityIsBelowOrEqualZero(quantity);
+            if (HasQuantity is false)
+            {
+                return;
+            }
+            if(Reserved == 0)
+            {
+                throw new CannotPurchaseProductBeforeReservingException();
+            }
             if(Reserved - quantity < 0)
             {
                 throw new ProductReservedBelowZeroException();
@@ -102,6 +110,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public void DecreaseQuantity(int quantity)
         {
+            CheckIfQuantityIsBelowOrEqualZero(quantity);
             CheckIfHasQuantityOrThrow();
             if (Quantity < quantity)
             {
@@ -112,18 +121,21 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         }
         public void IncreaseQuantity(int quantity)
         {
+            CheckIfQuantityIsBelowOrEqualZero(quantity);
             CheckIfHasQuantityOrThrow();
             Quantity += quantity;
             IncrementVersion();
         }
-        public void Reserve(int quantity)
+        public virtual void Reserve(int quantity)
         {
+            CheckIfQuantityIsBelowOrEqualZero(quantity);
             CheckIfHasQuantityOrThrow();
             DecreaseQuantity(quantity);
             Reserved += quantity;
         }
         public void Unreserve(int quantity)
         {
+            CheckIfQuantityIsBelowOrEqualZero(quantity);
             CheckIfHasQuantityOrThrow();
             if (Reserved < quantity)
             {
@@ -135,7 +147,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
         public void ChangeBaseDetails(string sku, string name, decimal price, int vat, string description, string? ean = null, 
             int? quantity = null, string? location = null, string? additionalDescription = null, int? reserved = null)
         {
-            Validate(price, quantity, vat, sku, ean, location, name);
+            Validate(price, quantity, vat, sku, ean, location, name, reserved);
             SKU = sku;
             EAN = ean;
             Name = name;
@@ -254,7 +266,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
             return location.Length <= 64;
         }
 
-        private static void Validate(decimal price, int? quantity, int vat, string sku, string? ean, string? location, string name)
+        private static void Validate(decimal price, int? quantity, int vat, string sku, string? ean, string? location, string name, int? reserved)
         {
             if (!IsPriceValid(price))
                 throw new ProductPriceBelowZeroException();
@@ -276,6 +288,19 @@ namespace Ecommerce.Modules.Inventory.Domain.Inventory.Entities
 
             if (!IsLocationValid(location))
                 throw new ProductInvalidLocationException();
+
+            if(reserved is not null && quantity is null || quantity is not null && reserved is null)
+            {
+
+            }
+        }
+
+        protected void CheckIfQuantityIsBelowOrEqualZero(int quantity)
+        {
+            if(quantity <= 0)
+            {
+                throw new QuantityBelowOrEqualZeroException();
+            }
         }
     }
 }

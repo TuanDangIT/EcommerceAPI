@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 [assembly: InternalsVisibleTo("Ecommerce.Modules.Inventory.Tests.Unit")]
 namespace Ecommerce.Modules.Inventory.Domain.Inventory.Exceptions
 {
-    internal class ProductReservedBelowZeroException : EcommerceException
+    internal class QuantityBelowOrEqualZeroException : EcommerceException
     {
-        public ProductReservedBelowZeroException() : base("Reserved products must be equal or higher than 0.")
+        public QuantityBelowOrEqualZeroException() : base("Quantity argument must be higher than 0.")
         {
         }
     }

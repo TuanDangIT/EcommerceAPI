@@ -21,7 +21,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Up
         public decimal Price { get; init; }
         public int VAT { get; init; }
         public int? Quantity { get; init; }
-        public int? Reserved { get; init; }
+        public int? Reserved { get; init; } 
         public string? Location { get; init; }
         public string Description { get; init; } = string.Empty;
         public string? AdditionalDescription { get; init; }

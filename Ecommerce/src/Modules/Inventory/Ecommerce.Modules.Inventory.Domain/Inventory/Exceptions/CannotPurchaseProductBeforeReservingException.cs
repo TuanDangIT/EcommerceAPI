@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 [assembly: InternalsVisibleTo("Ecommerce.Modules.Inventory.Tests.Unit")]
 namespace Ecommerce.Modules.Inventory.Domain.Inventory.Exceptions
 {
-    internal class ProductReservedBelowZeroException : EcommerceException
+    internal class CannotPurchaseProductBeforeReservingException : EcommerceException
     {
-        public ProductReservedBelowZeroException() : base("Reserved products must be equal or higher than 0.")
+        public CannotPurchaseProductBeforeReservingException() : base("Cannot purchase a product. You must reserve it first.")
         {
         }
     }
