@@ -18,17 +18,16 @@ namespace Ecommerce.Modules.Inventory.Infrastructure.CsvHelper.Services
 {
     internal class CsvService : ICsvService
     {
-        private readonly string _cultureInfo = "de-DE";
         public IEnumerable<ProductCsvRecordDto> ParseCsvFile(IFormFile file, char delimiter)
         {
             try
             {
-                var config = new CsvConfiguration(new CultureInfo(_cultureInfo))
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
                     Encoding = Encoding.UTF8,
                     HasHeaderRecord = true,
                     Delimiter = delimiter.ToString(),
-                    //TrimOptions = TrimOptions.Trim
+                    TrimOptions = TrimOptions.Trim
                 };
 
                 using var reader = new StreamReader(file.OpenReadStream());

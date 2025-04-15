@@ -16,6 +16,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Im
     internal class ProductCsvClassMap : ClassMap<ProductCsvRecordDto>
     {
         private readonly char _seperationChar = ',';
+        private readonly string _decimalCultureInfo = "de-DE";
         public ProductCsvClassMap(/*char valueSeperator*/)
         {
             Map(p => p.SKU).Validate(args => !string.IsNullOrEmpty(args.Field) && Product.IsSkuValid(args.Field));
@@ -27,7 +28,7 @@ namespace Ecommerce.Modules.Inventory.Application.Inventory.Features.Products.Im
                     return false;
                 return decimal.TryParse(args.Field, out var price)
                        && Product.IsPriceValid(price);
-            });
+            }).TypeConverterOption.CultureInfo(new CultureInfo(_decimalCultureInfo));
             Map(p => p.VAT).Validate(args => string.IsNullOrEmpty(args.Field) || Product.IsVatValid(int.Parse(args.Field)));
             Map(p => p.Quantity).Validate(args => string.IsNullOrEmpty(args.Field) || Product.IsQuantityValid(int.Parse(args.Field)));
             Map(p => p.Location).Validate(args => Product.IsLocationValid(args.Field)).TypeConverterOption.NullValues(string.Empty);
