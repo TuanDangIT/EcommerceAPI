@@ -28,8 +28,9 @@ namespace Ecommerce.Modules.Users.Api.Controllers
             return NotFound(new ProblemDetails()
             {
                 Type = _notFoundTypeUrl,
-                Title = $"{entityName} was not found.",
-                Status = (int)HttpStatusCode.NotFound
+                Title = "An exception occurred.",
+                Status = (int)HttpStatusCode.NotFound,
+                Detail = $"{entityName} was not found."
             });
         }
         protected ActionResult<ApiResponse<PagedResult<T>>> PagedResult<T>(PagedResult<T> model)

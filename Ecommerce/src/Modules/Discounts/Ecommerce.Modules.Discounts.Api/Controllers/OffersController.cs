@@ -44,7 +44,7 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         [Authorize(Roles = "Admin, Manager, Employee, Customer")]
         [HttpGet("{offerId:int}")]
         public async Task<ActionResult<ApiResponse<OfferDetailsDto>>> GetOffer([FromRoute] int offerId, CancellationToken cancellationToken)
-            => OkOrNotFound(await _offerService.GetAsync(offerId, cancellationToken), nameof(Offer));
+            => OkOrNotFound(await _offerService.GetAsync(offerId, cancellationToken), nameof(Offer), offerId.ToString());
 
         [SwaggerOperation("Accepts an offer", "Accept an offer for a user to able to use it in a cart.")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]

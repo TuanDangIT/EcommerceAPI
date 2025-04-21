@@ -72,7 +72,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [AllowAnonymous]
         [HttpGet("{returnId:guid}")]
         public async Task<ActionResult<ApiResponse<ReturnDetailsDto>>> GetReturn([FromRoute] Guid returnId, CancellationToken cancellationToken)
-            => OkOrNotFound<ReturnDetailsDto, Return>(await _mediator.Send(new GetReturn(returnId), cancellationToken));
+            => OkOrNotFound<ReturnDetailsDto, Return>(await _mediator.Send(new GetReturn(returnId), cancellationToken), returnId.ToString());
 
         [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Deletes a return")]

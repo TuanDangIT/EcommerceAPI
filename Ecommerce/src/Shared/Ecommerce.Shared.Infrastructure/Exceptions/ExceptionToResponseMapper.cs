@@ -13,13 +13,8 @@ namespace Ecommerce.Shared.Infrastructure.Exceptions
 {
     internal class ExceptionToResponseMapper : IExceptionToResponseMapper
     {
-        private readonly IContextService _contextService;
         private const string _badRequestTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.1";
         private const string _serverErrorTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.6.1";
-        public ExceptionToResponseMapper(IContextService contextService)
-        {
-            _contextService = contextService;
-        }
         public ProblemDetails Map(Exception exception)
             => exception switch
             {

@@ -46,7 +46,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [HttpGet("{auctionId:guid}")]
         public async Task<ActionResult<ApiResponse<AuctionDetailsDto>>> GetAuction([FromRoute] Guid auctionId, 
             CancellationToken cancellationToken)
-            => OkOrNotFound<AuctionDetailsDto, Auction>(await _mediator.Send(new GetAuction(auctionId), cancellationToken));
+            => OkOrNotFound<AuctionDetailsDto, Auction>(await _mediator.Send(new GetAuction(auctionId), cancellationToken), auctionId.ToString());
 
         [SwaggerOperation("Sends request offer")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]

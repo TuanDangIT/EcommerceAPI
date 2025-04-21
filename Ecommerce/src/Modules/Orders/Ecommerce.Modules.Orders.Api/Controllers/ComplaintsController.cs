@@ -71,7 +71,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [AllowAnonymous]
         [HttpGet("{complaintId:guid}")]
         public async Task<ActionResult<ApiResponse<ComplaintDetailsDto>>> GetComplaint([FromRoute] Guid complaintId, CancellationToken cancellationToken)
-            => OkOrNotFound<ComplaintDetailsDto, Complaint>(await _mediator.Send(new GetComplaint(complaintId), cancellationToken));
+            => OkOrNotFound<ComplaintDetailsDto, Complaint>(await _mediator.Send(new GetComplaint(complaintId), cancellationToken), complaintId.ToString());
 
         [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Approves a complaint")]

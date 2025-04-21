@@ -27,8 +27,9 @@ namespace Ecommerce.Modules.Carts.Api.Controllers
             return NotFound(new ProblemDetails()
             {
                 Type = _notFoundTypeUrl,
-                Title = $"{entityName}: {id} was not found.",
-                Status = (int)HttpStatusCode.NotFound
+                Title = $"An exception occurred.",
+                Status = (int)HttpStatusCode.NotFound,
+                Detail = $"{entityName}: {id} was not found."
             });
         }
     }

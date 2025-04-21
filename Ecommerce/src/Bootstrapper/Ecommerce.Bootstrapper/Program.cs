@@ -17,3 +17,8 @@ foreach (var module in modules)
     module.Use(app);
 }
 app.Run();
+
+public partial class Program
+{
+
+}

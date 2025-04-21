@@ -77,7 +77,7 @@ namespace Ecommerce.Modules.Inventory.Api.Controllers
         [SwaggerResponse(StatusCodes.Status404NotFound, "Product was not found")]
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<ApiResponse<ProductDetailsDto>>> GetProduct([FromRoute]Guid id, CancellationToken cancellationToken)
-            => OkOrNotFound<ProductDetailsDto, Product>(await _mediator.Send(new GetProduct(id), cancellationToken));
+            => OkOrNotFound<ProductDetailsDto, Product>(await _mediator.Send(new GetProduct(id), cancellationToken), id.ToString());
 
         [SwaggerOperation("Deletes a product")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]

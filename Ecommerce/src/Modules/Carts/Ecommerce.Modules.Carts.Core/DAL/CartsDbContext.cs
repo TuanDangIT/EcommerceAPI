@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("Ecommerce.Modules.Carts.Tests.Unit")]
+[assembly: InternalsVisibleTo("Ecommerce.Modules.Carts.Tests.Integration")]
 namespace Ecommerce.Modules.Carts.Core.DAL
 {
     internal class CartsDbContext : DbContext, ICartsDbContext

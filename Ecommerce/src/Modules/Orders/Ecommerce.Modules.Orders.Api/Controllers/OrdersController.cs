@@ -78,7 +78,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         [AllowAnonymous]
         [HttpGet("{orderId:guid}")]
         public async Task<ActionResult<ApiResponse<OrderDetailsDto>>> GetOrder([FromRoute]Guid orderId, CancellationToken cancellationToken)
-            => OkOrNotFound<OrderDetailsDto, Order>(await _mediator.Send(new GetOrder(orderId), cancellationToken));
+            => OkOrNotFound<OrderDetailsDto, Order>(await _mediator.Send(new GetOrder(orderId), cancellationToken), orderId.ToString());
 
         //[Authorize(Roles = "Admin, Manager, Employee")]
         //[SwaggerOperation("Creates an order")]

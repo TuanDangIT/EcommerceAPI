@@ -19,13 +19,13 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
     internal abstract class BaseController : ControllerBase
     {
         protected readonly IMediator _mediator;
-        private const string NotFoundTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.5";
+        private const string _notFoundTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.5";
 
         public BaseController(IMediator mediator)
         {
             _mediator = mediator;
         }
-        protected ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse, TEntity>(TResponse? model)
+        protected ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse, TEntity>(TResponse? model, string entityId)
         {
             if (model is not null)
             {
@@ -34,9 +34,10 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             string entityName = typeof(TEntity).Name;
             return NotFound(new ProblemDetails()
             {
-                Type = NotFoundTypeUrl,
-                Title = $"{entityName} was not found.",
-                Status = (int)HttpStatusCode.NotFound
+                Type = _notFoundTypeUrl,
+                Title = "An exception occurred.",
+                Status = (int)HttpStatusCode.NotFound,
+                Detail = $"{entityName}: {entityId} was not found."
             });
         }
         protected ActionResult<ApiResponse<CursorPagedResult<TData, TCursor>>> CursorPagedResult<TData, TCursor>(CursorPagedResult<TData, TCursor> model)
