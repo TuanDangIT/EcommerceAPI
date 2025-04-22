@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,7 +17,8 @@ namespace Ecommerce.Modules.Discounts.Core.DataAnnotations
             {
                 return ValidationResult.Success;
             }
-            return value is DateTime date && date > TimeProvider.System.GetUtcNow().UtcDateTime
+            var timeProvider = validationContext.GetRequiredService<TimeProvider>();
+            return value is DateTime date && date > timeProvider.GetUtcNow().UtcDateTime
                 ? ValidationResult.Success
                 : new ValidationResult("Date must be in the future");
         }

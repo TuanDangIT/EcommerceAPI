@@ -21,7 +21,7 @@ namespace Ecommerce.Shared.Infrastructure.Exceptions
                 ValidationException e => new ValidationProblemDetails()
                 {
                     Type = _badRequestTypeUrl,
-                    Title = "An validation exception occured.",
+                    Title = "An validation exception occurred.",
                     Status = (int)HttpStatusCode.BadRequest,
                     Errors = e.Errors,
                     Detail = e.Message
@@ -29,7 +29,7 @@ namespace Ecommerce.Shared.Infrastructure.Exceptions
                 EcommerceException e => new ProblemDetails()
                 {
                     Type = _badRequestTypeUrl,
-                    Title = "An exception occured.",
+                    Title = "An exception occurred.",
                     Status = (int)HttpStatusCode.BadRequest,
                     Detail = e.Message,
                 },

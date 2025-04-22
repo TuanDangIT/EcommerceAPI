@@ -7,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Ecommerce.Modules.Inventory.Domain.Inventory.Entities;
 using Ecommerce.Modules.Inventory.Domain.Auctions.Entities;
 using Ecommerce.Shared.Abstractions.Entities;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Ecommerce.Modules.Inventory.Tests.Integration")]
 namespace Ecommerce.Modules.Inventory.Infrastructure.DAL
 {
     internal class InventoryDbContext : DbContext

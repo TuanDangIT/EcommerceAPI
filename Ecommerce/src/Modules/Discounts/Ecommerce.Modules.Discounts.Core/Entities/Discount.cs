@@ -36,10 +36,10 @@ namespace Ecommerce.Modules.Discounts.Core.Entities
             }
             ExpiresAt = expiresAt;
         }
-        public Discount(string code)
-        {
-            Code = code;
-        }
+        //public Discount(string code)
+        //{
+        //    Code = code;
+        //}
         private Discount()
         {
             

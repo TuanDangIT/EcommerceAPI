@@ -48,6 +48,8 @@ namespace Ecommerce.Modules.Discounts.Core.Services
             string? stripePromotionCodeId = null;
             try
             {
+                var coupon = await _dbContext.Coupons.FirstOrDefaultAsync(c => c.Id == couponId, cancellationToken) ??
+                    throw new CouponNotFoundException(couponId);
                 var discount = await _dbContext.Discounts
                 .Select(d => d.Code)
                 .FirstOrDefaultAsync(code => code == dto.Code, cancellationToken);
@@ -55,8 +57,6 @@ namespace Ecommerce.Modules.Discounts.Core.Services
                 {
                     throw new DiscountCodeAlreadyInUseException(dto.Code);
                 }
-                var coupon = await _dbContext.Coupons.FirstOrDefaultAsync(c => c.Id == couponId, cancellationToken) ??
-                    throw new CouponNotFoundException(couponId);
                 stripePromotionCodeId = await _paymentProcessorService.CreateDiscountAsync(coupon.StripeCouponId, dto, cancellationToken);
                 var expiresDate = dto.ExpiresDate is null ? dto.ExpiresDate : DateTime.SpecifyKind((DateTime)dto.ExpiresDate, DateTimeKind.Utc);
                 var newDiscount = new Discount(dto.Code, stripePromotionCodeId, dto.RequiredCartTotalValue ?? 0, expiresDate, _timeProvider.GetUtcNow().DateTime);

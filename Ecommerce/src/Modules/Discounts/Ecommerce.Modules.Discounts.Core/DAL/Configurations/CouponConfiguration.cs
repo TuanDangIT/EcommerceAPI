@@ -29,10 +29,6 @@ namespace Ecommerce.Modules.Discounts.Core.DAL.Configurations
             builder.HasMany(c => c.Discounts)
                 .WithOne(d => d.Coupon)
                 .HasForeignKey(d => d.CouponId);
-            builder.Property(c => c.StripeCouponId)
-                .IsRequired();
-            builder.HasIndex(c => c.StripeCouponId)
-                .IsUnique();
         }
     }
 }

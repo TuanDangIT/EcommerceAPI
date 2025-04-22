@@ -49,23 +49,23 @@ namespace Ecommerce.Modules.Discounts.Api.Controllers
         }
 
         [SwaggerOperation("Creates a nominal coupon")]
-        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status201Created)]
         [HttpPost("nominal-coupons")]
         public async Task<ActionResult<ApiResponse<object>>> CreateNominalCoupon([FromBody]NominalCouponCreateDto dto, CancellationToken cancellationToken)
         {
             var couponId = await _couponService.CreateAsync(dto, cancellationToken);
             Response.Headers.Append("coupon-id", couponId.ToString());
-            return Created(couponId.ToString());
+            return Created(couponId);
         }
 
         [SwaggerOperation("Creates a percentage coupon")]
-        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status201Created)]
         [HttpPost("percentage-coupons")]
         public async Task<ActionResult<ApiResponse<object>>> CreatePercentageCoupon([FromBody] PercentageCouponCreateDto dto, CancellationToken cancellationToken)
         {
             var couponId = await _couponService.CreateAsync(dto, cancellationToken);
             Response.Headers.Append("coupon-id", couponId.ToString());
-            return Created(couponId.ToString());
+            return Created(couponId);
         }
 
         [SwaggerOperation("Updates a coupon's name")]

@@ -1,12 +1,12 @@
 ﻿using Ecommerce.Modules.Carts.Core.DAL;
 using Ecommerce.Modules.Carts.Core.Entities;
 using FluentAssertions;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -14,6 +14,11 @@ namespace Ecommerce.Modules.Carts.Tests.Integration.Controllers
 {
     public class CartsControllerGetCartTests : ControllerTests
     {
+        private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions()
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
         public CartsControllerGetCartTests(EcommerceTestApp ecommerceTestApp) : base(ecommerceTestApp)
         {
         }
@@ -30,7 +35,7 @@ namespace Ecommerce.Modules.Carts.Tests.Integration.Controllers
             //Assert
             httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             var httpContent = await httpResponse.Content.ReadAsStringAsync();
-            var cartGetApiResponse = JsonConvert.DeserializeObject<ApiResponseTest<GetCartData>>(httpContent);
+            var cartGetApiResponse = JsonSerializer.Deserialize<ApiResponseTest<GetCartData>>(httpContent, _jsonSerializerOptions);
             cartGetApiResponse.Should().NotBeNull();
             cartGetApiResponse.Code.Should().Be(HttpStatusCode.OK);
             cartGetApiResponse.Status.Should().Be("success");
@@ -39,7 +44,7 @@ namespace Ecommerce.Modules.Carts.Tests.Integration.Controllers
         }
 
         [Fact]
-        public async Task GetCart_ThatDoesNotExistWithCorrectGuid_ShouldReturn200AndCart()
+        public async Task GetCart_ThatDoesNotExistWithCorrectGuid_ShouldReturn404AndNotFoundMessage()
         {
             //Arrange
             var cartId = Guid.NewGuid();
@@ -49,7 +54,7 @@ namespace Ecommerce.Modules.Carts.Tests.Integration.Controllers
             //Assert
             httpResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
             var httpContent = await httpResponse.Content.ReadAsStringAsync();
-            var cartGetExceptionResponse = JsonConvert.DeserializeObject<ExceptionResponseTest>(httpContent);
+            var cartGetExceptionResponse = JsonSerializer.Deserialize<ExceptionResponseTest>(httpContent, _jsonSerializerOptions);
             cartGetExceptionResponse.Should().NotBeNull();
             cartGetExceptionResponse.Status.Should().Be(HttpStatusCode.NotFound);
             cartGetExceptionResponse.Title.Should().Be("An exception occurred.");
@@ -57,7 +62,7 @@ namespace Ecommerce.Modules.Carts.Tests.Integration.Controllers
         }
 
         [Fact]
-        public async Task GetCart_IncorrectGuid_ShouldReturn200AndCart()
+        public async Task GetCart_IncorrectGuid_ShouldReturn404()
         {
             //Act
             var httpResponse = await HttpClient.GetAsync(BaseEndpoint + "/random-string");
@@ -69,9 +74,9 @@ namespace Ecommerce.Modules.Carts.Tests.Integration.Controllers
         public async Task<Guid> SeedCart()
         {
             var cart = new Cart();
-            await CartsDbContext.AddAsync(cart);
+            var entry = await CartsDbContext.AddAsync(cart);
             await CartsDbContext.SaveChangesAsync();
-            return cart.Id;
+            return entry.Entity.Id;
         }
     }
 }
