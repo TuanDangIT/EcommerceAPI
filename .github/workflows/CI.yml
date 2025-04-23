@@ -22,11 +22,9 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-    - name: Go in /Ecommerce
-      run: cd Ecommerce
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore Ecommerce
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test Ecommerce --no-build --verbosity normal
