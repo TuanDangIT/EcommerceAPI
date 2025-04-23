@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Modules.Discounts.Core.DAL;
 using Ecommerce.Modules.Discounts.Core.DTO;
 using Ecommerce.Shared.Abstractions.Auth;
+using Ecommerce.Shared.Tests;
 using FluentAssertions;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;

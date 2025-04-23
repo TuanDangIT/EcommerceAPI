@@ -10,9 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="8.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.15" />
-    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="8.10.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
     <PackageReference Include="Testcontainers.PostgreSql" Version="4.4.0" />
     <PackageReference Include="xunit" Version="2.4.2" />
@@ -27,9 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\src\Bootstrapper\Ecommerce.Bootstrapper\Ecommerce.Bootstrapper.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Modules\Discounts\Ecommerce.Modules.Discounts.Api\Ecommerce.Modules.Discounts.Api.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Shared\Ecommerce.Shared.Tests\Ecommerce.Shared.Tests.csproj" />
+    <ProjectReference Include="..\..\Bootstrapper\Ecommerce.Bootstrapper\Ecommerce.Bootstrapper.csproj" />
+    <ProjectReference Include="..\Ecommerce.Shared.Infrastructure\Ecommerce.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

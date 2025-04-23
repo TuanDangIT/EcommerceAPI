@@ -29,6 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\src\Bootstrapper\Ecommerce.Bootstrapper\Ecommerce.Bootstrapper.csproj" />
     <ProjectReference Include="..\..\..\..\src\Modules\Carts\Ecommerce.Modules.Carts.Api\Ecommerce.Modules.Carts.Api.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Shared\Ecommerce.Shared.Tests\Ecommerce.Shared.Tests.csproj" />
   </ItemGroup>
 
 </Project>

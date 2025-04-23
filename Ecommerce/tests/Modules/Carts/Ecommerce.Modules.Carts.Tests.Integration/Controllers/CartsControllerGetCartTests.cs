@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Carts.Core.DAL;
 using Ecommerce.Modules.Carts.Core.Entities;
+using Ecommerce.Shared.Tests;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;

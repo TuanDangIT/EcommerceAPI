@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Discounts.Tests.Integration
+namespace Ecommerce.Shared.Tests
 {
     public class ExceptionResponseTest
     {

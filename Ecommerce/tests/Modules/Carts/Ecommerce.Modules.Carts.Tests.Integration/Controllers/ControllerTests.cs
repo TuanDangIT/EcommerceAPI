@@ -16,7 +16,6 @@ namespace Ecommerce.Modules.Carts.Tests.Integration.Controllers
         protected readonly HttpClient HttpClient;
         protected readonly string BaseEndpoint = "/api/v1/carts-module/Carts";
         private readonly EcommerceTestApp _ecommerceTestApp;
-        //private readonly IServiceScope _scope;
 
         public ControllerTests(EcommerceTestApp ecommerceTestApp)
         {

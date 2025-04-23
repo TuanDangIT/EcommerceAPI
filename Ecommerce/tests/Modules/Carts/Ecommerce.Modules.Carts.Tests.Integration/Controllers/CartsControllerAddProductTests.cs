@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Carts.Core.DTO;
 using Ecommerce.Modules.Carts.Core.Entities;
+using Ecommerce.Shared.Tests;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using System;

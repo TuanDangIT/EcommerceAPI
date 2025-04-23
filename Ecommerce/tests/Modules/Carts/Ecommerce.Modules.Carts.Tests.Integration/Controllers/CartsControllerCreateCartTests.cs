@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Ecommerce.Shared.Tests;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

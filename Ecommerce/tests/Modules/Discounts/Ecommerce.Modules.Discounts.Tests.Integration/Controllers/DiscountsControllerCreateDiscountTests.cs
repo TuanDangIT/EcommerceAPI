@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Modules.Discounts.Core.DTO;
 using Ecommerce.Modules.Discounts.Core.Entities;
+using Ecommerce.Shared.Tests;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
