@@ -71,6 +71,9 @@ Thank you for your understanding and interest!
     - [Tokens](#tokens)
     - [Roles](#roles)
   - [Mails module](#mails-module)
+- [Tests](#tests)
+  - [Unit tests](#unit-tests)
+  - [Integration tests](#integration-tests)
 - [Work to be done](#work-to-be-done)
 - [Technology](#technology)
 - [License](#license)
@@ -567,6 +570,481 @@ The Complaints controller manages the acceptance and rejection of complaints. If
 The primary role of the Mails module is to send notifications to clients about the status of their orders, offers, returns, and complaints. In addition, the module also provides endpoints for sending emails to both customers and non-customers (email address is needed). It supports two types of browsing: paginated browsing, which allows filtering by Order ID or Customer ID, and offset-based browsing, which is intended for handling larger volumes of data, such as viewing all sent emails. The module also includes functionality for downloading files that were attached to the emails.
 
 ![Mails endpoints](/assets/mails-swagger.png)
+
+# Tests
+
+## Unit tests
+
+The solution includes a Tests folder containing unit tests for each module. These tests are written using the xUnit framework, along with popular libraries such as FluentAssertions and Moq.
+
+Example of unit tests for csv parsing to dto
+```cs
+ public class CsvServiceParseTests
+{
+    private readonly CsvService _csvService;
+    private readonly Mock<IFormFile> _mockFile;
+
+    public CsvServiceParseTests()
+    {
+        _csvService = new CsvService();
+        _mockFile = new Mock<IFormFile>();
+    }
+
+    [Theory]
+    [InlineData(',')]
+    [InlineData(';')]
+    public void ParseCsvFile_WithValidFile_ReturnsExpectedRecords(char delimiter)
+    {
+        // Arrange
+        var mockFile = CreateMockCsvFile(GetValidCsvContent(delimiter), "products.csv");
+
+        // Act
+        var result = _csvService.ParseCsvFile(mockFile.Object, delimiter);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().HaveCount(2);
+
+        var products = result.ToList();
+
+        // First product validation
+        products[0].SKU.Should().Be("1000001123");
+        products[0].EAN.Should().Be("1234567890123");
+        products[0].Name.Should().Be("Product 1");
+        products[0].Price.Should().Be(10.99m);
+        products[0].VAT.Should().Be(23);
+        products[0].Quantity.Should().Be(100);
+        products[0].Location.Should().Be("Warehouse A");
+        products[0].Description.Should().Be("Description 1");
+        products[0].AdditionalDescription.Should().Be("Additional info 1");
+        products[0].Manufacturer.Should().Be("Manufacturer 1");
+        products[0].Category.Should().Be("Category 1");
+
+        products[0].Parameters.Should().ContainKey("Color");
+        products[0].Parameters["Color"].Should().Be("Red");
+        products[0].Parameters.Should().ContainKey("Size");
+        products[0].Parameters["Size"].Should().Be("M");
+
+        products[0].Images.Should().HaveCount(2);
+        products[0].Images.Should().Contain("image1_1.jpg");
+        products[0].Images.Should().Contain("image1_2.jpg");
+
+        //second product validation
+        products[1].SKU.Should().Be("3000001123");
+        products[1].EAN.Should().BeNull();
+        products[1].Name.Should().Be("Product 2");
+        products[1].Price.Should().Be(20.99m);
+        products[1].VAT.Should().Be(8);
+        products[1].Quantity.Should().BeNull();
+        products[1].Location.Should().Be("Warehouse B");
+        products[1].Description.Should().Be("Description 2");
+        products[1].AdditionalDescription.Should().BeNull();
+        products[1].Manufacturer.Should().Be("Manufacturer 2");
+        products[1].Category.Should().Be("Category 2");
+
+        products[1].Parameters.Should().ContainKey("Material");
+        products[1].Parameters["Material"].Should().Be("Cotton");
+
+        products[1].Images.Should().HaveCount(1);
+        products[1].Images.Should().Contain("image2_1.jpg");
+    }
+
+    [Fact]
+    public void ParseCsvFile_WithEmptyRequiredField_ThrowsCsvHelperBadDataException()
+    {
+        // Arrange
+        var delimiter = ',';
+        var csvContent = "SKU,EAN,Name,Price,VAT,Quantity,Location,Description,AdditionalDescription,Manufacturer,Category,Images\n" +
+                         ",1234567890123,Product 1,10.99,23,100,Warehouse A,Description 1,Additional info 1,Manufacturer 1,Category 1,image1_1.jpg";
+        var mockFile = CreateMockCsvFile(csvContent, "products.csv");
+
+        // Act
+        Action action = () => _csvService.ParseCsvFile(mockFile.Object, delimiter);
+
+        //Assert
+        action.Should().Throw<CsvHelperBadDataException>();
+    }
+
+    [Fact]
+    public void ParseCsvFile_WithInvalidPrice_ThrowsCsvHelperBadDataException()
+    {
+        // Arrange
+        var delimiter = ',';
+        var csvContent = "SKU,EAN,Name,Price,VAT,Quantity,Location,Description,AdditionalDescription,Manufacturer,Category,Images\n" +
+                         "SKU001,1234567890123,Product 1,invalid,23,100,Warehouse A,Description 1,Additional info 1,Manufacturer 1,Category 1,image1_1.jpg";
+        var mockFile = CreateMockCsvFile(csvContent, "products.csv");
+
+        // Act
+        Action action = () => _csvService.ParseCsvFile(mockFile.Object, delimiter);
+
+        //Assert
+        action.Should().Throw<CsvHelperBadDataException>();
+    }
+
+    [Fact]
+    public void ParseCsvFile_WithCustomParameters_ParsesParametersCorrectly()
+    {
+        // Arrange
+        var delimiter = ',';
+        var csvContent = "SKU,EAN,Name,Price,VAT,Quantity,Location,Description,AdditionalDescription,Manufacturer,Category,Images,Color,Size,Weight\n" +
+                         "SKU0000001,1234567890123,Product 1,\"10,99\",23,100,Warehouse A,Description 1,Additional info 1,Manufacturer 1,Category 1,image1_1.jpg,Red,M,500g";
+        var mockFile = CreateMockCsvFile(csvContent, "products.csv");
+
+        // Act
+        var result = _csvService.ParseCsvFile(mockFile.Object, delimiter);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().HaveCount(1);
+
+        var product = result.First();
+        product.Parameters.Should().ContainKey("Color");
+        product.Parameters["Color"].Should().Be("Red");
+        product.Parameters.Should().ContainKey("Size");
+        product.Parameters["Size"].Should().Be("M");
+        product.Parameters.Should().ContainKey("Weight");
+        product.Parameters["Weight"].Should().Be("500g");
+    }
+
+    [Fact]
+    public void ParseCsvFile_WithEmptyOptionalField_ParsesSuccessfully()
+    {
+        // Arrange
+        var delimiter = ',';
+        var csvContent = "SKU,EAN,Name,Price,VAT,Quantity,Location,Description,AdditionalDescription,Manufacturer,Category,Images,Size\n" +
+                         "PRODUCT0001,,Product One,\"10,99\",23,,,This is a detailed description,,,,image1_1.jpg,43";
+        var mockFile = CreateMockCsvFile(csvContent, "products.csv");
+
+        // Act
+        var result = _csvService.ParseCsvFile(mockFile.Object, delimiter);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().HaveCount(1);
+
+        var product = result.First();
+        product.EAN.Should().BeNull();
+        product.Quantity.Should().BeNull();
+        product.AdditionalDescription.Should().BeNull();
+    }
+
+    private Mock<IFormFile> CreateMockCsvFile(string csvContent, string fileName)
+    {
+        var bytes = Encoding.UTF8.GetBytes(csvContent);
+        var stream = new MemoryStream(bytes);
+
+        _mockFile.Setup(f => f.OpenReadStream()).Returns(stream);
+        _mockFile.Setup(f => f.FileName).Returns(fileName);
+        _mockFile.Setup(f => f.Length).Returns(bytes.Length);
+
+        return _mockFile;
+    }
+
+    private string GetValidCsvContent(char delimiter)
+    {
+        var stringBuilder = new StringBuilder();
+
+        stringBuilder.AppendLine($"SKU{delimiter}EAN{delimiter}Name{delimiter}Price{delimiter}VAT{delimiter}Quantity{delimiter}Location{delimiter}Description{delimiter}AdditionalDescription{delimiter}Manufacturer{delimiter}Category{delimiter}Images{delimiter}Color{delimiter}Size{delimiter}Material");
+
+        stringBuilder.AppendLine($"1000001123{delimiter}1234567890123{delimiter}Product 1{delimiter}\"10,99\"{delimiter}23{delimiter}100{delimiter}Warehouse A{delimiter}Description 1{delimiter}Additional info 1{delimiter}Manufacturer 1{delimiter}Category 1{delimiter}\"image1_1.jpg,image1_2.jpg\"{delimiter}Red{delimiter}M{delimiter}");
+
+        stringBuilder.AppendLine($"3000001123{delimiter}{delimiter}Product 2{delimiter}\"20,99\"{delimiter}8{delimiter}{delimiter}Warehouse B{delimiter}Description 2{delimiter}{delimiter}Manufacturer 2{delimiter}Category 2{delimiter}image2_1.jpg{delimiter}{delimiter}{delimiter}Cotton");
+
+        return stringBuilder.ToString();
+    }
+}
+```
+
+
+## Integration tests
+
+For integration tests, also written using the xUnit framework, I used WebApplicationFactory to spin up the API in memory. However, instead of relying on EF Core's in-memory database—which can be convenient but potentially unreliable for real-world scenarios—I opted to use Testcontainers. This approach allows tests to run against a real database instance within Docker, ensuring higher fidelity and more accurate test outcomes.
+
+The BaseTestApp class is responsible for managing the lifecycle of these test containers, including database initialization and disposal. While using Testcontainers introduces additional complexity and verbosity compared to in-memory solutions, it's a necessary trade-off to ensure the reliability and validity of the integration tests.
+
+BaseTestApp:
+```cs
+ public class BaseTestApp : WebApplicationFactory<Program>, IAsyncLifetime
+{
+    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder().Build();
+    private readonly FakeTimeProvider _fakeTimeProvider;
+    public BaseTestApp()
+    {
+        _fakeTimeProvider = new FakeTimeProvider();
+        _fakeTimeProvider.SetUtcNow(new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+    }
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureTestServices(services =>
+        {
+            var dbContextTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(x => x.GetTypes())
+                .Where(x => typeof(DbContext).IsAssignableFrom(x) && !x.IsInterface && x != typeof(DbContext));
+
+            foreach (var dbContextType in dbContextTypes)
+            {
+                var dbContextOptionsType = typeof(DbContextOptions<>).MakeGenericType(dbContextType);
+
+                var descriptor = services.SingleOrDefault(s => s.ServiceType == dbContextOptionsType);
+                if (descriptor != null)
+                {
+                    services.Remove(descriptor);
+                }
+
+                Type dbContextOptionsBuilderType = typeof(DbContextOptionsBuilder<>);
+                Type dbContextOptionsBuilderGenericType = dbContextOptionsBuilderType.MakeGenericType(dbContextType);
+                DbContextOptionsBuilder dbContextOptionsBuilderInstance = Activator.CreateInstance(dbContextOptionsBuilderGenericType) as DbContextOptionsBuilder ?? throw new NullReferenceException();
+                dbContextOptionsBuilderInstance.UseNpgsql(_dbContainer.GetConnectionString());
+                var options = dbContextOptionsBuilderInstance.Options;
+
+                services.AddScoped(dbContextOptionsType, _ => options);
+                services.AddScoped(dbContextType, sp =>
+                {
+                    var options = sp.GetRequiredService(dbContextOptionsType);
+                    return (DbContext?)Activator.CreateInstance(dbContextType, options, _fakeTimeProvider) ?? throw new NullReferenceException(); ;
+                });
+            }
+
+            services.RemoveAll<TimeProvider>();
+            var fakeTimeProvider = new FakeTimeProvider(new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
+            services.AddSingleton<TimeProvider>(fakeTimeProvider);
+
+            ConfigureTestServices(services);
+        });
+    }
+
+    protected virtual void ConfigureTestServices(IServiceCollection services)
+    {
+        // Empty by default, to be overridden by derived classes if needed
+    }
+
+    public async Task InitializeAsync()
+    {
+        await _dbContainer.StartAsync();
+    }
+
+    public new Task DisposeAsync()
+    {
+        return _dbContainer.StopAsync();
+    }
+}
+```
+Base controller test class:
+```cs
+public class ControllerTests : IClassFixture<EcommerceTestApp>
+{
+    internal readonly InventoryDbContext InventoryDbContext;
+    protected readonly HttpClient HttpClient;
+    protected readonly string BaseEndpoint = "/api/v1/inventory-module/";
+    private readonly EcommerceTestApp _ecommerceTestApp;
+
+    public ControllerTests(EcommerceTestApp ecommerceTestApp)
+    {
+        _ecommerceTestApp = ecommerceTestApp;
+        HttpClient = _ecommerceTestApp.CreateClient();
+        var scope = _ecommerceTestApp.Services.CreateScope();
+        InventoryDbContext = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
+        if (InventoryDbContext.Database.GetPendingMigrations().Any())
+        {
+            InventoryDbContext.Database.Migrate();
+        }
+    }
+
+    protected void Authorize()
+    {
+        var jwt = AuthHelper.CreateToken(Guid.NewGuid().ToString(), "username", "Admin");
+        HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+    }
+}
+```
+
+Integration tests example:
+```cs
+public class InventoryControllerCreateProductTests : ControllerTests
+{
+    private readonly string _controllerName = "Products";
+    private readonly ITestOutputHelper _testOutputHelper;
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
+    public InventoryControllerCreateProductTests(EcommerceTestApp ecommerceTestApp, ITestOutputHelper testOutputHelper) : base(ecommerceTestApp)
+    {
+        _testOutputHelper = testOutputHelper;
+    }
+
+    [Fact]
+    public async Task CreateProduct_WithCorrectData_ShouldReturn201AndId()
+    {
+        //Arrange
+        var (categoryId, manufacturerId, parameterId) = await Seed();
+        var command = new CreateProduct();
+        using var formContent = new MultipartFormDataContent
+        {
+            { new StringContent("12345678"), nameof(command.SKU) },
+            { new StringContent("name"), nameof(command.Name) },
+            { new StringContent(5.ToString()), nameof(command.Price) },
+            { new StringContent(23.ToString()), nameof(command.VAT) },
+            { new StringContent("description"), nameof(command.Description) },
+            { new StringContent(manufacturerId.ToString()), nameof(command.ManufacturerId) },
+            { new StringContent(categoryId.ToString()), nameof(command.CategoryId) }
+        };
+        var parametersJson = JsonSerializer.Serialize(new ProductParameterDto()
+        {
+            ParameterId = parameterId,
+            Value = "value"
+        });
+        formContent.Add(new StringContent(parametersJson, Encoding.UTF8, "application/json"), nameof(command.ProductParameters));
+        var imageStream = new MemoryStream();
+        var imageContent = new StreamContent(imageStream);
+        imageContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+        formContent.Add(imageContent, "image", "image.jpg");
+
+        //Act
+        Authorize();
+        var httpResponse = await HttpClient.PostAsync(BaseEndpoint + _controllerName, formContent);
+
+        //Assert
+        httpResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var httpContent = await httpResponse.Content.ReadAsStringAsync();
+        var productCreateApiResponse = JsonSerializer.Deserialize<ApiResponseTest<CreateProductData>>(httpContent, _jsonSerializerOptions);
+        productCreateApiResponse.Should().NotBeNull();
+        productCreateApiResponse.Code.Should().Be(HttpStatusCode.Created);
+        productCreateApiResponse.Status.Should().Be("success");
+        productCreateApiResponse.Data.Should().NotBeNull();
+        var product = await InventoryDbContext.Products.FirstOrDefaultAsync(c => c.Id == productCreateApiResponse.Data.Id);
+        product.Should().NotBeNull();
+
+    }
+
+    [Fact]
+    public async Task CreateProduct_WithNotExistingCategory_ShouldReturn400AndErrorMessage()
+    {
+        //Arrange
+        var (_, manufacturerId, parameterId) = await Seed();
+        var categoryId = Guid.NewGuid();
+        var command = new CreateProduct();
+        using var formContent = new MultipartFormDataContent
+        {
+            { new StringContent("12345678"), nameof(command.SKU) },
+            { new StringContent("name"), nameof(command.Name) },
+            { new StringContent(5.ToString()), nameof(command.Price) },
+            { new StringContent(23.ToString()), nameof(command.VAT) },
+            { new StringContent("description"), nameof(command.Description) },
+            { new StringContent(manufacturerId.ToString()), nameof(command.ManufacturerId) },
+            { new StringContent(categoryId.ToString()), nameof(command.CategoryId) }
+        };
+        var parametersJson = JsonSerializer.Serialize(new ProductParameterDto()
+        {
+            ParameterId = parameterId,
+            Value = "value"
+        });
+        formContent.Add(new StringContent(parametersJson, Encoding.UTF8, "application/json"), nameof(command.ProductParameters));
+
+        //Act
+        Authorize();
+        var httpResponse = await HttpClient.PostAsync(BaseEndpoint + _controllerName, formContent);
+        
+        //Assert
+        httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var httpContent = await httpResponse.Content.ReadAsStringAsync();
+        var productCreateExceptionResponse = JsonSerializer.Deserialize<ExceptionResponseTest>(httpContent, _jsonSerializerOptions);
+        productCreateExceptionResponse.Should().NotBeNull();
+        productCreateExceptionResponse.Status.Should().Be(HttpStatusCode.BadRequest);
+        productCreateExceptionResponse.Title.Should().Be("An exception occurred.");
+        productCreateExceptionResponse.Detail.Should().Be($"Category: {categoryId} was not found.");
+    }
+
+    [Fact]
+    public async Task CreateProduct_WithNotExistingManufacturer_ShouldReturn400AndErrorMessage()
+    {
+        //Arrange
+        var (categoryId, _, parameterId) = await Seed();
+        var manufacturerId = Guid.NewGuid();
+        var command = new CreateProduct();
+        using var formContent = new MultipartFormDataContent
+        {
+            { new StringContent("12345678"), nameof(command.SKU) },
+            { new StringContent("name"), nameof(command.Name) },
+            { new StringContent(5.ToString()), nameof(command.Price) },
+            { new StringContent(23.ToString()), nameof(command.VAT) },
+            { new StringContent("description"), nameof(command.Description) },
+            { new StringContent(manufacturerId.ToString()), nameof(command.ManufacturerId) },
+            { new StringContent(categoryId.ToString()), nameof(command.CategoryId) }
+        };
+        var parametersJson = JsonSerializer.Serialize(new ProductParameterDto()
+        {
+            ParameterId = parameterId,
+            Value = "value"
+        });
+        formContent.Add(new StringContent(parametersJson, Encoding.UTF8, "application/json"), nameof(command.ProductParameters));
+
+        //Act
+        Authorize();
+        var httpResponse = await HttpClient.PostAsync(BaseEndpoint + _controllerName, formContent);
+
+        //Assert
+        httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var httpContent = await httpResponse.Content.ReadAsStringAsync();
+        var productCreateExceptionResponse = JsonSerializer.Deserialize<ExceptionResponseTest>(httpContent, _jsonSerializerOptions);
+        productCreateExceptionResponse.Should().NotBeNull();
+        productCreateExceptionResponse.Status.Should().Be(HttpStatusCode.BadRequest);
+        productCreateExceptionResponse.Title.Should().Be("An exception occurred.");
+        productCreateExceptionResponse.Detail.Should().Be($"Manufacturer: {manufacturerId} was not found.");
+    }
+
+    [Fact]
+    public async Task CreateProduct_WithNotExistingParameter_ShouldReturn400AndErrorMessage()
+    {
+        //Arrange
+        var (categoryId, manufacturerId, _) = await Seed();
+        var parameterId = Guid.NewGuid();
+        var command = new CreateProduct();
+        using var formContent = new MultipartFormDataContent
+        {
+            { new StringContent("12345678"), nameof(command.SKU) },
+            { new StringContent("name"), nameof(command.Name) },
+            { new StringContent(5.ToString()), nameof(command.Price) },
+            { new StringContent(23.ToString()), nameof(command.VAT) },
+            { new StringContent("description"), nameof(command.Description) },
+            { new StringContent(manufacturerId.ToString()), nameof(command.ManufacturerId) },
+            { new StringContent(categoryId.ToString()), nameof(command.CategoryId) }
+        };
+        var parametersJson = JsonSerializer.Serialize(new ProductParameterDto()
+        {
+            ParameterId = parameterId,
+            Value = "value"
+        });
+        formContent.Add(new StringContent(parametersJson, Encoding.UTF8, "application/json"), nameof(command.ProductParameters));
+
+        //Act
+        Authorize();
+        var httpResponse = await HttpClient.PostAsync(BaseEndpoint + _controllerName, formContent);
+
+        //Assert
+        httpResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var httpContent = await httpResponse.Content.ReadAsStringAsync();
+        var productCreateExceptionResponse = JsonSerializer.Deserialize<ExceptionResponseTest>(httpContent, _jsonSerializerOptions);
+        productCreateExceptionResponse.Should().NotBeNull();
+        productCreateExceptionResponse.Status.Should().Be(HttpStatusCode.BadRequest);
+        productCreateExceptionResponse.Title.Should().Be("An exception occurred.");
+        productCreateExceptionResponse.Detail.Should().Be($"Parameter: {parameterId} was not found.");
+    }
+
+    public async Task<(Guid CategoryId, Guid ManufacturerId, Guid ParameterId)> Seed()
+    {
+        var category = new Category("category");
+        var manufacturer = new Manufacturer("manufacturer");
+        var parameter = new Parameter("parameter");
+        var categoryEntry = await InventoryDbContext.AddAsync(category);
+        var parameterEntry = await InventoryDbContext.AddAsync(parameter);
+        var manufacturerEntry = await InventoryDbContext.AddAsync(manufacturer);
+        await InventoryDbContext.SaveChangesAsync();
+        return (categoryEntry.Entity.Id, manufacturerEntry.Entity.Id, parameterEntry.Entity.Id);
+    }
+}
+```
 
 # Work to be done
 
