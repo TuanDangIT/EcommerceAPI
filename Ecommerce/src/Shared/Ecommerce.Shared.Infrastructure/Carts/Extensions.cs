@@ -1,4 +1,4 @@
-﻿using Ecommerce.Shared.Infrastructure.InPost;
+﻿using Ecommerce.Shared.Infrastructure.Delivery;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;

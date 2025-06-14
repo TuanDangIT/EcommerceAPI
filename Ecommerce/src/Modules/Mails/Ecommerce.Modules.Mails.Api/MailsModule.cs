@@ -2,7 +2,7 @@
 using Ecommerce.Modules.Mails.Api.Services;
 using Ecommerce.Modules.Mails.Api.Sieve;
 using Ecommerce.Shared.Abstractions.Modules;
-using Ecommerce.Shared.Infrastructure.InPost;
+using Ecommerce.Shared.Infrastructure.Delivery;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

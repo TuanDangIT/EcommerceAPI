@@ -6,7 +6,7 @@ using Ecommerce.Shared.Infrastructure.Contexts;
 using Ecommerce.Shared.Infrastructure.DomainEvents;
 using Ecommerce.Shared.Infrastructure.Events;
 using Ecommerce.Shared.Infrastructure.Exceptions;
-using Ecommerce.Shared.Infrastructure.InPost;
+using Ecommerce.Shared.Infrastructure.Delivery;
 using Ecommerce.Shared.Infrastructure.Mails;
 using Ecommerce.Shared.Infrastructure.Messaging;
 using Ecommerce.Shared.Infrastructure.Modules;
@@ -60,7 +60,7 @@ namespace Ecommerce.Shared.Infrastructure
             services.AddPostgres();
             services.AddPagination(configuration);
             services.AddStripe();
-            services.AddInpost();
+            services.AddDelivery();
             services.AddCartOptions();
             services.AddCompanyDetails();
             services.AddMails();

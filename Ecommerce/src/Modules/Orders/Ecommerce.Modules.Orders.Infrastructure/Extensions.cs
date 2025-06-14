@@ -11,7 +11,7 @@ using Ecommerce.Modules.Orders.Infrastructure.Delivery;
 using Ecommerce.Modules.Orders.Infrastructure.Invoices;
 using Ecommerce.Modules.Orders.Infrastructure.Sieve;
 using Ecommerce.Modules.Orders.Infrastructure.Stripe;
-using Ecommerce.Shared.Infrastructure.InPost;
+using Ecommerce.Shared.Infrastructure.Delivery;
 using Ecommerce.Shared.Infrastructure.Postgres;
 using Microsoft.Extensions.DependencyInjection;
 using Sieve.Services;
@@ -42,6 +42,13 @@ namespace Ecommerce.Modules.Orders.Infrastructure
                 var inPostOptions = sp.GetRequiredService<InPostOptions>();
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer" + " " + inPostOptions.ApiKey);
                 client.BaseAddress = new Uri(inPostOptions.BaseUrl);
+            }).AddStandardResilienceHandler();
+            services.AddHttpClient<IDeliveryService, DPDService>((sp, client) =>
+            {
+                var dpdOptions = sp.GetRequiredService<DPDOptions>();
+                client.DefaultRequestHeaders.Add("Authorization", "Basic" + " " + dpdOptions.ApiKey);
+                client.DefaultRequestHeaders.Add("X-Dpd-Fid", dpdOptions.OrganizationFID);
+                client.BaseAddress = new Uri(dpdOptions.BaseUrl);
             }).AddStandardResilienceHandler();
             services.AddSieve();
             return services;

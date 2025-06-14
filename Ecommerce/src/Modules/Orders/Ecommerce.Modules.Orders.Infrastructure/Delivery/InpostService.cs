@@ -1,6 +1,6 @@
 ﻿using Ecommerce.Modules.Orders.Application.Orders.Services;
 using Ecommerce.Modules.Orders.Domain.Orders.Entities;
-using Ecommerce.Shared.Infrastructure.InPost;
+using Ecommerce.Shared.Infrastructure.Delivery;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;

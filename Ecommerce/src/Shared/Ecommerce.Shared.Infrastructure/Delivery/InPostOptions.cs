@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Shared.Infrastructure.InPost
+namespace Ecommerce.Shared.Infrastructure.Delivery
 {
     public class InPostOptions
     {
