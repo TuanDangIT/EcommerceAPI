@@ -62,9 +62,17 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
             builder.ToTable(o =>
             {
                 o.HasCheckConstraint("CK_Order_TotalSum", "\"TotalSum\" >= 0");
-                o.HasCheckConstraint("CK_Order_ShippingPrice", "\"ShippingPrice\" >= 0");
                 o.HasCheckConstraint("CK_Order_DiscountValue", "\"Discount_Value\" > 0");
             });
+
+            builder.OwnsOne(o => o.DeliveryService, ds =>
+            {
+                ds.ToTable(ds =>
+                {
+                    ds.HasCheckConstraint("CK_Order_DeliveryService_Price", "\"DeliveryService_Price\" >= 0");
+                });
+            });
+
         }
     }
 }

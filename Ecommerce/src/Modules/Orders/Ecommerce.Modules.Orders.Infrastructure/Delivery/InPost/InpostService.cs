@@ -45,6 +45,10 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
         }
         public async Task<(Stream FileStream, string MimeType, string FileName)> GetLabelAsync(Shipment shipment, CancellationToken cancellationToken = default)
         {
+            if(shipment.LabelId is null)
+            {
+                throw new InvalidOperationException("Shipment does not have a label ID.");
+            }
             var httpResponse = await _httpClient.GetAsync($"v1/shipments/{shipment.LabelId}/label", cancellationToken);
             if (!httpResponse.IsSuccessStatusCode)
             {

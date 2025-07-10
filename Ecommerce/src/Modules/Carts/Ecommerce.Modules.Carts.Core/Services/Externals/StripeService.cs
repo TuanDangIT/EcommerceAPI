@@ -125,7 +125,7 @@ namespace Ecommerce.Modules.Carts.Core.Services.Externals
                     DisplayName = "Kurier InPost", // TODO: Make configurable
                     FixedAmount = new SessionShippingOptionShippingRateDataFixedAmountOptions
                     {
-                        Amount = (long)(checkoutCart.Shipment!.Price * 100),
+                        Amount = (long)(checkoutCart.Shipment!.DeliveryService.Price * 100),
                         Currency = _stripeOptions.Currency,
                     },
                     Type = "fixed_amount"

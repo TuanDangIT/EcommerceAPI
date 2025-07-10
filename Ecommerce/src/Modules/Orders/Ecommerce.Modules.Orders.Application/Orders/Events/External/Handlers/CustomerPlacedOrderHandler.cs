@@ -47,14 +47,14 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
                 }
                 discount = new Discount((DiscountType)discountType, @event.DiscountCode!, (decimal)@event.DiscountValue!, @event.DiscountSku);
             }
+            var deliveryService = new DeliveryService(@event.ShippingCourier, @event.ShippingService, @event.ShippingPrice);  
             var order = new Order(
                 newGuid,
                 customer, 
                 @event.Products, 
                 @event.TotalSum,
                 (PaymentMethod)paymentMethod!,
-                @event.ShippingService,
-                @event.ShippingPrice,
+                deliveryService,
                 additionalInformation,
                 discount,
                 @event.StripePaymentIntentId

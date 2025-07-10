@@ -110,6 +110,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
         public async Task FillShipmentDetailsAsync(Guid checkoutCartId, ShipmentFillDto shipmentFillDto, CancellationToken cancellationToken = default)
         {
             var checkoutCart = await GetCheckoutCartOrThrowIfNullAsync(checkoutCartId, cancellationToken);
+            var deliveryService = await GetDeliveryServiceOrThrowIfNotFoundAsync(shipmentFillDto.ShipmentId, cancellationToken);
             ValidateCartIsNotPaid(checkoutCart);
             checkoutCart.FillShipment(new Shipment(
                 shipmentFillDto.Country,
@@ -117,7 +118,8 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 shipmentFillDto.PostalCode,
                 shipmentFillDto.StreetName,
                 shipmentFillDto.StreetNumber,
-                shipmentFillDto.AparmentNumber
+                shipmentFillDto.AparmentNumber,
+                deliveryService
                 ));
             await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Shipment: {@shipment} was set for checkout cart: {checkoutCartId}.", shipmentFillDto, checkoutCart.Id);
@@ -146,6 +148,7 @@ namespace Ecommerce.Modules.Carts.Core.Services
         public async Task SetCheckoutCartDetailsAsync(Guid checkoutCartId, CheckoutCartSetDetailsDto checkoutCartSetDetailsDto, CancellationToken cancellationToken = default)
         {
             var checkoutCart = await GetCheckoutCartOrThrowIfNullAsync(checkoutCartId, cancellationToken);
+            var deliveryService = await GetDeliveryServiceOrThrowIfNotFoundAsync(checkoutCartSetDetailsDto.ShipmentFillDto.ShipmentId, cancellationToken);
             ValidateCartIsNotPaid(checkoutCart);
             var shipmentFillDto = checkoutCartSetDetailsDto.ShipmentFillDto;
             var customerDto = checkoutCartSetDetailsDto.CustomerDto;
@@ -164,7 +167,8 @@ namespace Ecommerce.Modules.Carts.Core.Services
                 shipmentFillDto.PostalCode,
                 shipmentFillDto.StreetName,
                 shipmentFillDto.StreetNumber,
-                shipmentFillDto.AparmentNumber
+                shipmentFillDto.AparmentNumber,
+                deliveryService
                 ));
             var payment = await _dbContext.Payments
                 .FirstOrDefaultAsync(p => p.Id == paymentId, cancellationToken) ?? throw new PaymentNotFoundException(paymentId);
@@ -218,8 +222,8 @@ namespace Ecommerce.Modules.Carts.Core.Services
                     cp.Product.ImagePathUrl
                 }),
                 TotalSum = checkoutCart.TotalSum,
-                ShippingService = checkoutCart.Shipment!.Service,
-                ShippingPrice = checkoutCart.Shipment!.Price,
+                ShippingService = checkoutCart.Shipment!.DeliveryService.Name,
+                ShippingPrice = checkoutCart.Shipment!.DeliveryService.Price,
                 Country =   checkoutCart.Shipment!.Country,
                 City = checkoutCart.Shipment!.City,
                 PostalCode = checkoutCart.Shipment.PostalCode,
@@ -266,6 +270,17 @@ namespace Ecommerce.Modules.Carts.Core.Services
             return checkoutCart;
         }
 
+        private async Task<DeliveryService> GetDeliveryServiceOrThrowIfNotFoundAsync(int deliveryServiceId, CancellationToken cancellationToken = default)
+        {
+            var deliveryService = await _dbContext.DeliveryServices
+                .FirstOrDefaultAsync(ds => ds.Id == deliveryServiceId, cancellationToken) ??
+                throw new DeliveryServiceNotFoundException(deliveryServiceId);
+            if (!deliveryService.IsActive)
+            {
+                throw new DeliveryServiceNotActiveException(deliveryServiceId);
+            }
+            return deliveryService;
+        }
         private void ValidateCartIsNotPaid(CheckoutCart checkoutCart)
         {
             if (checkoutCart.IsPaid)

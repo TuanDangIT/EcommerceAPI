@@ -59,7 +59,7 @@ namespace Ecommerce.Modules.Orders.Application.Complaints.Features.Complaint.App
                 {
                     throw new ComplaintInvalidAmountToReturnException();
                 }
-                await _paymentProcessorService.RefundAsync(complaint.Order, (decimal)request.Decision.RefundAmount + complaint.Order.ShippingPrice);
+                await _paymentProcessorService.RefundAsync(complaint.Order, (decimal)request.Decision.RefundAmount + complaint.Order.DeliveryService.Price);
             }
             _logger.LogInformation("Complaint: {complaintId} was approved by {@user}.", complaint.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });

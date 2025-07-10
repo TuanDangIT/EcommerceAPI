@@ -23,7 +23,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL
         public DbSet<Product> Products { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Discount> Discounts { get; set; }
-
+        public DbSet<DeliveryService> DeliveryServices { get; set; }
         private const string _schema = "carts";
         private readonly TimeProvider _timeProvider;
 

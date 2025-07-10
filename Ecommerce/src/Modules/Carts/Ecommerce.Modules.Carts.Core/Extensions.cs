@@ -32,6 +32,7 @@ namespace Ecommerce.Modules.Carts.Core
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<ICheckoutCartService, CheckoutCartService>();
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IDeliveryServiceService, DeliveryServiceService>();
             return services;
         }
         public static WebApplication UseCore(this WebApplication app)

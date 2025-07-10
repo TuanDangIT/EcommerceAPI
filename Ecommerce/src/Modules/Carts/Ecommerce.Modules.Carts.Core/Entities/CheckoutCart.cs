@@ -99,7 +99,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
                 TotalSum = 0;
                 return;
             }
-            decimal shipmentCost = Shipment?.Price ?? 0;
+            decimal shipmentCost = Shipment?.DeliveryService.Price ?? 0;
             TotalSum = baseTotal + shipmentCost;
             //TotalSum = totalSum + (Shipment is not null && totalSum != 0 ? Shipment.Price : 0);
         }

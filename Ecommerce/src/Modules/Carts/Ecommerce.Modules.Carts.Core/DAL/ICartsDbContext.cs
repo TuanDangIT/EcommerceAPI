@@ -20,6 +20,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL
         DbSet<Product> Products { get; set; }
         DbSet<Payment> Payments { get; set; }
         DbSet<Discount> Discounts { get; set; }
+        DbSet<DeliveryService> DeliveryServices { get; set; }
         Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }

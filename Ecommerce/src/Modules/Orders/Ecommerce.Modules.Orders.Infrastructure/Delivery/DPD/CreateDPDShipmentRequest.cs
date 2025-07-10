@@ -4,19 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Shared.Infrastructure.Delivery
+namespace Ecommerce.Modules.Orders.Infrastructure.Delivery.DPD
 {
-    public class DPDOptions
+    internal class CreateDPDShipmentRequest
     {
-        public string BaseUrl { get; set; } = string.Empty;
-        public string ApiKey { get; set; } = string.Empty;
         public string GenerationPolicy { get; set; } = string.Empty;
-        public string LanguageCode { get; set; } = string.Empty;
+        public DPDPackage[] Packages { get; set; } = [];
+        public string LangCode { get; set; } = string.Empty;
         public string OutputDocFormat { get; set; } = string.Empty;
         public string Format { get; set; } = string.Empty;
         public string OutputType { get; set; } = string.Empty;
         public string Variant { get; set; } = string.Empty;
-        public int OrganizationFID { get; set; } 
-        public string Content { get; set; } = string.Empty;
     }
 }

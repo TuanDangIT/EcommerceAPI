@@ -21,6 +21,10 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Configurations
                 s.Property(s => s.StreetNumber).IsRequired().HasMaxLength(8);
                 s.Property(s => s.AparmentNumber).HasMaxLength(8);
                 s.Property(s => s.Country).IsRequired().HasMaxLength(64);
+
+                s.HasOne(s => s.DeliveryService)
+                    .WithMany()
+                    .HasForeignKey(s => s.DeliveryServiceId);
             });
             builder.OwnsOne(cc => cc.Customer, c =>
             {

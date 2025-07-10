@@ -24,7 +24,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         {
             Receiver = receiver;
             Insurance = new Insurance(totalSum.ToString("0.00"));
-            Parcels = parcels.ToList();
+            Parcels = [.. parcels];
         }
         private Shipment()
         {

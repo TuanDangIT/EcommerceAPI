@@ -17,6 +17,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External
         public string PhoneNumber { get; set; } = string.Empty;
         public IEnumerable<Product> Products { get; set; } = Enumerable.Empty<Product>();
         public decimal TotalSum { get; set; }
+        public string ShippingCourier { get; set; } = string.Empty;
         public string ShippingService { get; set; } = string.Empty;
         public decimal ShippingPrice { get; set; }
         public string Country { get; set; } = string.Empty;

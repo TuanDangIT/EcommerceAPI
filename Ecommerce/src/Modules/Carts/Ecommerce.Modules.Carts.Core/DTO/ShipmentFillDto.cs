@@ -27,5 +27,7 @@ namespace Ecommerce.Modules.Carts.Core.DTO
         [Required]
         [Length(1, 8)]
         public string? AparmentNumber { get; set; }
+        [Required]
+        public int ShipmentId { get; set; }
     }
 }

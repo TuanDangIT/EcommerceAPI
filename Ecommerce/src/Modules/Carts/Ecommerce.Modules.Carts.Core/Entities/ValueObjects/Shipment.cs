@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Modules.Carts.Core.Entities.Exceptions;
+using Ecommerce.Modules.Carts.Core.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,9 @@ namespace Ecommerce.Modules.Carts.Core.Entities.ValueObjects
         public string StreetName { get; private set; } = string.Empty;
         public string StreetNumber { get; private set; } = string.Empty;
         public string? AparmentNumber { get; private set; }
-        public string Service { get; set; } = "Kurier InPost";
-        public decimal Price { get; set; } = 3;
-        public Shipment(string country, string city, string postalCode, string streetName, string streetNumber, string? apartmentNumber)
+        public int DeliveryServiceId { get; private set; }
+        public DeliveryService DeliveryService { get; private set; } = default!;
+        public Shipment(string country, string city, string postalCode, string streetName, string streetNumber, string? apartmentNumber, DeliveryService deliveryService)
         {
             Country = country;
             City = city;
@@ -25,10 +26,19 @@ namespace Ecommerce.Modules.Carts.Core.Entities.ValueObjects
             StreetName = streetName;
             StreetNumber = streetNumber;
             AparmentNumber = apartmentNumber;
+            ChooseDeliveryService(deliveryService);
         }
         private Shipment()
         {
 
+        }
+        public void ChooseDeliveryService(DeliveryService deliveryService)
+        {
+            if (deliveryService.IsActive == false)
+            {
+                throw new DeliveryServiceNotActiveException(deliveryService.Id);
+            }
+            DeliveryService = deliveryService;
         }
     }
 }

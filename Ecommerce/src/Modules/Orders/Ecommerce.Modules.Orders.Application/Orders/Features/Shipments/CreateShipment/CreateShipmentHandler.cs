@@ -19,16 +19,19 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
     internal class CreateShipmentHandler : ICommandHandler<CreateShipment, int>
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly IDeliveryService _deliveryService;
+        private readonly IDeliveryServiceFactory _deliveryServiceFactory;
+
+        //private readonly IDeliveryService _deliveryService;
         private readonly TimeProvider _timeProvider;
         private readonly ILogger<CreateShipmentHandler> _logger;
         private readonly IContextService _contextService;
 
-        public CreateShipmentHandler(IOrderRepository orderRepository, IDeliveryService deliveryService, 
+        public CreateShipmentHandler(IOrderRepository orderRepository, /*IDeliveryService deliveryService*/ IDeliveryServiceFactory deliveryServiceFactory, 
             TimeProvider timeProvider, ILogger<CreateShipmentHandler> logger, IContextService contextService)
         {
             _orderRepository = orderRepository;
-            _deliveryService = deliveryService;
+            _deliveryServiceFactory = deliveryServiceFactory;
+            //_deliveryService = deliveryService;
             _timeProvider = timeProvider;
             _logger = logger;
             _contextService = contextService;
@@ -37,8 +40,11 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
         {
             var order = await _orderRepository.GetAsync(request.OrderId, cancellationToken,
                 query => query.Include(o => o.Customer),
-                query => query.Include(o => o.Shipments)) ?? 
+                query => query.Include(o => o.Shipments), 
+                query => query.Include(o => o.DeliveryService)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
+            var deliveryService = _deliveryServiceFactory.GetDeliveryService(order.DeliveryService.Courier) ?? 
+                throw new ShipmentCourierNotSupportedException(order.DeliveryService.Courier);
             if (order.Status == Domain.Orders.Entities.Enums.OrderStatus.Draft)
             {
                 throw new OrderDraftException(order.Id);
@@ -53,7 +59,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
             });
             var shipment = new Domain.Orders.Entities.Shipment(receiver, parcels, order.TotalSum);
             order.AddShipment(shipment);
-            var (labelId, trackingNumber) = await _deliveryService.CreateShipmentAsync(shipment, cancellationToken);
+            var (labelId, trackingNumber) = await deliveryService.CreateShipmentAsync(shipment, cancellationToken);
             shipment.SetLabelId(labelId.ToString());
             shipment.SetTrackingNumber(trackingNumber);
             shipment.SetLabelCreatedAt(_timeProvider.GetUtcNow().UtcDateTime);

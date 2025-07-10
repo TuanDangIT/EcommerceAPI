@@ -37,19 +37,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure
             services.AddSingleton<IPaymentProcessorService, StripeService>();
             services.AddScoped<IOrdersUnitOfWork, OrdersUnitOfWork>();
             services.AddSingleton<IInvoiceService, InvoiceService>();
-            services.AddHttpClient<IDeliveryService, InpostService>((sp, client) =>
-            {
-                var inPostOptions = sp.GetRequiredService<InPostOptions>();
-                client.DefaultRequestHeaders.Add("Authorization", "Bearer" + " " + inPostOptions.ApiKey);
-                client.BaseAddress = new Uri(inPostOptions.BaseUrl);
-            }).AddStandardResilienceHandler();
-            services.AddHttpClient<IDeliveryService, DPDService>((sp, client) =>
-            {
-                var dpdOptions = sp.GetRequiredService<DPDOptions>();
-                client.DefaultRequestHeaders.Add("Authorization", "Basic" + " " + dpdOptions.ApiKey);
-                client.DefaultRequestHeaders.Add("X-Dpd-Fid", dpdOptions.OrganizationFID);
-                client.BaseAddress = new Uri(dpdOptions.BaseUrl);
-            }).AddStandardResilienceHandler();
+            services.AddDelivery();
             services.AddSieve();
             return services;
         }

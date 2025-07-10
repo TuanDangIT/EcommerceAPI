@@ -61,7 +61,7 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
                 StreetName = shipment.StreetName,
                 StreetNumber = shipment.StreetNumber,
                 AparmentNumber = shipment.AparmentNumber,
-                ShipmentPrice = shipment.Price
+                ShipmentPrice = shipment.DeliveryService.Price
             };
         public static CustomerDto AsDto(this Customer customer)
             => new()
@@ -87,6 +87,15 @@ namespace Ecommerce.Modules.Carts.Core.DAL.Mappings
                 Id = payment.Id,
                 PaymentMethod = payment.PaymentMethod.ToString(),
                 IsActived = payment.IsActive
+            };
+
+        public static DeliveryServiceDto AsDto(this DeliveryService deliveryService)
+            => new()
+            {
+                Id = deliveryService.Id,
+                Name = deliveryService.Name,
+                Courier = deliveryService.Courier.ToString(),
+                Price = deliveryService.Price,
             };
     }
 }

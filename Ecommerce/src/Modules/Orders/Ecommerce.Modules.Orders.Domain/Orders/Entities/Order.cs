@@ -26,8 +26,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public string? CompanyAdditionalInformation { get; private set; }
         public Discount? Discount { get; private set; }
         public string StripePaymentIntentId { get; private set; } = string.Empty;
-        public string ShippingService { get; private set; } = string.Empty;
-        public decimal ShippingPrice { get; private set; }
+        public DeliveryService DeliveryService { get; private set; } = default!;
         private readonly List<Shipment> _shipments = [];
         public IEnumerable<Shipment> Shipments => _shipments;
         public Return? Return { get; private set; }
@@ -38,7 +37,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public Invoice? Invoice { get; private set; }
         public bool HasInvoice => Invoice is not null;
         public Order(Guid id, Customer customer, IEnumerable<Product> products, decimal totalSum, PaymentMethod paymentMethod, 
-            string shippingService, decimal shippingPrice, string? clientAdditionalInformation, Discount? discount, string stripePaymentIntentId)
+            DeliveryService deliveryService, string? clientAdditionalInformation, Discount? discount, string stripePaymentIntentId)
         {
             if(totalSum < 0)
             {
@@ -48,16 +47,11 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             {
                 throw new OrderDiscountValueBelowOrEqualZeroException();
             }
-            if(shippingPrice < 0)
-            {
-                throw new OrderShippingPriceBelowZeroException();
-            }
             Id = id;
             Customer = customer;
             _products = products.ToList();
             Payment = paymentMethod;
-            ShippingService = shippingService;
-            ShippingPrice = shippingPrice;
+            DeliveryService = deliveryService;
             ClientAdditionalInformation = clientAdditionalInformation;
             Discount = discount;
             StripePaymentIntentId = stripePaymentIntentId;
@@ -199,7 +193,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 
         private void CalculateTotalSum()
         {
-            var productsTotal = _products.Sum(p => p.Price) + ShippingPrice;
+            var productsTotal = _products.Sum(p => p.Price) + DeliveryService.Price;
             if (Discount is null)
             {
                 TotalSum = productsTotal;
@@ -226,7 +220,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             }
             if (calculatedTotal <= 0)
             {
-                TotalSum = 0 + ShippingPrice;
+                TotalSum = 0 + DeliveryService.Price;
                 return;
             }
             TotalSum = calculatedTotal;
