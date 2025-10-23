@@ -18,9 +18,6 @@ services:
       - "8081:8081"
     build:
       context: ./Ecommerce/src/
-      # dockerfile: ./src/Dockerfile
-    # environment:
-    #   - ConnectionStrings__Postgres=Host=localhost;User ID=postgres;Password=mysecretpassword;Server=ecommerce_db;Port=5432;Database=EcommerceDb
     networks:
       - dev
   ecommerce_db:
@@ -34,7 +31,7 @@ services:
     networks:
       - dev
     volumes:
-      - "C:/Studia/Docker/EcommerceAPI/Postgres:/var/lib/postgresql/data"
+      - "C:/ProgramData/docker/volumes/postgres:/var/lib/postgresql/data"
 
   ecommerce_azurite:
     image: mcr.microsoft.com/azure-storage/azurite
@@ -46,7 +43,7 @@ services:
     networks:
       - dev
     volumes:
-      - "C:/Studia/Docker/EcommerceAPI/Azurite:/data"
+      - "C:/ProgramData/docker/volumes/azurite:/data"
 
   ecommerce_seq:
     image: datalust/seq:latest
