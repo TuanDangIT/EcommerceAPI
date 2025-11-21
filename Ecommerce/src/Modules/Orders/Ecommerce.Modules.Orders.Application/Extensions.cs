@@ -16,6 +16,10 @@ namespace Ecommerce.Modules.Orders.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
+            services.Scan(i => i.FromAssemblies(Assembly.GetExecutingAssembly())
+                .AddClasses(c => c.AssignableTo(typeof(IValidator<>)))
+                .AsImplementedInterfaces()
+                .WithScopedLifetime());
             services.AddMediatR(cfg =>
             {
                 cfg.AddOpenBehavior(typeof(OrdersValidationBehavior<,>));
@@ -23,10 +27,6 @@ namespace Ecommerce.Modules.Orders.Application
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
             services.AddSingleton<IOrdersEventMapper, OrdersEventMapper>();
-            services.Scan(i => i.FromAssemblies(Assembly.GetExecutingAssembly())
-                .AddClasses(c => c.AssignableTo(typeof(IValidator<>)))
-                .AsImplementedInterfaces()
-                .WithScopedLifetime());
             return services;
         }
     }

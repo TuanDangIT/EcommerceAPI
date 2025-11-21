@@ -16,9 +16,12 @@ namespace Ecommerce.Modules.Inventory.Application
 {
     public static class Extensions
     {
-        private const string _sieveSectionName = "Sieve";
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
+            services.Scan(i => i.FromAssemblies(Assembly.GetExecutingAssembly())
+                .AddClasses(c => c.AssignableTo(typeof(IValidator<>)))
+                .AsImplementedInterfaces()
+                .WithScopedLifetime());
             services.AddMediatR(cfg =>
             {
                 cfg.AddOpenBehavior(typeof(InventoryValidationBehavior<,>));
@@ -26,11 +29,6 @@ namespace Ecommerce.Modules.Inventory.Application
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
             services.AddSingleton<IInventoryEventMapper, InventoryEventMapper>();
-            services.Scan(i => i.FromAssemblies(Assembly.GetExecutingAssembly())
-                .AddClasses(c => c.AssignableTo(typeof(IValidator<>)))
-                .AsImplementedInterfaces()
-                .WithScopedLifetime());
-            //services.Configure<SieveOptions>(configuration.GetSection(_sieveSectionName));
             return services;
         }
     }
