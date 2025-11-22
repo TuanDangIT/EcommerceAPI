@@ -17,7 +17,7 @@ namespace Ecommerce.Modules.Orders.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.Scan(i => i.FromAssemblies(Assembly.GetExecutingAssembly())
-                .AddClasses(c => c.AssignableTo(typeof(IValidator<>)))
+                .AddClasses(c => c.AssignableTo(typeof(IValidator<>)), publicOnly: false)
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
             services.AddMediatR(cfg =>
