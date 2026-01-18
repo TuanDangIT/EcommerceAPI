@@ -85,7 +85,7 @@ namespace Ecommerce.Modules.Users.Core.Services
         }
         public async Task SignUpAsync(SignUpDto dto, CancellationToken cancellationToken = default)
         {
-            var email = dto.Email.ToLowerInvariant();
+            var email = dto.Email.ToLower();
             if(await _userRepository.GetByEmailAsync(email, cancellationToken) is not null)
             {
                 throw new EmailInUseException();

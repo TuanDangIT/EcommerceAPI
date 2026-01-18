@@ -21,7 +21,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ChangeStatu
                 .NotNull()
                 .Custom((value, context) =>
                 {
-                    if (!_availableStatuses.Contains(value, StringComparer.InvariantCultureIgnoreCase))
+                    if (!_availableStatuses.Contains(value, StringComparer.OrdinalIgnoreCase))
                     {
                         context.AddFailure($"Provided status is invalid. Please use the following ones: {string.Join(", ", _availableStatuses)}.");
                     }

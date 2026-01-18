@@ -25,7 +25,7 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Returns.SetRetur
                 .NotNull()
                 .Custom((value, context) =>
                 {
-                    if (!_availableStatuses.Contains(value, StringComparer.InvariantCultureIgnoreCase))
+                    if (!_availableStatuses.Contains(value, StringComparer.OrdinalIgnoreCase))
                     {
                         context.AddFailure($"Provided status is invalid. Please use the following ones: {string.Join(", ", _availableStatuses)}.");
                     }

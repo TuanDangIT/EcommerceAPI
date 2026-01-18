@@ -19,7 +19,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.Delivery
 
         public IDeliveryService GetDeliveryService(string shippingService)
         {
-            return shippingService.ToUpperInvariant() switch
+            return shippingService.ToUpper() switch
             {
                 "INPOST" => _serviceProvider.GetRequiredService<InpostService>(),
                 "DPD" => _serviceProvider.GetRequiredService<DPDService>(),
