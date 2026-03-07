@@ -7,12 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Shared\Ecommerce.Shared.Abstractions\Ecommerce.Shared.Abstractions.csproj" />
-    <ProjectReference Include="..\..\..\Shared\Ecommerce.Shared.Infrastructure\Ecommerce.Shared.Infrastructure.csproj" />
+    <Compile Remove="DataAnnotations\**" />
+    <EmbeddedResource Remove="DataAnnotations\**" />
+    <None Remove="DataAnnotations\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DataAnnotations\" />
+    <ProjectReference Include="..\..\..\Shared\Ecommerce.Shared.Abstractions\Ecommerce.Shared.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Ecommerce.Shared.Infrastructure\Ecommerce.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
