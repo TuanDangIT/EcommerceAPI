@@ -24,11 +24,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
                 p.Property(p => p.Price)
                     .HasPrecision(11, 2)
                     .IsRequired();
-                p.ToTable("Products", p =>
+                p.ToTable("OrderItems", p =>
                 {
-                    p.HasCheckConstraint("CK_Product_UnitPrice", "\"UnitPrice\" >= 0");
-                    p.HasCheckConstraint("CK_Product_Price", "\"Price\" >= 0");
-                    p.HasCheckConstraint("CK_Product_Quantity", "\"Quantity\" >= 0");
+                    p.HasCheckConstraint("CK_OrderItem_UnitPrice", "\"UnitPrice\" >= 0");
+                    p.HasCheckConstraint("CK_OrderItem_Price", "\"Price\" >= 0");
+                    p.HasCheckConstraint("CK_OrderItem_Quantity", "\"Quantity\" >= 0");
                 });
             });
             builder.OwnsOne(o => o.Discount, d =>

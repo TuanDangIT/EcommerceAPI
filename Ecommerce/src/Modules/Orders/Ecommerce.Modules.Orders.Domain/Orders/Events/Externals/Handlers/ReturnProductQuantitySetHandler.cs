@@ -9,21 +9,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Domain.Orders.Events.Externals
+namespace Ecommerce.Modules.Orders.Domain.Orders.Events.Externals.Handlers
 {
-    internal class ReturnProductAddedHandler : IDomainEventHandler<ReturnProductAdded>
+    internal class ReturnProductQuantitySetHandler : IDomainEventHandler<ReturnProductQuantitySet>
     {
         private readonly IOrderRepository _orderRepository;
 
-        public ReturnProductAddedHandler(IOrderRepository orderRepository)
+        public ReturnProductQuantitySetHandler(IOrderRepository orderRepository)
         {
             _orderRepository = orderRepository;
         }
-        public async Task HandleAsync(ReturnProductAdded @event)
+        public async Task HandleAsync(ReturnProductQuantitySet @event)
         {
             var order = await _orderRepository.GetAsync(@event.OrderId, default,
                 query => query.Include(o => o.Products)) ?? throw new OrderNotFoundException(@event.OrderId);
-            order.DecreaseProductQuantity(@event.SKU, @event.Quantity);
+            if(@event.Diffrence >= 0)
+            {
+                order.AddProduct(@event.SKU, @event.Diffrence);
+            }
+            else
+            {
+                order.DecreaseProductQuantity(@event.SKU, Math.Abs(@event.Diffrence));
+            }
             await _orderRepository.UpdateAsync();
         }
     }

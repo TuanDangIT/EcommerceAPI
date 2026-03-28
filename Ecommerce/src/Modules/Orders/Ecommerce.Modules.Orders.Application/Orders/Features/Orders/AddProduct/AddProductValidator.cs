@@ -14,19 +14,13 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Orders.AddProduct
             RuleFor(a => a.OrderId)
                 .NotEmpty()
                 .NotNull();
-            RuleFor(a => a.SKU)
+            RuleFor(a => a.ProductId)
                 .NotEmpty()
-                .NotNull()
-                .MinimumLength(8)
-                .MaximumLength(16);
-            RuleFor(a => a.Name)
-                .MinimumLength(2)
-                .MaximumLength(24);
+                .NotNull();
             RuleFor(a => a.Quantity)
-                .NotNull()
-                .GreaterThanOrEqualTo(0);
-            RuleFor(a => a.UnitPrice)
-                .GreaterThanOrEqualTo(0);
+                .GreaterThan(0)
+                .NotEmpty()
+                .NotNull();
         }
     }
 }

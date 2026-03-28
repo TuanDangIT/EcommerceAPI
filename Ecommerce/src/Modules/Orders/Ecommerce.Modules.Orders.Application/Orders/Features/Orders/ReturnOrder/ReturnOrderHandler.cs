@@ -65,7 +65,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder
                 .Select(p =>
                 {
                     var returnQuantity = request.ProductsToReturn.Single(ptr => ptr.ProductId == p.Id).Quantity;
-                    p = new Domain.Orders.Entities.Product(p.SKU, p.Name, p.UnitPrice, returnQuantity, p.ImagePathUrl);
+                    p = new Domain.Orders.Entities.OrderItem(p.SKU, p.Name, p.UnitPrice, returnQuantity, p.ImagePathUrl);
                     return p;
                 }).ToList();
             order.ReturnProducts(request.ProductsToReturn.Select(p => (p.ProductId, p.Quantity)));

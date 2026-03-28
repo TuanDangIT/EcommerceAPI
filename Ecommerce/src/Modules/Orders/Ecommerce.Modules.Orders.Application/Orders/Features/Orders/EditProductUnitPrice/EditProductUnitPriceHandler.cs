@@ -31,7 +31,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Orders.EditProduc
                 query => query.Include(o => o.Products)) ??
                 throw new OrderNotFoundException(request.OrderId);
             var product = order.Products.SingleOrDefault(p => p.Id == request.ProductId) ??
-                throw new ProductNotFoundException(request.OrderId, request.ProductId);
+                throw new OrderItemNotFoundException(request.OrderId, request.ProductId);
             product.EditUnitPrice(request.UnitPrice);
             await _orderRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Product's: {productId} price was updated with new price: {newPrice} for order: {orderId} by {@user}.",

@@ -16,8 +16,8 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
     public class Order : AggregateRoot, IAuditable
     {
         public Customer? Customer { get; private set; } = default!;
-        private readonly List<Product> _products = [];
-        public IEnumerable<Product> Products => _products;
+        private readonly List<OrderItem> _products = [];
+        public IEnumerable<OrderItem> Products => _products;
         public decimal TotalSum { get; private set; }
         public PaymentMethod Payment { get; private set; }
         public OrderStatus Status { get; private set; } = OrderStatus.Placed;
@@ -36,7 +36,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public DateTime? UpdatedAt { get; private set; }
         public Invoice? Invoice { get; private set; }
         public bool HasInvoice => Invoice is not null;
-        public Order(Guid id, Customer customer, IEnumerable<Product> products, decimal totalSum, PaymentMethod paymentMethod, 
+        public Order(Guid id, Customer customer, IEnumerable<OrderItem> products, decimal totalSum, PaymentMethod paymentMethod, 
             DeliveryService deliveryService, string? clientAdditionalInformation, Discount? discount, string stripePaymentIntentId)
         {
             if(totalSum < 0)
@@ -125,19 +125,14 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             ChangeStatus(OrderStatus.Completed);
             IncrementVersion();
         }
-        public void AddProduct(Product product)
+        public void AddProduct(Product product, int quantity)
         {
-            _products.Add(product);
+            var orderItem = new OrderItem(product.SKU, product.Name, product.Price, quantity, product.ImagePathUrl);
+            _products.Add(orderItem);
             CalculateTotalSum();
             IncrementVersion();
         }
-        public void AddProduct(int productId, int quantity)
-        {
-            var product = FindProductById(productId);
-            product.IncreaseQuantity(quantity);
-            CalculateTotalSum();
-            IncrementVersion();
-        }
+
         public void AddProduct(string sku, int quantity)
         {
             var product = FindProductBySku(sku);
@@ -145,17 +140,12 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             CalculateTotalSum();
             IncrementVersion();
         }
-        public void RemoveProduct(int productId, int? quantity)
-        {
-            var product = FindProductById(productId);
-            RemoveProduct(product, quantity);
-        }
         //public void RemoveProduct(string sku, int quantity)
         //{
         //    var product = FindProductBySku(sku);
         //    product.DecreaseQuantity(quantity);
         //}
-        public void RemoveProduct(Product product, int? quantity)
+        public void RemoveProduct(OrderItem product, int? quantity)
         {
             if (quantity is null || product.Quantity == quantity || product.Quantity == 1)
             {
@@ -225,11 +215,11 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             }
             TotalSum = calculatedTotal;
         }
-        private Product FindProductById(int productId) =>
+        private OrderItem FindProductById(int productId) =>
             _products.FirstOrDefault(p => p.Id == productId) ??
             throw new ProductNotFoundException(productId);
 
-        private Product FindProductBySku(string sku) =>
+        private OrderItem FindProductBySku(string sku) =>
             _products.SingleOrDefault(p => p.SKU == sku) ??
             throw new ProductNotFoundException(sku);
     }

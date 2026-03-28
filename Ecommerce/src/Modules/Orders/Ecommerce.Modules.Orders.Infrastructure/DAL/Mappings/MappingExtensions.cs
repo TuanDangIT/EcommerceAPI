@@ -89,7 +89,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 SKU = discount.SKU,
                 Value = discount.Value
             };
-        public static ProductDto AsDto(this Product product)
+        public static ProductDto AsDto(this OrderItem product)
             => new()
             {
                 Id = product.Id,

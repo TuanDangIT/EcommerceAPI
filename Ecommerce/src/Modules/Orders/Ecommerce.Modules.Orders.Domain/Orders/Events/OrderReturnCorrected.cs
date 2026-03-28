@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Events
 {
-    public sealed record class OrderReturnCorrected(Guid OrderId, IEnumerable<Product> Products) : IDomainEvent;
+    public sealed record class OrderReturnCorrected(Guid OrderId, IEnumerable<OrderItem> Products) : IDomainEvent;
 }

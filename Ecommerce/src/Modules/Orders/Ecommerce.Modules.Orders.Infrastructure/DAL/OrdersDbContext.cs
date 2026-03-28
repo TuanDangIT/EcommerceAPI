@@ -15,6 +15,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL
     internal class OrdersDbContext : DbContext
     {
         public DbSet<Order> Orders { get; set; }
+        public DbSet<Product> Products { get; set; }
         public DbSet<Return> Returns { get; set; }
         public DbSet<Complaint> Complaints { get; set; }   
         public DbSet<Status> Statuses { get; set; }

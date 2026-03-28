@@ -30,6 +30,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddPostgres<OrdersDbContext>();
+            services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IReturnRepository, ReturnRepository>();
             services.AddScoped<IComplaintRepository, ComplaintRepository>();

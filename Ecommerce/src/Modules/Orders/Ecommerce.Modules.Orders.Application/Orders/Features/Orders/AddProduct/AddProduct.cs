@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Features.Orders.AddProduct
 {
-    public sealed record class AddProduct(int ProductId, string SKU, string? Name, decimal? UnitPrice, int Quantity, string? ImagePathUrl) : ICommand
+    public sealed record class AddProduct(Guid ProductId, int Quantity) : ICommand
     {
         [SwaggerIgnore]
         public Guid OrderId { get; init; }

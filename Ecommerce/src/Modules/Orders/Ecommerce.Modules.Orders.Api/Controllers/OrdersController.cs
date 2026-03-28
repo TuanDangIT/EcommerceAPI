@@ -5,6 +5,7 @@ using Ecommerce.Modules.Orders.Application.Orders.DTO;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Invoice.CreateInvoice;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.BrowseOrders;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.CancelOrder;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Order.ChangeStatus;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.GetOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrderDelivered;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.HandleOrderShipped;
@@ -12,10 +13,11 @@ using Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitComplaint;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.AddProduct;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.BrowseOrdersByCustomerId;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.BrowseProductsToAdd;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.CreateDraftOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.DeleteOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.EditProductUnitPrice;
-using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.RemoveProduct;
+using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.RemoveOrderItem;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.SubmitOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.WriteAdditionalInformation;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateShipment;
@@ -80,57 +82,66 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         public async Task<ActionResult<ApiResponse<OrderDetailsDto>>> GetOrder([FromRoute]Guid orderId, CancellationToken cancellationToken)
             => OkOrNotFound<OrderDetailsDto, Order>(await _mediator.Send(new GetOrder(orderId), cancellationToken), orderId.ToString());
 
-        //[Authorize(Roles = "Admin, Manager, Employee")]
-        //[SwaggerOperation("Creates an order")]
-        //[SwaggerResponse(StatusCodes.Status201Created, "Creates an order and returns it's identifier", typeof(Guid))]
-        //[SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
-        //[SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
-        //[HttpPost]
-        //public async Task<ActionResult> CreateDraftOrder(CancellationToken cancellationToken)
-        //{
-        //    var orderId = await _mediator.Send(new CreateDraftOrder(), cancellationToken);
-        //    return CreatedAtAction(nameof(GetOrder), new { orderId }, orderId);
-        //}
+        [Authorize(Roles = "Admin, Manager, Employee")]
+        [SwaggerOperation("Creates an order")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Creates an order and returns it's identifier", typeof(Guid))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
+        [HttpPost]
+        public async Task<ActionResult> CreateDraftOrder(CancellationToken cancellationToken)
+        {
+            var orderId = await _mediator.Send(new CreateDraftOrder(), cancellationToken);
+            return CreatedAtAction(nameof(GetOrder), new { orderId }, orderId);
+        }
 
-        //[Authorize(Roles = "Admin, Manager, Employee")]
-        //[SwaggerOperation("Submits an order")]
-        //[SwaggerResponse(StatusCodes.Status204NoContent)]
-        //[SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        //[SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
-        //[SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
-        //[HttpPut("{orderId:guid}/submit-order")]
-        //public async Task<ActionResult> SubmitOrder([FromRoute] Guid orderId, CancellationToken cancellationToken)
-        //{
-        //    await _mediator.Send(new SubmitOrder(orderId), cancellationToken);
-        //    return NoContent();
-        //}
+        [Authorize(Roles = "Admin, Manager, Employee")]
+        [SwaggerOperation("Submits an order")]
+        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
+        [HttpPut("{orderId:guid}/submit-order")]
+        public async Task<ActionResult> SubmitOrder([FromRoute] Guid orderId, CancellationToken cancellationToken)
+        {
+            await _mediator.Send(new SubmitOrder(orderId), cancellationToken);
+            return NoContent();
+        }
 
-        //[Authorize(Roles = "Admin, Manager, Employee")]
-        //[SwaggerOperation("Adds product to a specified order")]
-        //[SwaggerResponse(StatusCodes.Status204NoContent)]
-        //[SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-        //[SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
-        //[SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
-        //[HttpPatch("{orderId:guid}/products")]
-        //public async Task<ActionResult> AddProduct([FromRoute]Guid orderId, [FromBody]AddProduct command, CancellationToken cancellationToken)
-        //{
-        //    command = command with { OrderId = orderId };
-        //    await _mediator.Send(command, cancellationToken);
-        //    return NoContent();
-        //}
+        [Authorize(Roles = "Admin, Manager, Employee")]
+        [SwaggerOperation("Browse available products to add to order")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Returns result for products available to add to order from search filter.", typeof(ApiResponse<IEnumerable<ProductToAddBrowseDto>>))]
+        public async Task<ActionResult<ApiResponse<IEnumerable<ProductToAddBrowseDto>>>> BrowseProductsToAdd([FromRoute] Guid orderId, [FromQuery] string search, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new BrowseProductsToAdd(orderId, search), cancellationToken);
+            return Ok(new ApiResponse<IEnumerable<ProductToAddBrowseDto>>(HttpStatusCode.OK, result));
+        }
 
-        //[Authorize(Roles = "Admin, Manager, Employee")]
-        //[SwaggerOperation("Deletes product from a specified order")]
-        //[SwaggerResponse(StatusCodes.Status204NoContent)]
-        //[SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
-        //[SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
-        //[HttpDelete("{orderId:guid}/products")]
-        //public async Task<ActionResult> RemoveProduct([FromRoute] Guid orderId, [FromBody] RemoveProduct command, CancellationToken cancellationToken)
-        //{
-        //    command = command with { OrderId = orderId };
-        //    await _mediator.Send(command, cancellationToken);
-        //    return NoContent();
-        //}
+        [Authorize(Roles = "Admin, Manager, Employee")]
+        [SwaggerOperation("Adds product to a specified order")]
+        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
+        [HttpPatch("{orderId:guid}/products")]
+        public async Task<ActionResult> AddProduct([FromRoute] Guid orderId, [FromBody] AddProduct command, CancellationToken cancellationToken)
+        {
+            command = command with { OrderId = orderId };
+            await _mediator.Send(command, cancellationToken);
+            return NoContent();
+        }
+
+        [Authorize(Roles = "Admin, Manager, Employee")]
+        [SwaggerOperation("Deletes product from a specified order")]
+        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
+        [HttpDelete("{orderId:guid}/products")]
+        public async Task<ActionResult> RemoveProduct([FromRoute] Guid orderId, [FromBody] RemoveOrderItem command, CancellationToken cancellationToken)
+        {
+            command = command with { OrderId = orderId };
+            await _mediator.Send(command, cancellationToken);
+            return NoContent();
+        }
 
         [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Updates a products's price for specified order")]
@@ -165,6 +176,17 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
         {
             await _mediator.Send(new DeleteOrder(orderId));
             return NoContent();
+        }
+
+        [Authorize(Roles = "Admin, Manager, Employee")]
+        [SwaggerOperation("Change order status")]
+        [SwaggerResponse(StatusCodes.Status200OK)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
+        [HttpPatch("{ordeId:guid}/status")]
+        public async Task<ActionResult> ChangeStatus([FromRoute] Guid ordeId, [FromBody] string status, CancellationToken cancellationToken)
+        {
+            await _mediator.Send(new ChangeStatus(ordeId, status), cancellationToken);
+            return Ok();
         }
 
         [SwaggerOperation("Returns an order")]
@@ -207,7 +229,7 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
 
         [SwaggerOperation("Webhook for updating order if delivered")]
         [SwaggerResponse(StatusCodes.Status200OK)]
-        [SwaggerResponse(StatusCodes.Status400BadRequest)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
         [AllowAnonymous]
         [HttpPost("/api/webhooks/v{v:apiVersion}/" + OrdersModule.BasePath + "/[controller]/order-delivered")]
         public async Task<ActionResult> InPostParcelDeliveredWebhookHandler()

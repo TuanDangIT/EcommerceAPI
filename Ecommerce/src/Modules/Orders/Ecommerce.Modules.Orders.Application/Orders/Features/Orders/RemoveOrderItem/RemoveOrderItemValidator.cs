@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Application.Orders.Features.Orders.RemoveProduct
+namespace Ecommerce.Modules.Orders.Application.Orders.Features.Orders.RemoveOrderItem
 {
-    internal class RemoveProductValidator : AbstractValidator<RemoveProduct>
+    internal class RemoveOrderItemValidator : AbstractValidator<RemoveOrderItem>
     {
-        public RemoveProductValidator()
+        public RemoveOrderItemValidator()
         {
             RuleFor(r => r.OrderId)
                 .NotEmpty()
                 .NotNull();
-            RuleFor(r => r.ProductId)
+            RuleFor(r => r.OrderItemId)
                 .NotEmpty()
                 .NotNull();
             RuleFor(r => r.Quantity)

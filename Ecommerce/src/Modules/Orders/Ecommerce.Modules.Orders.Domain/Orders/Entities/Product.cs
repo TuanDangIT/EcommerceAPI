@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 {
-    public class Product : BaseEntity<int>       //OrderItem could be a better name.
+    public class Product : BaseEntity, IAuditable
     {
         [JsonInclude]
         public string SKU { get; private set; } = string.Empty;
@@ -18,65 +18,44 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         [JsonInclude]
         public decimal Price { get; private set; }
         [JsonInclude]
-        public decimal UnitPrice { get; private set; }
-        [JsonInclude]
-        public int Quantity { get; private set; }
+        public int? Quantity { get; private set; }
+        public bool HasQuantity => Quantity.HasValue;
         [JsonInclude]
         public string? ImagePathUrl { get; private set; }
-        public Product(string sku, string name, decimal price, decimal unitPrice, int quantity, string? imagePathUrl)
+        public DateTime CreatedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
+        public Product(string sku, string name, decimal price, int? quantity, string? imagePathUrl)
         {
-            if(unitPrice < 0)
-            {
-                throw new ProductUnitPriceBelowZeroException();
-            }
-            if(price < 0)
-            {
-                throw new ProductPriceBelowZeroException();
-            }
-            if(quantity < 0)
-            {
-                throw new ProductQuantityBelowZeroException();
-            }
             SKU = sku;
             Name = name;
             Price = price;
-            UnitPrice = unitPrice;
             Quantity = quantity;
             ImagePathUrl = imagePathUrl;
         }
-        public Product(string sku, string name, decimal unitPrice, int quantity, string? imagePathUrl)
-        {
-            SKU = sku;
-            Name = name;
-            Price = unitPrice * quantity;
-            UnitPrice = unitPrice;
-            Quantity = quantity;
-            ImagePathUrl = imagePathUrl;
-        }
-        public Product()
-        {
 
+        private Product()
+        {
+            
         }
+
         public void DecreaseQuantity(int quantity)
         {
-            if(Quantity < quantity)
+            if (HasQuantity)
             {
-                throw new ProductQuantityBelowZeroException();
+                if (quantity > Quantity)
+                {
+                    throw new ProductQuantityBelowZeroException();
+                }
+                Quantity -= quantity;
             }
-            Quantity -= quantity;
-            CalculatePrice();
         }
+
         public void IncreaseQuantity(int quantity)
         {
-            Quantity += quantity;
-            CalculatePrice();
+            if (HasQuantity)
+            {
+                Quantity += quantity;
+            }
         }
-        public void EditUnitPrice(decimal unitPrice)
-        {
-            UnitPrice = unitPrice;
-            CalculatePrice();
-        }
-        private void CalculatePrice()
-            => Price = UnitPrice * Quantity;
     }
 }
