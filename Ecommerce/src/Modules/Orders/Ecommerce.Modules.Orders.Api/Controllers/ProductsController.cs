@@ -1,6 +1,6 @@
 ﻿using Asp.Versioning;
-using Ecommerce.Modules.Orders.Application.Orders.DTO;
-using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.BrowseProductsToAdd;
+using Ecommerce.Modules.Orders.Application.Products.DTO;
+using Ecommerce.Modules.Orders.Application.Products.Features.BrowseProductsToAddToOrder;
 using Ecommerce.Shared.Abstractions.Api;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -25,12 +25,12 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
 
         [Authorize(Roles = "Admin, Manager, Employee")]
         [SwaggerOperation("Browse available products to add to order")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Returns result for products available to add to order from search filter.", typeof(ApiResponse<IEnumerable<ProductToAddBrowseDto>>))]
+        [SwaggerResponse(StatusCodes.Status200OK, "Returns result for products available to add to order from search filter.", typeof(ApiResponse<IEnumerable<ProductToAddToOrderBrowseDto>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<IEnumerable<ProductToAddBrowseDto>>>> BrowseProductsToAdd([FromRoute] Guid orderId, [FromQuery] string search, CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<IEnumerable<ProductToAddToOrderBrowseDto>>>> BrowseProductsToAdd([FromQuery] string search, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new BrowseProductsToAdd(orderId, search), cancellationToken);
-            return Ok(new ApiResponse<IEnumerable<ProductToAddBrowseDto>>(HttpStatusCode.OK, result));
+            var result = await _mediator.Send(new BrowseProductsToAdd(search), cancellationToken);
+            return Ok(new ApiResponse<IEnumerable<ProductToAddToOrderBrowseDto>>(HttpStatusCode.OK, result));
         }
     }
 }

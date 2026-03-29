@@ -13,7 +13,6 @@ using Ecommerce.Modules.Orders.Application.Orders.Features.Order.ReturnOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Order.SubmitComplaint;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.AddProduct;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.BrowseOrdersByCustomerId;
-using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.BrowseProductsToAdd;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.CreateDraftOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.DeleteOrder;
 using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.EditProductUnitPrice;

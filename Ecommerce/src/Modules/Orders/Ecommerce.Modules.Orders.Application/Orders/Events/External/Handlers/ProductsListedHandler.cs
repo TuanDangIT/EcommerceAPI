@@ -20,8 +20,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
         }
         public async Task HandleAsync(ProductsListed @event)
         {
-            var products = @event.Products.Select(p => new Product(p.SKU, p.Name, p.Price, p.Quantity, p.ImagePathUrl)).ToList();
-             await _productRepository.AddAsync(products);       
+             await _productRepository.AddAsync(@event.Products);       
         }
     }
 }

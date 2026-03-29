@@ -24,8 +24,34 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public string? ImagePathUrl { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
+        public Product(Guid id, string sku, string name, decimal price, int? quantity, string? imagePathUrl)
+        {
+            if (quantity < 0)
+            {
+                throw new ProductQuantityBelowZeroException();
+            }
+            if (price < 0)
+            {
+                throw new ProductPriceBelowZeroException();
+            }
+            Id = id;
+            SKU = sku;
+            Name = name;
+            Price = price;
+            Quantity = quantity;
+            ImagePathUrl = imagePathUrl;
+        }
+
         public Product(string sku, string name, decimal price, int? quantity, string? imagePathUrl)
         {
+            if (quantity < 0)
+            {
+                throw new ProductQuantityBelowZeroException();
+            }
+            if (price < 0)
+            {
+                throw new ProductPriceBelowZeroException();
+            }
             SKU = sku;
             Name = name;
             Price = price;

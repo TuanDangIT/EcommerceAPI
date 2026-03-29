@@ -1,5 +1,5 @@
-﻿using Ecommerce.Modules.Orders.Application.Orders.DTO;
-using Ecommerce.Modules.Orders.Application.Orders.Features.Orders.BrowseProductsToAdd;
+﻿using Ecommerce.Modules.Orders.Application.Products.DTO;
+using Ecommerce.Modules.Orders.Application.Products.Features.BrowseProductsToAddToOrder;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Ecommerce.Shared.Abstractions.MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
 {
-    internal class BrowseProductsToAddHandler : ICommandHandler<BrowseProductsToAdd, IEnumerable<ProductToAddBrowseDto>>
+    internal class BrowseProductsToAddHandler : ICommandHandler<BrowseProductsToAdd, IEnumerable<ProductToAddToOrderBrowseDto>>
     {
         private readonly OrdersDbContext _dbContext;
         private readonly IContextService _contextService;
@@ -25,11 +25,11 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
             _contextService = contextService;
             _logger = logger;
         }
-        public async Task<IEnumerable<ProductToAddBrowseDto>> Handle(BrowseProductsToAdd request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductToAddToOrderBrowseDto>> Handle(BrowseProductsToAdd request, CancellationToken cancellationToken)
         {
             var products = await _dbContext.Products
                 .Where(p => p.Name.Contains(request.SearchTerm) || p.SKU.Contains(request.SearchTerm))
-                .Select(p => new ProductToAddBrowseDto
+                .Select(p => new ProductToAddToOrderBrowseDto
                 {
                     Id = p.Id,
                     SKU = p.SKU,
@@ -40,10 +40,10 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
                 })
                 .Take(_maxResults)
                 .AsNoTracking()
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
-            _logger.LogInformation("User {UserId} searched for products to add to order {OrderId} with search term '{SearchTerm}' and found {ProductCount} products.",
-                _contextService.Identity!.Id, request.OrderId, request.SearchTerm, products.Count);   
+            _logger.LogInformation("User {UserId} searched for products to add to order with search term '{SearchTerm}' and found {ProductCount} products.",
+                _contextService.Identity!.Id, request.SearchTerm, products.Count);   
 
             return products;
         }

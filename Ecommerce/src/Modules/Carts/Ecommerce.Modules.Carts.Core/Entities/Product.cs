@@ -42,6 +42,7 @@ namespace Ecommerce.Modules.Carts.Core.Entities
             Quantity = quantity;
             ImagePathUrl = imagePathUrl;
         }
+        [JsonConstructor]
         public Product(Guid id, string sku, string name, decimal price, int? quantity, string imagePathUrl)
         {
             if (quantity < 0)

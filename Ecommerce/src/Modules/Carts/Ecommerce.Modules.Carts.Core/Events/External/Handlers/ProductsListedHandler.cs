@@ -21,16 +21,7 @@ namespace Ecommerce.Modules.Carts.Core.Events.External.Handlers
         }
         public async Task HandleAsync(ProductsListed @event)
         {
-            var products = new List<Product>();
-            foreach(var product in @event.Products)
-            {
-                if (product is null)
-                {
-                    continue;
-                }
-                products.Add(product);
-            }
-            await _dbContext.Products.AddRangeAsync(products);
+            await _dbContext.Products.AddRangeAsync(@event.Products);
             await _dbContext.SaveChangesAsync();
         }
     }

@@ -26,7 +26,7 @@ namespace Ecommerce.Modules.Inventory.Domain.Auctions.Entities
         public IEnumerable<Review> Reviews => _review;
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        public Auction(Guid id, string sku, string name, decimal price, string description, List<string> imagePathUrls, string category, 
+        public Auction(Guid id, string sku, string name, decimal price, string description, List<string> imagePathUrls, string? category, 
             int? quantity = null, string? additionalDescription = null, List<AuctionParameter>? parameters = null, string? manufacturer = null)
         {
             if (quantity < 0)

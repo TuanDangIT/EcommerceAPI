@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Application.Orders.DTO
+namespace Ecommerce.Modules.Orders.Application.Products.DTO
 {
-    public class ProductToAddBrowseDto
+    public class ProductToAddToOrderBrowseDto
     {
         public Guid Id { get; set; }
         public string SKU { get; set; } = string.Empty;
