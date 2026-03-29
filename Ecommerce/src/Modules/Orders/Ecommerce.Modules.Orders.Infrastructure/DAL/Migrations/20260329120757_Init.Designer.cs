@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 {
     [DbContext(typeof(OrdersDbContext))]
-    [Migration("20250319101056_ChangePrecisionForDiscountValue")]
-    partial class ChangePrecisionForDiscountValue
+    [Migration("20260329120757_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -168,13 +168,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal>("ShippingPrice")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("ShippingService")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
@@ -201,9 +194,52 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                         {
                             t.HasCheckConstraint("CK_Order_DiscountValue", "\"Discount_Value\" > 0");
 
-                            t.HasCheckConstraint("CK_Order_ShippingPrice", "\"ShippingPrice\" >= 0");
-
                             t.HasCheckConstraint("CK_Order_TotalSum", "\"TotalSum\" >= 0");
+                        });
+                });
+
+            modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Product", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ImagePathUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(11, 2)
+                        .HasColumnType("numeric(11,2)");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SKU")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SKU")
+                        .IsUnique();
+
+                    b.ToTable("Products", "orders", t =>
+                        {
+                            t.HasCheckConstraint("CK_Product_Price", "\"Price\" >= 0");
+
+                            t.HasCheckConstraint("CK_Product_Quantity", "\"Quantity\" >= 0");
                         });
                 });
 
@@ -439,11 +475,8 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
 
             modelBuilder.Entity("Ecommerce.Modules.Orders.Domain.Orders.Entities.Order", b =>
                 {
-                    b.OwnsMany("Ecommerce.Modules.Orders.Domain.Orders.Entities.Product", "Products", b1 =>
+                    b.OwnsMany("Ecommerce.Modules.Orders.Domain.Orders.Entities.OrderItem", "Products", b1 =>
                         {
-                            b1.Property<Guid>("OrderId")
-                                .HasColumnType("uuid");
-
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("integer");
@@ -457,6 +490,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                 .IsRequired()
                                 .HasMaxLength(64)
                                 .HasColumnType("character varying(64)");
+
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uuid");
 
                             b1.Property<decimal>("Price")
                                 .HasPrecision(11, 2)
@@ -473,15 +509,44 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                             b1.Property<decimal>("UnitPrice")
                                 .HasColumnType("numeric");
 
-                            b1.HasKey("OrderId", "Id");
+                            b1.HasKey("Id");
 
-                            b1.ToTable("Products", "orders", t =>
+                            b1.HasIndex("OrderId");
+
+                            b1.ToTable("OrderItems", "orders", t =>
                                 {
-                                    t.HasCheckConstraint("CK_Product_Price", "\"Price\" >= 0");
+                                    t.HasCheckConstraint("CK_OrderItem_Price", "\"Price\" >= 0");
 
-                                    t.HasCheckConstraint("CK_Product_Quantity", "\"Quantity\" >= 0");
+                                    t.HasCheckConstraint("CK_OrderItem_Quantity", "\"Quantity\" >= 0");
 
-                                    t.HasCheckConstraint("CK_Product_UnitPrice", "\"UnitPrice\" >= 0");
+                                    t.HasCheckConstraint("CK_OrderItem_UnitPrice", "\"UnitPrice\" >= 0");
+                                });
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
+                    b.OwnsOne("Ecommerce.Modules.Orders.Domain.Orders.Entities.ValueObjects.DeliveryService", "DeliveryService", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Courier")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<decimal>("Price")
+                                .HasColumnType("numeric");
+
+                            b1.Property<string>("Service")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("Orders", "orders", t =>
+                                {
+                                    t.HasCheckConstraint("CK_Order_DeliveryService_Price", "\"DeliveryService_Price\" >= 0");
                                 });
 
                             b1.WithOwner()
@@ -517,6 +582,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
                         });
+
+                    b.Navigation("DeliveryService")
+                        .IsRequired();
 
                     b.Navigation("Discount");
 
@@ -786,8 +854,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                 {
                     b.Navigation("Complaints");
 
-                    b.Navigation("Customer")
-                        .IsRequired();
+                    b.Navigation("Customer");
 
                     b.Navigation("Invoice");
 

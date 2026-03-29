@@ -474,9 +474,6 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                 {
                     b.OwnsMany("Ecommerce.Modules.Orders.Domain.Orders.Entities.OrderItem", "Products", b1 =>
                         {
-                            b1.Property<Guid>("OrderId")
-                                .HasColumnType("uuid");
-
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("integer");
@@ -490,6 +487,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                                 .IsRequired()
                                 .HasMaxLength(64)
                                 .HasColumnType("character varying(64)");
+
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uuid");
 
                             b1.Property<decimal>("Price")
                                 .HasPrecision(11, 2)
@@ -506,7 +506,9 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Migrations
                             b1.Property<decimal>("UnitPrice")
                                 .HasColumnType("numeric");
 
-                            b1.HasKey("OrderId", "Id");
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("OrderId");
 
                             b1.ToTable("OrderItems", "orders", t =>
                                 {
