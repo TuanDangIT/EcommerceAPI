@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Modules.Orders.Application.Orders.Events
+namespace Ecommerce.Modules.Inventory.Application.Inventory.Events.Externals
 {
-    public record class ProductRemovedFromOrder(Guid ProductId, int Quantity) : IEvent;
+    public record class ProductAddedToOrder(Guid ProductId, int Quantity) : IEvent;
 }

@@ -19,14 +19,14 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         private readonly List<OrderItem> _products = [];
         public IEnumerable<OrderItem> Products => _products;
         public decimal TotalSum { get; private set; }
-        public PaymentMethod Payment { get; private set; }
+        public string? Payment { get; private set; }
         public OrderStatus Status { get; private set; } = OrderStatus.Placed;
         public bool IsCompleted => Status is OrderStatus.Cancelled || Status is OrderStatus.Completed || Status is OrderStatus.Returned;
         public string? ClientAdditionalInformation { get; private set; }
         public string? CompanyAdditionalInformation { get; private set; }
         public Discount? Discount { get; private set; }
         public string StripePaymentIntentId { get; private set; } = string.Empty;
-        public DeliveryService DeliveryService { get; private set; } = default!;
+        public DeliveryService? DeliveryService { get; private set; } 
         private readonly List<Shipment> _shipments = [];
         public IEnumerable<Shipment> Shipments => _shipments;
         public Return? Return { get; private set; }
@@ -36,7 +36,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
         public DateTime? UpdatedAt { get; private set; }
         public Invoice? Invoice { get; private set; }
         public bool HasInvoice => Invoice is not null;
-        public Order(Guid id, Customer customer, IEnumerable<OrderItem> products, decimal totalSum, PaymentMethod paymentMethod, 
+        public Order(Guid id, Customer customer, IEnumerable<OrderItem> products, decimal totalSum, string paymentMethod, 
             DeliveryService deliveryService, string? clientAdditionalInformation, Discount? discount, string stripePaymentIntentId)
         {
             if(totalSum < 0)
@@ -183,7 +183,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
 
         private void CalculateTotalSum()
         {
-            var productsTotal = _products.Sum(p => p.Price) + DeliveryService.Price;
+            var productsTotal = _products.Sum(p => p.Price) + DeliveryService?.Price ?? 0;
             if (Discount is null)
             {
                 TotalSum = productsTotal;
@@ -210,7 +210,7 @@ namespace Ecommerce.Modules.Orders.Domain.Orders.Entities
             }
             if (calculatedTotal <= 0)
             {
-                TotalSum = 0 + DeliveryService.Price;
+                TotalSum = 0 + DeliveryService?.Price ?? 0;
                 return;
             }
             TotalSum = calculatedTotal;

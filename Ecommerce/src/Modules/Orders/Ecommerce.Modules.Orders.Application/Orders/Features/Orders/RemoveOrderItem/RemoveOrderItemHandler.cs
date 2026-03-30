@@ -44,11 +44,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Orders.RemoveOrde
                 throw new ProductNotFoundException(orderItem.SKU);
 
             order.RemoveProduct(orderItem, request.Quantity);
-           
-            if (request.Quantity is not null)
-            {
-                product.IncreaseQuantity((int)request.Quantity!);
-            }
+
+            product.IncreaseQuantity(request.Quantity);
 
             await _orderRepository.UpdateAsync(cancellationToken);
 

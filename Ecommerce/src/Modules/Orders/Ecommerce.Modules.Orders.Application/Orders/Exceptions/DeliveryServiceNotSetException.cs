@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Modules.Orders.Application.Orders.Exceptions
 {
-    internal class InvalidPaymentMethodException : EcommerceException
+    internal class DeliveryServiceNotSetException : EcommerceException
     {
-        public InvalidPaymentMethodException() : base("Given payment method was invalid.")
+        public DeliveryServiceNotSetException() : base("Delivery service was not set.")
         {
         }
     }

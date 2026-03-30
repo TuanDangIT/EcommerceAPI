@@ -32,10 +32,6 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
             var address = new Address(@event.Country, @event.StreetName, @event.ApartmentNumber is null ? @event.StreetNumber : @event.StreetNumber + "/" + @event.ApartmentNumber, 
                 @event.City, @event.PostalCode);
             var customer = new Customer(@event.FirstName, @event.LastName, @event.Email, @event.PhoneNumber, address, @event.CustomerId);
-            if (!Enum.TryParse(typeof(PaymentMethod), @event.PaymentMethod, out var paymentMethod))
-            {
-                throw new InvalidPaymentMethodException();
-            }
             var additionalInformation = @event.AdditionalInformation;
             var now = _timeProvider.GetUtcNow().UtcDateTime;
             Discount? discount = null;
@@ -53,7 +49,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
                 customer, 
                 @event.Products, 
                 @event.TotalSum,
-                (PaymentMethod)paymentMethod!,
+                @event.PaymentMethod,
                 deliveryService,
                 additionalInformation,
                 discount,

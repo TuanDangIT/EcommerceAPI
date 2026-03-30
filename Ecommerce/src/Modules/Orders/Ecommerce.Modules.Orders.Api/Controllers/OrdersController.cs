@@ -82,8 +82,8 @@ namespace Ecommerce.Modules.Orders.Api.Controllers
             => OkOrNotFound<OrderDetailsDto, Order>(await _mediator.Send(new GetOrder(orderId), cancellationToken), orderId.ToString());
 
         [Authorize(Roles = "Admin, Manager, Employee")]
-        [SwaggerOperation("Creates an order")]
-        [SwaggerResponse(StatusCodes.Status201Created, "Creates an order and returns it's identifier", typeof(Guid))]
+        [SwaggerOperation("Creates a draft order")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Creates a draft order and returns it's identifier", typeof(Guid))]
         [SwaggerResponse(StatusCodes.Status403Forbidden, "Access is forbidden for this user")]
         [SwaggerResponse(StatusCodes.Status401Unauthorized, "User not authorized")]
         [HttpPost]

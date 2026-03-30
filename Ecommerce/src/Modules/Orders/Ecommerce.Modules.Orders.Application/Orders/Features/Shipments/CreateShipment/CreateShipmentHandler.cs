@@ -43,6 +43,12 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Features.Shipment.CreateSh
                 query => query.Include(o => o.Shipments), 
                 query => query.Include(o => o.DeliveryService)) ?? 
                 throw new OrderNotFoundException(request.OrderId);
+
+            if (order.DeliveryService is null)
+            {
+                throw new DeliveryServiceNotSetException();
+            }
+
             var deliveryService = _deliveryServiceFactory.GetDeliveryService(order.DeliveryService.Courier) ?? 
                 throw new ShipmentCourierNotSupportedException(order.DeliveryService.Courier);
             if (order.Status == Domain.Orders.Entities.Enums.OrderStatus.Draft)

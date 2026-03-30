@@ -48,7 +48,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 TotalSum = order.TotalSum,
                 Products = order.Products.Select(p => p.AsDto()),
                 Shipment = order.Shipments.Select(s => s.AsDetailsDto()),
-                Payment = order.Payment.ToString(),
+                Payment = order.Payment?.ToString(),
                 Status = order.Status.ToString(),
                 ClientAdditionalInformation = order.ClientAdditionalInformation,
                 CompanyAdditionalInformation = !hasCustomerConstraint ? order.CompanyAdditionalInformation : null,

@@ -13,8 +13,8 @@ namespace Ecommerce.Modules.Orders.Application.Orders.DTO
         public CustomerDto? Customer { get; set; } = new();
         public decimal? TotalSum { get; set; }
         public IEnumerable<ProductDto>? Products { get; set; } = [];
-        public string? Payment { get; set; } = string.Empty;
-        public string? Status { get; set; } = string.Empty;
+        public string? Payment { get; set; } 
+        public string Status { get; set; } = string.Empty;
         public string? ClientAdditionalInformation { get; set; }
         public string? CompanyAdditionalInformation { get; set; }
         public OrderInvoiceDto? Invoice { get; set; }
