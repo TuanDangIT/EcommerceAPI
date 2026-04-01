@@ -28,7 +28,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.QueryHandlers
         public async Task<IEnumerable<ProductToAddToOrderBrowseDto>> Handle(BrowseProductsToAdd request, CancellationToken cancellationToken)
         {
             var products = await _dbContext.Products
-                .Where(p => p.Name.Contains(request.SearchTerm) || p.SKU.Contains(request.SearchTerm))
+                .Where(p => p.Name.ToLower().Contains(request.SearchTerm.ToLower()) || p.SKU.ToLower().Contains(request.SearchTerm.ToLower()))
                 .Select(p => new ProductToAddToOrderBrowseDto
                 {
                     Id = p.Id,

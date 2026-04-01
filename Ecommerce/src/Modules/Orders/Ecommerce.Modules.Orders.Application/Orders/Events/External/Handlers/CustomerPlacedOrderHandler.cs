@@ -49,6 +49,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.Events.External.Handlers
                 customer, 
                 @event.Products, 
                 @event.TotalSum,
+                @event.TotalSum,
                 @event.PaymentMethod,
                 deliveryService,
                 additionalInformation,

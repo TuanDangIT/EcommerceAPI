@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ecommerce.Modules.Orders.Domain.Complaints.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,8 +12,17 @@ namespace Ecommerce.Modules.Orders.Domain.Complaints.Entities
         public string DecisionText { get; private set; } = string.Empty;
         public string? AdditionalInformation { get; private set; } = string.Empty;
         public decimal? RefundAmount { get; private set; }
-        public Decision(string decisionText, string? additionalInformation, decimal refundAmount)
+        public Decision(Complaint complaint, string decisionText, string? additionalInformation, decimal refundAmount)
         {
+            if(refundAmount < 0)
+            {
+                throw new RefundAmountBelowZeroException();
+            }
+
+            if(refundAmount > complaint.Order.Products.Sum(p => p.Price))
+            {
+                throw new InvalidAmountToReturnException();
+            }
             DecisionText = decisionText;
             AdditionalInformation = additionalInformation;
             RefundAmount = refundAmount;

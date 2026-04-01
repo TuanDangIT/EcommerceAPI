@@ -19,6 +19,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 FullName = order.Customer?.FirstName + " " + order.Customer?.LastName,
                 Status = order.Status.ToString(),
                 TotalSum = order.TotalSum,
+                TotalPaidSum = order.TotalPaidSum,
                 PlacedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
             };
@@ -30,6 +31,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 FullName = order.Customer?.FirstName + " " + order.Customer?.LastName,
                 Status = order.Status.ToString(),
                 TotalSum = order.TotalSum,
+                TotalPaidSum = order.TotalPaidSum,
                 PlacedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
             };
@@ -46,6 +48,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Mappings
                 Id = order.Id,
                 Customer = order.Customer?.AsDto(),
                 TotalSum = order.TotalSum,
+                TotalPaidSum = order.TotalPaidSum,
                 Products = order.Products.Select(p => p.AsDto()),
                 Shipment = order.Shipments.Select(s => s.AsDetailsDto()),
                 Payment = order.Payment?.ToString(),

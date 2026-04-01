@@ -12,6 +12,7 @@ namespace Ecommerce.Modules.Orders.Application.Orders.DTO
         public Guid Id { get; set; }
         public CustomerDto? Customer { get; set; } = new();
         public decimal? TotalSum { get; set; }
+        public decimal? TotalPaidSum { get; set; }
         public IEnumerable<ProductDto>? Products { get; set; } = [];
         public string? Payment { get; set; } 
         public string Status { get; set; } = string.Empty;

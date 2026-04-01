@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Ecommerce.Shared.Abstractions.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Ecommerce.Modules.Orders.Domain.Returns.Entities.Enums;
+using Ecommerce.Shared.Abstractions.DomainEvents;
 
 namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleReturn
 {
@@ -24,15 +25,17 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
         private readonly IMessageBroker _messageBroker;
         private readonly ILogger<HandleReturnHandler> _logger;
         private readonly IContextService _contextService;
+        private readonly IDomainEventDispatcher _domainEventDispatcher;
 
         public HandleReturnHandler(IReturnRepository returnRepository, IPaymentProcessorService stripeService, IMessageBroker messageBroker,
-            ILogger<HandleReturnHandler> logger, IContextService contextService)
+            ILogger<HandleReturnHandler> logger, IContextService contextService, IDomainEventDispatcher domainEventDispatcher)
         {
             _returnRepository = returnRepository;
             _stripeService = stripeService;
             _messageBroker = messageBroker;
             _logger = logger;
             _contextService = contextService;
+            _domainEventDispatcher = domainEventDispatcher;
         }
         public async Task Handle(HandleReturn request, CancellationToken cancellationToken)
         {
@@ -44,20 +47,23 @@ namespace Ecommerce.Modules.Orders.Application.Returns.Features.Return.HandleRet
             {
                 throw new ReturnCannotHandleException();
             }
-            //if (@return.IsFullReturn)
-            //{
-            //    await _stripeService.RefundAsync(@return.Order, cancellationToken);
-            //}
-            //else
-            //{
-            //    bool includeShippingPrice = !@return.HasReturned;
-            //    await _stripeService.RefundAsync(@return.Order, @return.TotalSumLeftToReturn + (includeShippingPrice ? @return.Order.ShippingPrice : 0), cancellationToken);
-            //}
+            if (@return.IsFullReturn)
+            {
+                await _stripeService.RefundAsync(@return.Order, cancellationToken);
+            }
+            else
+            {
+                bool includeShippingPrice = !@return.HasReturned;
+                await _stripeService.RefundAsync(@return.Order, @return.TotalSumLeftToReturn + (includeShippingPrice ? @return.Order.DeliveryService!.Price : 0), cancellationToken);
+            }
             var productToReturn = @return.Products.Where(p => p.Status != ReturnProductStatus.Returned).ToList();
             @return.Handle();
             await _returnRepository.UpdateAsync();
             _logger.LogInformation("Return: {returnId} was handled by {@user}.", @return.Id, 
                 new { _contextService.Identity!.Username, _contextService.Identity!.Id });
+
+            await _domainEventDispatcher.DispatchAsync(new Domain.Returns.Events.ReturnHandled(@return.OrderId, productToReturn));
+
             await _messageBroker.PublishAsync(new ReturnHandled(@return.Id, @return.OrderId, @return.Order.Customer!.UserId, 
                 @return.Order.Customer.FirstName, @return.Order.Customer.Email, productToReturn.Select(p => new { p.Name, p.Price, p.SKU, p.Quantity }), @return.CreatedAt));
         }

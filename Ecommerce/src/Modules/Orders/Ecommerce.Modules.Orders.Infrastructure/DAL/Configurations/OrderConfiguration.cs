@@ -60,6 +60,7 @@ namespace Ecommerce.Modules.Orders.Infrastructure.DAL.Configurations
             builder.ToTable(o =>
             {
                 o.HasCheckConstraint("CK_Order_TotalSum", "\"TotalSum\" >= 0");
+                o.HasCheckConstraint("CK_Order_TotalPaidSum", "\"TotalPaidSum\" >= 0");
                 o.HasCheckConstraint("CK_Order_DiscountValue", "\"Discount_Value\" > 0");
             });
 
