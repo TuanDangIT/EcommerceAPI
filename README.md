@@ -1062,7 +1062,7 @@ API Improvement Task List:
 - [ ] Implement order archiving as a background task.
 - [ ] Add history logs for orders ex. refunds, returns etc..
 - [ ] Add cancel feature for refunds via Stripe
-- [ ] Able to create drafts (empty orders) on company side for phone/personal orders.
+- [x] Able to create drafts (empty orders) on company side for phone/personal orders.
 - [ ] Implement generic cursor pagination, if possible.
 - [ ] Make DTOs immutable using records.
 - [ ] Allow multiple returns per order. Currently, only one return per order is allowed.
